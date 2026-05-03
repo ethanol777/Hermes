@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "agentic_stack_version": "0.13.0",
+  "abs_target": "/home/ethanol/agentic-stack",
+  "installed_at": "2026-05-03T01:43:58Z",
+  "adapters": {
+    "hermes": {
+      "installed_at": "2026-05-03T01:43:58Z",
+      "files_written": [
+        "AGENTS.md"
+      ],
+      "files_overwritten": [],
+      "files_alerted": [],
+      "file_results": [
+        {
+          "dst": "AGENTS.md",
+          "result": "written_new"
+        }
+      ],
+      "post_install_results": []
+    }
+  }
+}

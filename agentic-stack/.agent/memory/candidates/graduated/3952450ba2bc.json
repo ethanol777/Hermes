@@ -1,0 +1,44 @@
+{
+  "id": "3952450ba2bc",
+  "key": "manual_395245",
+  "name": "manual_395245",
+  "claim": "User \u96e8\u6668 prefers short direct action-first responses. No flattery. \u7528\u6237\u504f\u597d\u7b80\u6d01\u76f4\u63a5\u884c\u52a8\u4f18\u5148\u7684\u6c9f\u901a\u65b9\u5f0f\u3002",
+  "conditions": [
+    "action-first",
+    "direct",
+    "flattery",
+    "prefers",
+    "responses",
+    "short",
+    "user"
+  ],
+  "evidence_ids": [
+    "2026-05-03T01:46:03.598387+00:00"
+  ],
+  "cluster_size": 1,
+  "canonical_salience": 8.0,
+  "staged_at": "2026-05-03T01:46:03.598387+00:00",
+  "status": "accepted",
+  "decisions": [
+    {
+      "ts": "2026-05-03T01:46:03.598387+00:00",
+      "action": "staged",
+      "reviewer": "learn"
+    },
+    {
+      "ts": "2026-05-03T01:46:03.627995+00:00",
+      "action": "graduated",
+      "reviewer": "learn.py",
+      "notes": "Based on multiple conversations, user explicitly wants concise actionable replies without praise or formality.",
+      "provisional": false,
+      "evidence_snapshot": [
+        "2026-05-03T01:46:03.598387+00:00"
+      ],
+      "lessons_sha": "94343eed716c"
+    }
+  ],
+  "rejection_count": 0,
+  "accepted_at": "2026-05-03T01:46:03.627989+00:00",
+  "reviewer": "learn.py",
+  "rationale": "Based on multiple conversations, user explicitly wants concise actionable replies without praise or formality."
+}
