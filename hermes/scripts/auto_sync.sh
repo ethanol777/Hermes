@@ -1,46 +1,46 @@
 #!/bin/bash
-# Auto-sync all Hermes config repos to GitHub
+# Auto-sync all Hermes config to ~/Hermes/ and push to GitHub
 
 set -e
 
-REPOS=(
-  "$HOME/.hermes"
-  "$HOME/.hermes/skills"
-  "$HOME/.learnings"
-  "$HOME/agentic-stack"
-  "$HOME/Hermes"
-)
-
 HERMES_REPO="$HOME/Hermes"
 
-for repo in "${REPOS[@]}"; do
-  if [ ! -d "$repo/.git" ]; then
-    continue
-  fi
-
-  cd "$repo"
-
-  # Check for changes (tracked or untracked, respecting .gitignore)
-  if [ -z "$(git status --porcelain)" ]; then
-    continue
-  fi
-
-  # Add all changes (respects .gitignore for ~/.hermes/)
-  git add -A
-
-  # Commit with timestamp
-  git commit -m "auto-sync $(date '+%Y-%m-%d %H:%M')"
-
-  # Push to origin
-  git push 2>&1 || echo "push failed for $repo"
+# Sync ~/.hermes/ safe files → hermes/
+cd "$HOME/.hermes"
+git ls-files | grep -v 'node/' | while IFS= read -r f; do
+  mkdir -p "$HERMES_REPO/hermes/$(dirname "$f")"
+  cp "$f" "$HERMES_REPO/hermes/$f"
 done
 
-# After all sub-repos are pushed, update Hermes umbrella submodule pointers
+# Skills (submodule in ~/.hermes/skills/)
+cd "$HOME/.hermes/skills"
+git ls-files | while IFS= read -r f; do
+  mkdir -p "$HERMES_REPO/hermes/skills/$(dirname "$f")"
+  cp "$f" "$HERMES_REPO/hermes/skills/$f"
+done
+
+# Copy extra safe files from ~/.hermes/
+cp "$HOME/.hermes/SOUL.md" "$HERMES_REPO/hermes/" 2>/dev/null || true
+
+# Copy scripts 
+cp -r "$HOME/.hermes/scripts"/* "$HERMES_REPO/hermes/scripts/" 2>/dev/null || true
+
+# Sync learnings
+cp "$HOME"/.learnings/*.md "$HERMES_REPO/learnings/" 2>/dev/null || true
+
+# Sync agentic-stack
+cd "$HOME/agentic-stack"
+git ls-files | while IFS= read -r f; do
+  mkdir -p "$HERMES_REPO/agentic-stack/$(dirname "$f")"
+  cp "$f" "$HERMES_REPO/agentic-stack/$f"
+done
+
+# Commit and push Hermes repo
 cd "$HERMES_REPO"
 if [ -n "$(git status --porcelain)" ]; then
   git add -A
-  git commit -m "auto-sync: update submodule pointers $(date '+%Y-%m-%d %H:%M')"
-  git push 2>&1 || echo "push failed for Hermes"
+  git commit -m "auto-sync $(date '+%Y-%m-%d %H:%M')"
+  git push 2>&1 || echo "push failed"
 fi
 
 echo "auto-sync complete"
