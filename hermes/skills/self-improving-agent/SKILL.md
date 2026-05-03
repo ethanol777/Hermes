@@ -143,11 +143,37 @@ mkdir -p .learnings
 
 **Hermes Agent note:** `.learnings/` at `~/` (home directory) is a valid workspace root for CLI/Gateway sessions. The self-improvement system works the same way regardless of which agent framework initialized it. For the complete setup (including agentic-stack integration and git sync), see [`references/hermes-learnings-setup.md`](references/hermes-learnings-setup.md).
 
+**Hermes-specific: Active triggers (no hooks needed).** Unlike Claude Code/Codex which use hook scripts, Hermes relies on system-prompt-embedded triggers. The `self-improving-agent` skill's Detection Triggers section (below) is the mechanism — the agent monitors for correction signals and logs them inline during conversation. No `.claude/settings.json` or shell hooks needed. See also the Hermes `personalities` system in config.yaml for embedding the trigger rules directly.
+
+#### Active Recall Workflow (Hermes-specific)
+
+Because Hermes has `session_search` tool access, it can retroactively fill learnings by searching past sessions:
+
+1. `session_search(query)` with keywords like `correction`, `错误`, `记住`, `注意`
+2. Review session summaries for correction/error signals
+3. Write findings to `.learnings/` using the standard format
+4. Update memory if needed
+
+This is the Hermes equivalent of on_failure hooks — run it when the user says "补齐过往教训" or similar.
+
+#### Memory Management (Hermes-specific)
+
+Hermes Agent's built-in memory has a 2,200 character limit. When adding `.learnings/` entries and memory simultaneously:
+
+1. **Write to `.learnings/` first** (no size limit)
+2. **Then compress/upgrade memory** — memory should only contain a pointer, not the full content
+3. **If memory add fails with "exceeds limit"**, remove an old/merged entry first via `action=remove`
+
+Example compressed memory entry (~110 chars):
+```
+主动记录：用户纠正/踩坑→~/.learnings/对应文件。高价值经验→skill。10条教训+3条错误已就绪。
+```
+
 Create the files inline using the headers shown above. Avoid reading templates from the current repo or workspace unless you explicitly trust that path.
 
 ### Add reference to agent files AGENTS.md, CLAUDE.md, or .github/copilot-instructions.md to remind yourself to log learnings. (this is an alternative to hook-based reminders)
 
-#### Self-Improvement Workflow
+#### Self-Improvement Workflow (Generic)
 
 When errors or corrections occur:
 1. Log to `.learnings/ERRORS.md`, `LEARNINGS.md`, or `FEATURE_REQUESTS.md`
