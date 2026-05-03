@@ -39,5 +39,3 @@ weixin/
 workspace/
 
 # Git 子模块（已有自己的仓库）
-hermes-agent/
-skills/
