@@ -24,7 +24,12 @@ description: >
 - **"搜索 xx"** — 搜索某个名字或关键词
 - **"装 xxx"** — 安装某个具体的 skill
 
-安装方式：克隆对应 GitHub 仓库 → 检查分支（主分支或 dot-skill 分支）→ 确认 SKILL.md → symlink 到 ~/.hermes/skills/ → 安装 Python 依赖 → 验证加载
+安装方式：
+1. 浏览器打开 GitHub 仓库，确认存在 SKILL.md（Hermes 兼容需要 YAML frontmatter）
+2. `git clone` 到本地
+3. 检查 `requirements.txt`，安装依赖
+4. 创建 symlink：`ln -s ~/repo ~/.hermes/skills/skill-name`
+5. 用 `skill_view(name)` 验证加载
 
 详细安装指南见 `references/hermes-install-guide.md`（含已验证案例和常见问题）
 
