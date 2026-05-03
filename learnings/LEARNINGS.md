@@ -175,3 +175,73 @@ WSL 环境中 sudo 被禁用（Windows 设置中关闭），无法使用 sudo ap
 - Pattern-Key: infra.wsl-no-sudo
 
 ---
+
+## [LRN-20260503-008] knowledge_gap
+
+**Logged**: 2026-05-03T23:09:05.937859
+**Priority**: medium
+**Status**: pending
+**Area**: infra
+
+### Summary
+微信 iLink bot 有两个重要限制：不能编辑已发消息，且无法被邀请进普通微信群。
+
+### Details
+- WeixinAdapter.SUPPORTS_MESSAGE_EDITING = False → 流式输出只能 send-final
+- iLink bot 身份（@im.bot）通常无法被邀请进普通群聊
+- 连接失败区分 session 过期（err -14）和频率限制（err -2）
+- 需要配置：WEIXIN_TOKEN, WEIXIN_ACCOUNT_ID 等环境变量
+
+### Suggested Action
+配置微信接入时预先告知用户这些限制，不要允诺群聊功能。
+
+### Metadata
+- Source: research
+- Tags: weixin, ilink, limitation
+- Pattern-Key: infra.wechat-limitations
+
+---
+## [LRN-20260503-009] correction
+
+**Logged**: 2026-05-03T23:09:05.937859
+**Priority**: medium
+**Status**: pending
+**Area**: docs
+
+### Summary
+用户说"下载/安装 find skill"时，是指一个名为 "find-skills-skill" 的具体 skill，不是通用搜索功能。
+
+### Details
+用户纠正："这个skill的名字叫find skill"。需要从 ClawHub 精确安装 (fangkelvin/find-skills-skill)，安装命令：openclaw skills install find-skills-skill。用户明确要求：scope 仅限该 skill，不要编造缺失的依赖，环境更改前先问。
+
+### Suggested Action
+用户说安装 skill 时先确认是否是指具体的 skill 名称，不要自动泛化成功能搜索。
+
+### Metadata
+- Source: user_correction
+- Tags: skill, installation, naming
+- Pattern-Key: misc.skill-name-precision
+
+---
+## [LRN-20260503-010] best_practice
+
+**Logged**: 2026-05-03T23:09:05.937859
+**Priority**: low
+**Status**: pending
+**Area**: docs
+
+### Summary
+Hermes 的 memory 有 2,200 字符上限，需要定期管理，添加新条目时先删除不再需要的旧条目。
+
+### Details
+memory 达上限时会拒绝写入并报错。解决方法是先删除冗余条目（如已完成的旧任务记录或重复条目），再写入新内容。
+
+### Suggested Action
+写入 memory 失败时先删除过时条目再重试。
+
+### Metadata
+- Source: error_discovery
+- Tags: memory, limit, maintenance
+- Pattern-Key: misc.memory-limit
+
+---
