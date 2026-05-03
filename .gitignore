@@ -42,6 +42,7 @@ hermes/workspace/
 hermes/.hermes_history
 hermes/webui/
 hermes/cloudflared
+hermes/hermes-agent/
 
 # Git 目录
 .git/

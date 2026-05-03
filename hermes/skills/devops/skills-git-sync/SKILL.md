@@ -12,128 +12,24 @@ metadata:
 
 # Skills Git Sync
 
-Skills live in `~/.hermes/skills/` which is already a git repository. This skill covers the workflow for uploading new/changed skills to GitHub and syncing across devices.
+**注: 雨晨的环境已迁移为单仓实文件模式（见下文）。旧的子模块/多仓库模式仅作为历史参考保留。**
 
-> For the broader multi-repo backup pattern (config + skills + learnings + agentic-stack under a single umbrella repo with cron-driven auto-push), see [`references/multi-repo-backup.md`](references/multi-repo-backup.md).
+## 当前模式：单仓实文件 + 自动同步
 
-## Local Repo Configuration
+所有 Hermes 配置（config + skills + learnings + agentic-stack）归入 **`~/Hermes/`**（`github.com/ethanol777/Hermes`），每30分钟自动同步。
 
-```bash
-cd ~/.hermes/skills
-git remote -v
-# → origin  https://github.com/ethanol777/hermes-skills.git (fetch/push)
-git branch
-# → * master
-```
+**核心特征：**
+- **实文件** — 不是 git submodule，每个文件真实存在于 `~/Hermes/` 中
+- **单一远程** — 只推送到 `ethanol777/Hermes`，不推送子目录的独立仓库
+- **从运行时目录同步** — `auto_sync.sh` 检测运行时目录变更并复制到 `~/Hermes/`
+- **子目录无独立 .git** — 已删除 `~/.hermes/.git`、`~/.learnings/.git` 等
 
-**Gitignore** (`~/.hermes/skills/.gitignore`): `.bundled_manifest`, `.curator_state`, `.usage.json`, `.hub/`, `skills_list*`
+详细设置见 [`references/monorepo-setup.md`](references/monorepo-setup.md)（含脚本内容、cron配置、gitignore规则、初始化新机器步骤）。
 
-## Basic Upload Workflow
+## 历史参考：原先的多仓库模式
 
-After creating or modifying skills (via `skill_manage(action='create')` or `skill_manage(action='patch')`):
+> 雨晨的环境已全部迁移到 **单仓实文件模式**（见上文）。本节仅作为历史参考保留。
 
-```bash
-cd ~/.hermes/skills
+原先的独立仓库（`hermes-config`、`hermes-skills`、`hermes-learnings`、`agentic-stack`）已不再使用。所有变更仅推送到 `ethanol777/Hermes`。
 
-# 1. Check what changed
-git status
-
-# 2. Stage all changes
-git add .
-
-# 3. Commit with a descriptive message
-git commit -m "feat: add <skill-name> skill"
-# or  git commit -m "fix: update <skill-name> — fix xxx"
-# or  git commit -m "chore: sync skill updates"
-
-# 4. Push to GitHub
-git push origin master
-```
-
-## Batch Sync (Multiple Changes at Once)
-
-If you've created or updated several skills in one session, do a single commit:
-
-```bash
-cd ~/.hermes/skills && git add . && git commit -m "sync: update multiple skills" && git push
-```
-
-Or as a one-liner after any session that touched skills:
-
-```bash
-cd ~/.hermes/skills && git add -A && git commit -m "chore: auto-sync $(date +%Y-%m-%d)" && git push
-```
-
-## Commit Message Conventions
-
-| Prefix    | When to use                                    |
-|-----------|------------------------------------------------|
-| `feat:`   | New skill created                              |
-| `fix:`    | Bug fix or correction in a skill               |
-| `chore:`  | Maintenance, refactoring, or bulk updates      |
-| `sync:`   | Cross-device sync or batch commit              |
-| `docs:`   | Skill documentation improvement                |
-
-## Pulling on Another Device
-
-```bash
-cd ~/.hermes/skills
-git pull origin master
-```
-
-Restart Hermes after pulling — skills are loaded at startup.
-
-## Credential Handling (Headless / WSL)
-
-In non-interactive environments (WSL terminal, background agent), `git push` will fail with:
-
-```
-fatal: could not read Username for 'https://github.com': No such device or address
-```
-
-**Set up credential storage:**
-
-```bash
-# 1. Store credentials on disk (persists across sessions)
-git config --global credential.helper store
-
-# 2. Create ~/.git-credentials with embedded PAT
-echo "https://GITHUB_USERNAME:YOUR_TOKEN@github.com" > ~/.git-credentials
-chmod 600 ~/.git-credentials
-
-# 3. Verify — push should work without prompts
-git push origin master
-```
-
-The token is stored in plaintext in `~/.git-credentials`. This is the standard git approach for headless environments.
-
-**Alternative approaches:**
-- **`gh` CLI**: if authenticated (`gh auth status`), git uses its OAuth token automatically. Run `gh auth setup-git` to configure.
-- **Memory cache**: `git config --global credential.helper 'cache --timeout=28800'` — stores in memory for 8 hours (dies with the session).
-
-> ⚠️ **Do NOT embed the token in the remote URL** as a permanent solution:
-> `git remote set-url origin https://user:token@github.com/...`
-> This exposes the token in `git remote -v` output and git logs. Use `credential.helper store` instead.
-
-## Verification
-
-After a push, verify on GitHub:
-```bash
-gh repo view ethanol777/hermes-skills
-# or visit https://github.com/ethanol777/hermes-skills
-```
-Or check the latest commit locally:
-```bash
-cd ~/.hermes/skills && git log --oneline -3
-```
-
-## Pitfalls
-
-- **Don't commit secrets** — the `.gitignore` excludes `.hub/` and state files, but check `git status` before `git add .` if you've added any credential files manually. The `.git-credentials` file is NOT in the skills repo, it's in your home directory.
-- **"could not read Username" on push**: credential helper not configured. See Credential Handling section above.
-- **Push rejected (non-fast-forward)**: if another device pushed first, `git pull --rebase origin master` then `git push`
-- **Skills not appearing after pull**: the agent loads skills at session start. Use `skill_view(name)` to verify it loaded; if not, restart Hermes
-- **Different remote** — if you set up a different GitHub repo, update the remote URL:
-  ```bash
-  git remote set-url origin https://github.com/YOUR_USER/YOUR_REPO.git
-  ```
+详见 [`references/monorepo-setup.md`](references/monorepo-setup.md)。

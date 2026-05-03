@@ -1,6 +1,8 @@
-# Hermes Config Backup & Dotfiles Management
+> ⚠️ **雨晨的环境已迁移为单仓实文件模式。** 所有配置（config + skills + learnings + agentic-stack）归入 `~/Hermes/`（`github.com/ethanol777/Hermes`），每30分钟通过 `auto_sync.sh` 自动同步。以下历史文档仅作参考。
 
-Backup Hermes Agent configuration and companion tools to GitHub for recovery or multi-machine sync. This covers the ~/.hermes/ directory, companion repos (agentic-stack, .learnings), and the pattern for adding more.
+# Hermes Config Backup & Dotfiles Management (历史参考)
+
+> 本节描述的是旧的多仓库模式（每个子目录独立 git 仓库）。当前模式见 `skills-git-sync` 技能中的 [`references/monorepo-setup.md`](link:skills-git-sync)（在技能 `skills-git-sync` 中）。
 
 ## Overview: Multi-Repo Layout
 

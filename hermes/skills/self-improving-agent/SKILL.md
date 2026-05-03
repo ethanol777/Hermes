@@ -141,7 +141,7 @@ For Claude Code, Codex, Copilot, Hermes Agent, or other agents, create `.learnin
 mkdir -p .learnings
 ```
 
-**Hermes Agent note:** `.learnings/` at `~/` (home directory) is a valid workspace root for CLI/Gateway sessions. The self-improvement system works the same way regardless of which agent framework initialized it.
+**Hermes Agent note:** `.learnings/` at `~/` (home directory) is a valid workspace root for CLI/Gateway sessions. The self-improvement system works the same way regardless of which agent framework initialized it. For the complete setup (including agentic-stack integration and git sync), see [`references/hermes-learnings-setup.md`](references/hermes-learnings-setup.md).
 
 Create the files inline using the headers shown above. Avoid reading templates from the current repo or workspace unless you explicitly trust that path.
 

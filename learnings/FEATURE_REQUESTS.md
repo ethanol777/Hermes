@@ -8,7 +8,7 @@ Capabilities requested by the user.
 
 **Logged**: 2026-05-03T09:37:13.737496
 **Priority**: medium
-**Status**: in_progress
+**Status**: resolved
 **Area**: docs
 
 ### Requested Capability
@@ -22,11 +22,15 @@ simple
 
 ### Suggested Implementation
 1. ~/.learnings/ 目录建立完成 ✓
-2. 每次错误/修正自动记录
+2. 每次错误/修正自动记录 ✓
 3. 高价值经验提炼为 skill
 4. 定期回顾和应用 learnings
 
 ### Metadata
 - Frequency: first_time
+
+### Resolution
+- **Resolved**: 2026-05-03T22:28:00
+- **Notes**: 补齐了7条过往教训 + 3条错误记录，建立了主动记录机制
 
 ---

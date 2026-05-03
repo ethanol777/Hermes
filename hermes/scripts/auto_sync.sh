@@ -28,6 +28,7 @@ rsync -a --delete \
   --exclude='weixin/' --exclude='workspace/' \
   --exclude='.hermes_history' --exclude='webui/' \
   --exclude='cloudflared' \
+  --exclude='hermes-agent/' \
   "$HOME/.hermes/" "$HERMES/hermes/"
 
 # Sync skills
