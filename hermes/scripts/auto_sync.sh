@@ -1,42 +1,49 @@
 #!/bin/bash
-# Auto-sync all Hermes config to ~/Hermes/ and push to GitHub
-
+# Auto-sync: 运行时文件 → ~/Hermes/ → push GitHub
 set -e
 
-HERMES_REPO="$HOME/Hermes"
+HERMES="$HOME/Hermes"
 
-# Sync ~/.hermes/ safe files → hermes/
-cd "$HOME/.hermes"
-git ls-files | grep -v 'node/' | while IFS= read -r f; do
-  mkdir -p "$HERMES_REPO/hermes/$(dirname "$f")"
-  cp "$f" "$HERMES_REPO/hermes/$f"
-done
+# Sync ~/.hermes/ (排除不需要的)
+rsync -a --delete \
+  --exclude='.git' \
+  --exclude='.env' \
+  --exclude='auth.json' --exclude='auth.lock' \
+  --exclude='channel_directory.json' \
+  --exclude='feishu_seen_message_ids.json' \
+  --exclude='state.db*' \
+  --exclude='models_dev_cache.json' \
+  --exclude='ollama_cloud_models_cache.json' \
+  --exclude='.skills_prompt_snapshot.json' \
+  --exclude='gateway.*' \
+  --exclude='processes.json' \
+  --exclude='node/' \
+  --exclude='cache/' --exclude='checkpoints/' \
+  --exclude='logs/' --exclude='memories/' \
+  --exclude='cron/' --exclude='audio_cache/' \
+  --exclude='image_cache/' --exclude='images/' \
+  --exclude='bin/' --exclude='hooks/' \
+  --exclude='sessions/' --exclude='sandboxes/' \
+  --exclude='pastes/' --exclude='pairing/' \
+  --exclude='weixin/' --exclude='workspace/' \
+  --exclude='.hermes_history' --exclude='webui/' \
+  --exclude='cloudflared' \
+  "$HOME/.hermes/" "$HERMES/hermes/"
 
-# Skills (submodule in ~/.hermes/skills/)
-cd "$HOME/.hermes/skills"
-git ls-files | while IFS= read -r f; do
-  mkdir -p "$HERMES_REPO/hermes/skills/$(dirname "$f")"
-  cp "$f" "$HERMES_REPO/hermes/skills/$f"
-done
-
-# Copy extra safe files from ~/.hermes/
-cp "$HOME/.hermes/SOUL.md" "$HERMES_REPO/hermes/" 2>/dev/null || true
-
-# Copy scripts 
-cp -r "$HOME/.hermes/scripts"/* "$HERMES_REPO/hermes/scripts/" 2>/dev/null || true
+# Sync skills
+rsync -a --delete --exclude='.git' \
+  "$HOME/.hermes/skills/" "$HERMES/hermes/skills/"
 
 # Sync learnings
-cp "$HOME"/.learnings/*.md "$HERMES_REPO/learnings/" 2>/dev/null || true
+rsync -a --delete --exclude='.git' \
+  "$HOME/.learnings/" "$HERMES/learnings/"
 
 # Sync agentic-stack
-cd "$HOME/agentic-stack"
-git ls-files | while IFS= read -r f; do
-  mkdir -p "$HERMES_REPO/agentic-stack/$(dirname "$f")"
-  cp "$f" "$HERMES_REPO/agentic-stack/$f"
-done
+rsync -a --delete --exclude='.git' \
+  "$HOME/agentic-stack/" "$HERMES/agentic-stack/"
 
-# Commit and push Hermes repo
-cd "$HERMES_REPO"
+# Commit & push
+cd "$HERMES"
 if [ -n "$(git status --porcelain)" ]; then
   git add -A
   git commit -m "auto-sync $(date '+%Y-%m-%d %H:%M')"

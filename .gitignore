@@ -41,6 +41,7 @@ hermes/workspace/
 # 历史/状态
 hermes/.hermes_history
 hermes/webui/
+hermes/cloudflared
 
 # Git 目录
 .git/
