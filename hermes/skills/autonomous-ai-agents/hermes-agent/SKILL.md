@@ -149,6 +149,8 @@ hermes skills uninstall N   Remove a hub skill
 hermes skills publish PATH  Publish to registry
 hermes skills browse        Browse all available skills
 hermes skills tap add REPO  Add a GitHub repo as skill source
+
+**External GitHub repos:** For skills published outside the Hermes hub (e.g. GitHub repos with SKILL.md but no hub entry), see `references/external-skill-installation.md` under this skill — covers repo evaluation, cloning, dep installation, symlink registration, and how to handle catalog/awesome-list repos.
 ```
 
 ### MCP Servers
