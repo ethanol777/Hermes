@@ -183,7 +183,7 @@ If DISPLAY set but app doesn't show:
 
 ## References
 
-- `references/openviking-install.md` — Full session transcript: installing viking (GPS tool) on WSL without sudo, including the exact deb list, dependency resolution, and wrapper creation.
+- `references/viking-gps-install.md` — Full session transcript: installing the GPS Viking tool on WSL without sudo, including the exact deb list, dependency resolution, and wrapper creation. (Distinct from ByteDance's OpenViking context DB at `github.com/volcengine/OpenViking`, which is a pip-installable Python package — no sudo needed for that one.)
 
 ## See Also
 

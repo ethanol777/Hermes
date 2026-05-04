@@ -170,6 +170,14 @@ ClawHub skills use the OpenClaw CLI, not Hermes' built-in `hermes skills install
 ### Pitfalls
 
 - **🔴 Context misinterpretation**: When the user asks about a feature/file/concept name (e.g. "SOUL.md", "memory"), first check if it's referenced within an **already-installed skill** before searching ClawHub. The user may be referring to a file mentioned in a skill they just asked you to install (e.g. proactive-agent references SOUL.md, AGENTS.md, USER.md). Searching ClawHub for a separate skill when the answer is already installed is a waste and requires user correction.
+
+- **🔴 Ambiguous tool/package names**: When a user asks to install something with an ambiguous name (e.g. "openviking" could be GPS Viking or ByteDance's OpenViking), **search and disambiguate before acting**. Steps:
+  1. First ask: "Did you mean X or Y?" if you already know multiple possibilities exist
+  2. If not sure, search the name broadly (GitHub, web) to see what it could refer to
+  3. Check if the name matches a known org/project (e.g. ByteDance/Volcengine opensource projects)
+  4. Only install after confirming which one the user wants
+  - **Don't** jump to install the most obvious apt/pip package without checking context
+  - **Don't** assume the user means the oldest or most generic option
   - Correct flow: user says "install X-skill" → you install it → user asks about "Y file" → check X-skill's content first → if Y is mentioned as a workspace file in X-skill, create it locally rather than searching ClawHub
   - Wrong flow: user says "install X-skill" → user asks about "Y" → you search ClawHub for a Y-skill → user corrects you
 - **Rate limits (HTTP 429)**: ClawHub API enforces rate limiting aggressively. Actual retry strategy (tested):
