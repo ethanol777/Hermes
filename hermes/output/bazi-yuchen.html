@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>八字命盘 — 雨晨</title>
+<style>
+  :root {
+    --text-primary: #1a1a18;
+    --text-secondary: #5f5e5a;
+    --text-tertiary: #88877f;
+    --bg-primary: #ffffff;
+    --bg-secondary: #f6f5f0;
+    --bg-tertiary: #eeedeb;
+    --border: #d4d0c8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --text-primary: #e8e6de;
+      --text-secondary: #b4b2a9;
+      --text-tertiary: #888780;
+      --bg-primary: #1a1a18;
+      --bg-secondary: #2c2c2a;
+      --bg-tertiary: #3d3d3a;
+      --border: #555;
+    }
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: system-ui, -apple-system, 'Noto Sans SC', 'PingFang SC', sans-serif;
+    background: var(--bg-tertiary);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 30px 16px;
+  }
+  .card {
+    background: var(--bg-primary);
+    border-radius: 16px;
+    padding: 28px;
+    max-width: 720px;
+    width: 100%;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  .header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 20px;
+  }
+  h1 {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  .meta {
+    font-size: 13px;
+    color: var(--text-tertiary);
+  }
+  
+  .bazi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .pillar-header {
+    background: #8B4513;
+    color: #fff;
+    text-align: center;
+    padding: 8px 0;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 4px;
+  }
+  .pillar {
+    background: var(--bg-secondary);
+    text-align: center;
+    padding: 6px 0;
+  }
+  .tian-gan {
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--text-primary);
+    padding: 12px 0 4px;
+    letter-spacing: 6px;
+  }
+  .di-zhi {
+    font-size: 28px;
+    font-weight: 600;
+    color: #8B4513;
+    padding: 4px 0 12px;
+    letter-spacing: 6px;
+  }
+
+  .section-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin: 16px 0 8px;
+    padding-left: 8px;
+    border-left: 3px solid #8B4513;
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .info-card {
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    padding: 10px;
+    text-align: center;
+  }
+  .info-label {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    margin-bottom: 4px;
+  }
+  .info-value {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+  .info-value.small {
+    font-size: 13px;
+  }
+
+  .cang-gan-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px;
+    margin-bottom: 16px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .cg-header {
+    background: #6B8E23;
+    color: #fff;
+    text-align: center;
+    padding: 6px 0;
+    font-size: 12px;
+    font-weight: 500;
+  }
+  .cg-cell {
+    background: var(--bg-secondary);
+    padding: 6px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+  .cg-gan {
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  .dayun-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    margin-bottom: 16px;
+  }
+  .dayun-item {
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    padding: 10px 6px;
+    text-align: center;
+    position: relative;
+  }
+  .dayun-item.current {
+    background: #FFF3E0;
+    border: 1px solid #FFB74D;
+  }
+  @media (prefers-color-scheme: dark) {
+    .dayun-item.current {
+      background: #3E2723;
+      border: 1px solid #FFB74D;
+    }
+  }
+  .dayun-ganzhi {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  .dayun-age {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    margin-top: 2px;
+  }
+  .dayun-badge {
+    font-size: 10px;
+    color: #E65100;
+    font-weight: 500;
+  }
+
+  .wuxing-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .wuxing-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--bg-secondary);
+    border-radius: 20px;
+    padding: 4px 14px 4px 4px;
+  }
+  .wuxing-dot {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 600;
+    color: #fff;
+  }
+  .wuxing-label {
+    font-size: 13px;
+    color: var(--text-primary);
+  }
+  .wuxing-count {
+    font-size: 13px;
+    color: var(--text-tertiary);
+    font-weight: 500;
+  }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="header-row">
+    <h1>八字命盘 · 雨晨</h1>
+    <span class="meta">男 · 2002.4.16 0:48</span>
+  </div>
+  
+  <div class="section-title">四柱</div>
+  <div class="bazi-grid">
+    <div class="pillar-header">时柱</div>
+    <div class="pillar-header">日柱</div>
+    <div class="pillar-header">月柱</div>
+    <div class="pillar-header">年柱</div>
+    
+    <div class="pillar">
+      <div class="tian-gan">甲</div>
+      <div class="di-zhi">子</div>
+    </div>
+    <div class="pillar">
+      <div class="tian-gan">甲</div>
+      <div class="di-zhi">寅</div>
+    </div>
+    <div class="pillar">
+      <div class="tian-gan">甲</div>
+      <div class="di-zhi">辰</div>
+    </div>
+    <div class="pillar">
+      <div class="tian-gan">壬</div>
+      <div class="di-zhi">午</div>
+    </div>
+  </div>
+  
+  <div class="info-grid">
+    <div class="info-card">
+      <div class="info-label">日主</div>
+      <div class="info-value">甲木</div>
+    </div>
+    <div class="info-card">
+      <div class="info-label">日元强弱</div>
+      <div class="info-value small">身强</div>
+    </div>
+    <div class="info-card">
+      <div class="info-label">格局</div>
+      <div class="info-value small">建禄格</div>
+    </div>
+    <div class="info-card">
+      <div class="info-label">喜用神</div>
+      <div class="info-value small">火、土、金</div>
+    </div>
+  </div>
+  
+  <div class="section-title">藏干 · 十神</div>
+  <div class="cang-gan-grid">
+    <div class="cg-header">时柱 甲子</div>
+    <div class="cg-header">日柱 甲寅</div>
+    <div class="cg-header">月柱 甲辰</div>
+    <div class="cg-header">年柱 壬午</div>
+    
+    <div class="cg-cell">
+      <span class="cg-gan">癸</span> → 正印
+    </div>
+    <div class="cg-cell">
+      <span class="cg-gan">甲</span> → 比肩<br>
+      <span class="cg-gan">丙</span> → 食神<br>
+      <span class="cg-gan">戊</span> → 偏财
+    </div>
+    <div class="cg-cell">
+      <span class="cg-gan">戊</span> → 偏财<br>
+      <span class="cg-gan">乙</span> → 劫财<br>
+      <span class="cg-gan">癸</span> → 正印
+    </div>
+    <div class="cg-cell">
+      <span class="cg-gan">丁</span> → 伤官<br>
+      <span class="cg-gan">己</span> → 正财
+    </div>
+  </div>
+  
+  <div class="section-title">大运</div>
+  <div class="dayun-grid">
+    <div class="dayun-item">
+      <div class="dayun-ganzhi">乙巳</div>
+      <div class="dayun-age">6-16岁</div>
+      <div style="height: 14px"></div>
+    </div>
+    <div class="dayun-item current">
+      <div class="dayun-ganzhi">丙午</div>
+      <div class="dayun-age">16-26岁</div>
+      <div class="dayun-badge">◄ 当前</div>
+    </div>
+    <div class="dayun-item">
+      <div class="dayun-ganzhi">丁未</div>
+      <div class="dayun-age">26-36岁</div>
+      <div style="height: 14px"></div>
+    </div>
+    <div class="dayun-item">
+      <div class="dayun-ganzhi">戊申</div>
+      <div class="dayun-age">36-46岁</div>
+      <div style="height: 14px"></div>
+    </div>
+    <div class="dayun-item">
+      <div class="dayun-ganzhi">己酉</div>
+      <div class="dayun-age">46-56岁</div>
+      <div style="height: 14px"></div>
+    </div>
+    <div class="dayun-item">
+      <div class="dayun-ganzhi">庚戌</div>
+      <div class="dayun-age">56-66岁</div>
+      <div style="height: 14px"></div>
+    </div>
+    <div class="dayun-item">
+      <div class="dayun-ganzhi">辛亥</div>
+      <div class="dayun-age">66-76岁</div>
+      <div style="height: 14px"></div>
+    </div>
+  </div>
+  
+  <div class="section-title">五行统计</div>
+  <div class="wuxing-row">
+    <div class="wuxing-item">
+      <div class="wuxing-dot" style="background:#4CAF50">木</div>
+      <span class="wuxing-label">木</span>
+      <span class="wuxing-count">★★★★★★</span>
+    </div>
+    <div class="wuxing-item">
+      <div class="wuxing-dot" style="background:#F44336">火</div>
+      <span class="wuxing-label">火</span>
+      <span class="wuxing-count">★★☆☆☆☆</span>
+    </div>
+    <div class="wuxing-item">
+      <div class="wuxing-dot" style="background:#FF9800">土</div>
+      <span class="wuxing-label">土</span>
+      <span class="wuxing-count">★★★★☆☆</span>
+    </div>
+    <div class="wuxing-item">
+      <div class="wuxing-dot" style="background:#9E9E9E">金</div>
+      <span class="wuxing-label">金</span>
+      <span class="wuxing-count">☆☆☆☆☆☆</span>
+    </div>
+    <div class="wuxing-item">
+      <div class="wuxing-dot" style="background:#2196F3">水</div>
+      <span class="wuxing-label">水</span>
+      <span class="wuxing-count">★★★☆☆☆</span>
+    </div>
+  </div>
+  
+  <div class="section-title">当前运势</div>
+  <div class="info-grid">
+    <div class="info-card">
+      <div class="info-label">流年</div>
+      <div class="info-value">2026 丙午</div>
+    </div>
+    <div class="info-card">
+      <div class="info-label">大运</div>
+      <div class="info-value small">丙午 (16-26岁)</div>
+    </div>
+    <div class="info-card">
+      <div class="info-label">岁运关系</div>
+      <div class="info-value small">伏吟大运</div>
+    </div>
+    <div class="info-card">
+      <div class="info-label">建议</div>
+      <div class="info-value small">事业关键期，宜进取</div>
+    </div>
+  </div>
+  
+</div>
+</body>
+</html>
