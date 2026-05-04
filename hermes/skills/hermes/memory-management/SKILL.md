@@ -79,10 +79,11 @@ Layer 3: 冷记忆 (.learnings/ + session_search)
 
 当 built-in memory 超过 2000 字符时：
 
-1. 把"已归档/已完成"的条目移到 Holographic
-2. 合并同类条目（如多个关于 WSL sudo 的条目 → 合成一条）
-3. 删除纯进度类信息（"已完成XX"）
-4. 保留：用户偏好、环境约束、常犯错误
+1. **先删后加**：删除冗余旧条目 → 再写新压缩条目（避免"超过上限"报错）
+2. **多合一**：把多个相关条目合并为一条。比如飞书信息+推送cron → 一条；Git+skills+learnings → 一条
+3. **只留核心**：保留用户偏好、环境约束、常犯错误；删除纯进度记录（"已完成XX""流程进行中"）
+4. **跨层归档**：被删除的旧条目应同步到 Holographic fact_store(action='add') 做温存储，不丢数据
+5. **压缩后目标水位**：目标是 20-30% 以下，留足后续写入空间
 
 ## 进程协议
 
@@ -138,6 +139,6 @@ cron 每日AI资讯推送 (每天 9:00)
 | 用户说"我喜欢..." | memory add + fact_store add |
 | 用户纠正我 | memory add (修正) → .learnings ERRORS |
 | 需要回忆用户信息 | fact_store probe/search → memory |
-| 记忆满了 | 压缩 L1，移动旧数据到 L2 |
+| 记忆满了 | 压缩 L1，移动旧数据到 L2。见 `references/memory-compression-recipe.md` |
 | 发现重复模式 | 提炼为 skill |
 | 跨会话问题 | session_search |

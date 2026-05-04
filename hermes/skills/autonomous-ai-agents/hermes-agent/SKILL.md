@@ -148,9 +148,16 @@ hermes skills update        Update outdated skills
 hermes skills uninstall N   Remove a hub skill
 hermes skills publish PATH  Publish to registry
 hermes skills browse        Browse all available skills
-hermes skills tap add REPO  Add a GitHub repo as skill source
+### External GitHub repos
 
-**External GitHub repos:** For skills published outside the Hermes hub (e.g. GitHub repos with SKILL.md but no hub entry), see `references/external-skill-installation.md` under this skill — covers repo evaluation, cloning, dep installation, symlink registration, and how to handle catalog/awesome-list repos.
+For skills published outside the Hermes hub (e.g. GitHub repos with SKILL.md but no hub entry), see `references/external-skill-installation.md` under this skill — covers repo evaluation, cloning, dep installation, symlink registration, and how to handle catalog/awesome-list repos.
+
+### Skill library hygiene
+
+User 雨晨 (Monica's user) prefers a **clean, deduplicated skill library**. When maintaining skills:
+- If two skills have near-identical descriptions/function (e.g. `xiaohongshu-operator` vs `xiaohongshu-specialist`), delete the duplicate and keep the better one
+- Audit the skill list periodically for overlap
+- Active removal is preferred over "just leave it" — user notices and appreciates cleanup
 ```
 
 ### MCP Servers
