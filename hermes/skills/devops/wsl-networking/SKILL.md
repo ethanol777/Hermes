@@ -252,8 +252,11 @@ ssh ethanol@100.x.x.x
 
 ### 🚫 陷阱 2：WSL 禁用 sudo
 **现象**：`sudo: 已在此计算机上禁用 Sudo`
-**修复**：Windows 设置 → 开发者选项 → 启用 sudo
-或改用不需要 sudo 的方案（netsh portproxy、ngrok）
+**修复**：
+- **推荐做法：** 使用 `wsl-software-install` skill 的 deb 提取方案（无需启用 sudo）
+- Windows 设置 → 开发者选项 → 启用 sudo（如果确实需要 sudo）
+- 改用不需要 sudo 的方案（netsh portproxy、Cloudflare Tunnel 等）
+- 详见 [`wsl-software-install`](/home/ethanol/.hermes/skills/devops/wsl-software-install/SKILL.md) — 覆盖 pip/apt/snap 等安装场景
 
 ### 🚫 陷阱 3：WSL 重启后 IP 变化
 WSL 的 eth0 IP 每次重启可能变化，导致 portproxy 失效。
