@@ -145,16 +145,100 @@ echo 'JSON_ARRAY' | python3 /home/ethanol/.hermes/scripts/feishu_push_ai_news.py
 
 Input format: JSON array of objects with fields `title`, `summary`, `source`, `time`.
 
-### 3. Common Permission Codes
+### 3. IM Message Operations (核心扩展)
+
+用户期望直接通过飞书对话框发送消息，而非仅靠文档/表格分享。先查 user_id（姓名搜索），再发消息。
+
+#### Find User by Name (contact API)
+
+```bash
+# Get fresh token
+TOKEN=$(curl -s -X POST "https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal" \
+  -H "Content-Type: application/json" \
+  -d '{"app_id":"$FEISHU_APP_ID","app_secret":"$FEISHU_APP_SECRET"}' \
+  | python3 -c "import sys,json; print(json.load(sys.stdin)['tenant_access_token'])")
+
+# List users to find open_id
+USERS=$(curl -s -X GET "https://open.feishu.cn/open-apis/contact/v3/users?page_size=50" \
+  -H "Authorization: Bearer $TOKEN")
+# Parse: items[].name, items[].open_id, items[].user_id
+# Example output: 马雨晨: open_id=ou_xxx, user_id=xxx
+```
+
+**Pitfall:** Token expires every 2 hours. Always fetch fresh before contact lookups. The contact/v3/users endpoint returns `open_id` and `user_id` — use `open_id` with `receive_id_type=open_id` for sending messages.
+
+#### Send Text Message
+
+```bash
+USER_OPEN_ID="ou_xxx"  # from contact lookup
+CONTENT=$(python3 -c "import json; print(json.dumps({'text': '消息内容'}))")
+curl -s -X POST "https://open.feishu.cn/open-apis/im/v1/messages?receive_id_type=open_id" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d "{\"receive_id\":\"$USER_OPEN_ID\",\"msg_type\":\"text\",\"content\":\"$CONTENT\"}"
+```
+
+- `msg_type`: `"text"` for plain text, `"post"` for rich text (not recommended — text is simpler)
+- `content`: JSON-stringified string. For text: `json.dumps({"text": "..."})` double-stringified
+
+#### Send Image Message
+
+```bash
+# Step 1: Upload image to Feishu
+UPLOAD=$(curl -s -X POST "https://open.feishu.cn/open-apis/im/v1/images" \
+  -H "Authorization: Bearer $TOKEN" \
+  -F "image_type=message" \
+  -F "image=@/path/to/image.png")
+IMAGE_KEY=$(echo "$UPLOAD" | python3 -c "import sys,json; print(json.load(sys.stdin)['data']['image_key'])")
+
+# Step 2: Send the image message
+CONTENT=$(python3 -c "import json; print(json.dumps({'image_key': '$IMAGE_KEY'}))")
+curl -s -X POST "https://open.feishu.cn/open-apis/im/v1/messages?receive_id_type=open_id" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d "{\"receive_id\":\"$USER_OPEN_ID\",\"msg_type\":\"image\",\"content\":\"$CONTENT\"}"
+```
+
+- `image_type`: `"message"` for chat images, `"doc"` for document images
+- Supported image formats: PNG, JPG, GIF, WEBP
+- Image size limit: ~20MB for message images
+- The `image_key` is valid indefinitely once uploaded
+
+#### User Preference: IM-first, not document-first
+
+用户期望直接发送消息到飞书对话框，而不是新建一份文档/表格来分享。当用户说"飞书给我"或类似的请求时，优先使用 IM 消息 API 发送文本+图片，其次才是创建表格/文档。
+
+**Pitfall:** 不要默认创建新表格/文档来承载内容——用户要看的是对话框里的消息，不是飞书文档链接。
+
+### 4. Document Operations (docx API)
+
+Feishu docx API is available but has reliability issues:
+
+```bash
+# Create document (WORKS)
+curl -s -X POST "https://open.feishu.cn/open-apis/docx/v1/documents" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"title": "文档标题"}'
+```
+
+**Pitfalls with block operations:**
+- `POST .../blocks/{block_id}/children` — unreliable, often returns 1770001 "invalid param" with no clear cause
+- `POST .../blocks/{block_id}/children/batch_create` — returns 404
+- The exact block payload format is finicky — prefer sending content via spreadsheet or IM message instead
+- If doc content is needed, write data to a spreadsheet first (sheets/v3 is reliable) and reference the link
+
+### 5. Common Error Codes
 
 | Code | Meaning | Action |
 |------|---------|--------|
 | 0 | Success | — |
 | 99991663 | Token expired | Re-fetch tenant_access_token |
 | 99991672 | Scope not granted | Grant permissions + publish app version |
-| 99991672 | Scope not granted | Grant permissions + publish app version |
+| 1770001 | Invalid param (docx block creation) | Try spreadsheet or IM message instead |
+| 1061044 | Parent node not exist (drive upload) | Verify the document/spreadsheet token is valid |
 
-### 4. Data Gathering for Cron Job Pushes
+### 6. Data Gathering for Cron Job Pushes
 
 When running a cron job to push Feishu content (e.g., daily AI news), the data gathering step is the hardest part. Here's what works in this environment:
 
