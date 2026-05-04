@@ -44,6 +44,8 @@ hermes honcho setup
 
 See: https://docs.honcho.dev/v3/guides/integrations/hermes#running-honcho-locally-with-hermes
 
+**⚠️ WSL / no-sudo pitfall:** Self-hosted Honcho requires Docker + PostgreSQL (with pgvector extension). On environments where Docker cannot be installed (WSL with sudo disabled, locked-down containers), this path is **not viable**. The `docker compose up --build` will fail with permission errors. Do NOT recommend self-hosted to users on WSL without sudo. Instead, recommend the `holographic` local memory provider — same Hermes plugin interface, zero external dependencies (SQLite-based), available as a drop-in replacement via `hermes memory setup` → select "holographic". See `references/wsl-selfhosting-limitations.md` for the full diagnosis walkthrough.
+
 #### Manual config (no interactive wizard)
 
 When running on gateway platforms (WeChat, Feishu, etc.) where interactive CLI isn't available, configure manually:
