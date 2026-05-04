@@ -162,7 +162,7 @@ Hermes Agent's built-in memory has a 2,200 character limit. When adding `.learni
 
 1. **Write to `.learnings/` first** (no size limit)
 2. **Then compress/upgrade memory** — memory should only contain a pointer, not the full content
-3. **If memory add fails with "exceeds limit"**, remove an old/merged entry first via `action=remove`
+3. **If memory add fails with "exceeds limit"**, remove an old/merged entry first via `action=replace`
 
 Example compressed memory entry (~110 chars):
 ```
@@ -170,6 +170,22 @@ Example compressed memory entry (~110 chars):
 ```
 
 Create the files inline using the headers shown above. Avoid reading templates from the current repo or workspace unless you explicitly trust that path.
+
+##### Advanced Memory Architecture (5-Layer Model)
+
+For long-term memory health, implement a multi-layered approach layered by access frequency and semantic depth:
+
+| Layer | Name | Tool/Store | Capacity | Key Feature |
+|-------|------|-----------|----------|-------------|
+| 1 (Hottest) | Built-in Memory | `memory` tool (key-value) | 2,200 chars | Auto-injected every turn |
+| 2 (Warm) | Honcho Backend | Honcho plugin (dialectic) | Unlimited | Semantic search + user modeling |
+| 3 (Cold) | Self-Improvement Logs | `~/.learnings/` markdown | Unlimited | Structured permanent knowledge |
+| 4 (Semantic) | Vector Database | Chroma / Qdrant / Faiss | Unlimited | Semantic retrieval (RAG) |
+| 5 (Automation) | Cron Maintenance | `hermes cron` + scripts | N/A | Compression, dedup, promotion |
+
+**Data flow**: New facts enter Layer 1 (immediate). Hot memory size triggers compression into Layer 2 (Honcho) and Layer 3 (.learnings). Periodic cron promotes high-value insights from Layer 3 into formal skills. Layer 4 indexes all layers for semantic cross-retrieval.
+
+**Full design and implementation steps**: see `references/memory-architecture.md` under this skill.
 
 ### Add reference to agent files AGENTS.md, CLAUDE.md, or .github/copilot-instructions.md to remind yourself to log learnings. (this is an alternative to hook-based reminders)
 

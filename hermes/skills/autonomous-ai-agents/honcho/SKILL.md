@@ -26,16 +26,16 @@ Honcho provides AI-native cross-session user modeling. It learns who the user is
 - Understanding what the 5 Honcho tools do and when to use them
 - Configuring context budgets and session summary injection
 
-## Setup
+### Setup
 
-### Cloud (app.honcho.dev)
+#### Cloud (app.honcho.dev)
 
 ```bash
 hermes honcho setup
 # select "cloud", paste API key from https://app.honcho.dev
 ```
 
-### Self-hosted
+#### Self-hosted
 
 ```bash
 hermes honcho setup
@@ -44,11 +44,62 @@ hermes honcho setup
 
 See: https://docs.honcho.dev/v3/guides/integrations/hermes#running-honcho-locally-with-hermes
 
-### Verify
+#### Manual config (no interactive wizard)
+
+When running on gateway platforms (WeChat, Feishu, etc.) where interactive CLI isn't available, configure manually:
+
+```bash
+# 1. Set provider in config.yaml
+hermes config set memory.provider honcho
+
+# 2. Set API key in .env
+echo "HONCHO_API_KEY=your-key" >> ~/.hermes/.env
+
+# 3. Create honcho.json config
+cat > ~/.hermes/honcho.json << 'EOF'
+{
+  "apiKey": "your-key",
+  "workspace": "hermes",
+  "peerName": "username",
+  "contextCadence": 2,
+  "dialecticCadence": 3,
+  "dialecticDepth": 2,
+  "hosts": {
+    "hermes": {
+      "enabled": true,
+      "aiPeer": "hermes",
+      "recallMode": "hybrid",
+      "writeFrequency": "async",
+      "sessionStrategy": "per-directory",
+      "saveMessages": true
+    }
+  }
+}
+EOF
+```
+
+Config resolution order: `$HERMES_HOME/honcho.json` (profile-local) > `~/.hermes/honcho.json` > `~/.honcho/config.json`.
+
+#### Connectivity check (restricted regions)
+
+Before attempting cloud setup from regions with restricted internet (China, etc.), verify the API is reachable:
+
+```bash
+curl -s --max-time 10 -o /dev/null -w "%{http_code}" https://api.honcho.dev
+# 403/401 = reachable (expected auth response)
+# timeout/000 = blocked; use self-hosted instead
+```
+
+#### Verify
 
 ```bash
 hermes honcho status    # shows resolved config, connection test, peer info
+hermes memory status    # shows all available providers and which have valid credentials
 ```
+
+**Pitfall:** `hermes memory status` may list a provider as "active" while showing "not available" — this means the provider plugin is installed but missing required env vars. The built-in memory (MEMORY.md/USER.md) acts as a transparent fallback.
+
+**Pitfall:** Honcho API key registration at app.honcho.dev requires creating an account. There is no free-tier anonymous mode. For a zero-external-dependency setup, use self-hosted mode or the `holographic` local provider instead.
 
 ## Architecture
 
@@ -408,7 +459,9 @@ If you see warnings about context budget exceeded, lower `contextTokens` or redu
 ### Session summary missing
 Session summary requires at least one prior turn in the current Honcho session. On cold start (new session, no history), the summary is omitted and Honcho uses the cold-start prompt strategy instead.
 
-## CLI Commands
+## References
+
+- `references/memory-system-architecture.md` — Multi-layer memory architecture (hot/warm/cold + vector DB + cron maintenance). Use when designing or upgrading the memory stack beyond a single provider. Documents the five-layer approach with layer responsibilities, workflow, and design principles.
 
 | Command | Description |
 |---------|-------------|

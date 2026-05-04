@@ -293,9 +293,14 @@ memory:
   user_profile_enabled: true
   memory_char_limit: 2200
   user_char_limit: 1375
-  provider: openviking
+  provider: holographic
   nudge_interval: 10
   flush_min_turns: 6
+plugins:
+  hermes-memory-store:
+    auto_extract: true
+    default_trust: 0.5
+    hrr_dim: 1024
 delegation:
   model: ''
   provider: ''

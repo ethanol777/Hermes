@@ -343,6 +343,8 @@ Type these during an interactive chat session.
 
 **Installing community companion tools** (SkillClaw, Honcho, hermes-workspace, plugin, and other third-party tools that integrate with Hermes via proxy, plugin, or config rewrite): see `references/community-companion-tools.md` — covers finding upstream provider credentials, WSL gotchas (python3-venv), interactive setup fallbacks, and the critical "don't start proxy tools during active session" pitfall.
 
+**Memory provider selection on WSL** (Holographic, Honcho, mem0, and others — which ones work without Docker/sudo): see `references/memory-providers-wsl.md` — covers multi-layer architecture, setup commands, fact_store tools, trust scoring, and WSL-specific pitfalls.
+
 **Agentic-Stack** (portable cross-agent memory/skills layer with Hermes adapter): see `references/agentic-stack.md`
 
 **Config Backup** (backing up Hermes config to GitHub with secret hygiene, multi-repo layout, and restore workflow): see `references/config-backup.md` — covers .gitignore templates, GitHub API repo creation, submodule handling, and restoring on a new machine. — covers git clone installation, `.agent/` brain structure, tool commands (recall/learn/show), and the `learn.py` Chinese-text heuristic gotcha (rules must include English keywords).
