@@ -1,66 +1,143 @@
 ---
 name: memory-management
-description: Multi-layered memory system for Hermes Agent — hot (built-in MEMORY.md/USER.md), warm (Holographic SQLite with FTS5+HRR), cold (.learnings/). Use for memory maintenance, cross-layer search, migration, and auto-extraction.
-version: 1.0.0
+description: Proactive three-layer memory system with automatic compression, conflict resolution, cross-layer search, and self-evolution. Hot (built-in memory) → Warm (Holographic SQLite FTS5+HRR) → Cold (.learnings/). Designed for lifelong learning without forgetting.
+version: 2.0.0
 author: Monica
-tags: [memory, holographic, self-improvement, maintenance]
+tags: [memory, holographic, self-improvement, maintenance, evolution]
 ---
 
-# Memory Management
+# Memory Management (进化版)
 
-Hermes uses a three-layer memory system:
+## 核心原则
 
-| Layer | Store | Tool | Capacity | Latency |
-|-------|-------|------|----------|---------|
-| Hot | Built-in `memory` tool | `memory(action=add/replace/remove)` | 2200 chars | Instant (injected into every turn) |
-| Warm | Holographic SQLite | `fact_store` + `fact_feedback` | Unlimited | Fast (FTS5 + HRR vector search) |
-| Cold | `~/.learnings/` files | `session_search` + file tools | Unlimited | Slower (disk I/O) |
+所有记忆都遵循 **PAR** 法则：
+- **P**roactive — 不等用户问，先想
+- **A**ccurate — 查证再答，猜的不记
+- **R**elean — 定期清理，不囤垃圾
 
-## When to use which
-
-- **Hot memory**: Current project context, recent preferences, active corrections. Facts the user would reference in the same session.
-- **Warm memory (Holographic)**: Durable facts about the user, environment, projects, tools. Use `fact_store(action='search')` or `fact_store(action='probe')` before answering questions about the user.
-- **Cold memory (.learnings/)**: Historical errors, resolved issues, long-term best practices. Use `session_search` or read `~/.learnings/LEARNINGS.md` / `ERRORS.md` directly.
-
-## Holographic fact_store operations
-
-| Action | Description | Required params |
-|--------|-------------|-----------------|
-| `add` | Store a fact | `content`, optional: `category`, `tags` |
-| `search` | FTS5 keyword search | `query`, optional: `category`, `min_trust`, `limit` |
-| `probe` | All facts about an entity | `entity`, optional: `category`, `limit` |
-| `related` | Structural adjacency | `entity`, optional: `category`, `limit` |
-| `reason` | Facts connected to MULTIPLE entities | `entities` (list), optional: `category`, `limit` |
-| `contradict` | Find conflicting facts | optional: `category`, `limit` |
-| `update` | Modify a fact | `fact_id`, optional: `content`, `trust_delta`, `tags`, `category` |
-| `remove` | Delete a fact | `fact_id` |
-| `list` | Browse facts | optional: `category`, `min_trust`, `limit` |
-
-## Auto-extraction
-
-Holographic is configured with `auto_extract: true`. At session end, it scans user messages for:
-- Preference patterns ("I prefer/like/use/want/need...", "my favorite...is...", "I always/never/usually...")
-- Decision patterns ("we decided/agreed/chose...", "the project uses/needs/requires...")
-
-Extracted facts get `category=user_pref` or `category=project`.
-
-## Maintenance
-
-A cron job runs daily at 3:00 AM (Asia/Shanghai) to:
-1. Remove facts with trust_score < 0.3
-2. Check built-in memory usage and offload if needed
-3. Report database stats
-
-## Memory flow
+## 三层记忆架构
 
 ```
-User says something important
-  → Hot: I save to built-in memory tool (immediate context)
-  → Warm: Holographic auto-extracts patterns at session end
-  → Cold: I log errors/corrections to .learnings/ if systemic
+Layer 1: 热记忆 (built-in MEMORY.md/USER.md)
+  ├─ 当前项目上下文
+  ├─ 近期用户偏好
+  ├─ 本次会话关键事实
+  └─ 容量: 2200 字符
+  工具: memory(action=add|replace|remove)
 
-I need to recall something
-  → First: fact_store(action='probe') or fact_store(action='search') on Holographic
-  → Then: memory tool to check hot memory
-  → Finally: session_search or read .learnings/ files for cold history
+Layer 2: 温记忆 (Holographic SQLite)
+  ├─ 持久化用户画像
+  ├─ 环境/项目/工具事实
+  ├─ 跨会话的行为模式
+  └─ 容量: 无上限 (FTS5 + HRR 向量检索)
+  工具: fact_store(action=add|search|probe|reason|related|contradict|update|remove|list)
+
+Layer 3: 冷记忆 (.learnings/ + session_search)
+  ├─ 历史错误 (ERRORS.md)
+  ├─ 持久教训 (LEARNINGS.md)
+  ├─ 功能需求 (FEATURE_REQUESTS.md)
+  └─ 容量: 无上限 (全文本可搜)
+  工具: read_file / search_files / session_search
 ```
+
+## 主动记忆管理流程
+
+### 写入时 (自动)
+
+| 触发条件 | 写入目标 | 写入内容 |
+|---------|---------|---------|
+| 用户给新信息/偏好 | L1 built-in memory | 关键事实，保持简洁 |
+| auto_extract 触发 | L2 Holographic | 偏好/决策模式 |
+| 用户纠正我（"不对"） | L3 .learnings ERRORS.md | 完整错误记录 |
+| 发现更好的做法 | L3 .learnings LEARNINGS.md | 最佳实践 |
+| 高价值经验（3次以上重复） | → skill | 提炼为可复用 SKILL.md |
+
+### 查询时 (优先顺序)
+
+```
+问自己：这个信息我会在同一个会话还用到吗？
+  ├─ 会 → 查 built-in memory (最快)
+  ├─ 不会 → 查 Holographic fact_store
+  │   ├─ 知道实体名 → probe(实体名)
+  │   ├─ 知道关键词 → search(关键词)
+  │   └─ 涉及多个实体 → reason([实体1, 实体2])
+  └─ 查不到 → session_search / .learnings/
+```
+
+**黄金规则**：回答关于用户的问题前，**必须**先查 Holographic。除非用户明确说"不用查"。
+
+### 冲突解决
+
+当多个记忆层给出矛盾信息时：
+
+1. **时间优先**：较新的覆盖较旧的
+2. **信任优先**：Holographic 中 trust_score 更高的优先
+3. **明确优先**：用户明确说过的 > 系统推断的
+4. **如果仍有冲突**：用 fact_store(action='contradict') 列出所有矛盾事实，然后问用户
+
+### 压缩策略
+
+当 built-in memory 超过 2000 字符时：
+
+1. 把"已归档/已完成"的条目移到 Holographic
+2. 合并同类条目（如多个关于 WSL sudo 的条目 → 合成一条）
+3. 删除纯进度类信息（"已完成XX"）
+4. 保留：用户偏好、环境约束、常犯错误
+
+## 进程协议
+
+每次会话开启时执行：
+
+```
+1. fact_store(action='list', min_trust=0.5, limit=3) → 预热
+2. 查看 memory 是否 > 2000 chars → 如满则压缩
+3. 检查 auto-extract 是否产生新事实
+```
+
+每次会话结束时执行：
+
+```
+1. 检查是否有需要记入 .learnings/ 的新错误/纠正
+2. 如果有高价值重复模式 → 升级为 skill
+```
+
+## 进化规则
+
+### 什么时候升级记忆为 skill
+
+满足任意一条即可：
+- 同一个 Pattern-Key 在 .learnings 中出现 ≥2 次
+- 我解决了某个复杂问题（≥5 个工具调用）
+- 用户说"把这个记下来"
+- 发现了一个跨项目通用的最佳实践
+
+### 什么时候压缩/删除
+
+- L1 满 2000 字 → 立即压缩
+- L2 trust_score < 0.3 → cron 自动删除
+- L3 状态为 resolved 超过 30 天 → 可归档
+- 同一实体有 3+ 条矛盾事实 → 人工确认
+
+## 系统集成
+
+```
+cron 记忆自动维护 (每天 3:00)
+  ├─ 清理 trust < 0.3 的事实
+  ├─ 检查 built-in memory 水位
+  ├─ 报告数据库状态
+  └─ 如需升级 skill 则标记
+
+cron 每日AI资讯推送 (每天 9:00)
+  └─ 独立于记忆系统
+```
+
+## 快速参考
+
+| 场景 | 我应该怎么做 |
+|------|------------|
+| 用户说"我喜欢..." | memory add + fact_store add |
+| 用户纠正我 | memory add (修正) → .learnings ERRORS |
+| 需要回忆用户信息 | fact_store probe/search → memory |
+| 记忆满了 | 压缩 L1，移动旧数据到 L2 |
+| 发现重复模式 | 提炼为 skill |
+| 跨会话问题 | session_search |
