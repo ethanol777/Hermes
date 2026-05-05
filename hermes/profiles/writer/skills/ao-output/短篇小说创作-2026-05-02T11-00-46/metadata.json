@@ -1,0 +1,58 @@
+{
+  "name": "短篇小说创作",
+  "success": false,
+  "totalDuration": "8.1s",
+  "totalTokens": {
+    "input": 0,
+    "output": 0
+  },
+  "inputs": {
+    "premise": "一个程序员发现 AI 的回复里包含了它不该知道的信息——他女儿昨晚说的梦话。",
+    "style": "悬疑",
+    "length": "800"
+  },
+  "steps": [
+    {
+      "id": "story_structure",
+      "role": "academic/academic-narratologist",
+      "agentName": "叙事学家",
+      "status": "failed",
+      "output_var": "structure",
+      "duration": "8.1s",
+      "tokens": {
+        "input": 0,
+        "output": 0
+      }
+    },
+    {
+      "id": "character_design",
+      "role": "academic/academic-psychologist",
+      "status": "skipped",
+      "duration": "0.0s",
+      "tokens": {
+        "input": 0,
+        "output": 0
+      }
+    },
+    {
+      "id": "conflict_design",
+      "role": "game-development/narrative-designer",
+      "status": "skipped",
+      "duration": "0.0s",
+      "tokens": {
+        "input": 0,
+        "output": 0
+      }
+    },
+    {
+      "id": "write_story",
+      "role": "marketing/marketing-content-creator",
+      "status": "skipped",
+      "duration": "0.0s",
+      "tokens": {
+        "input": 0,
+        "output": 0
+      }
+    }
+  ]
+}
