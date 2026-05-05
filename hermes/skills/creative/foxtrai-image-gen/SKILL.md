@@ -57,21 +57,60 @@ Write a detailed prompt in the prompt textbox. Include:
    - msg_type: "image"
    - content: {"image_key": "<returned_image_key>"}
 
+## Balance Management
+
+- **Starting balance**: 17 credits
+- **GPT Image 2 cost**: 7 credits per generation at 1K quality, 中档
+- **Current balance**: Check at top of sidebar (shows "X 账户余额")
+- **When balance < cost**: The "生成" button changes to disabled "余额不足" — need to recharge before generating
+- **Balance drops immediately** after clicking generate (before generation completes)
+- **Other models cost**: nano-banana / nano-banana-2 / nano-banana-pro costs 8 credits
+- **Free generation**: If Banana Pro model has resolution downgrade, the generation is free (no charge)
+
 ## Important Notes
 
-- **Model cost**: GPT Image 2 costs 7 credits per generation
-- **Account balance**: Currently 10 credits remaining (was 17, spent 7)
-- **Generate button**: May say "生成需消耗 7" — ensure balance is sufficient
-- **No vision analysis**: The DeepSeek provider doesn't support image vision — use browser_console() or DOM inspection to check results instead of browser_vision()
+- **No vision analysis**: The DeepSeek provider doesn't support image vision — use browser_console() or DOM inspection (check for img presence + download button) to verify completion instead of browser_vision()
 - **Download location**: Files go to ~/Downloads/foxtrai-asset-*.png on WSL
 - **Image hosting**: Only send via Feishu IM (WeChat MEDIA: send fails due to platform bug)
+- **History**: Previous generations appear in "历史记录" section on the right side
+- **Modal popups**: "发现新版本" modal appears on fresh login — dismiss with "我知道了" before interacting
 
-## Prompt Writing Tips for Bazi Charts
+## Prompt Types & Templates
 
-When generating Bazi (八字) charts, include in the prompt:
+### Type 1: Bazi (八字) Charts
+
+When generating Bazi charts, include in the prompt:
 1. Traditional Chinese aesthetic (dark background, gold/red palette, scroll-like border)
 2. 4-column table layout (时柱, 日柱, 月柱, 年柱)
 3. Each cell: upper row = 天干 (big bold characters), lower row = 地支
 4. Below each pillar: hidden stems + ten gods (藏干十神)
 5. Bottom info: birth date, 日主 analysis, wuxing stats, 大运 timeline
-6. Set font rendering requirements for Chinese characters
+6. Specify font rendering requirements for Chinese characters
+
+### Type 2: Character / Mascot Art
+
+When generating cute characters or mascots, include in the prompt:
+1. Character description (animal type, color, size, expression)
+2. Outfit/accessories (crown, cape, hat, props)
+3. Pose and posture (standing, sitting, hands on hips, waving)
+4. Background style (gradient, starry, solid color, patterned)
+5. Art style (Japanese anime, chibi, watercolor, vector flat)
+6. Color palette (warm/cool, specific dominant colors)
+7. Text/label if any (Chinese art text, position, font style, border color)
+8. Aspect ratio (square for avatars, portrait for full body, landscape for scenes)
+
+### Type 3: Landscape / Scene
+
+For scenery, architecture, or environmental art:
+1. Setting (time of day, weather, season)
+2. Foreground/midground/background layering
+3. Color atmosphere (golden hour, cyberpunk neon, misty morning)
+4. Artistic style (Chinese ink wash, anime background, photorealistic)
+
+### Type 4: Diagram / Infographic
+
+For technical diagrams or information graphics:
+1. Clean white/light background for readability
+2. Chinese text support — specify exact characters and font style
+3. Structured layout with sections and connecting arrows
+4. Color-coded categories for different elements
