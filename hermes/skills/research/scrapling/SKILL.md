@@ -325,6 +325,10 @@ spider = QuotesSpider(crawldir="./crawl_checkpoint")
 spider.start()  # Ctrl+C to pause, re-run to resume from checkpoint
 ```
 
+## Related References
+
+See `references/chinese-social-platforms.md` for lightweight curl-based access techniques for Xiaohongshu, Weibo, Bilibili, and other Chinese platforms that block datacenter IPs. Also see the `last30days` skill (`~/.hermes/skills/research/last30days/`) for multi-source social research using these techniques.
+
 ## Pitfalls
 
 - **Browser install required**: run `scrapling install` after pip install -- without it, `DynamicFetcher` and `StealthyFetcher` will fail
