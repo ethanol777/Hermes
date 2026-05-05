@@ -26,15 +26,18 @@ curl -s "https://hn.algolia.com/api/v1/search?query=AI&tags=story&hitsPerPage=20
 
 Returns stories matching the query, sorted by relevance (points + recency). Good for finding top stories on a specific topic.
 
-### Search with numeric filters
+### Search with numeric filters (⚠️ UNRELIABLE — often returns 400)
 
 ```bash
 # Stories with >100 points (not very useful for cron — takes too long for new stories)
 curl -s "https://hn.algolia.com/api/v1/search?query=AI&tags=story&hitsPerPage=20&numericFilters=points>100"
 
 # Stories from last 7 days (use Unix timestamp — but `date -d` doesn't work from all shells)
+curl -s "https://hn.algolia.com/api/v1/search?tags=story&hitsPerPage=20&numericFilters=created_at_i>1745000000"
 # Instead, just use search_by_date and filter client-side
 ```
+
+**Pitfall:** `numericFilters` with timestamps (`created_at_i>...`) frequently returns `400 Bad Request` with no clear cause. The safest approach is to fetch from `search_by_date` and filter client-side by checking `created_at_i` in Python.
 
 ## JSON Response Structure
 
