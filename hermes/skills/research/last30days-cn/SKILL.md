@@ -115,6 +115,47 @@ cd {{SKILL_DIR}}/scripts && python3 last30days.py "{{用户查询}}" --emit comp
 - `--days N` - 回溯天数（1-30，默认30）
 - `--search weibo,bilibili,zhihu` - 指定搜索源
 
+### 步骤 1（备选）: Agent 内置浏览器搜索（当 Python 脚本无法运行时）
+
+当环境无法满足 Python 3.12+ / 缺少 playwright 依赖 / 无 sudo 安装权限时，使用 Agent 自带的浏览器工具替代 Python 脚本，手动执行多平台搜索。成功率已经过 WSL 环境验证。
+
+**推荐搜索流程（优先级从高到低）：**
+
+1. **Bing 国内版** — 主力搜索引擎，替代被拦截的百度
+   ```
+   browser_navigate(url="https://cn.bing.com/search?q={URL编码的中文查询}&setlang=zh-Hans")
+   ```
+   解析搜索结果页的标题、摘要和链接。对有价值的搜索结果页可以 `browser_scroll` 查看更多，或点击链接获取详情。
+
+2. **小红书内容** — 使用 curl + 手机 UA 绕过反爬
+   - 不要直接用 browser_navigate 打开小红书（会触发"安全限制"）
+   - 用 curl 替代：`curl -sL "https://www.xiaohongshu.com/explore/{NOTE_ID}" -A "手机UA"`
+   - 数据在 HTML 的 `__INITIAL_STATE__` JSON 里
+   - 详细方法见本技能 `references/chinese-platform-access.md`
+
+3. **知乎/微博内容** — 通过 Bing 索引获取（不要直接打开）
+   - 搜索 `site:zhihu.com {主题}` 或 `site:weibo.com {主题}` 来间接访问
+   - 从搜索摘要中提取数据
+
+4. **B站/BOSS直聘/职友集等招聘网站** — 可直接用 browser_navigate 访问
+
+**使用浏览器搜索时的注意事项：**
+- 搜索结果片段中包含了标题、摘要、URL、发布日期等关键信息，优先利用这些
+- 对薪资/待遇类搜索，优先打开 jobui.com（职友集）、zhipin.com（BOSS直聘）、liepin.com（猎聘）的结果页面
+- 多个来源交叉验证：同一薪资数据出现在多个招聘平台时，可信度更高
+- 中国平台普遍对服务器 IP 有反爬（百度、知乎、小红书），Bing 国内版是最稳定的入口
+
+**搜索词构造技巧：**
+- 公司 + 岗位 + 薪资/面试/就业形势/前景
+- 用年份限定时效性：`2026`、`2025`
+- 替代关键词：`校招`、`秋招`、`面经`、`待遇`、`工资`
+
+**数据组织：**
+- 提取搜索结果中的标题、摘要、来源链接
+- 对有价值的来源，单独打开页面获取完整数据
+- 跨平台数据交叉比对，合并同类信息
+- 标注每个数据点的来源平台和时效性
+
 ### 步骤 1（备选）: Agent 浏览器搜索（Python 环境不满足时）
 
 当环境无法运行 last30days.py（Python < 3.12、无 playwright、无 sudo 安装依赖等），使用 Agent 内置的浏览器工具进行搜索：
