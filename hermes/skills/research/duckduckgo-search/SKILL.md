@@ -229,6 +229,7 @@ curl -s --max-time 15 "https://example.com/article" | grep -oP '(?<=<p>|<h2>|<h3
 ## Limitations
 
 - **Rate limiting**: DuckDuckGo may throttle after many rapid requests. Add a short delay between searches if needed.
+- **Timeout exceptions**: In cloud environments, WSL, or cron jobs, `ddgs` often throws `DDGSException(TimeoutException(...))` rather than returning empty results. This is a connection-level failure (the Yahoo/DuckDuckGo backend timeouts), not rate limiting. When this happens, fall back to RSS feeds or browser-based search immediately — don't retry with different keywords.
 - **No content extraction**: `ddgs` returns snippets, not full page content. Use `web_extract`, browser tools, or curl for the full article/page.
 - **Results quality**: Generally good but less configurable than Firecrawl's search.
 - **Availability**: DuckDuckGo may block requests from some cloud IPs. If searches return empty, try different keywords or wait a few seconds.
