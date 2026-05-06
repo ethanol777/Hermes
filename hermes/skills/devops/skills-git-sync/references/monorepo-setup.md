@@ -63,7 +63,6 @@ rsync -a --delete \
   --exclude='.hermes_history' --exclude='webui/' \
   --exclude='cloudflared' \
   --exclude='hermes-agent/' \
-  # 注意：cron/、profiles/、output/、scripts/ 故意不排除——跨设备恢复需要它们
   "$HOME/.hermes/" "$HERMES/hermes/"
 
 # Sync skills
@@ -77,6 +76,10 @@ rsync -a --delete --exclude='.git' \
 # Sync agentic-stack
 rsync -a --delete --exclude='.git' \
   "$HOME/agentic-stack/" "$HERMES/agentic-stack/"
+
+# Sync data (vectordb + viking)
+rsync -a --delete --exclude='.git' \
+  "$HOME/data/" "$HERMES/data/"
 
 # Commit & push
 cd "$HERMES"
@@ -123,13 +126,14 @@ git add → commit → push
 - 第三方工具: `bin/`, `hooks/`, `sessions/`, `sandboxes/`, `node/`
 - 历史/状态: `.hermes_history`, `webui/`
 
-**⚠️ 不排除但需确认：**
-- `cron/` — 之前在 rsync 排除列表中，已移除。确认同样不在 `.gitignore` 中
-- `profiles/` — 当前未被排除，跨设备恢复需要保留
-- `scripts/` — 当前未被排除，保留
-- `output/` — 当前未被排除，保留
+**已确认跟踪（换设备可直接恢复）：**
+- `cron/` — 定时任务（已从 rsync 排除列表和两处 .gitignore 移除）
+- `profiles/` — 自定义 profile，已在 git 中
+- `scripts/` — 自定义脚本，已在 git 中
+- `output/` — 历史输出，已在 git 中
+- `data/` — vectordb + viking 数据，通过新增 rsync 行加入并跟踪
 
-**跨设备恢复提示：** clone 下来后需要手动配置的是 `~/.hermes/.env`（API 密钥），其余 cron/profiles/scripts 等均由 git 覆盖。
+**跨设备恢复提示：** clone 下来后需要手动配置的只有 `~/.hermes/.env`（API 密钥），其余 cron/profiles/scripts 等均由 git 覆盖。
 
 ## Cron Job 配置
 
@@ -175,3 +179,9 @@ ln -sf ~/Hermes/agentic-stack ~/agentic-stack
 - **⚠️ `hermes-agent/` 不该进仓库**: `~/.hermes/hermes-agent/` 是 Hermes Agent 源码目录（一个 git 子模块），不应进入配置仓库。在 `~/Hermes/.gitignore` 中添加 `hermes/hermes-agent/`，同时在 `auto_sync.sh` 的 rsync 中 `--exclude='hermes-agent/'`。
 - **⚠️ cloudflared 二进制文件**: `~/.hermes/cloudflared` 是 Cloudflare Tunnel 二进制，不应进仓库。在 `.gitignore` 和 rsync 中排除。
 - **auto_sync.sh 演化路径**: 脚本从"git submodule add" → "git ls-files 逐文件复制"（但子目录 .git 已删除后失败）→ "rsync 完整目录同步"。如果你需要重建 auto_sync.sh，使用 `rsync -a --delete` 模式配合 `--exclude` 排除列表。
+- **⚠️ 嵌套 .gitignore 陷阱**: `~/Hermes/` 仓库中有**两个** `.gitignore` 文件。修改仓库中有两个 `.gitignore` 文件时（根目录和 `hermes/` 子目录），两个都必须更新：
+  1. 根 `.gitignore` (`~/Hermes/.gitignore`) — 全局规则
+  2. 内层 `.gitignore` (`~/Hermes/hermes/.gitignore`) — 从 `~/.hermes/.gitignore` 同步而来
+  - **例子**: 要取消忽略 `hermes/cron/`，需要在根 `.gitignore` 加 `!hermes/cron/`，同时在 `hermes/.gitignore` 中加 `!cron/`（或删除 `cron/` 行）。
+  - **原因**: 内层 `.gitignore` 的 `cron/` 匹配 `hermes/cron/`，且 `!` 否定规则仅在同一文件中生效。
+  - **修复流程**: 修改源文件 `~/.hermes/.gitignore` → 运行一次 auto_sync → 或手动 `cp ~/.hermes/.gitignore ~/Hermes/hermes/.gitignore`。

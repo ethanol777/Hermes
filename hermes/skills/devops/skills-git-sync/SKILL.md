@@ -52,25 +52,45 @@ metadata:
 | `hermes/skills/` | 全部 skill |
 | `hermes/scripts/` | 自动同步脚本、飞书推送脚本 |
 
-### ⚠️ 当前被 gitignore/rsync 排除，但建议加上
+### ✅ 当前已加入 Git 备份
 
-| 内容 | 大小 | 原因 |
-|------|------|------|
-| `hermes/cron/` | ~1M | 定时任务（AI资讯推送等），换设备重建很麻烦 |
-| `hermes/profiles/` | 小 | 自定义 profile（coder/researcher/reviewer/writer），每个有独立配置、skills 和 workspace |
-| `hermes/output/` | 小 | 历史输出文件（如八字排盘结果） |
+以下目录/文件已从 rsync 排除列表和 `.gitignore` 中移除，现已在仓库中跟踪：
 
-**操作步骤：**
-1. 从 `auto_sync.sh` 的 rsync 排除列表中**移除 `cron/`**
-2. 从 `~/.hermes/.gitignore` 和 `~/Hermes/.gitignore` 中移除 `cron/` 行
-3. 确认 `profiles/` 没有被任一 `.gitignore` 排除（当前未排除，但需验证 `auto_sync.sh` rsync 不含 `--exclude='profiles/'`）
-4. 运行一次 auto_sync 使它们进入 git，推送到 GitHub
+| 内容 | 说明 |
+|------|------|
+| `hermes/cron/` | 定时任务（AI资讯推送等），通过去除 rsync `--exclude='cron/'` 及两处 `.gitignore` 中的 `cron/` 行加入 |
+| `hermes/profiles/` | 自定义 profile（coder/researcher/reviewer/writer），已被跟踪 |
+| `hermes/output/` | 历史输出文件，已被跟踪 |
+| `data/` | vectordb + viking 数据（~4M），通过新增 rsync 行加入 |
+
+### ⚠️ 操作注意事项：嵌套 .gitignore 陷阱
+
+**问题：** `~/Hermes/` 仓库中有**两个** `.gitignore` 文件：
+1. `~/Hermes/.gitignore`（根级别）
+2. `~/Hermes/hermes/.gitignore`（内层，从 `~/.hermes/.gitignore` 同步而来）
+
+要取消忽略某个目录（如 `cron/`），**两个 `.gitignore` 都要改**。根 `.gitignore` 的 `!hermes/cron/` 无法覆盖内层 `.gitignore` 的 `cron/` 规则。
+
+**修复方法：**
+- 修改源文件 `~/.hermes/.gitignore`，加入 `!cron/` 取消防御（或直接删除 `cron/` 行）
+- 修改 `~/Hermes/.gitignore`，加入 `!hermes/cron/`
+- 然后运行一次 `auto_sync.sh` 或手动 `cp` 同步两份 `.gitignore`
+
+**为什么需要 `!dir/`：** 在 `.gitignore` 中，`cron/` 会匹配**任何位置**的 `cron/` 目录。使用 `!cron/`（同一文件内）或 `!hermes/cron/`（父目录文件内）才能重新包含。注意：`!` 规则在同一 `.gitignore` 文件中才生效——内层文件里的 `cron/` 需要用内层文件的 `!cron/` 取消。
+
+### auto_sync.sh 变更记录
+
+| 变更 | 说明 |
+|------|------|
+| 移除 `--exclude='cron/'` | 让 `cron/` 能被 rsync 同步到仓库目录 |
+| 新增 data/ 同步行 | `rsync -a --delete --exclude='.git' "$HOME/data/" "$HERMES/data/"` |
+
+修改后，下一次 cron 自动同步会把这些新目录推送到 GitHub。
 
 ### 🟡 可选但低价值
 
 | 内容 | 说明 |
 |------|------|
-| `data/vectordb` + `data/viking` | 向量数据库，~4M，可能含 RAG 记忆数据，但设备相关 |
 | `hermes/hermes-agent/` | Hermes 源码，本身就是独立 git 仓库，clone 即可 |
 
 ### 🔴 不需要同步
@@ -78,6 +98,37 @@ metadata:
 - `sessions/`、`memories/`、`state.db` — 运行时/会话数据，大且设备特定
 - `cache/`、`logs/`、`audio_cache/`、`image_cache/` — 缓存，无意义
 - `bin/`、`node/`、`cloudflared` — 二进制/第三方工具
+
+---
+
+## 🚀 新机器恢复步骤
+
+在另一台电脑上恢复完整的 Hermes 环境：
+
+```bash
+# 1. 克隆主仓库
+git clone https://github.com/ethanol777/Hermes.git ~/Hermes
+
+# 2. 链接运行时目录（或 cp）
+ln -s ~/Hermes/hermes ~/.hermes
+
+# 3. 克隆 Hermes 源代码
+git clone https://gitcode.com/GitHub_Trending/he/hermes-agent.git ~/.hermes/hermes-agent
+
+# 4. 安装依赖
+cd ~/.hermes/hermes-agent && pip install -e .
+
+# 5. 手动复制 API 密钥（不在 git 中）
+# 将原机器的 ~/.hermes/.env 拷贝过来
+
+# 6. 检查配置
+hermes doctor
+
+# 7. 验证定时任务
+hermes cron list
+
+# 大功告成 🚀
+```
 
 ---
 
