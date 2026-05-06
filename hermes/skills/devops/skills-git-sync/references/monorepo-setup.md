@@ -9,10 +9,11 @@
 ├── hermes/                        ← 运行时配置
 │   ├── config.yaml                ← Hermes 主配置
 │   ├── SOUL.md                    ← 身份定义
-│   ├── scripts/                   ← 工具脚本
-│   │   ├── auto_sync.sh           ← 自动同步脚本
-│   │   └── feishu_push_ai_news.py ← 飞书 AI 资讯推送
-│   ├── skills/                    ← 211+ AI 专家角色 skill
+│   ├── scripts/                   ← 工具脚本（auto_sync.sh, feishu_push_ai_news.py）
+│   ├── profiles/                  ← 自定义 profile（coder/researcher/reviewer/writer）
+│   ├── cron/                      ← 定时任务（AI资讯推送等）
+│   ├── output/                    ← 历史输出文件（如八字排盘结果）
+│   ├── skills/                    ← 67+ AI 专家角色 skill
 │   └── .gitignore                 ← 排除密钥/缓存
 ├── learnings/                     ← 自我进化记录
 │   ├── LEARNINGS.md               ← 修正/最佳实践
@@ -53,7 +54,7 @@ rsync -a --delete \
   --exclude='node/' \
   --exclude='cache/' --exclude='checkpoints/' \
   --exclude='logs/' --exclude='memories/' \
-  --exclude='cron/' --exclude='audio_cache/' \
+  --exclude='audio_cache/' \
   --exclude='image_cache/' --exclude='images/' \
   --exclude='bin/' --exclude='hooks/' \
   --exclude='sessions/' --exclude='sandboxes/' \
@@ -62,6 +63,7 @@ rsync -a --delete \
   --exclude='.hermes_history' --exclude='webui/' \
   --exclude='cloudflared' \
   --exclude='hermes-agent/' \
+  # 注意：cron/、profiles/、output/、scripts/ 故意不排除——跨设备恢复需要它们
   "$HOME/.hermes/" "$HERMES/hermes/"
 
 # Sync skills
@@ -112,13 +114,22 @@ git add → commit → push
 | `~/.learnings/` | `learnings/` | 学习记录 |
 | `~/agentic-stack/` | `agentic-stack/` | 跨 Agent 记忆层 |
 
-### .gitignore 排除内容
+### .gitignore 排除内容（跨设备注意事项）
 
-- 密钥文件: `.env`, `auth.json`, `config.yaml`(注: 实际 config.yaml 不包含内联密钥, 但为安全仍排除), `channel_directory.json`, `feishu_seen_message_ids.json`
+**当前排除：**
+- 密钥文件: `.env`, `auth.json`, `channel_directory.json`, `feishu_seen_message_ids.json`
 - 运行时数据: `state.db`, `models_dev_cache.json`, `gateway.*`, `processes.json`
-- 缓存/日志: `cache/`, `checkpoints/`, `logs/`, `memories/`, `cron/`, `audio_cache/`, `image_cache/`, `images/`
+- 缓存/日志: `cache/`, `checkpoints/`, `logs/`, `memories/`, `audio_cache/`, `image_cache/`, `images/`
 - 第三方工具: `bin/`, `hooks/`, `sessions/`, `sandboxes/`, `node/`
 - 历史/状态: `.hermes_history`, `webui/`
+
+**⚠️ 不排除但需确认：**
+- `cron/` — 之前在 rsync 排除列表中，已移除。确认同样不在 `.gitignore` 中
+- `profiles/` — 当前未被排除，跨设备恢复需要保留
+- `scripts/` — 当前未被排除，保留
+- `output/` — 当前未被排除，保留
+
+**跨设备恢复提示：** clone 下来后需要手动配置的是 `~/.hermes/.env`（API 密钥），其余 cron/profiles/scripts 等均由 git 覆盖。
 
 ## Cron Job 配置
 

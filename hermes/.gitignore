@@ -23,6 +23,7 @@ checkpoints/
 logs/
 memories/
 cron/
+!cron/
 audio_cache/
 image_cache/
 images/

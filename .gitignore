@@ -26,6 +26,7 @@ checkpoints/
 logs/
 memories/
 cron/
+!hermes/cron/
 audio_cache/
 image_cache/
 images/

@@ -20,7 +20,7 @@ rsync -a --delete \
   --exclude='node/' \
   --exclude='cache/' --exclude='checkpoints/' \
   --exclude='logs/' --exclude='memories/' \
-  --exclude='cron/' --exclude='audio_cache/' \
+  --exclude='audio_cache/' \
   --exclude='image_cache/' --exclude='images/' \
   --exclude='bin/' --exclude='hooks/' \
   --exclude='sessions/' --exclude='sandboxes/' \
@@ -42,6 +42,10 @@ rsync -a --delete --exclude='.git' \
 # Sync agentic-stack
 rsync -a --delete --exclude='.git' \
   "$HOME/agentic-stack/" "$HERMES/agentic-stack/"
+
+# Sync data (vectordb + viking)
+rsync -a --delete --exclude='.git' \
+  "$HOME/data/" "$HERMES/data/"
 
 # Commit & push
 cd "$HERMES"
