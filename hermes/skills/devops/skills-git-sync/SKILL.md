@@ -31,7 +31,8 @@ metadata:
 - 检查清单：`state.db*`、`memory_store.db*`、`*.db-wal`、`*.db-shm` 都应列入 `.gitignore`
 - `auto_sync.sh` 的 `--exclude` 列表也需要同步更新，防止 rsync 把不需要的文件拷贝过去
 
-详细设置见 [`references/monorepo-setup.md`](references/monorepo-setup.md)（含脚本内容、cron配置、gitignore规则、初始化新机器步骤）。
+详见 [`references/monorepo-setup.md`](references/monorepo-setup.md)（含脚本内容、cron配置、gitignore规则、初始化新机器步骤）。
+外部独立仓库依赖关系见 [`references/external-repo-deps.md`](references/external-repo-deps.md)。
 
 ## 跨设备完整恢复清单
 
@@ -126,6 +127,12 @@ hermes doctor
 
 # 7. 验证定时任务
 hermes cron list
+
+# 8. 恢复 mission-control（如需要）
+git clone https://github.com/builderz-labs/mission-control.git ~/mission-control
+cp ~/Hermes/hermes/.env.mc ~/mission-control/.env  # 若有备份
+cd ~/mission-control && pnpm install && pnpm build
+tmux new-session -d -s mc 'pnpm start'
 
 # 大功告成 🚀
 ```
