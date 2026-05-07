@@ -16,10 +16,19 @@ When running Hermes in a WSL environment behind the Great Firewall, foreign sear
 
 | Engine | Status | Method |
 |--------|--------|--------|
-| **360 Search (so.com)** | ✅ Works | Browser tool navigation + snapshot |
+| **360 Search (so.com)** | ✅ Works | `browser_navigate` directly to `https://www.so.com/s?q=<query>` — no CAPTCHA, returns structured results with headings+links+snippets in snapshot |
 | GitHub | ✅ Works | curl / browser |
 | Cloudflare | ✅ Works | curl / browser |
 | RSS feeds | ✅ Works | curl with User-Agent header |
+
+### 360 Search Best Practices
+
+- Navigate directly to the results URL: `browser_navigate(url="https://www.so.com/s?q=<URL_ENCODED_QUERY>")`
+- The snapshot returns clean structured data: `<heading>` for titles, `<link>` for URLs, `<paragraph>` for snippets
+- Intermediate results (search suggestions / "其他人还搜了") are also visible in the snapshot
+- If the snapshot mentions browser-unsupported features, fall back to `browser_console` to extract the page DOM
+- 360 Search may occasionally present its own CAPTCHA after many searches; space out requests if needed
+- **Baidu and Sogou** both trigger CAPTCHA challenges on first search query from the browser tool — skip them
 
 ## Preferred Search Workflow
 
@@ -59,12 +68,17 @@ When a user shares a VPN subscription link or asks about an airport service:
 
 1. **Test the link** with curl first — if it returns 502 or errors, the server may be down
 2. **Search 360** via browser for the service name (e.g., "精灵学院 机场", "Riolu 官网")
-3. **Look for review/aggregator sites** — many Chinese VPN reviews list official URLs, pricing, and promo codes
-4. **Check multiple domains** — try common patterns: `www.<name>.work`, `dome.<name>.work`, `v2board.<name>.work`
+3. **Look for review/aggregator sites** — many Chinese VPN reviews list official URLs, pricing, and promo codes (e.g., clashvps.com)
+4. **Check multiple domains** — try common patterns: `www.<name>.work`, `dome.<name>.work`, `v2board.<name>.work`, `portal.<name>.work`
 5. **Try DNS probes** to discover related subdomains quickly
+6. **Cloudflare protection**: Many Chinese airport panels sit behind Cloudflare, which blocks curl POST/PUT and returns 405 or empty JS-rendered pages. In that case:
+   - The subscription API may be on a different bare-metal IP (not behind Cloudflare)
+   - Use DNS to compare the panel domain vs the subscription link IP — the subscription server is often direct
+   - Login via API is usually blocked by Cloudflare; tell the user to log in manually from their browser and regenerate the subscription link
 
 ## Limitations
 
 - No reliable way to scrape search results as plain text from Chinese engines — browser snapshot is the best option
 - 360 search may eventually rate-limit; space out requests
 - Some content on Chinese search engines is censored or SEO-gamed
+- Panels behind Cloudflare (most V2Board-based airports) are effectively inaccessible from Hermes — no JavaScript execution means empty snapshots; curl/API access is blocked by Cloudflare challenge
