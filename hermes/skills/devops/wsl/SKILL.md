@@ -69,3 +69,4 @@ chmod +x ~/.hermes/cloudflared
 - `references/networking.md` — Full WSL networking guide with port forwarding, DNS, and cross-subnet access
 - `references/software-install.md` — Detailed package installation methods for WSL
 - `references/remote-access.md` — Cloudflare Tunnel setup for exposing services
+- `references/browser-setup.md` — Installing headless Chromium via Playwright for Hermes browser tools (no sudo needed)
