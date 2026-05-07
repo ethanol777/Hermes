@@ -637,6 +637,7 @@ terminal(command="tmux new-session -d -s resumed 'hermes --resume 20260225_14305
 1. `hermes tools` — check if toolset is enabled for your platform
 2. Some tools need env vars (check `.env`)
 3. `/reset` after enabling tools
+4. **Browser tool on WSL**: If `browser_navigate` hangs, the issue is usually a missing Chrome/Chromium binary — not a network problem. See `references/browser-tool-wsl.md` for install methods without sudo.
 
 ### Model/provider issues
 1. `hermes doctor` — check config and dependencies
