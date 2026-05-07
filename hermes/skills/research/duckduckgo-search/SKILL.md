@@ -285,9 +285,11 @@ This avoids the `pipe_to_interpreter` security rule entirely.
 | 36kr (中文) | `https://36kr.com/feed` | Chinese tech news |
 
 ## Limitations
+## Limitations
 
 - **Rate limiting**: DuckDuckGo may throttle after many rapid requests. Add a short delay between searches if needed.
 - **Timeout exceptions**: In cloud environments, WSL, or cron jobs, `ddgs` often throws `DDGSException(TimeoutException(...))` rather than returning empty results. This is a connection-level failure (the Yahoo/DuckDuckGo backend timeouts), not rate limiting. When this happens, fall back to RSS feeds or browser-based search immediately — don't retry with different keywords.
+- **China / GFW environment**: Users in mainland China will find `ddgs` nearly always times out. See `references/search-from-china.md` for the full fallback strategy covering 360 Search via browser, GitHub search, and VPN/airport investigation workflows.
 - **No content extraction**: `ddgs` returns snippets, not full page content. Use `web_extract`, browser tools, or curl for the full article/page.
 - **Results quality**: Generally good but less configurable than Firecrawl's search.
 - **Availability**: DuckDuckGo may block requests from some cloud IPs. If searches return empty, try different keywords or wait a few seconds.

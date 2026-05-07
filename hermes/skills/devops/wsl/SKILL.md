@@ -39,6 +39,17 @@ ip route | grep default
 # netsh interface portproxy add v4tov4 listenport=8788 listenaddress=0.0.0.0 connectport=8788 connectaddress=$(wsl hostname -I)
 ```
 
+### China Network Note
+
+If your WSL environment is behind the Great Firewall (common for users in mainland China):
+- Foreign search engines (Google, DuckDuckGo, Bing, YouTube, Reddit, Wikipedia) are blocked
+- `ddgs` (DuckDuckGo CLI) nearly always times out
+- Domestic search engines (Baidu, Sogou) trigger CAPTCHA when accessed via browser tool
+- ✅ **360搜索 (so.com)** works reliably via browser tool without CAPTCHA — the preferred search method for Chinese queries
+- ✅ **GitHub** and **Cloudflare** are accessible
+- **Workaround**: For well-known topics, the model's training data is often sufficient. For current/specific data, use browser tool → 360 search, or suggest searching from the Windows host browser.
+- See `research/duckduckgo-search` skill's `references/search-from-china.md` for the full fallback strategy (360 search workflow, VPN/airport investigation, etc.)
+
 ### Installing Software Without Sudo
 
 ```bash
