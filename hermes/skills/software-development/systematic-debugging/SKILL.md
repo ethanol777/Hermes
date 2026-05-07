@@ -325,6 +325,15 @@ Use these Hermes tools during Phase 1:
 - **`terminal`** — Run tests, check git history, reproduce bugs
 - **`web_search`/`web_extract`** — Research error messages, library docs
 
+### Language-Specific Debugging Tools
+
+See the `references/` directory for detailed debugging tool guides:
+
+- `references/node-debugging.md` — Node.js `--inspect` + CDP debugging
+- `references/python-debugging.md` — Python pdb + debugpy + remote-pdb debugging
+
+Each covers: quick-start commands, REPL reference, attaching to running processes, automation scripts (CDP/DAP), and common pitfalls.
+
 ### With delegate_task
 
 For complex multi-component debugging, dispatch investigation subagents:
