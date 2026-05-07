@@ -82,3 +82,4 @@ chmod +x ~/.hermes/cloudflared
 - `references/remote-access.md` — Cloudflare Tunnel setup for exposing services
 - `references/reasonix-setup.md` — Installing and configuring Reasonix with opencode-go provider
 - `references/browser-setup.md` — Installing headless Chromium via Playwright for Hermes browser tools (no sudo needed)
+- `references/proxy-setup.md` — Setting up Mihomo (Clash Meta) proxy on headless WSL without sudo: extracting .deb binaries, configuring with airport configs, starting the daemon, switching nodes via API, and testing connectivity
