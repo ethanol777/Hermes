@@ -54,6 +54,34 @@ Plus login mode still makes sense for:
 - Users who prioritize simplicity over flexibility
 - Budget-constrained users who don't hit quota limits
 
+## ChatGPT 代充 Platforms (for China users)
+
+When recommending subscription-based access (Plus/Pro) instead of API relay:
+
+| Platform | URL | Price (Pro) | Payment | Notes |
+|----------|:---:|:-----------:|:--------|-------|
+| **GETGPT Pro** | https://getgpt.pro | ~¥1,200/mo | Alipay, WeChat | Most popular, 1-min delivery, has dedicated Codex page |
+| **慧境AIlink** | https://dongli.work | ~¥1,200/mo | Alipay, WeChat | Also sells Claude/Cursor memberships |
+| **gpt.juzixp.com** | (card-based) | ~¥165/mo (Plus) | Card code | Near-official pricing, long operation history |
+| **ai.muooy.com** | https://ai.muooy.com | N/A | Alipay, WeChat | Card code model, multi-device support |
+| **plus.3ms.run** | (self-service) | ~¥155/mo (Plus) | WeChat | Self-service recharge, has Bilibili tutorial videos |
+
+**Pitfalls to warn users about:**
+- **Cheap Nigeria/Turkey region充值** (< ¥130/mo for Plus) — cannot upgrade to Pro, high ban risk from black-card/盗刷
+- **Team plan sharing** — admin can see your chat history
+- **Always test with 1 month first** before committing to a longer plan
+
+## Enterprise Policy: Can You Use Codex at Work?
+
+If the user works at a Chinese big tech company (BAT, ByteDance, Kuaishou, Meituan, etc.):
+
+1. **Network**: Company intranet likely blocks OpenAI/ChatGPT domains entirely
+2. **Data security**: Uploading internal code to OpenAI servers violates data security policies (可能违反《数据安全法》)
+3. **Internal alternatives**: Most companies provide internal LLM platforms (e.g., Kuaishou has 可灵AI/Kling for internal use)
+4. **Safe practice**: Use Codex on personal devices, personal time, and personal projects only. Never paste company code.
+
+**When asked**: "Can I use Codex at <company>?" — answer cautiously. Best advice: check the company's internal AI tool usage policy after joining. For pre-入职 questions, explain the general situation without making specific claims about that company.
+
 ## Useful Links from Research
 
 - https://zhuanlan.zhihu.com (search "Codex 国内使用 2026") — Chinese installation guides with relay config examples

@@ -175,6 +175,14 @@ For Codex CLI specifically, **ChatGPT Plus quota may NOT be sufficient for heavy
 
 ---
 
+## Citation Requirement
+
+**This user requires source citations for factual claims.** When providing specific numbers, dates, service URLs, or pricing information:
+- Cite the source URL directly (e.g., "V-API pricing page at https://api.v3.cm/pricing shows...")
+- If the data comes from a search result, name the source (e.g., "CFM闪存市场 spot pricing, April 28 2026")
+- Do not present estimates or unsourced figures as facts
+- When in doubt, say "I found this from [source]" rather than asserting it as established truth
+
 ## Data Source Notes
 
 When recommending relay services in answers:
