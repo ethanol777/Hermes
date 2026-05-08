@@ -51,7 +51,23 @@ Relay services provide an OpenAI-compatible endpoint (`https://<relay>/v1/chat/c
 
 | Service | URL | Models Available | Notes |
 |---------|-----|-----------------|-------|
-| **V-API** | https://api.v3.cm | 718+ models. OpenAI, Anthropic/Claude, Gemini, Grok, DeepSeek, 豆包, 千问, Midjourney etc. | Has dedicated **codex (0.5x)** pricing group — Codex-related models at half price. Multiple pricing tiers (default, claude 2.4x, gemini 1.5x, qwen 0.4x). |
+| **V-API** | https://api.v3.cm | 718+ models. OpenAI, Anthropic/Claude, Gemini, Grok, DeepSeek, 豆包, 千问, Midjourney etc. | Has dedicated **codex (0.5x)** pricing group — Codex-related models at half price. Multiple pricing tiers (see below). |
+
+**V-API Pricing Tier Groups** (observed May 2026 on their pricing page):
+
+| Tier Group | Multiplier | Typical Models |
+|------------|:----------:|----------------|
+| default | 1.0x (base) | Standard OpenAI models |
+| codex | **0.5x** | Codex-optimized models (GPT-5.x-Codex) |
+| qwen | **0.4x** | 通义千问 models |
+| claude_kiro | 0.35x | Budget Claude routing |
+| claude_fzl | 0.6x | Budget Claude routing |
+| claude_cc | 0.8x | Budget Claude routing |
+| claude | 2.4x | Official Claude API (premium) |
+| gemini | 1.5x | Google Gemini models |
+| gf | 2x | Premium routing tier |
+
+Vendor filter options include: OpenAI, OAI-Plus (OpenAI Plus-tier routing), Anthropic, Gemini, DeepSeek, 通义千问, 豆包, 智谱AI, 百度千帆, Perplexity, Grok, Midjourney, Suno, Luma, Runway, 可灵AI, Flux, Pika, Sora, StabilityAI, and others.
 | **API2D / API2GPT** | (various domains) | OpenAI + Claude | Long-standing service (years of operation). Higher prices. Alipay support. |
 | **OhMyGPT** | (various domains) | OpenAI + Claude (limited) | Budget-friendly. Smaller model selection. Higher risk profile. |
 | **Veast AI** | (Singapore-based) | Full model lineup | Good latency from China (Singapore routing). Responsive support. |
@@ -134,6 +150,11 @@ For teams or production use, deploy your own gateway:
 ---
 
 ## 5. Platform-Specific Notes
+
+## References
+
+- `references/codex-cli-relay-setup.md` — Detailed session findings on Codex CLI + relay integration (May 2026)
+- `references/china-tech-company-ai-policy.md` — Chinese big tech company internal AI policies and employee usage guidelines
 
 ### OpenAI (ChatGPT)
 - Direct API: Blocked from mainland China
