@@ -101,3 +101,13 @@ When researching component pricing:
 - **Don't treat chip prices as consumer prices**: A DDR4 8Gb chip at $1.63 doesn't mean you can buy an 8GB stick for $1.63 — that's 1 die (1/8 of a stick)
 - **Prices change weekly**: Memory spot prices are updated weekly/monthly; always note the date of your data
 - **Bing国内版 filter bubble**: Technical search results are dramatically worse on the Chinese domestic version; switch to 国际版 for hardware queries
+
+## User Preference: Mandatory Source Citations
+
+This user requires source citations for ALL factual claims with specific numbers, dates, or policy requirements. When presenting pricing data:
+
+1. **Always include the source URL** — at minimum the site name and page path
+2. **Quote the exact number** — don't paraphrase approximations as fact
+3. **Include the data date** — prices change; note when the data was current
+4. **Don't present estimates as official** — if a value is your calculation from chip counts, say so explicitly
+5. **Prefer primary sources over summaries** — CFM direct data beats a blog's interpretation
