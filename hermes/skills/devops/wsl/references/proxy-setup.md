@@ -80,7 +80,7 @@ The `GEOIP,CN,DIRECT` ensures domestic traffic stays direct (fast), while `MATCH
 
 **How to get the node config:**
 - From subscription API: `curl -sL "https://example.com/subscribe?token=xxx" -o ~/.config/clash/config.yaml`
-- From direct paste: write the YAML config directly from the user
+- From direct paste: write the YAML config directly from the user's document — the primary fallback when the subscription API is down
 - From Clash Verge Rev GUI: export from the app on Windows, then copy to WSL
 
 ### 3. Start Mihomo Daemon
@@ -166,7 +166,7 @@ echo 'export https_proxy=http://127.0.0.1:7890' >> ~/.bashrc
 Once the proxy is running, you can fetch trending content from various sources:
 
 ```bash
-# Hacker News trends (JSON API — works reliably)
+# Hacker News trends (JSON API — works reliably, no CAPTCHA)
 curl -sL --proxy "http://127.0.0.1:7890" \
   "https://hn.algolia.com/api/v1/search?tags=front_page&hitsPerPage=15"
 
@@ -175,12 +175,66 @@ curl -sL --proxy "http://127.0.0.1:7890" \
 curl -sL --proxy "http://127.0.0.1:7890" \
   "https://www.reddit.com/r/all/hot/.json?limit=10"
 
+# Specific subreddits
+curl -sL --proxy "http://127.0.0.1:7890" \
+  "https://www.reddit.com/r/technology/.json?limit=8"
+
 # RSS feeds (work with both CloudFront and anytls nodes)
 curl -sL --proxy "http://127.0.0.1:7890" \
   "https://techcrunch.com/category/artificial-intelligence/feed/"
+
+# BBC News — reliable text content via proxy (but JS-heavy pages fail)
+curl -sL --proxy "http://127.0.0.1:7890" \
+  "https://www.bbc.com/news/world/us_and_canada"
+
+# NPR News RSS
+curl -sL --proxy "http://127.0.0.1:7890" \
+  "https://feeds.npr.org/1001/rss.xml"
+
+# Politico RSS
+curl -sL --proxy "http://127.0.0.1:7890" \
+  "https://rss.politico.com/politics-news.xml"
+
+# Check external IP through proxy
+curl -s --proxy "http://127.0.0.1:7890" "https://ifconfig.co"
 ```
 
-## Common Pitfalls
+**Content retrieval tips:**
+- **Hacker News Algolia API** is the most reliable — no CAPTCHA, clean JSON, gets front-page stories
+- **Reddit .json endpoints** are second-best — some subreddits may return 403 with certain node types
+- **RSS/XML feeds** work well when the HTML page has CAPTCHA — NPR, Politico, TechCrunch all work
+- **BBC News** HTML pages work for headline extraction but don't rely on complex DOM parsing (BBC has varied per-page structure)
+- **Search engines (Google/DDG/Bing)** nearly always return CAPTCHA via curl, even through proxy — skip these in favor of direct source URLs
+- **Truth Social / X (Twitter)** have no public scrape-friendly API — use news article summaries instead
+
+## Troubleshooting: Airport Subscription Down
+
+When the subscription API endpoint returns 502 (backend server down), but you still need proxy access:
+
+1. **Find the airport's official website** — Use 360搜索 (so.com) via browser tool (no CAPTCHA in China). Search for the airport brand name + "机场":
+   ```
+   https://www.so.com/s?q=精灵学院+机场+官网
+   ```
+   The results typically include the official website + review sites with pricing info.
+
+2. **Find the login panel** — Airport panels usually run V2Board or similar, behind Cloudflare. Common subdomains: `dome.*`, `panel.*`, `jump.*`, `v2board.*`. If the panel is Cloudflare-protected, you may not be able to scrape it — ask the user to log in via browser instead.
+
+3. **Ask the user for their config directly** — If they can access the panel from their own machine, they can export/subscribe and paste the full YAML to you. This is the most reliable fallback:
+   ```
+   "订阅挂了，你能不能从面板导出完整配置文件发给我？我直接起代理。"
+   ```
+
+4. **Login with user credentials when the panel is accessible** — Some panels have Vue/React frontends that work through the browser tool:
+   - Try navigating to `dome.*/auth/login` etc.
+   - If Cloudflare blocks, ask the user to generate a new sub token from the panel
+
+5. **Known airport subdomain patterns** (common V2Board panels):
+   - `dome.<domain>` — dome.riolu.work
+   - `www.<domain>`
+   - `portal.<domain>`
+   - `v2board.<domain>`
+   - `jump.<domain>` (redirect) — jump.riolu.work
+   - API subscription: `api2.<domain>`, `sub.<domain>`, or custom paths like `/RioLU/system/api/v1/client/subscribe`
 
 ### ⚠️ Proxy Env Var Traps Localhost API Calls
 
