@@ -424,11 +424,6 @@ session_reset:
 group_sessions_per_user: true
 streaming:
   enabled: false
-platforms:
-  api_server:
-    enabled: true
-    port: 8642
-    host: 127.0.0.1
 platform_toolsets:
   cli:
   - hermes-cli

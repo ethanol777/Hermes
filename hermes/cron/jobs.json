@@ -50,7 +50,7 @@
       "model": null,
       "provider": null,
       "base_url": null,
-      "script": "~/.hermes/scripts/auto_sync.sh",
+      "script": "auto_sync.sh",
       "context_from": null,
       "schedule": {
         "kind": "interval",
@@ -60,15 +60,15 @@
       "schedule_display": "every 30m",
       "repeat": {
         "times": null,
-"completed": 315
+        "completed": 316
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-05-03T09:56:27.341459+08:00",
-"next_run_at": "2026-05-10T18:10:44.761479+08:00",
-      "last_run_at": "2026-05-10T17:10:11.823447+08:00",
+      "next_run_at": "2026-05-10T18:44:18.680009+08:00",
+      "last_run_at": "2026-05-10T17:43:42.191493+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -128,5 +128,5 @@
       "workdir": null
     }
   ],
-"updated_at": "2026-05-10T17:40:44.761612+08:00"
+  "updated_at": "2026-05-10T18:14:18.680154+08:00"
 }
