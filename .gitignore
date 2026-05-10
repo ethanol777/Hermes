@@ -51,3 +51,4 @@ hermes/hermes-agent/
 # Git 目录
 .git/
 gateway.log
+data/_system/queue/
