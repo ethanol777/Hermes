@@ -2,8 +2,8 @@
   "jobs": [
     {
       "id": "7c5e6555da91",
-      "name": "\u6bcf\u65e5AI\u8d44\u8baf\u63a8\u9001",
-      "prompt": "\u6267\u884c\u4ee5\u4e0b\u6b65\u9aa4\uff1a\n\n## \u6b65\u9aa4 1\uff1a\u641c\u7d22\u6700\u65b0 AI \u8d44\u8baf\n\n\u7528 web_search \u641c\u7d22\u6700\u65b0 AI / \u6280\u672f\u8d44\u8baf\uff0c\u641c\u7d22\u4ee5\u4e0b\u6765\u6e90\uff08\u5168\u90e8\u641c\u7d22\uff09\uff1a\n- \"AI news today latest\"\n- \"\u4eba\u5de5\u667a\u80fd \u6700\u65b0\u52a8\u6001\"\n- \"AI breakthrough\"\n\n\u6536\u96c6 5 \u6761\u6700\u6709\u4ef7\u503c\u7684\u8d44\u8baf\uff0c\u6bcf\u6761\u5305\u542b\uff1a\n- title: \u6807\u9898\n- summary: \u4e00\u53e5\u8bdd\u6458\u8981\uff08\u4e2d\u6587\uff09\n- source: \u6765\u6e90\u94fe\u63a5 URL\n- time: \u5f53\u524d\u65f6\u95f4\uff08\u683c\u5f0f HH:mm\uff0c\u7528 $(date +%H:%M) \u83b7\u53d6\uff09\n\n## \u6b65\u9aa4 2\uff1a\u5199\u5165\u98de\u4e66\u8868\u683c\n\n1. \u5c06\u8d44\u8baf\u7ec4\u88c5\u6210 JSON \u6570\u7ec4\u683c\u5f0f\n2. \u7528 terminal \u8c03\u7528\u811a\u672c\u5199\u5165\u98de\u4e66\u8868\u683c\uff1a\n   ```\n   echo 'JSON_ARRAY' | python3 /home/ethanol/.hermes/scripts/feishu_push_ai_news.py \"$(date +%Y-%m-%d)\"\n   ```\n   \u5176\u4e2d JSON_ARRAY \u66ff\u6362\u4e3a\u6b65\u9aa4 1 \u6536\u96c6\u7684\u8d44\u8baf\u7684 JSON \u6570\u7ec4\n3. \u786e\u8ba4\u8fd4\u56de\u7ed3\u679c\u5305\u542b code=0\n\n## \u6b65\u9aa4 3\uff1a\u5728\u98de\u4e66\u804a\u5929\u6846\u53d1\u9001\u5361\u7247\n\n\u7528 send_message \u5de5\u5177\u53d1\u9001\u6bcf\u65e5\u8d44\u8baf\u5361\u7247\uff0ctarget \u4e3a \"feishu:oc_4a1994453e58aee8265eb732b98f5100\"\uff0c\u6d88\u606f\u683c\u5f0f\u5982\u4e0b\uff08\u76f4\u63a5\u53d1 Markdown \u6587\u672c\u5373\u53ef\uff0c\u5e73\u53f0\u4f1a\u6e32\u67d3\uff09\uff1a\n\n\ud83d\udcf0 **\u4eca\u65e5 AI \u8d44\u8baf\u63a8\u9001\uff08YYYY-MM-DD\uff09**\n\n---\n\n**1. [\u6807\u98981]**\n\n\ud83d\udccc [\u6458\u89811]\n\n\ud83d\udcce \u6765\u6e90\uff1a[\u6765\u6e90\u540d](URL)\n\n---\n\n**2. [\u6807\u98982]**\n\n...\uff085\u6761\u540c\u6837\u683c\u5f0f\uff09\n\n---\n\n\ud83d\udcbe \u5df2\u540c\u6b65\u5199\u5165\u98de\u4e66\u8868\u683c\u300c\u6bcf\u65e5\u63a8\u9001\u6536\u96c6\u300d\n\n\u6ce8\u610f\u4e8b\u9879\uff1a\n- \u8d44\u8baf\u5fc5\u987b\u662f\u6700\u65b0\u7684\u3001\u771f\u5b9e\u7684\n- \u7528\u4e2d\u6587\u5199\u6458\u8981\n- \u4e0d\u8981\u5305\u542b\u6d4b\u8bd5\u6570\u636e",
+      "name": "每日AI资讯推送",
+      "prompt": "执行以下步骤：\n\n## 步骤 1：搜索最新 AI 资讯\n\n用 web_search 搜索最新 AI / 技术资讯，搜索以下来源（全部搜索）：\n- \"AI news today latest\"\n- \"人工智能 最新动态\"\n- \"AI breakthrough\"\n\n收集 5 条最有价值的资讯，每条包含：\n- title: 标题\n- summary: 一句话摘要（中文）\n- source: 来源链接 URL\n- time: 当前时间（格式 HH:mm，用 $(date +%H:%M) 获取）\n\n## 步骤 2：写入飞书表格\n\n1. 将资讯组装成 JSON 数组格式\n2. 用 terminal 调用脚本写入飞书表格：\n   ```\n   echo 'JSON_ARRAY' | python3 /home/ethanol/.hermes/scripts/feishu_push_ai_news.py \"$(date +%Y-%m-%d)\"\n   ```\n   其中 JSON_ARRAY 替换为步骤 1 收集的资讯的 JSON 数组\n3. 确认返回结果包含 code=0\n\n## 步骤 3：在飞书聊天框发送卡片\n\n用 send_message 工具发送每日资讯卡片，target 为 \"feishu:oc_4a1994453e58aee8265eb732b98f5100\"，消息格式如下（直接发 Markdown 文本即可，平台会渲染）：\n\n📰 **今日 AI 资讯推送（YYYY-MM-DD）**\n\n---\n\n**1. [标题1]**\n\n📌 [摘要1]\n\n📎 来源：[来源名](URL)\n\n---\n\n**2. [标题2]**\n\n...（5条同样格式）\n\n---\n\n💾 已同步写入飞书表格「每日推送收集」\n\n注意事项：\n- 资讯必须是最新的、真实的\n- 用中文写摘要\n- 不要包含测试数据",
       "skills": [],
       "skill": null,
       "model": null,
@@ -43,14 +43,14 @@
     },
     {
       "id": "1d871b4e4b88",
-      "name": "\u81ea\u52a8\u540c\u6b65 Hermes \u914d\u7f6e\u5230 GitHub",
-      "prompt": "\u6267\u884c auto_sync.sh \u811a\u672c\uff0c\u5c06 ~/.hermes/\u3001~/.learnings/\u3001~/agentic-stack/ \u7684\u53d8\u66f4\u540c\u6b65\u5230 ~/Hermes/ \u5e76\u63a8\u9001 GitHub\u3002",
+      "name": "自动同步 Hermes 配置到 GitHub",
+      "prompt": "执行 auto_sync.sh 脚本，将 ~/.hermes/、~/.learnings/、~/agentic-stack/ 的变更同步到 ~/Hermes/ 并推送 GitHub。",
       "skills": [],
       "skill": null,
       "model": null,
       "provider": null,
       "base_url": null,
-      "script": "auto_sync.sh",
+      "script": "~/.hermes/scripts/auto_sync.sh",
       "context_from": null,
       "schedule": {
         "kind": "interval",
@@ -86,8 +86,8 @@
     },
     {
       "id": "4c5b66fb0f2b",
-      "name": "\u8bb0\u5fc6\u81ea\u52a8\u7ef4\u62a4",
-      "prompt": "\u6267\u884c\u8bb0\u5fc6\u7cfb\u7edf\u7ef4\u62a4\u4efb\u52a1\uff1a\n\n1. **\u68c0\u67e5 Holographic \u6570\u636e\u5e93\u72b6\u6001**\uff1a\u8fd0\u884c `python3 -c \"import sqlite3; c=sqlite3.connect('/home/ethanol/.hermes/memory_store.db'); cur=c.execute('SELECT COUNT(*), ROUND(AVG(trust_score),2) FROM facts'); print(cur.fetchone()); cur=c.execute('SELECT COUNT(*) FROM facts WHERE trust_score < 0.3'); print(f'low_trust: {cur.fetchone()[0]}'); cur=c.execute('SELECT fact_id,content FROM facts WHERE trust_score < 0.3 LIMIT 10'); [print(f'  LOW: {r[0]}: {r[1][:60]}') for r in cur.fetchall()]; c.close()\"`\n\n2. **\u6e05\u7406\u4f4e\u4fe1\u4efb\u5ea6\u4e8b\u5b9e**\uff08trust < 0.3\uff09\uff1a\u5220\u9664\u5b83\u4eec\uff08\u8bf4\u660e\u88ab\u591a\u4e2a\u7528\u6237\u6807\u8bb0\u4e3a\u65e0\u7528\u6216\u4ece\u672a\u88ab\u4f7f\u7528\uff09\n\n3. **\u68c0\u67e5\u5185\u7f6e memory \u662f\u5426\u5feb\u6ee1**\uff08\u8d85\u8fc7 2000 \u5b57\u7b26\uff09\uff1a\u5982\u679c\u662f\uff0c\u628a\u4f4e\u4ef7\u503c\u6761\u76ee\u79fb\u5230 Holographic \u4e2d\u5e76\u5220\u9664\u5185\u7f6e memory \u5bf9\u5e94\u7684\u6761\u76ee\n\n4. **\u62a5\u544a\u7ed3\u679c**\uff1a\u7ef4\u62a4\u524d\u540e\u5bf9\u6bd4\uff0c\u5220\u9664\u4e86\u591a\u5c11\u4f4e\u4fe1\u4efb\u4e8b\u5b9e\uff0c\u5185\u5b58\u4f7f\u7528\u7387\u591a\u5c11\n\n\u53ea\u62a5\u544a\u7ed3\u679c\uff0c\u4e0d\u8981\u591a\u4f59\u89e3\u91ca\u3002",
+      "name": "记忆自动维护",
+      "prompt": "执行记忆系统维护任务：\n\n1. **检查 Holographic 数据库状态**：运行 `python3 -c \"import sqlite3; c=sqlite3.connect('/home/ethanol/.hermes/memory_store.db'); cur=c.execute('SELECT COUNT(*), ROUND(AVG(trust_score),2) FROM facts'); print(cur.fetchone()); cur=c.execute('SELECT COUNT(*) FROM facts WHERE trust_score < 0.3'); print(f'low_trust: {cur.fetchone()[0]}'); cur=c.execute('SELECT fact_id,content FROM facts WHERE trust_score < 0.3 LIMIT 10'); [print(f'  LOW: {r[0]}: {r[1][:60]}') for r in cur.fetchall()]; c.close()\"`\n\n2. **清理低信任度事实**（trust < 0.3）：删除它们（说明被多个用户标记为无用或从未被使用）\n\n3. **检查内置 memory 是否快满**（超过 2000 字符）：如果是，把低价值条目移到 Holographic 中并删除内置 memory 对应的条目\n\n4. **报告结果**：维护前后对比，删除了多少低信任事实，内存使用率多少\n\n只报告结果，不要多余解释。",
       "skills": [],
       "skill": null,
       "model": null,

@@ -1,58 +1,78 @@
 #!/bin/bash
-# Auto-sync: 运行时文件 → ~/Hermes/ → push GitHub
+# Auto-sync: 运行时文件 -> ~/Hermes/ -> push GitHub
 set -e
 
 HERMES="$HOME/Hermes"
 
-# Sync ~/.hermes/ (排除不需要的)
-rsync -a --delete \
-  --exclude='.git' \
-  --exclude='.env' \
-  --exclude='auth.json' --exclude='auth.lock' \
-  --exclude='channel_directory.json' \
-  --exclude='feishu_seen_message_ids.json' \
-  --exclude='state.db*' \
-  --exclude='models_dev_cache.json' \
-  --exclude='ollama_cloud_models_cache.json' \
-  --exclude='.skills_prompt_snapshot.json' \
-  --exclude='gateway.*' \
-  --exclude='processes.json' \
-  --exclude='node/' \
-  --exclude='cache/' --exclude='checkpoints/' \
-  --exclude='logs/' --exclude='memories/' \
-  --exclude='audio_cache/' \
-  --exclude='image_cache/' --exclude='images/' \
-  --exclude='bin/' --exclude='hooks/' \
-  --exclude='sessions/' --exclude='sandboxes/' \
-  --exclude='pastes/' --exclude='pairing/' \
-  --exclude='weixin/' --exclude='workspace/' \
-  --exclude='.hermes_history' --exclude='webui/' \
-  --exclude='cloudflared' \
-  --exclude='hermes-agent/' \
-  "$HOME/.hermes/" "$HERMES/hermes/"
+sync_dir() {
+  local src="$1" dst="$2"
+  shift 2
+  local excludes=("$@")
+  mkdir -p "$dst"
+  for item in "$src"/*; do
+    [ -e "$item" ] || continue
+    base="$(basename "$item")"
+    skip=0
+    for excl in "${excludes[@]}"; do
+      case "$base" in "$excl"|"$excl"*) skip=1; break ;; esac
+    done
+    [ "$skip" = 1 ] && continue
+    cp -rf --preserve=timestamps "$item" "$dst/"
+  done
+  for item in "$src"/.[!.]*; do
+    [ -e "$item" ] || continue
+    base="$(basename "$item")"
+    skip=0
+    for excl in "${excludes[@]}"; do
+      case "$base" in "$excl"|"$excl"*) skip=1; break ;; esac
+    done
+    [ "$skip" = 1 ] && continue
+    cp -rf --preserve=timestamps "$item" "$dst/"
+  done
+}
 
-# Sync skills
-rsync -a --delete --exclude='.git' \
-  "$HOME/.hermes/skills/" "$HERMES/hermes/skills/"
+EXCLUDES=(
+  .git .env auth.json auth.lock channel_directory.json
+  feishu_seen_message_ids.json state.db models_dev_cache.json
+  ollama_cloud_models_cache.json .skills_prompt_snapshot.json
+  gateway. processes.json node cache checkpoints logs memories
+  audio_cache image_cache images bin hooks sessions sandboxes
+  pastes pairing weixin workspace .hermes_history webui
+  cloudflared hermes-agent
+)
 
-# Sync learnings
-rsync -a --delete --exclude='.git' \
-  "$HOME/.learnings/" "$HERMES/learnings/"
+echo ">>> Syncing .hermes/ -> hermes/"
+sync_dir "$HOME/.hermes" "$HERMES/hermes" "${EXCLUDES[@]}"
+mkdir -p "$HERMES/hermes/skills"
+[ -d "$HOME/.hermes/skills" ] && cp -rf --preserve=timestamps "$HOME/.hermes/skills"/. "$HERMES/hermes/skills/"
 
-# Sync agentic-stack
-rsync -a --delete --exclude='.git' \
-  "$HOME/agentic-stack/" "$HERMES/agentic-stack/"
+echo ">>> Syncing learnings/"
+mkdir -p "$HERMES/learnings"
+cp -rf --preserve=timestamps "$HOME/.learnings"/. "$HERMES/learnings/" 2>/dev/null || true
 
-# Sync data (vectordb + viking)
-rsync -a --delete --exclude='.git' \
-  "$HOME/data/" "$HERMES/data/"
+echo ">>> Syncing agentic-stack/"
+mkdir -p "$HERMES/agentic-stack"
+cp -rf --preserve=timestamps "$HOME/agentic-stack"/. "$HERMES/agentic-stack/" 2>/dev/null || true
 
-# Commit & push
+[ -d "$HOME/data" ] && {
+  echo ">>> Syncing data/"
+  mkdir -p "$HERMES/data"
+  cp -rf --preserve=timestamps "$HOME/data"/. "$HERMES/data/" 2>/dev/null || true
+}
+
+echo ">>> Git commit and push"
 cd "$HERMES"
+git status --short
 if [ -n "$(git status --porcelain)" ]; then
   git add -A
   git commit -m "auto-sync $(date '+%Y-%m-%d %H:%M')"
-  git push 2>&1 || echo "push failed"
+  git pull --rebase --autostash origin master 2>/dev/null || true
+  git push origin master 2>&1 || {
+    echo "push failed, retrying..."
+    git pull origin master --no-edit 2>/dev/null || true
+    git push origin master 2>&1
+  }
+else
+  echo "Nothing to commit - no changes."
 fi
-
-echo "auto-sync complete"
+echo "=== auto-sync complete ==="
