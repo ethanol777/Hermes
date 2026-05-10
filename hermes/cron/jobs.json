@@ -50,7 +50,7 @@
       "model": null,
       "provider": null,
       "base_url": null,
-      "script": "auto_sync.sh",
+      "script": "~/.hermes/scripts/auto_sync.sh",
       "context_from": null,
       "schedule": {
         "kind": "interval",

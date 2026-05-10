@@ -448,3 +448,4 @@ platform_toolsets:
   - hermes-qqbot
   yuanbao:
   - hermes-yuanbao
+mcp_servers: {}
