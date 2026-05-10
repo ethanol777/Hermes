@@ -62,17 +62,44 @@ cp -rf --preserve=timestamps "$HOME/agentic-stack"/. "$HERMES/agentic-stack/" 2>
 
 echo ">>> Git commit and push"
 cd "$HERMES"
+
+# Clean up any leftover rebase state from previous failed run
+if [ -d "$HERMES/.git/rebase-merge" ] || [ -d "$HERMES/.git/rebase-apply" ]; then
+  echo "... aborting stale rebase"
+  git rebase --abort 2>/dev/null || true
+  git checkout master 2>/dev/null || true
+fi
+# Reset any conflicted state
+git reset --merge 2>/dev/null || true
+
 git status --short
 if [ -n "$(git status --porcelain)" ]; then
   git add -A
   git commit -m "auto-sync $(date '+%Y-%m-%d %H:%M')"
-  git pull --rebase --autostash origin master 2>/dev/null || true
+  # Fetch and rebase with auto-resolution (theirs = remote takes precedence on conflict)
+  git fetch origin master 2>&1
+  if git rebase FETCH_HEAD -X theirs 2>&1; then
+    # Rebase succeeded (with auto-resolved conflicts if any)
+    :
+  else
+    echo "rebase failed, trying merge instead..."
+    git rebase --abort 2>/dev/null || true
+    git merge origin/master --no-edit -X theirs 2>/dev/null || true
+  fi
   git push origin master 2>&1 || {
     echo "push failed, retrying..."
-    git pull origin master --no-edit 2>/dev/null || true
+    sleep 2
+    git pull origin master --no-edit -X theirs 2>/dev/null || true
     git push origin master 2>&1
   }
 else
-  echo "Nothing to commit - no changes."
+  # Even if nothing changed locally, pull remote changes to stay in sync
+  echo "Nothing to commit - checking for remote updates..."
+  git fetch origin master 2>&1
+  if git rebase FETCH_HEAD -X theirs 2>&1; then
+    git push origin master 2>&1 || true
+  else
+    git rebase --abort 2>/dev/null || true
+  fi
 fi
 echo "=== auto-sync complete ==="
