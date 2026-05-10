@@ -9,12 +9,22 @@ sync_dir() {
   shift 2
   local excludes=("$@")
   mkdir -p "$dst"
-  for item in "$src"/* "$src"/.[!.]*; do
+  for item in "$src"/*; do
     [ -e "$item" ] || continue
     base="$(basename "$item")"
     skip=0
     for excl in "${excludes[@]}"; do
-      if [ "$base" = "$excl" ] || [ "$base" = "$excl"* ]; then skip=1; break; fi
+      case "$base" in "$excl"|"$excl"*) skip=1; break ;; esac
+    done
+    [ "$skip" = 1 ] && continue
+    cp -rf --preserve=timestamps "$item" "$dst/"
+  done
+  for item in "$src"/.[!.]*; do
+    [ -e "$item" ] || continue
+    base="$(basename "$item")"
+    skip=0
+    for excl in "${excludes[@]}"; do
+      case "$base" in "$excl"|"$excl"*) skip=1; break ;; esac
     done
     [ "$skip" = 1 ] && continue
     cp -rf --preserve=timestamps "$item" "$dst/"
@@ -57,7 +67,11 @@ if [ -n "$(git status --porcelain)" ]; then
   git add -A
   git commit -m "auto-sync $(date '+%Y-%m-%d %H:%M')"
   git pull --rebase --autostash origin master 2>/dev/null || true
-  git push origin master 2>&1 || { echo "push failed, retrying..."; git pull origin master --no-edit 2>/dev/null || true; git push origin master 2>&1; }
+  git push origin master 2>&1 || {
+    echo "push failed, retrying..."
+    git pull origin master --no-edit 2>/dev/null || true
+    git push origin master 2>&1
+  }
 else
   echo "Nothing to commit - no changes."
 fi
