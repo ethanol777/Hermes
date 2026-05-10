@@ -13,7 +13,7 @@ metadata:
 
 # Hermes Agent
 
-Hermes Agent is an open-source AI agent framework by Nous Research that runs in your terminal, messaging platforms, and IDEs. It belongs to the same category as Claude Code (Anthropic), Codex (OpenAI), and OpenClaw — autonomous coding and task-execution agents that use tool calling to interact with your system. Hermes works with any LLM provider (OpenRouter, Anthropic, OpenAI, DeepSeek, local models, and 15+ others) and runs on Linux, macOS, and WSL.
+Hermes Agent is an open-source AI agent framework by Nous Research that runs in your terminal, messaging platforms, and IDEs. It belongs to the same category as Claude Code (Anthropic), Codex (OpenAI), and OpenClaw — autonomous coding and task-execution agents that use tool calling to interact with your system. Hermes works with any LLM provider (OpenRouter, Anthropic, OpenAI, DeepSeek, local models, and 15+ others) and runs on Linux, macOS, WSL, and Windows (native, early beta).
 
 What makes Hermes different:
 
@@ -44,6 +44,8 @@ Hermes-specific setup (non-GStack, WSL/Linux): `references/gbrain-setup-hermes.m
 
 ## Quick Start
 
+### Linux, macOS, WSL2, Termux
+
 ```bash
 # Install
 curl -fsSL https://raw.githubusercontent.com/NousResearch/hermes-agent/main/scripts/install.sh | bash
@@ -63,6 +65,20 @@ hermes model
 # Check health
 hermes doctor
 ```
+
+### Windows (native, PowerShell) — Early Beta
+
+> Native Windows support is **early beta**. It installs and runs, but hasn't been road-tested as broadly as Linux/macOS/WSL2. File issues for rough edges.
+
+```powershell
+irm https://raw.githubusercontent.com/NousResearch/hermes-agent/main/scripts/install.ps1 | iex
+```
+
+The installer handles everything: uv, Python 3.11, Node.js, ripgrep, ffmpeg, and a portable MinGit (unpacked to `%LOCALAPPDATA%\hermes\git` — no admin required, isolated from system Git). Uses existing Git if detected.
+
+**Install path:** `%LOCALAPPDATA%\hermes` (vs `~/.hermes` on WSL/Linux).
+
+**Limitation:** The browser-based dashboard chat pane needs WSL (uses POSIX PTY). Classic CLI and gateway both run natively on Windows.
 
 ---
 
@@ -366,7 +382,9 @@ $HERMES_HOME/skills/        Installed skills
 ~/.hermes/hermes-agent/     Source code (if git-installed)
 ```
 
-Profiles use `~/.hermes/profiles/<name>/` with the same layout.
+**Windows native paths** (when not using WSL): replace `~/.hermes/` with `%LOCALAPPDATA%\hermes\`. E.g., `%LOCALAPPDATA%\hermes\config.yaml`.
+
+Profiles use `~/.hermes/profiles/<name>/` with the same layout (or `%LOCALAPPDATA%\hermes\profiles\<name>\` on Windows native).
 
 ### Config Sections
 
@@ -742,6 +760,7 @@ tmux kill-session -t hermes
 - **Discord bot silent**: Must enable **Message Content Intent** in Bot → Privileged Gateway Intents.
 - **Slack bot only works in DMs**: Must subscribe to `message.channels` event. Without it, the bot ignores public channels.
 - **Windows HTTP 400 "No models provided"**: Config file encoding issue (BOM). Ensure `config.yaml` is saved as UTF-8 without BOM.
+- **Windows PowerShell execution policy**: If `install.ps1` fails, run `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass` first, or append `-ExecutionPolicy Bypass` to the install command.
 
 ### Gateway model mismatch — CLI model vs gateway model
 
