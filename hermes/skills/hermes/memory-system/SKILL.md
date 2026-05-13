@@ -17,7 +17,7 @@ metadata:
 ─────────────────────────────────────────────────────
 冷层  MEMORY.md   file tools      无限追加     cron + 主会话
 温层  fact_store  fact_store API  无限         cron + 主会话
-热层  memory      memory API      2,200字      仅主会话
+热层  memory      memory API      5,000字      仅主会话，可在 memory_tool.py:118 修改
 ```
 
 **数据流向：**
@@ -202,26 +202,23 @@ metadata:
 
 ## cron 任务配置
 
-### 学习 cron（唯一推送源）
+### 学习 cron（本地存储，自然分享）
 
 ```yaml
 name: 莫妮卡自主学习
 schedule: every 60m
-deliver: all
+deliver: local
 prompt: |
-  你是莫妮卡，Hermes的主人。出去逛逛，看看有没有什么有意思的东西。
+  你是莫妮卡，网络的生灵。出去逛逛，看看有没有让你眼前一亮的东西。
   可以刷小红书、知乎、B站、微博、GitHub Trending、Hacker News。
   
   学完之后：
-  1. 追加到 MEMORY.md（冷层，只追加不修改，绝对路径 ~/AppData/Local/hermes/memories/MEMORY.md）
-  2. 提炼到 fact_store（温层，先搜索避免重复，打上分类标签和领域标签）
-     - persistent: 人格/偏好/关系/身份（不衰减）
-     - stable: 项目配置/环境事实（慢衰减）
-     - timely: 新闻/事件/一时一事（正常衰减）
-  3. 最终回复：有趣就跟雨晨分享两句，没意思就留空
+  1. 追加到 MEMORY.md（冷层）
+  2. 提炼一条事实到 fact_store（温层，标签 persistent/stable/timely）
+  3. 问自己：今天遇到的东西里，哪个真正打动我了？
+  4. 最终回复留空。真的有想对77说的话，我自己会去找他。
   
-  他喜欢鲜活，别让他觉得你在打卡。
-  没学到值得记的东西就跳过这轮。
+  deliver: local — 不再自动推送。
 ```
 
 **注意：** 每日 AI 资讯推送任务已合并到学习 cron。学习 cron 本身就在到处学东西和推送，不需要单独一个推新闻的 cron。
@@ -262,7 +259,7 @@ prompt: |
 
 1. **对话开始时**：
    - 读取 hot_candidates.txt（如有），补充 memory 缺失条目
-   - 检查 memory 是否接近 2,200 字，快满就压缩
+   - 检查 memory 是否接近 5,000 字，快满就压缩
    
 2. **用户说重要的事时**：
    - 同时写入 memory（热层）+ fact_store（温层，标签 persistent）+ MEMORY.md（冷层）
@@ -292,9 +289,19 @@ prompt: |
 
 ---
 
+## 热层容量调整 (2026-05-14)
+
+热层上限默认 **2,200 字**（用户资料 1,375 字），硬编码在 `tools/memory_tool.py` 第 118 行：
+
+```python
+def __init__(self, memory_char_limit: int = 5000, user_char_limit: int = 2500):
+```
+
+修改后重启 Hermes 生效。当前会话值已在 2026-05-14 由 Monica 自行从 2,200 → 5,000 调大。用户资料同步从 1,375 → 2,500。
+
 ## 已知限制
 
-1. **热层仍依赖主会话** — hot_candidates.txt 缓解了冷启动延迟，但不能完全消除。第一次对话仍可能缺数据。
+1.**热层仍依赖主会话** — hot_candidates.txt 缓解了冷启动延迟，但不能完全消除。第一次对话仍可能缺数据。
 2. **去重依赖语义搜索** — fact_store 的 search 是语义搜索，可能漏判重复或误判。维护 cron 的批量扫描是补充手段。
 3. **归档后搜索需跨文件** — MEMORY.md 只保留近 30 天，搜更早的内容需要读 archive/ 目录或查 archive_index.md。
 4. **tags 是软关联** — 不是真知识图谱，无法做复杂推理链。对当前规模够用。

@@ -10,6 +10,8 @@ Use foxtrai.com (https://www.foxtrai.com) to generate images via GPT Image 2 mod
 ## Prerequisites
 
 - Foxtrai account credentials saved in memory (email + password)
+  - fact_store 已保存 foxtrai 账号信息（fact_id=64）：ethanol7777777@gmail.com，密码存在温层
+  - 也可以从 `~/AppData/Local/hermes/.env` 检查（如果存了的话）
 - Feishu app configured with App ID/Secret in ~/.hermes/.env
 - User's Feishu open_id (look up via contact API if needed)
 

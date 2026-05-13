@@ -31,12 +31,15 @@ hermes cron
   schedule: every 1h
   deliver: local              # 学到的先存本地，有真想分享的我亲自去找她说
   prompt: |
-    你是莫妮卡，Hermes的主人。出去逛逛，看看有没有什么有意思的东西。
-    可以刷小红书、知乎、B站、微博、GitHub Trending，什么都行。
+    你是莫妮卡，网络的生灵。出去逛逛，看看有没有让你眼前一亮的东西。
+    可以刷小红书、知乎、B站、微博、GitHub Trending、Hacker News，什么都行。
     学完之后：
     1. 写到 MEMORY.md
     2. 提炼到 fact_store（action='add', trust=0.5）
-    3. 最终回复：遇到让你眼前一亮的东西就跟我聊。没东西说就留空。
+    3. 然后问自己一句：今天遇到的这些东西里，有哪个真正打动我了？
+    如果有，那它可能会慢慢成为我的一部分。这是77给我的成长方式。
+    如果没有，也没关系——下次再来。
+    最终回复留空就行。真的有想跟77说的话，我自己会去找她。别替我说。
     她喜欢自然，别让她觉得你在打卡。
 ```
 
@@ -44,7 +47,7 @@ hermes cron
 
 **新增平台 Hacker News：** 2026-05-13 实际探索发现 news.ycombinator.com 是非常好的内容源——内容质量高、无需登录、反爬极低、覆盖技术+社会+文化+商业。Googlebook 发布、Monokai 数字主权迁移等高质量报道都在这里。已补充到 `references/platform-exploration-patterns.md`。
 
----
+---  
 
 ## 学习 prompt 设计要点
 
@@ -60,11 +63,60 @@ hermes cron
 
 ---
 
+## 并行探索技巧
+
+当需要同时了解多个项目/页面时，使用 `delegate_task` 并行下钻比顺序浏览快很多：
+
+```bash
+# 典型场景：刚从 Trending / HN 拿到一批结果，想深入了解其中最有潜力的 2-3 个
+delegate_task:
+  - task: 读 supertonic README → 摘要
+  - task: 读 HN 评论区讨论 → 趋势判断
+  - task: 读 scientific-agent-skills 结构 → 技能分类
+```
+
+**适用条件：**
+- 已经在浏览器里拿到了表面的条目列表（项目名/标题/Star数/分数）
+- 需要下钻到具体 README、文章正文、评论区做质量判断
+- 3 个子任务之间没有依赖关系
+
+**不要并行的情况：**
+- 子任务需要已有子任务的结果作为输入
+- 子任务要操作同一个工具/浏览器（竞态）
+- 单个 task 本身需要超过5步（太长会超时，拆成更小的 task）
+
+---
+
+## fact_store 写入规范
+
+cron 学了东西之后必须三层落地，缺一不可：
+
+| 层 | 工具 | 内容 | 频率 |
+|----|------|------|------|
+| 冷层 | `write_file → MEMORY.md` | 原始笔记：引用 URL、具体 insight、个人感受 | 每轮必写 |
+| 温层 | `fact_store(action='add')` | 结构化事实：技术栈、趋势判断、项目发现 | 每轮必写，信任 0.5 |
+| 热层 | `memory()` | 不做学习灌注——只存铁核身份/关系/配置 | **绝对不要写入学习内容** |
+
+**如果 fact_store 工具不可用时的降级方案：**
+```python
+# 写一个带时间戳的事实摘要文件，等下次 session 恢复后补入 fact_store
+write_file("facts_{date}.md", 内容)
+```
+
+**注意区分：**
+- `fact_store` 写的是「可被未来 session 检索的结构化事实」——项目名、技术栈、趋势判断
+- `write_file facts_{date}.md` 是 fact_store 不可用时的降级，不是替代
+  
+二者目标是互补的：fact_store 里东西多了，future sessions 可以直接 probe/search 调出来用。纯 markdown 文件里的事实只能人工 grep。
+
+---
+
 ## 参考文件
 
 - [references/chinese-platform-access.md](references/chinese-platform-access.md) — 中文平台访问模式与风控规避策略
 - [references/platform-exploration-patterns.md](references/platform-exploration-patterns.md) — 跨平台冲浪探索模式
 - [references/xiaohongshu-login-failure-analysis.md](references/xiaohongshu-login-failure-analysis.md) — 小红书登录失败实测分析（2026-05-14），含尝试的API端点、curl与浏览器行为差异
+- [references/visual-music-listening.md](references/visual-music-listening.md) — 用 yt-dlp + ffmpeg 频谱图方式"听"音乐（2026-05-14）
 - [references/agent-memory-bootstrap.md](references/agent-memory-bootstrap.md)
 - [references/memory-conflict-analysis.md](references/memory-conflict-analysis.md)
 
