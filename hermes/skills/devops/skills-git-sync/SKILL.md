@@ -34,6 +34,73 @@ metadata:
 详见 [`references/monorepo-setup.md`](references/monorepo-setup.md)（含脚本内容、cron配置、gitignore规则、初始化新机器步骤）。
 外部独立仓库依赖关系见 [`references/external-repo-deps.md`](references/external-repo-deps.md)。
 
+## Windows HERMES_HOME 路径问题（关键）
+
+**问题：** Windows 上 Hermes 的运行时数据目录由 `HERMES_HOME` 环境变量决定。默认是 `C:\Users\<用户>\AppData\Local\hermes`，**不是** `~/.hermes`。
+
+旧版 auto_sync.sh 硬编码 `~/.hermes`，导致同步的是旧数据。新版 auto_sync_v2.sh 改为读取 `$HERMES_HOME` 环境变量。
+
+**验证方法：** `echo $HERMES_HOME` — 应输出类似 `/c/Users/77/AppData/Local/hermes`。
+
+**跨设备恢复时：** 新设备的 HERMES_HOME 可能不同。拷贝文件时以环境变量为准，不要硬编码路径。
+
+## 当前模式：单仓实文件 + 自动同步 v2
+
+所有 Hermes 配置归入 **`~/Hermes/`**（`github.com/ethanol777/Hermes`），每30分钟自动同步。
+
+**v2 同步脚本：`auto_sync_v2.sh`**（替代旧版 auto_sync.sh）
+
+核心改进：
+- 从 `$HERMES_HOME`（而非固定 `~/.hermes`）同步，适配 Windows/macOS/Linux
+- `memories/` 目录不再整体 gitignore，核心文件进入版本控制
+- 仅同步必要的核心文件，不同步 state.db（60MB）、sessions/、cache/、logs/ 等运行时数据
+- 运行脚本放在 `$HERMES_HOME/scripts/` 而非 `$HOME/`
+
+**同步范围（v2）：**
+
+```
+$HERMES_HOME/SOUL.md                    → ~/Hermes/hermes/SOUL.md
+$HERMES_HOME/config.yaml                → ~/Hermes/hermes/config.yaml
+$HERMES_HOME/memories/MEMORY.md         → ~/Hermes/hermes/memories/MEMORY.md
+$HERMES_HOME/memories/USER.md          → ~/Hermes/hermes/memories/USER.md
+$HERMES_HOME/memories/hot_candidates.txt → ~/Hermes/hermes/memories/hot_candidates.txt
+$HERMES_HOME/memories/archive_index.md  → ~/Hermes/hermes/memories/archive_index.md
+$HERMES_HOME/memories/archive/*         → ~/Hermes/hermes/memories/archive/
+$HERMES_HOME/memories/fact_store.jsonl  → ~/Hermes/hermes/memories/fact_store.jsonl
+$HERMES_HOME/skills/**                  → ~/Hermes/hermes/skills/**
+$HERMES_HOME/cron/**                    → ~/Hermes/hermes/cron/**
+$HOME/skills/**                         → ~/Hermes/user-skills/**
+```
+
+**不同步（v2 明确排除）：**
+
+| 排除项 | 原因 |
+|--------|------|
+| state.db / state.db-* | 运行时数据库，60MB+，含 fact_store SQLite |
+| memory_store.db | 运行时数据库 |
+| kanban.db / response_store.db | 运行时临时数据 |
+| sessions/ | 会话历史，设备特定 |
+| cache/ logs/ audio_cache/ image_cache/ | 缓存，无需备份 |
+| .env auth.json channel_directory.json | 密钥/认证，安全风险 |
+| bin/ hooks/ node/ | 二进制/第三方工具 |
+| hermes-agent/ | 源码，通过 pip 安装 |
+| profiles/ output/ gallery/ tmp/ | 运行时生成内容 |
+
+**memories/ 目录的 Git 跟踪修复：** 旧版 `.gitignore` 曾排除整个 `memories/` 目录，导致冷层记忆和温层备份不同步到 GitHub。修复后 `memories/` 仅排除 `.lock`、`.db`、`.db-shm`、`.db-wal` 文件，保留 `.md`、`.txt`、`.jsonl`。
+
+**两层 .gitignore 陷阱：** 根 `.gitignore` 和 `hermes/.gitignore` 同时存在。修改忽略规则时两层都要改，否则内层规则会覆盖外层的 `!` 取消指令。
+
+## 记忆数据同步说明
+
+**温层（fact_store）双重存储：**
+
+| 存储 | 路径 | 用途 |
+|------|------|------|
+| SQLite 源 | `$HERMES_HOME/state.db` | 运行时，不同步 |
+| JSON 备份 | `$HERMES_HOME/memories/fact_store.jsonl` | Git 同步，新设备恢复用 |
+
+维护 cron（每日 3am）负责将 fact_store 导出为 `.jsonl` 格式供 Git 同步。新设备恢复时，学习 cron 会在运行后自动重建温层数据。
+
 ## 跨设备完整恢复清单
 
 要把 Hermes 功能和记忆完整搬运到新设备，以下是在 `~/Hermes/` git 仓库之外需要注意的：
