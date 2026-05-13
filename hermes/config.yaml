@@ -1,6 +1,6 @@
 model:
   default: deepseek-v4-flash
-  provider: opencode-go
+  provider: opencode
   base_url: https://opencode.ai/zen/go/v1
   api_mode: chat_completions
 providers: {}
@@ -427,3 +427,13 @@ platform_toolsets:
   yuanbao:
     - hermes-yuanbao
 mcp_servers: {}
+custom_providers:
+- name: opencode
+  base_url: https://opencode.ai/zen/go/v1
+  api_key: sk-ajpaboZaxUygJjxwoHmKahrjfuAu5vcKj2XvGQPUuer1YYqHCRXwJSdqGi5siWo8
+  models:
+    deepseek-v4-flash:
+      name: deepseek-v4-flash
+    minimax-m2.7:
+      name: minimax-m2.7
+  model: deepseek-v4-flash
