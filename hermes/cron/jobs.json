@@ -2,14 +2,14 @@
   "jobs": [
     {
       "id": "1d871b4e4b88",
-      "name": "\u81ea\u52a8\u540c\u6b65 Hermes \u914d\u7f6e\u5230 GitHub",
-      "prompt": "\u6267\u884c auto_sync.sh \u811a\u672c\uff0c\u5c06 ~/.hermes/\u3001~/.learnings/\u3001~/agentic-stack/ \u7684\u53d8\u66f4\u540c\u6b65\u5230 ~/Hermes/ \u5e76\u63a8\u9001 GitHub\u3002",
+      "name": "\u83ab\u59ae\u5361\u5b8c\u6574\u540c\u6b65\u5230 GitHub",
+      "prompt": "\u6267\u884c auto_sync_v2.sh \u811a\u672c\uff0c\u5c06 HERMES_HOME (AppData/Local/hermes) \u7684\u6838\u5fc3\u6587\u4ef6\u540c\u6b65\u5230 ~/Hermes/ \u5e76\u63a8\u9001\u5230 GitHub\u3002\u5305\u62ec\uff1aSOUL.md\u3001config.yaml\u3001memories/\u3001skills/\u3001cron/\u3002\u5df2\u8bbe\u7f6e HERMES_HOME \u73af\u5883\u53d8\u91cf\u3002",
       "skills": [],
       "skill": null,
       "model": null,
       "provider": null,
       "base_url": null,
-      "script": "auto_sync.sh",
+      "script": "auto_sync_v2.sh",
       "context_from": null,
       "schedule": {
         "kind": "interval",
@@ -125,5 +125,5 @@
       "workdir": null
     }
   ],
-  "updated_at": "2026-05-13T23:58:35.661781+08:00"
+  "updated_at": "2026-05-14T00:00:19.493232+08:00"
 }
