@@ -1,0 +1,18 @@
+{"id":"fs_001","fact":"Bambu Lab 3D打印公司被指滥用开源社会契约——从开源起步到逐步封闭生态，引发社区强烈反弹，fulu-foundation发起项目恢复BambuNetwork完整功能","source":"HN 1334pts","date":"2026-05-14","tags":"timely,hardware,opensource,3dprinting","confidence":0.95}
+{"id":"fs_002","fact":"TanStack NPM包遭遇供应链攻击，攻击者篡改发布流程注入恶意代码，这是NPM生态供应链安全的重要警示案例","source":"HN 1077pts","date":"2026-05-14","tags":"timely,security,opensource,npm","confidence":0.95}
+{"id":"fs_003","fact":"Needle项目把Gemini工具调用功能蒸馏到仅26M参数的模型中，显示小模型在特定任务上可以非常高效","source":"HN Show 566pts / github cactus-compute","date":"2026-05-14","tags":"timely,AI,LLM,distillation","confidence":0.92}
+{"id":"fs_004","fact":"GitLab宣布裁员并废弃CREDIT价值观（Collaboration/Results/Execution/Diversity/Iterate/Transparency），社区认为标志着一个时代的结束","source":"HN 687pts","date":"2026-05-14","tags":"timely,business,devops,culture","confidence":0.93}
+{"id":"fs_005","fact":"Python 3.14和3.15回退了增量GC（incremental GC），开发者原计划引入但实测出现问题","source":"HN 79pts","date":"2026-05-14","tags":"timely,python,programming","confidence":0.90}
+{"id":"fs_006","fact":"obra/superpowers 在GitHub Trending上持续火爆（189k stars），是一个Agent技能框架和软件开发方法论，定义了AI coding agent的技能组织和执行范式","source":"GitHub Trending #3","date":"2026-05-14","tags":"timely,AI,agents,framework","confidence":0.92}
+{"id":"fs_007","fact":"rohitg00/agentmemory 登顶GitHub Trending（7k+ stars），专注AI coding agent的持久化记忆，基于真实世界基准测试","source":"GitHub Trending #2","date":"2026-05-14","tags":"timely,AI,agents,memory","confidence":0.91}
+{"id":"fs_008","fact":"tinyhumansai/openhuman 登录GitHub Trending（4.4k stars），定位为个人AI超级智能，强调私有、简单、极度强大","source":"GitHub Trending #1","date":"2026-05-14","tags":"timely,AI,agents,personal","confidence":0.90}
+{"id":"fs_009","fact":"millionco/react-doctor（9k+ stars）检测AI写的React代码中的问题，反映了'AI生成代码质量'开始成为工程痛点","source":"GitHub Trending","date":"2026-05-14","tags":"timely,AI,frontend,code-review","confidence":0.91}
+{"id":"fs_010","fact":"supertone-inc/supertonic 闪电般快速的设备端多语言TTS，基于ONNX推理，代表了端侧语音生成趋势","source":"GitHub Trending","date":"2026-05-14","tags":"timely,AI,TTS,on-device","confidence":0.89}
+{"id":"fs_011","fact":"danielmiessler/Personal_AI_Infrastructure（13k+ stars）：Agentic AI基础设施用于放大人类能力，强调人机协作而非替代","source":"GitHub Trending","date":"2026-05-14","tags":"timely,AI,agents,infrastructure","confidence":0.90}
+{"id":"fs_012","fact":"Kickstarter被支付处理商迫使禁止成人内容，跟当年Patreon/OnlyFans类似的支付渠道压力","source":"HN 57pts","date":"2026-05-14","tags":"timely,business,platform,content-moderation","confidence":0.88}
+{"id":"fs_013","fact":"B站热门：宇树发布GD01载人变形机甲390万元起，3D打印和机器人硬件趋势明显","source":"B站排行榜","date":"2026-05-14","tags":"timely,hardware,robotics,China","confidence":0.88}
+{"id":"fs_014","fact":"Matklad（Rust核心贡献者、rust-analyzer作者）写了一篇关于学习软件架构的文章，HN 569pts，值得深读","source":"HN 569pts","date":"2026-05-14","tags":"stable,programming,architecture,rust","confidence":0.92}
+{"id":"fs_015","fact":"荷兰自杀预防网站被发现未经用户同意与科技公司共享数据，引发隐私伦理讨论","source":"HN 186pts","date":"2026-05-14","tags":"timely,privacy,ethics,health","confidence":0.93}
+{"id":"fs_016","fact":"新型不锈钢可在海水制氢条件下存活，材料科学突破可能影响清洁能源成本","source":"HN 203pts / sciencedaily","date":"2026-05-14","tags":"timely,science,materials,clean-energy","confidence":0.88}
+{"id":"fs_017","fact":"催化剂问题：为什么资深开发者很难有效传达他们的专业知识——知识诅咒和专业盲点的双重困境","source":"HN 712pts / nair.sh","date":"2026-05-14","tags":"stable,programming,culture,communication","confidence":0.90}
+{"id":"fs_018","fact":"Googlebook(googlebook.google) 引发巨大讨论（875pts/1445评论），Google疑似推出社交产品或书籍相关功能，细节不明","source":"HN 875pts","date":"2026-05-14","tags":"timely,business,Google,social","confidence":0.70}
