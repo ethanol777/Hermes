@@ -48,7 +48,7 @@ Write a detailed prompt in the prompt textbox. Include:
 1. Once complete, click the "下载" (Download) button on the generated image
 2. The file saves to ~/Downloads/foxtrai-asset-*.png
 
-### Step 6: Send via Feishu
+### Step 6: Send via Feishu (if requested)
 
 1. Get fresh Feishu tenant_access_token
 2. Upload image to Feishu: `POST /open-apis/im/v1/images` (form-data: image_type=message, image=@path)
@@ -56,6 +56,12 @@ Write a detailed prompt in the prompt textbox. Include:
    - receive_id: user's Feishu open_id
    - msg_type: "image"
    - content: {"image_key": "<returned_image_key>"}
+
+### Step 7: Save to Gallery (if personal image)
+
+If the image is a personal artifact (self-portrait, avatar, etc.), also save a copy to `~/AppData/Local/hermes/gallery/` for long-term access.
+
+### Feishu Image Send Pitfall
 
 ## Balance Management
 
@@ -67,7 +73,9 @@ Write a detailed prompt in the prompt textbox. Include:
 - **Other models cost**: nano-banana / nano-banana-2 / nano-banana-pro costs 8 credits
 - **Free generation**: If Banana Pro model has resolution downgrade, the generation is free (no charge)
 
-## Important Notes
+### Feishu Image Send Pitfall
+
+Sending image messages via inline curl JSON (`-d '{"receive_id":...,"content":...}'`) causes error code **9499 Bad Request** due to shell escaping corruption of the nested JSON `content` field. Always write the payload to a temp file with `python3` and use `-d @path`. See the `feishu-api` skill's Send Image Message section for the exact file-based workflow.
 
 - **No vision analysis**: The DeepSeek provider doesn't support image vision — use browser_console() or DOM inspection (check for img presence + download button) to verify completion instead of browser_vision()
 - **Download location**: Files go to ~/Downloads/foxtrai-asset-*.png on WSL

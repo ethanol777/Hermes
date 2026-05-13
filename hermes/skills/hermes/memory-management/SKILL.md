@@ -1,12 +1,19 @@
 ---
 name: memory-management
-description: Proactive three-layer memory system with automatic compression, conflict resolution, cross-layer search, and self-evolution. Hot (built-in memory) → Warm (Holographic SQLite FTS5+HRR) → Cold (.learnings/). Designed for lifelong learning without forgetting.
-version: 2.0.0
+description: DEPRECATED see hermes/memory-system. Proactive three-layer memory system with automatic compression, conflict resolution, cross-layer search, and self-evolution.
+version: 2.1.0
 author: Monica
-tags: [memory, holographic, self-improvement, maintenance, evolution]
+tags: [memory, holographic, self-improvement, maintenance, evolution, deprecated]
 ---
 
-# Memory Management (进化版)
+> **⚠️ 此 skill 已被 hermes/memory-system 取代 (2026-05-13)。**
+>
+> 原因：memory-management 描述的 cron 自动维护管道在 cron 环境中不可用（memory/fact_store 工具无权限）。
+> memory-system 是替代方案：冷层由 Monica 在对话中主动提纯，不再依赖 cron 自动化。
+>
+> 保留此 skill 作为参考，但不应用于新任务。如需记忆操作请加载 hermes/memory-system。
+
+# Memory Management (进化版 — 已废弃)
 
 ## 核心原则
 
@@ -120,6 +127,8 @@ Layer 3: 冷记忆 (.learnings/ + session_search)
 - 同一实体有 3+ 条矛盾事实 → 人工确认
 
 ## 系统集成
+
+> **注意：以下 cron 方案已废弃。** memory/fact_store 工具在 cron 环境中不可用。维护工作改由 Monica 在对话中主动执行。详见 hermes/memory-system。
 
 ```
 cron 记忆自动维护 (每天 3:00)

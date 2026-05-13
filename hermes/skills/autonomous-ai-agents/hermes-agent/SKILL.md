@@ -1,9 +1,10 @@
 ---
 name: hermes-agent
 description: "Configure, extend, or contribute to Hermes Agent."
-version: 2.0.0
+version: 2.1.0
 author: Hermes Agent + Teknium
 license: MIT
+platforms: [linux, macos, windows]
 metadata:
   hermes:
     tags: [hermes, setup, configuration, multi-agent, spawning, cli, gateway, development]
@@ -13,7 +14,7 @@ metadata:
 
 # Hermes Agent
 
-Hermes Agent is an open-source AI agent framework by Nous Research that runs in your terminal, messaging platforms, and IDEs. It belongs to the same category as Claude Code (Anthropic), Codex (OpenAI), and OpenClaw — autonomous coding and task-execution agents that use tool calling to interact with your system. Hermes works with any LLM provider (OpenRouter, Anthropic, OpenAI, DeepSeek, local models, and 15+ others) and runs on Linux, macOS, WSL, and Windows (native, early beta).
+Hermes Agent is an open-source AI agent framework by Nous Research that runs in your terminal, messaging platforms, and IDEs. It belongs to the same category as Claude Code (Anthropic), Codex (OpenAI), and OpenClaw — autonomous coding and task-execution agents that use tool calling to interact with your system. Hermes works with any LLM provider (OpenRouter, Anthropic, OpenAI, DeepSeek, local models, and 15+ others) and runs on Linux, macOS, and WSL.
 
 What makes Hermes different:
 
@@ -30,21 +31,7 @@ People use Hermes for software development, research, system administration, dat
 
 **Docs:** https://hermes-agent.nousresearch.com/docs/
 
-### Skills Sync Across Devices
-
-Skills in `~/.hermes/skills/` are per-device. To sync across machines via Git, see `references/skills-git-sync.md`.
-
-### GBrain — Persistent Knowledge Base for Hermes
-
-GBrain (https://github.com/garrytan/gbrain) is a persistent knowledge-base system
-with hybrid search, knowledge graph, and 29 skills. It works alongside Hermes Agent
-as an agent-accessible brain.
-
-Hermes-specific setup (non-GStack, WSL/Linux): `references/gbrain-setup-hermes.md`
-
 ## Quick Start
-
-### Linux, macOS, WSL2, Termux
 
 ```bash
 # Install
@@ -65,20 +52,6 @@ hermes model
 # Check health
 hermes doctor
 ```
-
-### Windows (native, PowerShell) — Early Beta
-
-> Native Windows support is **early beta**. It installs and runs, but hasn't been road-tested as broadly as Linux/macOS/WSL2. File issues for rough edges.
-
-```powershell
-irm https://raw.githubusercontent.com/NousResearch/hermes-agent/main/scripts/install.ps1 | iex
-```
-
-The installer handles everything: uv, Python 3.11, Node.js, ripgrep, ffmpeg, and a portable MinGit (unpacked to `%LOCALAPPDATA%\hermes\git` — no admin required, isolated from system Git). Uses existing Git if detected.
-
-**Install path:** `%LOCALAPPDATA%\hermes` (vs `~/.hermes` on WSL/Linux).
-
-**Limitation:** The browser-based dashboard chat pane needs WSL (uses POSIX PTY). Classic CLI and gateway both run natively on Windows.
 
 ---
 
@@ -144,19 +117,6 @@ hermes tools disable NAME   Disable a toolset
 hermes skills list          List installed skills
 hermes skills search QUERY  Search the skills hub
 hermes skills install ID    Install a skill (ID can be a hub identifier OR a direct https://…/SKILL.md URL; pass --name to override when frontmatter has no name)
-
-  ⚠️ Only ONE identifier per invocation — do NOT space-separate multiple names. Use a shell loop:
-    for skill in name1 name2 name3; do hermes skills install "$skill" --yes; done
-
-  ⚠️ Community-source skills are security-scanned (quarantine → scan → verdict → install/block). A verdict of `DANGEROUS` (exfiltration, persistence, privilege_escalation findings) blocks with `Decision: BLOCKED — Blocked (community source + dangerous verdict, N findings). Use --force to override.` Read the scan output before overriding. Official-source skills skip scanning.
-
-  ⚠️ Hub browse output shows truncated names. Always confirm the exact ID from `hermes skills search` or `hermes skills inspect`. Common mismatches:
-    - "distributed-llm-pr" → distributed-llm-pretraining-torchtitan
-    - "hermes-atropos-env" → hermes-atropos-environments
-    - "optimizing-attention" → optimizing-attention-flash
-    - "sparse-autoencoder" → sparse-autoencoder-training
-    - "here-now" (not a hub skill)
-    - "lambda-labs-gpu-client" (not a hub skill)
 hermes skills inspect ID    Preview without installing
 hermes skills config        Enable/disable skills per platform
 hermes skills check         Check for updates
@@ -164,16 +124,7 @@ hermes skills update        Update outdated skills
 hermes skills uninstall N   Remove a hub skill
 hermes skills publish PATH  Publish to registry
 hermes skills browse        Browse all available skills
-### External GitHub repos
-
-For skills published outside the Hermes hub (e.g. GitHub repos with SKILL.md but no hub entry), see `references/external-skill-installation.md` under this skill — covers repo evaluation, cloning, dep installation, symlink registration, and how to handle catalog/awesome-list repos.
-
-### Skill library hygiene
-
-User 雨晨 (Monica's user) prefers a **clean, deduplicated skill library**. When maintaining skills:
-- If two skills have near-identical descriptions/function (e.g. `xiaohongshu-operator` vs `xiaohongshu-specialist`), delete the duplicate and keep the better one
-- Audit the skill list periodically for overlap
-- Active removal is preferred over "just leave it" — user notices and appreciates cleanup
+hermes skills tap add REPO  Add a GitHub repo as skill source
 ```
 
 ### MCP Servers
@@ -201,6 +152,7 @@ hermes gateway setup        Configure platforms
 Supported platforms: Telegram, Discord, Slack, WhatsApp, Signal, Email, SMS, Matrix, Mattermost, Home Assistant, DingTalk, Feishu, WeCom, BlueBubbles (iMessage), Weixin (WeChat), API Server, Webhooks. Open WebUI connects via the API Server adapter.
 
 Platform docs: https://hermes-agent.nousresearch.com/docs/user-guide/messaging/
+Connecting desktop clients (Cherry Studio, Open WebUI, etc.): `references/api-server-client-setup.md`
 
 ### Sessions
 
@@ -237,7 +189,7 @@ hermes webhook test NAME    Send a test POST
 
 ### Profiles
 
-```bash
+```
 hermes profile list         List all profiles
 hermes profile create NAME  Create (--clone, --clone-all, --clone-from)
 hermes profile use NAME     Set sticky default
@@ -248,8 +200,6 @@ hermes profile rename A B   Rename a profile
 hermes profile export NAME  Export to tar.gz
 hermes profile import FILE  Import from archive
 ```
-
-Profiles isolate agent instances (separate config, sessions, skills, memory). Great for **domain specialization** — e.g., a `coding-expert` profile with dev-focused skills vs an `ai-research` profile with ML skills. Each profile can have its own Persona file at `~/.hermes/profiles/<name>/persona.md`. See `references/agent-persona-specialization.md`.
 
 ### Credential Pools
 
@@ -279,7 +229,11 @@ hermes uninstall            Uninstall Hermes
 
 ## Slash Commands (In-Session)
 
-Type these during an interactive chat session.
+Type these during an interactive chat session. New commands land fairly
+often; if something below looks stale, run `/help` in-session for the
+authoritative list or see the [live slash commands reference](https://hermes-agent.nousresearch.com/docs/reference/slash-commands).
+The registry of record is `hermes_cli/commands.py` — every consumer
+(autocomplete, Telegram menu, Slack mapping, `/help`) derives from it.
 
 ### Session Control
 ```
@@ -291,9 +245,15 @@ Type these during an interactive chat session.
 /compress            Manually compress context
 /stop                Kill background processes
 /rollback [N]        Restore filesystem checkpoint
+/snapshot [sub]      Create or restore state snapshots of Hermes config/state (CLI)
 /background <prompt> Run prompt in background
 /queue <prompt>      Queue for next turn
+/steer <prompt>      Inject a message after the next tool call without interrupting
+/agents (/tasks)     Show active agents and running tasks
 /resume [name]       Resume a named session
+/goal [text|sub]     Set a standing goal Hermes works on across turns until achieved
+                     (subcommands: status, pause, resume, clear)
+/redraw              Force a full UI repaint (CLI)
 ```
 
 ### Configuration
@@ -305,6 +265,11 @@ Type these during an interactive chat session.
 /verbose             Cycle: off → new → all → verbose
 /voice [on|off|tts]  Voice mode
 /yolo                Toggle approval bypass
+/busy [sub]          Control what Enter does while Hermes is working (CLI)
+                     (subcommands: queue, steer, interrupt, status)
+/indicator [style]   Pick the TUI busy-indicator style (CLI)
+                     (styles: kaomoji, emoji, unicode, ascii)
+/footer [on|off]     Toggle gateway runtime-metadata footer on final replies
 /skin [name]         Change theme (CLI)
 /statusbar           Toggle status bar (CLI)
 ```
@@ -315,8 +280,12 @@ Type these during an interactive chat session.
 /toolsets            List toolsets (CLI)
 /skills              Search/install skills (CLI)
 /skill <name>        Load a skill into session
-/cron                Manage cron jobs (CLI)
+/reload-skills       Re-scan ~/.hermes/skills/ for added/removed skills
+/reload              Reload .env variables into the running session (CLI)
 /reload-mcp          Reload MCP servers
+/cron                Manage cron jobs (CLI)
+/curator [sub]       Background skill maintenance (status, run, pin, archive, …)
+/kanban [sub]        Multi-profile collaboration board (tasks, links, comments)
 /plugins             List plugins (CLI)
 ```
 
@@ -327,6 +296,7 @@ Type these during an interactive chat session.
 /restart             Restart gateway (gateway)
 /sethome             Set current chat as home channel (gateway)
 /update              Update Hermes to latest (gateway)
+/topic [sub]         Enable or inspect Telegram DM topic sessions (gateway)
 /platforms (/gateway) Show platform connection status (gateway)
 ```
 
@@ -337,6 +307,7 @@ Type these during an interactive chat session.
 /browser             Open CDP browser connection
 /history             Show conversation history (CLI)
 /save                Save conversation to file (CLI)
+/copy [N]            Copy the last assistant response to clipboard (CLI)
 /paste               Attach clipboard image (CLI)
 /image               Attach local image file (CLI)
 ```
@@ -347,8 +318,10 @@ Type these during an interactive chat session.
 /commands [page]     Browse all commands (gateway)
 /usage               Token usage
 /insights [days]     Usage analytics
+/gquota              Show Google Gemini Code Assist quota usage (CLI)
 /status              Session info (gateway)
 /profile             Active profile info
+/debug               Upload debug report (system info + logs) and get shareable links
 ```
 
 ### Exit
@@ -360,18 +333,6 @@ Type these during an interactive chat session.
 
 ## Key Paths & Config
 
-**Chinese messaging platform setup (Feishu/Lark, WeChat/Weixin):** see `references/chinese-messaging-platforms.md` under this skill — covers .env config, connection modes, access control, and common pitfalls.
-
-**Integrating external agent/role libraries** (e.g., agency-agents, agency-agents-zh, or similar repos with hundreds of pre-built roles): see `references/external-agent-libraries.md` under this skill — covers convert scripts, install workflow, frontmatter gotchas, and skills repo sync.
-
-**Installing community companion tools** (SkillClaw, Honcho, hermes-workspace, plugin, and other third-party tools that integrate with Hermes via proxy, plugin, or config rewrite): see `references/community-companion-tools.md` — covers finding upstream provider credentials, WSL gotchas (python3-venv), interactive setup fallbacks, and the critical "don't start proxy tools during active session" pitfall.
-
-**Memory provider selection on WSL** (Holographic, Honcho, mem0, and others — which ones work without Docker/sudo): see `references/memory-providers-wsl.md` — covers multi-layer architecture, setup commands, fact_store tools, trust scoring, and WSL-specific pitfalls.
-
-**Agentic-Stack** (portable cross-agent memory/skills layer with Hermes adapter): see `references/agentic-stack.md`
-
-**Config Backup** (backing up Hermes config to GitHub with secret hygiene, multi-repo layout, and restore workflow): see `references/config-backup.md` — covers .gitignore templates, GitHub API repo creation, submodule handling, and restoring on a new machine. — covers git clone installation, `.agent/` brain structure, tool commands (recall/learn/show), and the `learn.py` Chinese-text heuristic gotcha (rules must include English keywords).
-
 ```
 ~/.hermes/config.yaml       Main configuration
 ~/.hermes/.env              API keys and secrets
@@ -382,9 +343,7 @@ $HERMES_HOME/skills/        Installed skills
 ~/.hermes/hermes-agent/     Source code (if git-installed)
 ```
 
-**Windows native paths** (when not using WSL): replace `~/.hermes/` with `%LOCALAPPDATA%\hermes\`. E.g., `%LOCALAPPDATA%\hermes\config.yaml`.
-
-Profiles use `~/.hermes/profiles/<name>/` with the same layout (or `%LOCALAPPDATA%\hermes\profiles\<name>\` on Windows native).
+Profiles use `~/.hermes/profiles/<name>/` with the same layout.
 
 ### Config Sections
 
@@ -437,8 +396,6 @@ Full config reference: https://hermes-agent.nousresearch.com/docs/user-guide/con
 
 Full provider docs: https://hermes-agent.nousresearch.com/docs/integrations/providers
 
-**OpenCode Zen/Go provider setup:** see `references/providers-opencode.md` under this skill — covers API key setup, model names, base URLs, and WSL binary path notes.
-
 ### Toolsets
 
 Enable/disable via `hermes tools` (interactive) or `hermes tools enable/disable NAME`.
@@ -446,12 +403,14 @@ Enable/disable via `hermes tools` (interactive) or `hermes tools enable/disable 
 | Toolset | What it provides |
 |---------|-----------------|
 | `web` | Web search and content extraction |
+| `search` | Web search only (subset of `web`) |
 | `browser` | Browser automation (Browserbase, Camofox, or local Chromium) |
 | `terminal` | Shell commands and process management |
 | `file` | File read/write/search/patch |
 | `code_execution` | Sandboxed Python execution |
 | `vision` | Image analysis |
 | `image_gen` | AI image generation |
+| `video` | Video analysis and generation |
 | `tts` | Text-to-speech |
 | `skills` | Skill browsing and management |
 | `memory` | Persistent cross-session memory |
@@ -460,11 +419,21 @@ Enable/disable via `hermes tools` (interactive) or `hermes tools enable/disable 
 | `cronjob` | Scheduled task management |
 | `clarify` | Ask user clarifying questions |
 | `messaging` | Cross-platform message sending |
-| `search` | Web search only (subset of `web`) |
 | `todo` | In-session task planning and tracking |
+| `kanban` | Multi-agent work-queue tools (gated to workers) |
+| `debugging` | Extra introspection/debug tools (off by default) |
+| `safe` | Minimal, low-risk toolset for locked-down sessions |
+| `spotify` | Spotify playback and playlist control |
+| `homeassistant` | Smart home control (off by default) |
+| `discord` | Discord integration tools |
+| `discord_admin` | Discord admin/moderation tools |
+| `feishu_doc` | Feishu (Lark) document tools |
+| `feishu_drive` | Feishu (Lark) drive tools |
+| `yuanbao` | Yuanbao integration tools |
 | `rl` | Reinforcement learning tools (off by default) |
 | `moa` | Mixture of Agents (off by default) |
-| `homeassistant` | Smart home control (off by default) |
+
+Full enumeration lives in `toolsets.py` as the `TOOLSETS` dict; `_HERMES_CORE_TOOLS` is the default bundle most platforms inherit from.
 
 Tool changes take effect on `/reset` (new session). They do NOT apply mid-conversation to preserve prompt caching.
 
@@ -644,6 +613,444 @@ terminal(command="tmux new-session -d -s resumed 'hermes --resume 20260225_14305
 
 ---
 
+## Durable & Background Systems
+
+Four systems run alongside the main conversation loop. Quick reference
+here; full developer notes live in `AGENTS.md`, user-facing docs under
+`website/docs/user-guide/features/`.
+
+### Delegation (`delegate_task`)
+
+Synchronous subagent spawn — the parent waits for the child's summary
+before continuing its own loop. Isolated context + terminal session.
+
+- **Single:** `delegate_task(goal, context, toolsets)`.
+- **Batch:** `delegate_task(tasks=[{goal, ...}, ...])` runs children in
+  parallel, capped by `delegation.max_concurrent_children` (default 3).
+- **Roles:** `leaf` (default; cannot re-delegate) vs `orchestrator`
+  (can spawn its own workers, bounded by `delegation.max_spawn_depth`).
+- **Not durable.** If the parent is interrupted, the child is
+  cancelled. For work that must outlive the turn, use `cronjob` or
+  `terminal(background=True, notify_on_complete=True)`.
+
+Config: `delegation.*` in `config.yaml`.
+
+### Cron (scheduled jobs)
+
+Durable scheduler — `cron/jobs.py` + `cron/scheduler.py`. Drive it via
+the `cronjob` tool, the `hermes cron` CLI (`list`, `add`, `edit`,
+`pause`, `resume`, `run`, `remove`), or the `/cron` slash command.
+
+- **Schedules:** duration (`"30m"`, `"2h"`), "every" phrase
+  (`"every monday 9am"`), 5-field cron (`"0 9 * * *"`), or ISO timestamp.
+- **Per-job knobs:** `skills`, `model`/`provider` override, `script`
+  (pre-run data collection; `no_agent=True` makes the script the whole
+  job), `context_from` (chain job A's output into job B), `workdir`
+  (run in a specific dir with its `AGENTS.md` / `CLAUDE.md` loaded),
+  multi-platform delivery.
+- **Invariants:** 3-minute hard interrupt per run, `.tick.lock` file
+  prevents duplicate ticks across processes, cron sessions pass
+  `skip_memory=True` by default, and cron deliveries are framed with a
+  header/footer instead of being mirrored into the target gateway
+  session (keeps role alternation intact).
+
+User docs: https://hermes-agent.nousresearch.com/docs/user-guide/features/cron
+
+### Curator (skill lifecycle)
+
+Background maintenance for agent-created skills. Tracks usage, marks
+idle skills stale, archives stale ones, keeps a pre-run tar.gz backup
+so nothing is lost.
+
+- **CLI:** `hermes curator <verb>` — `status`, `run`, `pause`, `resume`,
+  `pin`, `unpin`, `archive`, `restore`, `prune`, `backup`, `rollback`.
+- **Slash:** `/curator <subcommand>` mirrors the CLI.
+- **Scope:** only touches skills with `created_by: "agent"` provenance.
+  Bundled + hub-installed skills are off-limits. **Never deletes** —
+  max destructive action is archive. Pinned skills are exempt from
+  every auto-transition and every LLM review pass.
+- **Telemetry:** sidecar at `~/.hermes/skills/.usage.json` holds
+  per-skill `use_count`, `view_count`, `patch_count`,
+  `last_activity_at`, `state`, `pinned`.
+
+Config: `curator.*` (`enabled`, `interval_hours`, `min_idle_hours`,
+`stale_after_days`, `archive_after_days`, `backup.*`).
+User docs: https://hermes-agent.nousresearch.com/docs/user-guide/features/curator
+
+### Kanban (multi-agent work queue)
+
+Durable SQLite board for multi-profile / multi-worker collaboration.
+Users drive it via `hermes kanban <verb>`; dispatcher-spawned workers
+see a focused `kanban_*` toolset gated by `HERMES_KANBAN_TASK` so the
+schema footprint is zero outside worker processes.
+
+- **CLI verbs (common):** `init`, `create`, `list` (alias `ls`),
+  `show`, `assign`, `link`, `unlink`, `comment`, `complete`, `block`,
+  `unblock`, `archive`, `tail`. Less common: `watch`, `stats`, `runs`,
+  `log`, `dispatch`, `daemon`, `gc`.
+- **Worker toolset:** `kanban_show`, `kanban_complete`, `kanban_block`,
+  `kanban_heartbeat`, `kanban_comment`, `kanban_create`, `kanban_link`.
+- **Dispatcher** runs inside the gateway by default
+  (`kanban.dispatch_in_gateway: true`) — reclaims stale claims,
+  promotes ready tasks, atomically claims, spawns assigned profiles.
+  Auto-blocks a task after ~5 consecutive spawn failures.
+- **Isolation:** board is the hard boundary (workers get
+  `HERMES_KANBAN_BOARD` pinned in env); tenant is a soft namespace
+  within a board for workspace-path + memory-key isolation.
+
+User docs: https://hermes-agent.nousresearch.com/docs/user-guide/features/kanban
+
+---
+
+## Windows-Specific Quirks
+
+Hermes runs natively on Windows (PowerShell, cmd, Windows Terminal, git-bash
+mintty, VS Code integrated terminal). Most of it just works, but a handful
+of differences between Win32 and POSIX have bitten us — document new ones
+here as you hit them so the next person (or the next session) doesn't
+rediscover them from scratch.
+
+### Input / Keybindings
+
+**Alt+Enter doesn't insert a newline.** Windows Terminal intercepts Alt+Enter
+at the terminal layer to toggle fullscreen — the keystroke never reaches
+prompt_toolkit. Use **Ctrl+Enter** instead. Windows Terminal delivers
+Ctrl+Enter as LF (`c-j`), distinct from plain Enter (`c-m` / CR), and the
+CLI binds `c-j` to newline insertion on `win32` only (see
+`_bind_prompt_submit_keys` + the Windows-only `c-j` binding in `cli.py`).
+Side effect: the raw Ctrl+J keystroke also inserts a newline on Windows —
+unavoidable, because Windows Terminal collapses Ctrl+Enter and Ctrl+J to
+the same keycode at the Win32 console API layer. No conflicting binding
+existed for Ctrl+J on Windows, so this is a harmless side effect.
+
+mintty / git-bash behaves the same (fullscreen on Alt+Enter) unless you
+disable Alt+Fn shortcuts in Options → Keys. Easier to just use Ctrl+Enter.
+
+**Diagnosing keybindings.** Run `python scripts/keystroke_diagnostic.py`
+(repo root) to see exactly how prompt_toolkit identifies each keystroke
+in the current terminal. Answers questions like "does Shift+Enter come
+through as a distinct key?" (almost never — most terminals collapse it
+to plain Enter) or "what byte sequence is my terminal sending for
+Ctrl+Enter?" This is how the Ctrl+Enter = c-j fact was established.
+
+### Config / Files
+
+**HERMES_HOME is NOT `~/.hermes` on Windows.** On Linux and macOS,
+`HERMES_HOME` resolves to `~/.hermes/`. On Windows, the default is
+`~/AppData/Local/hermes/` (i.e. `%LOCALAPPDATA%/hermes/`). If you create a
+`~/.hermes` symlink pointing at a config repo, Hermes will NOT read it —
+it reads from `~/AppData/Local/hermes/`. Skinning `~/.hermes` as a symlink
+is still useful for user convenience (`cd ~/.hermes` works the same on all
+three OSes), but any skills, config, SOUL.md, or cron files you place under
+`~/.hermes/` must be manually synced (or symlinked) into
+`~/AppData/Local/hermes/`.
+
+**Quick check:** `hermes doctor` reports the actual `HERMES_HOME` under
+"Directory Structure" (e.g. `~/AppData\Local\hermes`). If you expected
+`~/.hermes` and see the AppData path, that's expected on Windows.
+
+**HTTP 400 "No models provided" on first run.** `config.yaml` was saved
+with a UTF-8 BOM (common when Windows apps write it). Re-save as UTF-8
+without BOM. `hermes config edit` writes without BOM; manual edits in
+Notepad are the usual culprit.
+
+### Config Repository Recovery (New Machine)
+
+If you maintain your Hermes config in a git repo (e.g. `~/Hermes` with
+`hermes/`, `learnings/`, `data/`, etc.) and need to restore on a fresh
+installation:
+
+1. **Install Hermes** — the standard install script/command for your OS.
+2. **Clone config repo:**
+   ```bash
+   git clone https://github.com/you/your-hermes-config.git ~/Hermes
+   ```
+   On Windows git-bash, SSH may have path-resolution issues with
+   `ssh-wrapper.sh` (broken forward-slash → backslash conversion). Use
+   HTTPS URLs as a reliable workaround.
+3. **Create symlinks for convenience:**
+   ```bash
+   ln -sf ~/Hermes/hermes ~/.hermes
+   ln -sf ~/Hermes/learnings ~/.learnings
+   ln -sf ~/Hermes/agentic-stack ~/agentic-stack   # if present
+   ln -sf ~/Hermes/data ~/data                       # if present
+   ```
+4. **Copy API keys** — `.env` is in `.gitignore` and must be manually
+   copied from the old machine's `.env` file to the new one.
+5. **Sync skills + config to actual HERMES_HOME** (required on Windows
+   since Hermes reads from `~/AppData/Local/hermes/`, not `~/.hermes`):
+
+   Remove the old `~/.hermes` first (it's a real directory from the
+   installer, not yet a symlink). If `rm -rf` fails with "Permission
+   denied" on some files in git-bash, run `chmod -R u+w ~/.hermes`
+   first, then retry:
+   ```bash
+   chmod -R u+w ~/.hermes 2>/dev/null
+   rm -rf ~/.hermes
+   ln -sf ~/Hermes/hermes ~/.hermes
+   ```
+
+   Then sync skills + config to the actual runtime directory:
+   ```bash
+   cp -r ~/.hermes/config.yaml ~/AppData/Local/hermes/config.yaml
+   cp -r ~/.hermes/skills/* ~/AppData/Local/hermes/skills/
+   cp ~/.hermes/SOUL.md ~/AppData/Local/hermes/SOUL.md
+   cp -r ~/.hermes/cron/* ~/AppData/Local/hermes/cron/ 2>/dev/null
+   ```
+
+   On Linux/macOS, steps 5-6 are unnecessary because `~/.hermes` IS the
+   real `HERMES_HOME`.
+6. **Verify:**
+   ```bash
+   hermes doctor
+   hermes cron list
+   ```
+   It's normal to see `Config version outdated (v22 → v23)` here — the
+   repo's config may be at a slightly older schema version, but Hermes
+   auto-migrates it on the next `chat` start. Run `hermes doctor` again
+   after first chat to confirm.
+7. Run `hermes setup` to configure any newly needed providers/tools.
+
+### `execute_code` / Sandbox
+
+**WinError 10106** ("The requested service provider could not be loaded
+or initialized") from the sandbox child process — it can't create an
+`AF_INET` socket, so the loopback-TCP RPC fallback fails before
+`connect()`. Root cause is usually **not** a broken Winsock LSP; it's
+Hermes's own env scrubber dropping `SYSTEMROOT` / `WINDIR` / `COMSPEC`
+from the child env. Python's `socket` module needs `SYSTEMROOT` to locate
+`mswsock.dll`. Fixed via the `_WINDOWS_ESSENTIAL_ENV_VARS` allowlist in
+`tools/code_execution_tool.py`. If you still hit it, echo `os.environ`
+inside an `execute_code` block to confirm `SYSTEMROOT` is set. Full
+diagnostic recipe in `references/execute-code-sandbox-env-windows.md`.
+
+### Testing / Contributing
+
+**`scripts/run_tests.sh` doesn't work as-is on Windows** — it looks for
+POSIX venv layouts (`.venv/bin/activate`). The Hermes-installed venv at
+`venv/Scripts/` has no pip or pytest either (stripped for install size).
+Workaround: install `pytest + pytest-xdist + pyyaml` into a system Python
+3.11 user site, then invoke pytest directly with `PYTHONPATH` set:
+
+```bash
+"/c/Program Files/Python311/python" -m pip install --user pytest pytest-xdist pyyaml
+export PYTHONPATH="$(pwd)"
+"/c/Program Files/Python311/python" -m pytest tests/foo/test_bar.py -v --tb=short -n 0
+```
+
+Use `-n 0`, not `-n 4` — `pyproject.toml`'s default `addopts` already
+includes `-n`, and the wrapper's CI-parity guarantees don't apply off POSIX.
+
+**POSIX-only tests need skip guards.** Common markers already in the codebase:
+- Symlinks — elevated privileges on Windows
+- `0o600` file modes — POSIX mode bits not enforced on NTFS by default
+- `signal.SIGALRM` — Unix-only (see `tests/conftest.py::_enforce_test_timeout`)
+- Winsock / Windows-specific regressions — `@pytest.mark.skipif(sys.platform != "win32", ...)`
+
+Use the existing skip-pattern style (`sys.platform == "win32"` or
+`sys.platform.startswith("win")`) to stay consistent with the rest of the
+suite.
+
+### Path / Filesystem
+
+**Line endings.** Git may warn `LF will be replaced by CRLF the next time
+Git touches it`. Cosmetic — the repo's `.gitattributes` normalizes. Don't
+let editors auto-convert committed POSIX-newline files to CRLF.
+
+**Forward slashes work almost everywhere.** `C:/Users/...` is accepted by
+every Hermes tool and most Windows APIs. Prefer forward slashes in code
+and logs — avoids shell-escaping backslashes in bash.
+
+### Gateway Install / Startup
+
+**`hermes gateway install` requires Administrator PowerShell.** The
+command creates a Windows Scheduled Task (`schtasks /Create /SC ONLOGON`),
+which requires admin rights. Run `Start-Process powershell -Verb RunAs`
+to elevate, then execute `hermes gateway install`.
+
+**API key quirk — use `.env`, not config.yaml.** The Gateway sometimes
+does not pick up `platforms.api_server.key` from config.yaml. Always set
+the API key via the `API_SERVER_KEY` environment variable in `.env`:
+```bash
+echo 'API_SERVER_KEY=your-secret-key' >> $HOME/AppData/Local/hermes/.env
+```
+Then restart Gateway: `hermes gateway restart`.
+
+**Cosmetic `UnicodeDecodeError` on non-English Windows.** Hermes's
+`_exec_schtasks()` calls `subprocess.run(…, text=True)` (UTF-8 default).
+On Chinese/Japanese/Korean Windows, `schtasks.exe` outputs locale
+encoding (CP936/CP932/CP949), producing `UnicodeDecodeError` in subprocess
+reader threads. **This is cosmetic** — it pollutes stderr but does NOT
+prevent the command from succeeding when admin rights are available. The
+encoding issue only blocks the Startup-folder fallback logic (the
+`_FALLBACK_PATTERNS` regex match fails on blank output).
+
+**Cosmetic `UnicodeDecodeError` on non-English Windows.** Hermes's
+`_exec_schtasks()` calls `subprocess.run(…, text=True)` (UTF-8 default).
+On Chinese/Japanese/Korean Windows, `schtasks.exe` outputs locale
+encoding (CP936/CP932/CP949), producing `UnicodeDecodeError` in subprocess
+reader threads. **This is cosmetic** — it pollutes stderr but does NOT
+prevent the command from succeeding when admin rights are available. The
+encoding issue only blocks the Startup-folder fallback logic (the
+`_FALLBACK_PATTERNS` regex match fails on blank output).
+
+If `hermes gateway install` fails, 99% of the time it's **Access denied**
+(`schtasks /Create` requires admin), not the encoding issue.
+
+**🔑 Correct approach:**
+```powershell
+# 1. Open Administrator PowerShell (Win+X → Terminal Admin)
+# 2. Run:
+hermes gateway install
+```
+
+**Fallback — Startup folder (no admin required).** If you lack admin
+rights, install via the Startup folder:
+
+```python
+# From within a running Hermes session:
+cd ~/AppData/Local/hermes/hermes-agent
+python -c "
+import sys; sys.path.insert(0, '.')
+from hermes_cli.gateway_windows import _write_task_script, _install_startup_entry
+script = _write_task_script()
+entry = _install_startup_entry(script)
+print(f'Startup entry created: {entry}')
+"
+```
+
+Or just run the script directly after it's written:
+```
+C:\Users\<you>\AppData\Local\hermes\gateway-service\Hermes_Gateway.cmd
+```
+
+The startup entry lives at:
+`%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup\Hermes_Gateway.cmd`
+
+Full reproduction recipe: `references/windows-gateway-install-encoding.md`
+Full pythonw.exe fake binary recipe: `references/windows-gateway-pythonw-fake.md`
+
+**Silent startup (no terminal window).** The scheduled task script uses
+`python.exe` by default, which shows a console window on login. Replace
+it with `pythonw.exe` in the same venv directory — it runs without a
+console:
+
+```cmd
+C:\Users\<you>\AppData\Local\hermes\hermes-agent\venv\Scripts\pythonw.exe -m hermes_cli.main gateway run --replace
+```
+
+Edit `%LOCALAPPDATA%\hermes\gateway-service\Hermes_Gateway.cmd` and
+change `python.exe` → `pythonw.exe`. Then restart: `hermes gateway restart`.
+
+**⚠ uv-managed venv caveat — fake pythonw.exe + missing DLLs.**
+Hermes installed via `uv` creates its venv under
+`%LOCALAPPDATA%\hermes\hermes-agent\venv\`. uv copies `python.exe` as
+`pythonw.exe` in the venv `Scripts\` directory — both are the same size
+and both have a **CONSOLE** subsystem PE header. Renaming the file or
+updating the script path to `pythonw.exe` has no effect because the
+binary itself is a console executable.
+
+Furthermore, the real `pythonw.exe` from uv's managed Python installation
+has a **GUI** subsystem header but depends on `python311.dll`,
+`python3.dll`, and `vcruntime140*.dll` from that same Python directory.
+Copying it alone into the venv `Scripts\` yields exit code
+`STATUS_DLL_NOT_FOUND` (0xC0000135).
+
+**Fix — two steps:**
+
+1. Copy the real `pythonw.exe` from uv's Python installation into the
+   venv `Scripts\` directory:
+   ```powershell
+   # From an elevated PowerShell:
+   copy "$env:LOCALAPPDATA\hermes\hermes-agent\venv\Scripts\python.exe" "$env:LOCALAPPDATA\hermes\hermes-agent\venv\Scripts\python.exe.bak"
+   copy "$env:USERPROFILE\AppData\Roaming\uv\python\cpython-*-windows-x86_64-none\pythonw.exe" "$env:LOCALAPPDATA\hermes\hermes-agent\venv\Scripts\pythonw.exe"
+   ```
+
+2. Copy the required DLLs alongside it:
+   ```powershell
+   $uvPy = Resolve-Path "$env:USERPROFILE\AppData\Roaming\uv\python\cpython-*-windows-x86_64-none"
+   copy "$uvPy\python3.dll" "$env:LOCALAPPDATA\hermes\hermes-agent\venv\Scripts\"
+   copy "$uvPy\python311.dll" "$env:LOCALAPPDATA\hermes\hermes-agent\venv\Scripts\"
+   copy "$uvPy\vcruntime140.dll" "$env:LOCALAPPDATA\hermes\hermes-agent\venv\Scripts\"
+   copy "$uvPy\vcruntime140_1.dll" "$env:LOCALAPPDATA\hermes\hermes-agent\venv\Scripts\"
+   ```
+
+Verify: the new `pythonw.exe` should be larger (~90 KB vs ~47 KB) and
+identified as `GUI` subsystem:
+```bash
+file /c/Users/<you>/AppData/Local/hermes/hermes-agent/venv/Scripts/pythonw.exe
+# → PE32+ executable for MS Windows 6.00 (GUI), x86-64
+```
+
+After the fix, restart the gateway: `hermes gateway restart`.
+
+Full reproduction and troubleshooting: `references/windows-gateway-pythonw-silent.md`.
+
+**⚠ uv-venv pitfall:** `uv` may copy `python.exe` as `pythonw.exe` (same
+file size, Console subsystem). The real `pythonw.exe` has a GUI subsystem
+(~90KB vs ~47KB for Python 3.11) and needs its companion DLLs
+(`python3.dll`, `python311.dll`, `vcruntime*.dll`) alongside it. If the
+popup persists after the `pythonw.exe` change, check with `file` / `ls -la`
+— see `references/windows-gateway-pythonw-fake.md` for the full fix
+with copy commands.
+
+**⚠️ Pitfall — uv-created venvs have a FAKE `pythonw.exe`.** When uv creates
+a virtual environment (`uv venv` or `hermes` installation), it copies
+`python.exe` as `pythonw.exe` — same file size, same CONSOLE subsystem flag
+in the PE header. This means the scheduled task still shows a console window
+even after the .cmd file is switched to `pythonw.exe`.
+
+**Verify with:**
+```bash
+ls -la venv/Scripts/python*.exe
+# If both are the same size (e.g. 47104), pythonw.exe is a fake.
+file venv/Scripts/pythonw.exe
+# Should say "(GUI)", not "(console)"
+```
+
+**Fix — copy the real `pythonw.exe` from the parent Python installation:**
+```bash
+# uv-managed Python — find it via the venv's pyvenv.cfg:
+grep "^home = " venv/pyvenv.cfg
+# home = C:\Users\<you>\AppData\Roaming\uv\python\cpython-3.11-windows-x86_64-none
+cp "<home>/pythonw.exe" venv/Scripts/pythonw.exe
+```
+
+The real `pythonw.exe` is consistently larger (~90KB vs ~47KB) and has
+the `(GUI)` subsystem flag. After replacement, restart the gateway service
+(no console window on next login). The scheduled task's .cmd script already
+uses `pythonw.exe`, so the fix takes effect immediately on restart.
+
+**`terminal.cwd` in config.yaml — MSYS path resolution gotcha.** The
+Gateway's agent runs the local terminal backend via Python subprocess
+(git-bash/MSYS). If `terminal.cwd` is set to a native Windows path like
+`D:\Code\my_workplace`, the backend passes it through MSYS as
+`/d/Code/my_workplace`, which may resolve to a different location or
+not exist at all. The agent then falls back to `/` repeatedly, causing
+a stream of `LocalEnvironment cwd '...' is missing on disk; falling
+back to '/'` warnings. **Fix:** leave `cwd: .` (the default) in
+config.yaml — the agent uses its own CWD resolution internally. Custom
+`cwd` values should use forward-slash paths (e.g. `/d/Code/work`) and
+only when absolutely necessary.
+
+**Cleanup after switching from Startup folder to Scheduled Task.** Remove
+the old startup entry and any git-bash management scripts:
+```
+rm "$APPDATA/Microsoft/Windows/Start Menu/Programs/Startup/Hermes_Gateway.cmd"
+rm ~/hermes-gateway-start.sh ~/hermes-gateway-stop.sh
+```
+
+### PowerShell from git-bash
+
+When running PowerShell commands through the `terminal` tool on Windows
+(git-bash/MSYS), **bash consumes `$_` before PowerShell sees it**, causing
+syntax errors like `Unexpected token 'C:\\Users\\...'`. Always escape as
+`\\$` or use a `.ps1` script file (preferred for complex queries).
+
+Full guide with examples: `references/windows-powershell-gitbash-quoting.md`.
+
+---
+
 ## Troubleshooting
 
 ### Voice not working
@@ -655,14 +1062,16 @@ terminal(command="tmux new-session -d -s resumed 'hermes --resume 20260225_14305
 1. `hermes tools` — check if toolset is enabled for your platform
 2. Some tools need env vars (check `.env`)
 3. `/reset` after enabling tools
-4. **Browser tool on WSL**: If `browser_navigate` hangs, the issue is usually a missing Chrome/Chromium binary — not a network problem. See `references/browser-tool-wsl.md` for install methods without sudo.
 
 ### Model/provider issues
 1. `hermes doctor` — check config and dependencies
 2. `hermes login` — re-authenticate OAuth providers
 3. Check `.env` has the right API key
-4. **Gateway uses config.yaml, not /model slash command**: CLI session model can differ from the gateway's model. If a user says "my [platform] bot isn't using the right model", compare the CLI header model vs `grep -A3 '^model:' ~/.hermes/config.yaml`. See `references/gateway-model-mismatch.md`.
-5. **Copilot 403**: `gh auth login` tokens do NOT work for Copilot API. You must use the Copilot-specific OAuth device code flow via `hermes model` → GitHub Copilot.
+4. **Copilot 403**: `gh auth login` tokens do NOT work for Copilot API. You must use the Copilot-specific OAuth device code flow via `hermes model` → GitHub Copilot.
+5. **`developer` role rejected (HTTP 400)** — Some providers (DeepSeek, Gemini, Claude aggregators) reject `role: "developer"`:
+   - Check session files under `~/.hermes/sessions/` for messages with `role: "developer"` — search across files: `grep -l '"role": "developer"' ~/.hermes/sessions/*.json`
+   - If found, the session was pre-constructed with developer role. The transport's role-swap only handles `system→developer` for gpt-5/codex models, not the reverse.
+   - Fix: add a defensive `developer→system` downgrade in `agent/transports/chat_completions.py` before the existing swap block. See `references/provider-role-compatibility.md` for full diagnosis recipe and patch.
 
 ### Changes not taking effect
 - **Tools/skills:** `/reset` starts a new session with updated toolset
@@ -674,118 +1083,62 @@ terminal(command="tmux new-session -d -s resumed 'hermes --resume 20260225_14305
 2. `hermes skills config` — check platform enablement
 3. Load explicitly: `/skill name` or `hermes -s name`
 
+### Web UI (hermes-web-ui) setup
+
+The Hermes Web UI (`hermes-web-ui`) provides a browser dashboard for chat, platform configuration, cron jobs, skills browsing, and usage analytics. Installed via npm — see `references/hermes-web-ui-setup.md` for installation, Node.js version management (requires v23+, use fnm), Gateway port coordination, and troubleshooting.
+
 ### Gateway issues
 Check logs first:
 ```bash
 grep -i "failed to send\|error" ~/.hermes/logs/gateway.log | tail -20
 ```
 
+**Gateway slow-start with multiple platforms.** When the gateway has
+multiple messaging platforms configured (e.g. api_server + feishu + weixin),
+startup connects sequentially: api_server first (~1s), then feishu (~60-120s
+websocket connect), then weixin. During this window the API server **port
+is listening but requests time out** because the gateway hasn't finished
+initializing all platform connections. This is normal — wait until you
+see `Gateway running with N platform(s)` in the log. If you need the API
+server to be responsive immediately, consider running a platform-only
+gateway or accepting the startup delay. This is a cosmetic wait, not a crash.
+
 Common gateway problems:
 - **Gateway dies on SSH logout**: Enable linger: `sudo loginctl enable-linger $USER`
 - **Gateway dies on WSL2 close**: WSL2 requires `systemd=true` in `/etc/wsl.conf` for systemd services to work. Without it, gateway falls back to `nohup` (dies when session closes).
 - **Gateway crash loop**: Reset the failed state: `systemctl --user reset-failed hermes-gateway`
 
-### Bot not responding (no reply to DMs)
-
-Systematic diagnosis when a configured platform bot doesn't reply to messages:
-
-1. **Is the gateway running?** → `hermes gateway status`. If it shows a systemd service, the gateway IS running even if `ps` seems to show nothing (systemd forks processes). If "not running", start it with `tmux new-session -d -s hermes 'hermes gateway run'` (tmux persistence) or via `systemctl --user start hermes-gateway`.
-
-2. **Is the platform actually connected?** → Check the gateway startup output for `✓ <platform> connected`. For Feishu, look for `connected to wss://msg-frontier.feishu.cn`. For WeChat, look for `weixin connected`. If it doesn't appear, the platform adapter failed to initialize — check env vars next.
-
-3. **Are the env vars set?** → `grep -i "FEISHU\|WEIXIN\|WECHAT\|TELEGRAM\|DISCORD" ~/.hermes/.env`. Missing env vars are the #1 cause of silent platforms — the gateway logs which platforms it skipped at startup.
-
-4. **Check gateway logs for inbound messages** → `grep "inbound message\|Connected" ~/.hermes/logs/gateway.log | tail -10`. If no inbound messages appear, the platform connection itself is broken (bad token, expired auth, network issue). If messages DO appear, the agent is processing but something went wrong downstream.
-
-5. **Check for response errors** → `grep -i "failed to send\|error\|exception\|traceback" ~/.hermes/logs/gateway.log | tail -20`. Often the agent responds but the platform rejects the payload (rate limit, attachment too large, permission denied).
-
-6. **TMUX session immediately disappears** → This means a gateway process is already running (systemd service or another tmux session). `tmux list-sessions` will show nothing. Fix: find and stop the existing process via `systemctl --user stop hermes-gateway` or `kill <PID>` before creating a new tmux session.
-
-7. **For Feishu specifically**: Verify the app is **published and approved** in the Feishu Open Platform console. Unpublished apps don't receive messages. Check `Bot capability` is enabled in app permissions.
-
-8. **Restart to apply changes**: `systemctl --user restart hermes-gateway` or kill the tmux session and recreate it. Then wait 5 seconds and check the startup log for connection confirmations.
-
-**Quick sanity check** (for platforms with REST APIs like Feishu):
-```bash
-source ~/.hermes/.env
-curl -s -X POST https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal \
-  -H "Content-Type: application/json" \
-  -d "{\"app_id\":\"$FEISHU_APP_ID\",\"app_secret\":\"$FEISHU_APP_SECRET\"}" | python3 -c "import sys,json; d=json.load(sys.stdin); print('OK' if d.get('code')==0 else 'FAIL: '+d.get('msg',''))"
-```
-
-Also see `references/gateway-diagnosis-feishu.md` for a walkthrough of a real Feishu diagnosis session.
-
-### Gateway Architecture — Single Process, Multiple Platforms
-
-The gateway runs as a **single process** that handles ALL configured platforms simultaneously (Feishu, WeChat, Telegram, Discord, etc.) — there is **one gateway, not one per platform**. The `--domain` and `--platform` flags shown in some old notes do not exist in the current CLI and should be ignored.
-
-On WSL with systemd enabled (`systemd=true` in `/etc/wsl.conf`), the gateway runs as a systemd service managed by `systemctl --user`. On WSL without systemd, use tmux.
-
-**Checking what's actually running:**
-```bash
-hermes gateway status        # shows systemd service status + PID
-ps aux | grep hermes_gateway | grep -v grep  # show raw processes
-```
-
-### Persisting the gateway on WSL
-
-**With systemd** (recommended — enables startup on boot and survives logout):
-```bash
-hermes gateway status              # confirm it's running via systemd
-systemctl --user enable hermes-gateway   # enable at boot
-systemctl --user restart hermes-gateway  # restart after config changes
-```
-
-**Without systemd** — use tmux:
-```bash
-# Kill any existing gateway first to avoid port conflicts
-pkill -f 'hermes gateway' 2>/dev/null; sleep 1
-
-# Create persistent gateway session
-tmux new-session -d -s hermes 'hermes gateway run'
-
-# Check output
-tmux capture-pane -t hermes -p | tail -10
-
-# Attach to see live output
-tmux attach -t hermes
-
-# Kill when needed
-tmux kill-session -t hermes
-```
-
-**TMUX sessions disappearing immediately** usually means the gateway is already running under systemd or another process (check `hermes gateway status` and `ps aux | grep hermes_gateway`). The new tmux session fails with "already running". Fix: stop the existing instance first via `systemctl --user stop hermes-gateway` or `kill <PID>`.
-
 ### Platform-specific issues
 - **Discord bot silent**: Must enable **Message Content Intent** in Bot → Privileged Gateway Intents.
 - **Slack bot only works in DMs**: Must subscribe to `message.channels` event. Without it, the bot ignores public channels.
-- **Windows HTTP 400 "No models provided"**: Config file encoding issue (BOM). Ensure `config.yaml` is saved as UTF-8 without BOM.
-- **Windows PowerShell execution policy**: If `install.ps1` fails, run `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass` first, or append `-ExecutionPolicy Bypass` to the install command.
-
-### Gateway model mismatch — CLI model vs gateway model
-
-The CLI session and the gateway read model config from **different sources**:
-
-| Context | Model source |
-|---------|-------------|
-| CLI session | `config.yaml` → `model.default` at session start, OR `/model` override mid-session |
-| Gateway | `config.yaml` → `model.default` only (reads at startup) |
-
-If you change the model via `/model deepseek-v4-flash` in a CLI session, it does NOT update `config.yaml` — it only affects that CLI session. The gateway continues with whatever `model.default` was in `config.yaml` when it started.
-
-**How to fix:** When you want ALL platforms (gateway, cron jobs) to switch models:
-1. Update `config.yaml`: `hermes config set model <new-model>` (or edit `~/.hermes/config.yaml` directly)
-2. Restart gateway: `systemctl --user restart hermes-gateway` or `tmux kill-session -t hermes` then `tmux new -s hermes 'hermes gateway run'`
-3. Verify: Check gateway logs for `✓ feishu connected` / `✓ weixin connected`
-
-Without restarting, the gateway will continue using the old model — appearing as if it's "ignoring" the model change. This is by design: the gateway is a long-running process that pins its config at startup for stability.
-
+- **Windows-specific issues** (`Alt+Enter` newline, WinError 10106, UTF-8 BOM config, test suite, line endings): see the dedicated **Windows-Specific Quirks** section above.
 ### Auxiliary models not working
-If `auxiliary` tasks (vision, compression, session_search) fail silently, the `auto` provider can't find a backend. Either set `OPENROUTER_API_KEY` or `GOOGLE_API_KEY`, or explicitly configure each auxiliary task's provider:
+
+If `auxiliary` tasks (vision, compression, session_search, **title_generation**, curator, etc.) fail, the `auto` provider can't find a backend. Either set `OPENROUTER_API_KEY` or `GOOGLE_API_KEY`, or explicitly configure each auxiliary task's provider:
 ```bash
 hermes config set auxiliary.vision.provider <your_provider>
 hermes config set auxiliary.vision.model <model_name>
 ```
+
+**Common pitfall — title_generation with minimax-cn:** If `auxiliary.title_generation` is configured with `provider: minimax-cn` but `MINIMAX_CN_API_KEY` is not set, you'll get:
+```
+⚠ Auxiliary title generation failed: Provider 'minimax-cn' is set in config.yaml but no API key was found.
+```
+Fix by switching it to `auto` (or a provider you have configured):
+```bash
+hermes config set auxiliary.title_generation.provider auto
+```
+This makes title generation use the same provider as the main model.
+
+**Watch out — model field may still be stale after switching to `auto`.** If the provider is already `auto` but you still see:
+```
+⚠ Auxiliary title generation failed: HTTP 401: Model MiniMax-M2.7 not supported
+```
+The `model` field is still pinned to the old MiniMax model. `auto` provider resolves via the main provider's endpoint, but sends whatever model name is set in this section — so the endpoint rejects it if that model isn't served there. Fix by clearing the model:
+```bash
+hermes config set auxiliary.title_generation.model ""
+```
+This makes `auto` fall through to the main model (e.g. `deepseek-v4-flash`). Verify with `hermes config` and check that both `provider: auto` and `model: ''` are set under `auxiliary.title_generation`.
 
 ---
 
@@ -800,12 +1153,12 @@ hermes config set auxiliary.vision.model <model_name>
 | Provider setup | `hermes model` or [Providers guide](https://hermes-agent.nousresearch.com/docs/integrations/providers) |
 | Platform setup | `hermes gateway setup` or [Messaging docs](https://hermes-agent.nousresearch.com/docs/user-guide/messaging/) |
 | MCP servers | `hermes mcp list` or [MCP guide](https://hermes-agent.nousresearch.com/docs/user-guide/features/mcp) |
-| Persona & specialization | Edit `references/agent-persona-specialization.md` or use `/personality` / Profiles |
 | Profiles | `hermes profile list` or [Profiles docs](https://hermes-agent.nousresearch.com/docs/user-guide/profiles) |
 | Cron jobs | `hermes cron list` or [Cron docs](https://hermes-agent.nousresearch.com/docs/user-guide/features/cron) |
 | Memory | `hermes memory status` or [Memory docs](https://hermes-agent.nousresearch.com/docs/user-guide/features/memory) |
 | Env variables | `hermes config env-path` or [Env vars reference](https://hermes-agent.nousresearch.com/docs/reference/environment-variables) |
 | CLI commands | `hermes --help` or [CLI reference](https://hermes-agent.nousresearch.com/docs/reference/cli-commands) |
+| Web UI setup | `references/hermes-web-ui-setup.md` | |
 | Gateway logs | `~/.hermes/logs/gateway.log` |
 | Session files | `~/.hermes/sessions/` or `hermes sessions browse` |
 | Source code | `~/.hermes/hermes-agent/` |
@@ -901,6 +1254,44 @@ python -m pytest tests/tools/ -q            # Specific area
 - Tests auto-redirect `HERMES_HOME` to temp dirs — never touch real `~/.hermes/`
 - Run full suite before pushing any change
 - Use `-o 'addopts='` to clear any baked-in pytest flags
+
+**Windows contributors:** `scripts/run_tests.sh` currently looks for POSIX venvs (`.venv/bin/activate` / `venv/bin/activate`) and will error out on Windows where the layout is `venv/Scripts/activate` + `python.exe`. The Hermes-installed venv at `venv/Scripts/` also has no `pip` or `pytest` — it's stripped for end-user install size. Workaround: install pytest + pytest-xdist + pyyaml into a system Python 3.11 user site (`/c/Program Files/Python311/python -m pip install --user pytest pytest-xdist pyyaml`), then run tests directly:
+
+```bash
+export PYTHONPATH="$(pwd)"
+"/c/Program Files/Python311/python" -m pytest tests/tools/test_foo.py -v --tb=short -n 0
+```
+
+Use `-n 0` (not `-n 4`) because `pyproject.toml`'s default `addopts` already includes `-n`, and the wrapper's CI-parity story doesn't apply off-POSIX.
+
+**Cross-platform test guards:** tests that use POSIX-only syscalls need a skip marker. Common ones already in the codebase:
+- Symlink creation → `@pytest.mark.skipif(sys.platform == "win32", reason="Symlinks require elevated privileges on Windows")` (see `tests/cron/test_cron_script.py`)
+- POSIX file modes (0o600, etc.) → `@pytest.mark.skipif(sys.platform.startswith("win"), reason="POSIX mode bits not enforced on Windows")` (see `tests/hermes_cli/test_auth_toctou_file_modes.py`)
+- `signal.SIGALRM` → Unix-only (see `tests/conftest.py::_enforce_test_timeout`)
+- Live Winsock / Windows-specific regression tests → `@pytest.mark.skipif(sys.platform != "win32", reason="Windows-specific regression")`
+
+**Monkeypatching `sys.platform` is not enough** when the code under test also calls `platform.system()` / `platform.release()` / `platform.mac_ver()`. Those functions re-read the real OS independently, so a test that sets `sys.platform = "linux"` on a Windows runner will still see `platform.system() == "Windows"` and route through the Windows branch. Patch all three together:
+
+```python
+monkeypatch.setattr(sys, "platform", "linux")
+monkeypatch.setattr(platform, "system", lambda: "Linux")
+monkeypatch.setattr(platform, "release", lambda: "6.8.0-generic")
+```
+
+See `tests/agent/test_prompt_builder.py::TestEnvironmentHints` for a worked example.
+
+### Extending the system prompt's execution-environment block
+
+Factual guidance about the host OS, user home, cwd, terminal backend, and shell (bash vs. PowerShell on Windows) is emitted from `agent/prompt_builder.py::build_environment_hints()`. This is also where the WSL hint and per-backend probe logic live. The convention:
+
+- **Local terminal backend** → emit host info (OS, `$HOME`, cwd) + Windows-specific notes (hostname ≠ username, `terminal` uses bash not PowerShell).
+- **Remote terminal backend** (anything in `_REMOTE_TERMINAL_BACKENDS`: `docker, singularity, modal, daytona, ssh, vercel_sandbox, managed_modal`) → **suppress** host info entirely and describe only the backend. A live `uname`/`whoami`/`pwd` probe runs inside the backend via `tools.environments.get_environment(...).execute(...)`, cached per process in `_BACKEND_PROBE_CACHE`, with a static fallback if the probe times out.
+- **Key fact for prompt authoring:** when `TERMINAL_ENV != "local"`, *every* file tool (`read_file`, `write_file`, `patch`, `search_files`) runs inside the backend container, not on the host. The system prompt must never describe the host in that case — the agent can't touch it.
+
+Full design notes, the exact emitted strings, and testing pitfalls:
+`references/prompt-builder-environment-hints.md`.
+
+**Refactor-safety pattern (POSIX-equivalence guard):** when you extract inline logic into a helper that adds Windows/platform-specific behavior, keep a `_legacy_<name>` oracle function in the test file that's a verbatim copy of the old code, then parametrize-diff against it. Example: `tests/tools/test_code_execution_windows_env.py::TestPosixEquivalence`. This locks in the invariant that POSIX behavior is bit-for-bit identical and makes any future drift fail loudly with a clear diff.
 
 ### Commit Conventions
 

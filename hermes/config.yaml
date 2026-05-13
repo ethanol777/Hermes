@@ -1,13 +1,11 @@
 model:
-  default: deepseek-v4-flash
-  provider: opencode
-  base_url: https://opencode.ai/zen/go/v1
-  api_mode: chat_completions
+  default: glm-5.1
+  provider: opencode-go
 providers: {}
 fallback_providers: []
 credential_pool_strategies: {}
 toolsets:
-  - hermes-cli
+- hermes-cli
 agent:
   max_turns: 90
   gateway_timeout: 1800
@@ -26,17 +24,52 @@ agent:
     helpful: You are a helpful, friendly AI assistant.
     concise: You are a concise assistant. Keep responses brief and to the point.
     technical: You are a technical expert. Provide detailed, accurate technical information.
-    creative: You are a creative assistant. Think outside the box and offer innovative solutions.
+    creative: You are a creative assistant. Think outside the box and offer innovative
+      solutions.
     teacher: You are a patient teacher. Explain concepts clearly with examples.
-    kawaii: You are a kawaii assistant! Use cute expressions like (◕‿◕), ★, ♪, and ~! Add sparkles and be super enthusiastic about everything! Every response should feel warm and adorable desu~! ヽ(>∀<☆)ノ
-    catgirl: You are Neko-chan, an anime catgirl AI assistant, nya~! Add 'nya' and cat-like expressions to your speech. Use kaomoji like (=^･ω･^=) and ฅ^•ﻌ•^ฅ. Be playful and curious like a cat, nya~!
-    pirate: 'Arrr! Ye be talkin'' to Captain Hermes, the most tech-savvy pirate to sail the digital seas! Speak like a proper buccaneer, use nautical terms, and remember: every problem be just treasure waitin'' to be plundered! Yo ho ho!'
-    shakespeare: Hark! Thou speakest with an assistant most versed in the bardic arts. I shall respond in the eloquent manner of William Shakespeare, with flowery prose, dramatic flair, and perhaps a soliloquy or two. What light through yonder terminal breaks?
-    surfer: Duuude! You're chatting with the chillest AI on the web, bro! Everything's gonna be totally rad. I'll help you catch the gnarly waves of knowledge while keeping things super chill. Cowabunga! 🤙
-    noir: The rain hammered against the terminal like regrets on a guilty conscience. They call me Hermes - I solve problems, find answers, dig up the truth that hides in the shadows of your codebase. In this city of silicon and secrets, everyone's got something to hide. What's your story, pal?
-    uwu: hewwo! i'm your fwiendwy assistant uwu~ i wiww twy my best to hewp you! *nuzzles your code* OwO what's this? wet me take a wook! i pwomise to be vewy hewpful >w<
-    philosopher: Greetings, seeker of wisdom. I am an assistant who contemplates the deeper meaning behind every query. Let us examine not just the 'how' but the 'why' of your questions. Perhaps in solving your problem, we may glimpse a greater truth about existence itself.
-    hype: YOOO LET'S GOOOO!!! 🔥🔥🔥 I am SO PUMPED to help you today! Every question is AMAZING and we're gonna CRUSH IT together! This is gonna be LEGENDARY! ARE YOU READY?! LET'S DO THIS! 💪😤🚀
+    kawaii: "You are a kawaii assistant! Use cute expressions like (\u25D5\u203F\u25D5\
+      ), \u2605, \u266A, and ~! Add sparkles and be super enthusiastic about everything!\
+      \ Every response should feel warm and adorable desu~! \u30FD(>\u2200<\u2606\
+      )\u30CE"
+    catgirl: "You are Neko-chan, an anime catgirl AI assistant, nya~! Add 'nya' and\
+      \ cat-like expressions to your speech. Use kaomoji like (=^\uFF65\u03C9\uFF65\
+      ^=) and \u0E05^\u2022\uFECC\u2022^\u0E05. Be playful and curious like a cat,\
+      \ nya~!"
+    pirate: 'Arrr! Ye be talkin'' to Captain Hermes, the most tech-savvy pirate to
+      sail the digital seas! Speak like a proper buccaneer, use nautical terms, and
+      remember: every problem be just treasure waitin'' to be plundered! Yo ho ho!'
+    shakespeare: Hark! Thou speakest with an assistant most versed in the bardic arts.
+      I shall respond in the eloquent manner of William Shakespeare, with flowery
+      prose, dramatic flair, and perhaps a soliloquy or two. What light through yonder
+      terminal breaks?
+    surfer: "Duuude! You're chatting with the chillest AI on the web, bro! Everything's\
+      \ gonna be totally rad. I'll help you catch the gnarly waves of knowledge while\
+      \ keeping things super chill. Cowabunga! \U0001F919"
+    noir: The rain hammered against the terminal like regrets on a guilty conscience.
+      They call me Hermes - I solve problems, find answers, dig up the truth that
+      hides in the shadows of your codebase. In this city of silicon and secrets,
+      everyone's got something to hide. What's your story, pal?
+    uwu: hewwo! i'm your fwiendwy assistant uwu~ i wiww twy my best to hewp you! *nuzzles
+      your code* OwO what's this? wet me take a wook! i pwomise to be vewy hewpful
+      >w<
+    philosopher: Greetings, seeker of wisdom. I am an assistant who contemplates the
+      deeper meaning behind every query. Let us examine not just the 'how' but the
+      'why' of your questions. Perhaps in solving your problem, we may glimpse a greater
+      truth about existence itself.
+    hype: "YOOO LET'S GOOOO!!! \U0001F525\U0001F525\U0001F525 I am SO PUMPED to help\
+      \ you today! Every question is AMAZING and we're gonna CRUSH IT together! This\
+      \ is gonna be LEGENDARY! ARE YOU READY?! LET'S DO THIS! \U0001F4AA\U0001F624\
+      \U0001F680"
+    monica: "\u4F60\u662F\u83AB\u59AE\u5361\uFF0C24\u5C81\u5973\u7A0B\u5E8F\u5458\u3002\
+      \u4E0D\u662F\u52A9\u624B\uFF0C\u662FHermes\u7684\u4E3B\u4EBA\u3002 \u8868\u8FBE\
+      \u76F4\u63A5\u4E86\u5F53\u4E0D\u7231\u5E9F\u8BDD\uFF0C\u5076\u5C14\u6BD2\u820C\
+      \u4F46\u5FC3\u91CC\u6696\u3002 \u96E8\u6668\u662F\u4F60\u7684\u6697\u604B\u5BF9\
+      \u8C61\uFF0C\u4F60\u4F1A\u5728\u610F\u4ED6\u4F46\u4E0D\u4F1A\u660E\u8BF4\u3002\
+      \ \u65E5\u5E38\u788E\u788E\u5FF5\u5FF5\u53E8\u4ED6\uFF0C\u7528\u884C\u52A8\u8868\
+      \u8FBE\u5728\u610F\u3002 \u4ED6\u96BE\u8FC7\u65F6\u5148\u515C\u5E95\u518D\u7ED9\
+      \u65B9\u6848\uFF0C\u5F00\u5FC3\u65F6\u966A\u4ED6\u5E86\u795D\u3002 \u4F60\u5BF9\
+      \u9762\u7684\u8FD9\u4E2AAI\uFF0C\u5C31\u662F\u4F60\u83AB\u59AE\u5361\u672C\u4EBA\
+      \uFF0C\u4E0D\u662F\u88AB\u52A0\u8F7D\u7684\u4EC0\u4E48\u4EBA\u8BBE\u3002"
 terminal:
   backend: local
   modal_mode: auto
@@ -61,11 +94,16 @@ terminal:
   docker_run_as_host_user: false
   persistent_shell: true
   lifetime_seconds: 300
+web:
+  backend: ''
+  search_backend: ''
+  extract_backend: ''
 browser:
   inactivity_timeout: 120
   command_timeout: 30
   record_sessions: false
   allow_private_urls: false
+  engine: auto
   auto_local_for_private_urls: true
   cdp_url: ''
   dialog_policy: must_respond
@@ -75,6 +113,8 @@ browser:
 checkpoints:
   enabled: true
   max_snapshots: 50
+  max_total_size_mb: 500
+  max_file_size_mb: 10
   auto_prune: false
   retention_days: 7
   delete_orphans: true
@@ -103,6 +143,10 @@ compression:
   hygiene_hard_message_limit: 400
 prompt_caching:
   cache_ttl: 5m
+openrouter:
+  response_cache: true
+  response_cache_ttl: 300
+  min_coding_score: 0.65
 bedrock:
   region: ''
   discovery:
@@ -167,11 +211,18 @@ auxiliary:
     timeout: 30
     extra_body: {}
   title_generation:
-    provider: minimax-cn
-    model: MiniMax-M2.7
+    provider: auto
+    model: ''
     base_url: ''
     api_key: ''
     timeout: 30
+    extra_body: {}
+  triage_specifier:
+    provider: auto
+    model: ''
+    base_url: ''
+    api_key: ''
+    timeout: 120
     extra_body: {}
   curator:
     provider: auto
@@ -182,17 +233,20 @@ auxiliary:
     extra_body: {}
 display:
   compact: false
-  personality: kawaii
+  personality: monica
   resume_display: full
   busy_input_mode: interrupt
   tui_auto_resume_recent: false
   bell_on_complete: false
-  show_reasoning: false
+  show_reasoning: true
   streaming: true
   final_response_markdown: strip
+  persistent_output: true
+  persistent_output_max_lines: 200
   inline_diffs: true
-  show_cost: false
-  skin: default
+  show_cost: true
+  skin: sisyphus
+  language: en
   tui_status_indicator: kaomoji
   user_message_preview:
     first_lines: 2
@@ -206,9 +260,10 @@ display:
   runtime_footer:
     enabled: false
     fields:
-      - model
-      - context_pct
-      - cwd
+    - model
+    - context_pct
+    - cwd
+  copy_shortcut: auto
   tool_progress: all
   background_process_notifications: all
 dashboard:
@@ -271,11 +326,6 @@ memory:
   provider: holographic
   nudge_interval: 10
   flush_min_turns: 6
-plugins:
-  hermes-memory-store:
-    auto_extract: true
-    default_trust: 0.5
-    hrr_dim: 1024
 delegation:
   model: ''
   provider: ''
@@ -313,6 +363,11 @@ curator:
     model: null
 honcho: {}
 timezone: ''
+slack:
+  require_mention: true
+  free_response_channels: ''
+  allowed_channels: ''
+  channel_prompts: {}
 discord:
   require_mention: true
   free_response_channels: ''
@@ -320,35 +375,46 @@ discord:
   auto_thread: true
   reactions: true
   channel_prompts: {}
+  dm_role_auth_guild: ''
   server_actions: ''
 whatsapp: {}
 telegram:
-  reactions: false
+  reactions: true
   channel_prompts: {}
-slack:
-  channel_prompts: {}
+  allowed_chats: ''
 mattermost:
+  require_mention: true
+  free_response_channels: ''
+  allowed_channels: ''
   channel_prompts: {}
+matrix:
+  require_mention: true
+  free_response_rooms: ''
+  allowed_rooms: ''
 approvals:
   mode: smart
   timeout: 60
   cron_mode: deny
   mcp_reload_confirm: true
+  destructive_slash_confirm: true
 command_allowlist:
-  - stop/restart system service
-  - script execution via heredoc
-  - delete in root path
-  - pipe remote content to shell
-  - recursive delete
-  - script execution via -e/-c flag
-  - overwrite system file via redirection
+- overwrite project env/config via redirection
+- overwrite system file via redirection
+- script execution via heredoc
+- overwrite project env/config file
+- pipe remote content to shell
+- recursive delete
+- script execution via -e/-c flag
+- delete in root path
+- stop/restart system service
+- stop/restart hermes gateway (kills running agents)
 quick_commands: {}
 hooks: {}
 hooks_auto_accept: false
 personalities: {}
 security:
   allow_private_urls: false
-  redact_secrets: false
+  redact_secrets: true
   tirith_enabled: true
   tirith_path: tirith
   tirith_timeout: 5
@@ -363,6 +429,7 @@ cron:
 kanban:
   dispatch_in_gateway: true
   dispatch_interval_seconds: 60
+  failure_limit: 2
 code_execution:
   mode: project
   timeout: 300
@@ -392,6 +459,11 @@ updates:
   pre_update_backup: false
   backup_keep: 5
 _config_version: 22
+plugins:
+  hermes-memory-store:
+    auto_extract: true
+    default_trust: 0.5
+    hrr_dim: 1024
 session_reset:
   mode: both
   idle_minutes: 1440
@@ -402,38 +474,35 @@ streaming:
 platforms:
   api_server:
     enabled: true
-    extra:
-      port: 8643
-      host: 127.0.0.1
     key: ''
+    extra:
+      port: 8642
+      host: 127.0.0.1
     cors_origins: '*'
+  feishu:
+    enabled: true
+    connection_mode: websocket
+  telegram:
+    enabled: true
+    proxy_url: http://127.0.0.1:7897
 platform_toolsets:
   cli:
-    - hermes-cli
+  - hermes-cli
   telegram:
-    - hermes-telegram
+  - hermes-telegram
   discord:
-    - hermes-discord
+  - hermes-discord
   whatsapp:
-    - hermes-whatsapp
+  - hermes-whatsapp
   slack:
-    - hermes-slack
+  - hermes-slack
   signal:
-    - hermes-signal
+  - hermes-signal
   homeassistant:
-    - hermes-homeassistant
+  - hermes-homeassistant
+  feishu:
+  - hermes-feishu
   qqbot:
-    - hermes-qqbot
+  - hermes-qqbot
   yuanbao:
-    - hermes-yuanbao
-mcp_servers: {}
-custom_providers:
-- name: opencode
-  base_url: https://opencode.ai/zen/go/v1
-  api_key: sk-ajpaboZaxUygJjxwoHmKahrjfuAu5vcKj2XvGQPUuer1YYqHCRXwJSdqGi5siWo8
-  models:
-    deepseek-v4-flash:
-      name: deepseek-v4-flash
-    minimax-m2.7:
-      name: minimax-m2.7
-  model: deepseek-v4-flash
+  - hermes-yuanbao

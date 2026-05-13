@@ -208,12 +208,33 @@ UPLOAD=$(curl -s -X POST "https://open.feishu.cn/open-apis/im/v1/images" \
   -F "image=@/path/to/image.png")
 IMAGE_KEY=$(echo "$UPLOAD" | python3 -c "import sys,json; print(json.load(sys.stdin)['data']['image_key'])")
 
-# Step 2: Send the image message
-CONTENT=$(python3 -c "import json; print(json.dumps({'image_key': '$IMAGE_KEY'}))")
+# Step 2: Send the image message — ⚠️ MUST use -d @file, NOT inline JSON
+# Inline -d '{"receive_id":"...","content":"..."}' causes code 9499 Bad Request
+# due to shell escaping corruption of the nested JSON content field.
+# Write payload to a temp file instead:
+
+cat > /tmp/feishu_payload.json << 'PYEOF'
+{"receive_id": "USER_OPEN_ID", "msg_type": "image", "content": "{\"image_key\":\"IMAGE_KEY\"}"}
+PYEOF
+# Then substitute the actual values (perl/sed substitute in place)
+# Or write the file from Python to avoid shell escaping entirely:
+python3 -c "
+import json
+payload = {
+    'receive_id': '$USER_OPEN_ID',
+    'msg_type': 'image',
+    'content': json.dumps({'image_key': '$IMAGE_KEY'})
+}
+with open('/tmp/feishu_payload.json', 'w') as f:
+    json.dump(payload, f, ensure_ascii=False)
+"
+
 curl -s -X POST "https://open.feishu.cn/open-apis/im/v1/messages?receive_id_type=open_id" \
   -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
-  -d "{\"receive_id\":\"$USER_OPEN_ID\",\"msg_type\":\"image\",\"content\":\"$CONTENT\"}"
+  -d @/tmp/feishu_payload.json
+
+rm -f /tmp/feishu_payload.json
 ```
 
 - `image_type`: `"message"` for chat images, `"doc"` for document images
@@ -423,6 +444,12 @@ For detailed HN Algolia API query patterns (date ranges, point thresholds, keywo
 ### Python Runtime Note
 
 The hermes venv at `/home/ethanol/.hermes/hermes-agent/venv/bin/python3` has **no pip module**. If installing Python packages is needed, use system python3 or a different interpreter. The venv is sealed for dependency isolation.
+
+**Windows SRE module mismatch**: On this Windows machine, system `python3` (from PATH at `C:\Users\77\AppData\Roaming\uv\python\cpython-3.11-windows-x86_64-none\`) has a broken `re` module (`AssertionError: SRE module mismatch`). JSON parsing in bash pipes (`| python3 -c "import sys,json..."`) will fail with `SRE module mismatch`. Workaround: use the Hermes venv python at a known-good path:
+```bash
+/c/Users/77/AppData/Local/hermes/hermes-agent/venv/Scripts/python.exe -c "import sys,json; ..."
+```
+This venv python is reliable for JSON parsing. The token fetch commands in this skill use `| python3 -c ...` which will fail on this machine — substitute with the full path when on Windows.
 
 ### Environment Variables
 

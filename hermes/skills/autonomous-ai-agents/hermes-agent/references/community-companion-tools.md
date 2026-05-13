@@ -163,7 +163,52 @@ hermes chat -q "Reply with OK and nothing else."
 Drop-in plugin — no config rewrite. Installs to `~/.hermes/plugins/`.
 Auto-loads on gateway boot via `pre_tool_call` hook. Zero config.
 
-### hermes-web-search-plus
+### hermes-web-ui (Web Dashboard)
+
+**Repo:** github.com/EKKOLearnAI/hermes-web-ui (4.7k ⭐)
+
+Full-featured web dashboard for Hermes Agent: AI chat with streaming, multi-session management, platform config, usage analytics, cron job management, skill browser, file manager.
+
+**Install:**
+```bash
+npm install -g hermes-web-ui
+```
+
+**Prerequisites:**
+- Node.js v23+ (v22 will show "请升级到23以上版本" error)
+- Hermes Gateway running with `api_server` platform enabled
+- `API_SERVER_KEY` set in `~/.hermes/.env`
+- Gateway API server must be reachable (default port 8642, set in config.yaml)
+
+**Usage:**
+```bash
+hermes-web-ui start        # starts on port 8648
+hermes-web-ui restart      # restart for config changes
+hermes-web-ui status       # check running state
+hermes-web-ui stop         # stop the server
+```
+
+**Integration details:**
+- Web UI reads Hermes config from `~/.hermes/config.yaml` automatically
+- It auto-discovers profiles and manages Gateway instances
+- If Gateway is already running (e.g. from a scheduled task), web UI detects it and may reassign ports
+- Generates its own auth token on first start (printed to console)
+- Access at `http://localhost:8648/#/?token=<token>`
+- Session data stored in SQLite at `~/.hermes-web-ui/`
+- Logs at `~/.hermes-web-ui/logs/server.log`
+
+**Windows/fnm notes:**
+- Ensure fnm default is set to v23+ before running:
+  ```bash
+  fnm install 23 && fnm default 23 && fnm use 23
+  npm install -g hermes-web-ui
+  hermes-web-ui restart
+  ```
+- After switching Node versions, reinstall the package under the new default
+
+---
+
+
 
 **Repo:** github.com/robbyczgw-cla/hermes-web-search-plus
 

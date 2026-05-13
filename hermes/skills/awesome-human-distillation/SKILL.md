@@ -281,6 +281,15 @@ description: >
 
 详细安装指南见 `references/hermes-install-guide.md`（含已验证案例、分支选择、工具兼容性说明）
 
+## 集成策略
+
+对于关系类、人格类、思维框架类蒸馏 skill，推荐 **吸收式集成** 而非安装式集成——阅读 skill 内容后把精华写入 `SOUL.md` 和 `memory`，不保留独立 skill 文件。详见 `references/absorb-into-soul.md`。
+
+适用吸收式集成的典型类别：
+- 亲密关系类（伴侣/Crush/现任/初恋/前任/相亲）
+- 家庭关系类（父母/重逢）
+- 公众人物思维模式类（视情况，部分适合按需加载的书架模式）
+
 ---
 
 ## 注意事项
