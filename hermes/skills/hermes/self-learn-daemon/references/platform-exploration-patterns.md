@@ -70,6 +70,23 @@ curl -sL "https://api.zhihu.com/topstory/hot-lists/total?limit=5" \
 - API 接口有反爬（返回 -352），不要依赖 API。浏览器拿到的页面内容完整。
 - `browser_click` 点击排行视频条目一般不会导航到视频页（SPA 拦截）。需要用 JS 取链接。
 
+**查找特定视频的两个方法：**
+
+**方法 A：排行榜盲扫（适合不知道看什么）**
+用 browser_console 提取所有 BV 链接：
+```javascript
+Array.from(document.querySelectorAll('a[href*="/video/BV"]'))
+  .filter((a,i,arr) => arr.indexOf(a)===i)
+  .map(a => ({text: a.textContent.trim().substring(0,60), href: a.href}))
+```
+
+**方法 B：搜索 URL 精确查找（适合知道想看什么）**
+当在排行榜看到感兴趣的视频标题后，不要尝试在排行页点击——直接构造搜索 URL：
+```
+https://search.bilibili.com/all?keyword={URL编码的关键词}
+```
+搜索结果页中的链接可以直接 `browser_navigate` 进入视频详情页。比在排行页硬点链接可靠得多。
+
 **提取视频 URL 的有效方式：**
 ```
 // 方法一：浏览器控制台搜索页面中所有链接，按文本内容过滤
@@ -105,6 +122,14 @@ document.querySelector('a[href*="关键路径片段"]')?.href
 - 完全不需要登录，无验证码/反爬
 - 每篇有分数 + 评论数，可快速判断话题热度
 - 内容质量高：技术（新框架、论文、语言特性）、文化（数字主权、隐私）、商业（产品发布、公司动态）、社会（监管、伦理）
+
+**⚠️ 始终从首页进，不要直接导航到 item?id= 页面：**
+- `browser_navigate('https://news.ycombinator.com/item?id=...')` 直接进评论页可能返回**空页面**（2026-05-14 实测多个 item 全部为空，疑似无头浏览器内容遮蔽）
+- **正确做法：** 先 `browser_navigate('https://news.ycombinator.com/')` 或 `https://news.ycombinator.com/front` 加载首页，然后：
+  - 点文章标题链接 → 直接看原文
+  - 点评论数链接（"Xcomments"）→ 看 HN 讨论
+  - 首页加载的页面内容完整，点击链接导航也正常
+- 如果 Item ID 是已知的（比如从其他地方看到的），用 `curl -sL "https://news.ycombinator.com/item?id=X"` + python 解析（见 `references/hn-curl-parsing-pattern.md`）
 
 **阅读文章内容：**
 - 大多数链接指向外部博客/新闻站，可 `browser_navigate` 进入阅读

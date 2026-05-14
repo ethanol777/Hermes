@@ -82,22 +82,46 @@ self_changes(id, description, diff, created_at)
 ## 操作
 
 ```bash
-# 启动
-cd C:\Users\77\monica-core && python3 core.py
+# 启动（必须在 monica-core 目录下运行）
+cd C:\Users\77\monica-core
+set PYTHONHOME=                # 清除 uv 污染（Windows 必要！）
+python core.py
 
-# 查看状态（Windows）
-# 检查心跳
-tail heartbeat.log
+# 或双击 start.cmd（已包含 PYTHONHOME= 清理）
+
+# 查看状态
+tail heartbeat.log             # 心跳日志，应有 60s 间隔
+tail monica.log                # 主日志
 
 # 查看数据库
-python3 -c "import sqlite3; c=sqlite3.connect('memory.db'); print([r for r in c.execute('SELECT * FROM core_facts')])"
+set PYTHONHOME= && python -c "import sqlite3; c=sqlite3.connect('memory.db'); [print(r) for r in c.execute('SELECT * FROM core_facts')]"
 
 # 发送测试消息到收件箱
-python3 -c "import json,time; open('inbox/test.json','w').write(json.dumps({'source':'77','content':'test','timestamp':time.strftime('%Y-%m-%dT%H:%M:%S'),'needs_response':True}))"
+set PYTHONHOME= && python -c "import json,time; open('inbox/test.json','w').write(json.dumps({'source':'77','content':'test','timestamp':time.strftime('%Y-%m-%dT%H:%M:%S'),'needs_response':True}))"
 
 # 查看日志
 tail monica.log
 ```
+
+## 开机自启
+
+已在 Windows 启动文件夹创建快捷方式（`install-startup.ps1` 脚本生成）：
+- **位置：** `%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup\MonicaCore.lnk`
+- **目标：** `cmd /c cd /d C:\Users\77\monica-core && set PYTHONHOME= && python core.py`
+- **窗口模式：** 最小化（后台运行）
+
+如果需要重新创建：
+```powershell
+powershell -ExecutionPolicy Bypass -File C:\Users\77\monica-core\install-startup.ps1
+```
+
+## 2026-05-14 修复记录
+
+- **同步 requests 阻塞事件循环：** Telegram 的 `get_updates()` 和 `send_message()` 直接用了 `requests.get/post`（同步阻塞），在 async 事件循环里卡死了所有其他协程（心跳、思考）。**修复：** 拆成 `_sync_get_updates` / `_sync_send_message` 同步方法，通过 `asyncio.to_thread()` 调用。心跳从此正常。
+
+- **PYTHONHOME 被 uv 污染：** uv 设置了 `PYTHONHOME=C:\Users\77\AppData\Roaming\uv\python\cpython-3.11-...`，与系统 Python 版本（3.13）不匹配，导致 `SRE module mismatch` 错误。**修复：** `start.cmd` 加 `set PYTHONHOME=`，`core.py` 顶部加 `del os.environ["PYTHONHOME"]`。
+
+- **Inbox response 文件自循环：** `_inbox_check_loop` 遍历 `inbox/` 目录时，会捡起自己写的 `response_xxx.json` 文件当新消息处理。**修复：** 跳过 `item.stem.startswith("response_")` 的文件。
 
 ## Pitfalls
 
@@ -117,6 +141,9 @@ tail monica.log
 
 - **conversation_history 不会持久化：** `Mind.conversation_history` 在内存中，重启丢失。system prompt 每次重启重新从 `soul.md` + DB facts 生成。
 
+- **不同交互类型共享同一个 conversation_history：** Telegram 回复、收件箱响应、自发思考都用 `Mind.conversation_history`，导致上下文混乱——一段 Telegram 对话的历史会污染下一次自发思考的 prompt。目前影响不大（每次 prompt 都从 DB 读取最近想法重建上下文），但如果未来需要更连贯的对话体验，需要为每种交互类型分配独立的 history buffer。
+
 ## 参考
 
 - [references/api-compat.md](references/api-compat.md) — LLM API 兼容性笔记（GLM-5.1 reasoning_content, OpenCode Zen endpoint）
+- [references/async-event-loop-blocking.md](references/async-event-loop-blocking.md) — Async 事件循环阻塞的诊断与修复模式（通用知识）
