@@ -527,8 +527,12 @@ stt:
 | MiniMax | `MINIMAX_API_KEY` | Paid |
 | Mistral (Voxtral) | `MISTRAL_API_KEY` | Paid |
 | NeuTTS (local) | None (`pip install neutts[all]` + `espeak-ng`) | Free |
+| **Piper** (local) | None (`pip install piper-tts`) | Free |
 
 Voice commands: `/voice on` (voice-to-voice), `/voice tts` (always voice), `/voice off`.
+
+**Piper TTS (local) — 中文语音配置、YAML 陷阱、模型下载、Windows 路径：**
+`references/piper-tts-windows.md`
 
 ---
 
@@ -927,7 +931,7 @@ C:\Users\<you>\AppData\Local\hermes\gateway-service\Hermes_Gateway.cmd
 The startup entry lives at:
 `%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup\Hermes_Gateway.cmd`
 
-Full reproduction recipe: `references/windows-gateway-install-encoding.md`
+Full reproduction recipe: `references/windows-gateway-install-encoding.md`\n- Windows TTS setup (Piper, Edge, YAML pitfalls): `references/tts-config-windows.md`
 Full pythonw.exe fake binary recipe: `references/windows-gateway-pythonw-fake.md`
 
 **Silent startup (no terminal window).** The scheduled task script uses
@@ -1057,6 +1061,7 @@ Full guide with examples: `references/windows-powershell-gitbash-quoting.md`.
 1. Check `stt.enabled: true` in config.yaml
 2. Verify provider: `pip install faster-whisper` or set API key
 3. In gateway: `/restart`. In CLI: exit and relaunch.
+4. **TTS config has duplicate YAML keys.** If `tts:` section has two `piper:` blocks (or any duplicated provider key), the **second one silently overrides the first** — YAML doesn't warn. This is the #1 cause of "TTS configured correctly but not using the voice I set". Check with `grep -n "  piper:" config.yaml` to confirm only one occurrence. See `references/tts-chinese-voice-setup.md` for the full fix and a Chinese-voice setup guide.
 
 ### Tool not available
 1. `hermes tools` — check if toolset is enabled for your platform
@@ -1102,6 +1107,8 @@ initializing all platform connections. This is normal — wait until you
 see `Gateway running with N platform(s)` in the log. If you need the API
 server to be responsive immediately, consider running a platform-only
 gateway or accepting the startup delay. This is a cosmetic wait, not a crash.
+
+**Telegram-specific:** `references/telegram-gateway-diagnosis.md` — proxy connection failures, DoH discovery, polling conflicts, reconnect behavior, and direct httpx/PTB test commands.
 
 Common gateway problems:
 - **Gateway dies on SSH logout**: Enable linger: `sudo loginctl enable-linger $USER`

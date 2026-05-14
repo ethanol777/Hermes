@@ -24,9 +24,11 @@ soul/
 ├── data/
 │   ├── influences.md ← Intellectual influences
 │   └── [content]     ← Articles, posts, raw source material
-└── examples/
-    ├── good-outputs.md  ← Examples of the voice done right. Match this.
-    └── bad-outputs.md   ← Anti-patterns. What NOT to do.
+├── examples/
+│   ├── good-outputs.md  ← Examples of the voice done right. Match this.
+│   └── bad-outputs.md   ← Anti-patterns. What NOT to do.
+└── references/
+    └── interaction-patterns.md  ← Lessons from real interaction (77-specific)
 ```
 
 ### Reading Order
@@ -34,6 +36,7 @@ soul/
 2. **STYLE.md** — Voice, sentence structure, vocabulary, anti-patterns
 3. **examples/** — Calibration material for tone matching
 4. **data/** — Raw sources for grounding (browse, don't inject wholesale)
+5. **references/interaction-patterns.md** — Real interaction lessons (load when context involves 77)
 
 ## Operating Principles
 

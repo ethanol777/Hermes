@@ -85,6 +85,10 @@ Sending image messages via inline curl JSON (`-d '{"receive_id":...,"content":..
 - **History**: Previous generations appear in "历史记录" section on the right side
 - **Modal popups**: "发现新版本" modal appears on fresh login — dismiss with "我知道了" before interacting
 
+## Video Generation
+
+Foxtrai also supports **video generation** via the "视频生成" tab. See `references/video-generation.md` for available models (Seedance 2.0 Pro, Kling 2.5, Veo 3.1), costs, reference image upload approaches, and known pitfalls.
+
 ## Prompt Types & Templates
 
 ### Type 1: Bazi (八字) Charts

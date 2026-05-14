@@ -1,6 +1,6 @@
 model:
   default: deepseek-v4-flash
-  provider: deepseek
+  provider: opencode-go
 providers: {}
 fallback_providers: []
 credential_pool_strategies: {}
@@ -238,8 +238,11 @@ privacy:
   redact_pii: false
 tts:
   provider: edge
+  piper:
+    voice: zh_CN-huayan-medium
+    voices_dir: C:\Users\77\AppData\Local\hermes\cache\piper-voices
   edge:
-    voice: en-US-AriaNeural
+    voice: zh-CN-XiaoxiaoNeural
   elevenlabs:
     voice_id: pNInz6obpgDQGcFmaJgB
     model_id: eleven_multilingual_v2
@@ -259,8 +262,6 @@ tts:
     ref_text: ""
     model: neuphonic/neutts-air-q4-gguf
     device: cpu
-  piper:
-    voice: en_US-lessac-medium
 stt:
   enabled: true
   provider: local
@@ -287,8 +288,8 @@ context:
 memory:
   memory_enabled: true
   user_profile_enabled: true
-  memory_char_limit: 2200
-  user_char_limit: 1375
+  memory_char_limit: 5000
+  user_char_limit: 2500
   provider: holographic
   nudge_interval: 10
   flush_min_turns: 6
