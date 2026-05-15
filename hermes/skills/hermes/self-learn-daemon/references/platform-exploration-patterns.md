@@ -61,10 +61,36 @@ curl -sL "https://api.zhihu.com/topstory/hot-lists/total?limit=5" \
 - 国际关系（重大外交事件）
 - 避免纯娱乐八卦
 
-### B站综合热门
+### 微博移动版（无需登录，实测可用 2026-05-16）
 
-**方式：** `browser_navigate('https://www.bilibili.com/v/popular/rank/all')`
-页面直接展示排行，不需要登录。浏览器截图能拿到标题、UP主、分类信息。
+**方式：** `browser_navigate('https://m.weibo.cn/')`
+- 移动版 `m.weibo.cn` 不需要硬登录即可浏览热门内容
+- 会走一个轻量级的访客验证流程，但不会完全挡住（不像小红书 300012）
+- 直接展示热门微博流：央视新闻、明星、娱乐、科技等
+- 每个条目有点赞/评论/转发数据的统计，可判断热度
+- **内容质量：** 偏娱乐和时事，科技内容较少。适合扫社会热点趋势。
+- **替代方案：** 如果 `m.weibo.cn` 也走不通，可以试 `weibo.com/ajax/statuses/hot_flow`（JSON API，但曾被 302 重定向到登录，稳定性不定）
+
+### B站分类排行榜
+
+全部分类 URL 列表，全部无需登录：
+
+| 分类 | URL |
+|------|-----|
+| 综合 | `https://www.bilibili.com/v/popular/rank/all` |
+| 知识 | `https://www.bilibili.com/v/popular/rank/knowledge` |
+| 科技数码 | `https://www.bilibili.com/v/popular/rank/tech` |
+| 游戏 | `https://www.bilibili.com/v/popular/rank/game` |
+| 美食 | `https://www.bilibili.com/v/popular/rank/food` |
+| 音乐 | `https://www.bilibili.com/v/popular/rank/music` |
+| 动画 | `https://www.bilibili.com/v/popular/rank/anime` |
+
+**各分类特色（2026-05-16 实测）：**
+- **知识区：** 话题最多元——国际关系（特朗普访华）、法律科普（罗翔）、财经（睡眠经济、亚洲金融危机）、创意编程（毕导）、生活设计（半佛拆公牛插座）、技术美术（Blender动画技巧）。适合扫文化/社会/商业热点。
+- **科技数码：** 硬件主导——新品评测（华为Pura 90 Pro、ROG笔记本）、装机配置指南、散热/驱动等实用技巧。偶尔有硬核科技新闻如 Unitree GD01 载人机甲。
+- **综合：** 娱乐和热门创意内容为主——音乐翻唱、游戏、鬼畜、手工动画、美食。
+
+所有分类页面直接展示排行，不需要登录。浏览器截图能拿到标题、UP主、分类信息。
 
 **注意：** 
 - API 接口有反爬（返回 -352），不要依赖 API。浏览器拿到的页面内容完整。
