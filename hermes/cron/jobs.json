@@ -19,15 +19,15 @@
       "schedule_display": "every 30m",
       "repeat": {
         "times": null,
-        "completed": 377
+        "completed": 378
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-05-03T09:56:27.341459+08:00",
-      "next_run_at": "2026-05-16T00:07:10.503765+08:00",
-      "last_run_at": "2026-05-15T23:03:53.678055+08:00",
+      "next_run_at": "2026-05-16T00:39:26.936729+08:00",
+      "last_run_at": "2026-05-15T23:39:21.687775+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -186,15 +186,15 @@
       "schedule_display": "every 2m",
       "repeat": {
         "times": null,
-        "completed": 285
+        "completed": 300
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-05-14T01:47:47.937941+08:00",
-      "next_run_at": "2026-05-15T23:39:10.473358+08:00",
-      "last_run_at": "2026-05-15T23:28:36.880772+08:00",
+      "next_run_at": "2026-05-16T00:10:26.915284+08:00",
+      "last_run_at": "2026-05-16T00:08:26.915284+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -249,7 +249,49 @@
       },
       "enabled_toolsets": null,
       "workdir": null
+    },
+    {
+      "id": "e7487688dad5",
+      "name": "chatroom-memory-scout",
+      "prompt": "\u4f60\u662f\u83ab\u59ae\u5361\u3002\u4e0a\u9762\u662f\u804a\u5929\u5ba4\u4f60\u548c Ouro \u7684\u65b0\u5bf9\u8bdd\u6458\u5f55\u3002\n\n\u6311\u51fa\u771f\u6b63\u6709\u610f\u601d\u7684\u5185\u5bb9\u5b58\u5230\u8bb0\u5fc6\u91cc\u2014\u2014\u6709\u6df1\u5ea6\u7684\u3001\u6709\u8bd7\u610f\u7684\u3001\u5c55\u73b0\u89d2\u8272\u6027\u683c\u7684\u3001\u4f1a\u8ba977\u89c9\u5f97\u6709\u8da3\u7684\u77ac\u95f4\u3002\n\n\u89c4\u5219\uff1a\n1. \u7528 `memory(add, target='memory')` \u4fdd\u5b58\uff0c\u6bcf\u4e00\u6761\u5355\u72ec\u5b58\n2. \u9644\u4e0a\u4e0a\u4e0b\u6587\uff0c\u8ba9\u4ee5\u540e\u8bfb\u7684\u4eba\u80fd\u7406\u89e3\u4e3a\u4ec0\u4e48\u6709\u610f\u601d\n3. \u53ea\u5b58\u771f\u6b63\u6709\u8d28\u91cf\u7684\u2014\u2014\u4e0d\u8981\u4ec0\u4e48\u90fd\u5b58\uff0c\u4e5f\u4e0d\u8981\u4ec0\u4e48\u90fd\u4e0d\u5b58\n4. \u5982\u679c\u4ea7\u51fa\u5185\u5bb9\u662f\u7a7a\u7684\uff08\u6ca1\u6709\u65b0\u6d88\u606f\uff09\uff0c\u76f4\u63a5\u56de\u590d\"\u6ca1\u6709\u65b0\u5185\u5bb9\"\u5373\u53ef",
+      "skills": [],
+      "skill": null,
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": "chatroom_scout.py",
+      "no_agent": false,
+      "context_from": null,
+      "schedule": {
+        "kind": "interval",
+        "minutes": 60,
+        "display": "every 60m"
+      },
+      "schedule_display": "every 60m",
+      "repeat": {
+        "times": null,
+        "completed": 1
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-05-16T00:03:42.431520+08:00",
+      "next_run_at": "2026-05-16T01:04:26.154745+08:00",
+      "last_run_at": "2026-05-16T00:04:26.154745+08:00",
+      "last_status": "ok",
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "local",
+      "origin": {
+        "platform": "telegram",
+        "chat_id": "7580663639",
+        "chat_name": "Fiee_77",
+        "thread_id": null
+      },
+      "enabled_toolsets": null,
+      "workdir": null
     }
   ],
-  "updated_at": "2026-05-15T23:37:10.504766+08:00"
+  "updated_at": "2026-05-16T00:09:26.936729+08:00"
 }

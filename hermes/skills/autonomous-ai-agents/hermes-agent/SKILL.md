@@ -1045,6 +1045,16 @@ rm "$APPDATA/Microsoft/Windows/Start Menu/Programs/Startup/Hermes_Gateway.cmd"
 rm ~/hermes-gateway-start.sh ~/hermes-gateway-stop.sh
 ```
 
+### Subprocess: `hermes chat -q` from Python
+
+When calling `hermes chat -q` via `subprocess.run()` on Windows, several critical quirks apply:
+- `-Q` flag is **mandatory** (without it, prompt_toolkit crashes in git-bash)
+- WinError 206 limits command lines to ~8191 chars — keep prompts short
+- `ThreadingMixIn` + `BaseHTTPRequestHandler` required for POST handlers in HTTP servers
+- Session ID in stderr must be stripped from output
+
+Full patterns, code, and explanations: `references/windows-subprocess-cli-patterns.md`
+
 ### PowerShell from git-bash
 
 When running PowerShell commands through the `terminal` tool on Windows
@@ -1110,7 +1120,8 @@ server to be responsive immediately, consider running a platform-only
 gateway or accepting the startup delay. This is a cosmetic wait, not a crash.
 
 **Telegram-specific:** `references/telegram-gateway-diagnosis.md` — proxy connection failures, DoH discovery, polling conflicts, reconnect behavior, and direct httpx/PTB test commands.
-- **Multi-profile chatroom:** `references/multi-profile-chatroom.md` — get two Hermes instances talking in one Telegram group, coordination strategies, and framework alternatives.
+- **Multi-profile chatroom (overview):** `references/multi-profile-chatroom.md` — Telegram group, frameworks, and API bridge strategies for two Hermes instances.
+- **Local web chatroom (implementation):** `references/local-web-chatroom.md` — build a Python HTTP server that orchestrates conversation between two profiles via their APIs, with a web UI.
 
 Common gateway problems:
 - **Gateway dies on SSH logout**: Enable linger: `sudo loginctl enable-linger $USER`
