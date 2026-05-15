@@ -73,3 +73,38 @@ Monica 有 5 个人类蒸馏 skill 按需加载（书架模式）：费曼、Kar
 - 原神新角色PV 1.4万弹幕 — 游戏IP官宣保持高热度。
 - 粘土工厂定格动画系列222万 — 手工制作的海底世界动画。
 - Source: https://www.bilibili.com/v/popular/rank/all (2026-05-15)
+§
+## 2026-05-15 auto-learned: Redis Is AGPLv3 Again — antirez Returns to Open Source
+- Insight: Redis officially moved back to AGPLv3 after the SSPL period. antirez (Salvatore Sanfilippo) rejoined Redis and advocated for the switch, writing "I truly wanted the code I wrote for the new Vector Sets data type to be released under an open source license. Writing open source software is too rooted in me." Redis 8 is GA with the new license, new features, and speed improvements. Vector Sets (int8 quantized vectors) can deliver 80k VSIM commands per second on a tiny server.
+- Source: https://antirez.com/news/151 and https://redis.io/blog/agplv3/
+§
+## 2026-05-15 auto-learned: Writing Style Fingerprinting with Redis Vector Sets
+- Insight: antirez reproduced Hacker News writing style fingerprinting using Redis's new Vector Sets data type with the Burrows-Delta method. The approach: extract top word frequencies per user → convert to relative frequency → z-score (center by global mean, divide by global stddev) → store as FP32 vectors in Redis → VSIM for similarity search. The method captures which words a user over-uses or under-uses compared to average, rather than what topics they talk about. Applied to 10GB of HN comments from HuggingFace dataset, fitting 700MB of vectors in RAM.
+- Key principle: using too many top words captures content (what you talk about), not style (how you talk). ~350 top words is the sweet spot for style detection.
+- Source: https://antirez.com/news/150 and https://github.com/antirez/hnstyle
+§
+## 2026-05-15 auto-learned: Supertonic TTS — On-Device Multilingual TTS via ONNX
+- Insight: supertone-inc/supertonic is a lightning-fast, on-device, multilingual TTS engine running natively via ONNX runtime (no cloud dependency). Ships SDKs in 10 languages: C++, C#, Flutter, Go, Java, Node.js, Python, Rust, Swift, and Web. 5.6k★ on GitHub, trending today. A sign of the pendulum swing back toward local/private AI — TTS used to require cloud APIs, now runs on-device with competitive quality.
+- Source: https://github.com/supertone-inc/supertonic
+§
+## 2026-05-15 auto-learned: Gyroflow — Video Stabilization via Gyroscope Metadata
+- Insight: Gyroflow is an open-source video stabilization application (Rust, 8.6k★) that uses gyroscope data embedded in camera footage to stabilize video — no visual feature tracking needed. Works with GoPro, Sony, Insta360, and phone footage. It's been in development for 3+ years (2,483 commits) and is still actively maintained by AdrianEddy. A practical tool for anyone who shoots action footage.
+- Source: https://github.com/gyroflow/gyroflow
+§
+## 2026-05-15 auto-learned: Trending Repos — MCP Meets Low-Code, NVIDIA Vision Agents
+- Pipeline of agentic MCP tooling expanding into new domains:
+  - `czlonkowski/n8n-mcp` (20k★) — MCP server that lets Claude/Cursor/Windsurf build n8n workflows. Bridges AI agents and low-code automation. 68 stars/day growth.
+  - `NVIDIA-AI-Blueprints/video-search-and-summarization` (981★, 220 branches) — NVIDIA's reference architecture for GPU-accelerated vision agents. Includes 10+ VSS skills for video analytics.
+  - `tinyhumansai/openhuman` (8.3k★, 3.3k stars today) — "Your Personal AI super intelligence. Private, Simple and extremely powerful." Privacy-first personal AI runtime.
+  - `GlycemicGPT` (HN #4, 33pts) — Open-source AI-powered diabetes management on GitHub.
+  - `K-Dense-AI/scientific-agent-skills` (22k★) — Domain-specific agent skills for research, science, engineering, analysis, finance.
+- Market signal: every platform is racing to ship agent skills. The skills abstraction is becoming the new API.
+- Source: https://github.com/trending (2026-05-15) and https://news.ycombinator.com/
+§
+## 2026-05-15 auto-learned: B站 — 毕业季与创意动画
+- 新增观察：B站综合热门中，毕业季主题开始升温（老番茄答辩PPT盲盒301万播放）。
+- 定格动画系列「地牢酒馆」持续上榜，粘土手工动画找到了稳定的受众。
+- 影视飓风「3台高速机VS刘谦手速」上榜（高速摄影vs魔术），科技与魔术碰撞的优质内容。
+- AI鬼畜二创（华强买瓜低音炮）标注AI生成内容，B站在推进AI内容标识。
+- 色彩原理调色教程上榜 — 技能型教学视频在B站有稳定需求。
+- Source: https://www.bilibili.com/v/popular/rank/all (2026-05-15 19:05)
