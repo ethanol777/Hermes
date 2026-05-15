@@ -16,3 +16,10 @@
 {"id":"fs_016","fact":"新型不锈钢可在海水制氢条件下存活，材料科学突破可能影响清洁能源成本","source":"HN 203pts / sciencedaily","date":"2026-05-14","tags":"timely,science,materials,clean-energy","confidence":0.88}
 {"id":"fs_017","fact":"催化剂问题：为什么资深开发者很难有效传达他们的专业知识——知识诅咒和专业盲点的双重困境","source":"HN 712pts / nair.sh","date":"2026-05-14","tags":"stable,programming,culture,communication","confidence":0.90}
 {"id":"fs_018","fact":"Googlebook(googlebook.google) 引发巨大讨论（875pts/1445评论），Google疑似推出社交产品或书籍相关功能，细节不明","source":"HN 875pts","date":"2026-05-14","tags":"timely,business,Google,social","confidence":0.70}
+{"id":"fs_019","fact":"RAV4车主物理拆除车内蜂窝和GPS模块阻止数据采集（HN 919★）——硬件层面的隐私抗议，不是软件开关而是直接拔线","source":"HN #1","date":"2026-05-15","tags":"timely,privacy,hardware,automotive","confidence":0.93}
+{"id":"fs_020","fact":"Bun从Zig重写为Rust已被合并（HN 656★）——JS运行时大规模重构，社区对Rust泛化JS工具链看法两极分化","source":"HN #7","date":"2026-05-15","tags":"timely,javascript,rust,programming","confidence":0.92}
+{"id":"fs_021","fact":"arXiv推出1年禁令惩罚幻觉引用论文（HN 538★）——学术预印本平台直接应对LLM生成的虚假参考文献问题，ML/AI领域将受影响","source":"HN #3","date":"2026-05-15","tags":"timely,AI,academic,integrity","confidence":0.94}
+{"id":"fs_022","fact":"Mullvad VPN出口IP意外具有可识别性（HN 430★）——研究显示VPN出口节点IP携带识别模式，隐私保护不是二元的","source":"HN #5","date":"2026-05-15","tags":"timely,privacy,VPN,research","confidence":0.90}
+{"id":"fs_023","fact":"yetone/native-feel-skill登顶GitHub Trending（872★）——从Raycast逆向工程蒸馏出的原生桌面应用设计Agent Skill，8条架构原则、4层架构、WebKit/WebView2指南","source":"GitHub Trending #1","date":"2026-05-15","tags":"timely,agents,skills,desktop,UI","confidence":0.91}
+{"id":"fs_024","fact":"B站影视飓风用3台高速摄影机对比刘谦手速，科技与魔术的跨界内容引发生态位讨论（技术上'破解'魔术的边界）","source":"B站热门","date":"2026-05-15","tags":"timely,China,tech,culture,Bilibili","confidence":0.88}
+{"id":"fs_025","fact":"B站在AI鬼畜二创上推进AI内容标识制度，华强买瓜低音炮等作品已标注AI生成","source":"B站热门","date":"2026-05-15","tags":"timely,China,AI,content-moderation,Bilibili","confidence":0.85}
