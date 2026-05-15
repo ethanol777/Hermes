@@ -19,15 +19,15 @@
       "schedule_display": "every 30m",
       "repeat": {
         "times": null,
-        "completed": 365
+        "completed": 367
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-05-03T09:56:27.341459+08:00",
-      "next_run_at": "2026-05-14T11:38:44.407978+08:00",
-      "last_run_at": "2026-05-14T10:32:56.733048+08:00",
+      "next_run_at": "2026-05-15T17:52:22.019432+08:00",
+      "last_run_at": "2026-05-15T17:22:22.019432+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -69,7 +69,7 @@
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-05-04T13:20:08.106491+08:00",
-      "next_run_at": "2026-05-15T03:00:00+08:00",
+      "next_run_at": "2026-05-16T03:00:00+08:00",
       "last_run_at": "2026-05-14T03:00:54.842643+08:00",
       "last_status": "error",
       "last_error": "RuntimeError: HTTP 402: Insufficient Balance",
@@ -114,7 +114,7 @@
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-05-13T16:35:15.146635+08:00",
-      "next_run_at": "2026-05-14T12:07:44.374048+08:00",
+      "next_run_at": "2026-05-15T17:50:28.683768+08:00",
       "last_run_at": "2026-05-14T11:07:44.374048+08:00",
       "last_status": "ok",
       "last_error": null,
@@ -151,7 +151,7 @@
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-05-14T01:37:11.946075+08:00",
-      "next_run_at": "2026-05-15T03:00:00+08:00",
+      "next_run_at": "2026-05-16T03:00:00+08:00",
       "last_run_at": "2026-05-14T03:00:56.684977+08:00",
       "last_status": "error",
       "last_error": "RuntimeError: HTTP 402: Insufficient Balance",
@@ -186,15 +186,15 @@
       "schedule_display": "every 2m",
       "repeat": {
         "times": null,
-        "completed": 119
+        "completed": 141
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-05-14T01:47:47.937941+08:00",
-      "next_run_at": "2026-05-14T11:10:44.387548+08:00",
-      "last_run_at": "2026-05-14T11:00:00.744573+08:00",
+      "next_run_at": "2026-05-15T17:22:33.841938+08:00",
+      "last_run_at": "2026-05-15T17:20:33.841938+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -209,5 +209,5 @@
       "workdir": null
     }
   ],
-  "updated_at": "2026-05-14T11:08:44.413067+08:00"
+  "updated_at": "2026-05-15T17:22:22.021429+08:00"
 }
