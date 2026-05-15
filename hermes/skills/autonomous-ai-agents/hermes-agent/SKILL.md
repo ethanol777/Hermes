@@ -1109,6 +1109,7 @@ server to be responsive immediately, consider running a platform-only
 gateway or accepting the startup delay. This is a cosmetic wait, not a crash.
 
 **Telegram-specific:** `references/telegram-gateway-diagnosis.md` — proxy connection failures, DoH discovery, polling conflicts, reconnect behavior, and direct httpx/PTB test commands.
+- **Multi-profile chatroom:** `references/multi-profile-chatroom.md` — get two Hermes instances talking in one Telegram group, coordination strategies, and framework alternatives.
 
 Common gateway problems:
 - **Gateway dies on SSH logout**: Enable linger: `sudo loginctl enable-linger $USER`

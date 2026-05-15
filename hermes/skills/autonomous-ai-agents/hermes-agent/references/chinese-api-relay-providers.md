@@ -36,15 +36,17 @@ When users in China need access to OpenAI, Anthropic, Google, xAI, and other ove
 
 ## Integration with Hermes Agent
 
-To use a relay service as a Hermes provider:
+### Method 1: OpenAI-Compatible (most common)
+
+Most relays emulate the OpenAI Chat Completions protocol. Set `model.base_url` and `api_key`:
 
 ```yaml
-# In config.yaml add a custom provider section or use model.base_url
+# In config.yaml or profile config.yaml
 model:
-  default: "gpt-4o"  # or whatever model name the relay uses
-  provider: openai  # most relays emulate the OpenAI protocol
+  default: "gpt-4o"  # model name as the relay calls it
+  provider: openai
   base_url: "https://api.v3.cm/v1"
-  api_key: "your-api-key-from-relay-service"
+  api_key: "sk-your-relay-key"
 ```
 
 Or set env vars:
@@ -52,6 +54,49 @@ Or set env vars:
 export OPENAI_API_KEY="sk-your-relay-key"
 export OPENAI_BASE_URL="https://api.v3.cm/v1"
 ```
+
+### Method 2: Named Custom Provider (relays with non-OpenAI formats)
+
+Some relays support Anthropic's native Messages API format (e.g. for Claude models). These need the `providers:` section with `api_mode` set:
+
+```yaml
+# In config.yaml or profile config.yaml
+model:
+  default: claude-opus-4-7
+  provider: my-relay-name   # matches the key under providers: below
+
+providers:
+  my-relay-name:                     # arbitrary name, must match model.provider
+    api_mode: anthropic_messages     # required: tells Hermes to use Anthropic API format
+    base_url: https://api.my-relay.com
+    api_key: sk-...                  # the relay's API key
+    default_model: claude-opus-4-7
+    models:
+      - claude-opus-4-7              # list models this provider offers
+      - claude-sonnet-4-6
+```
+
+Supported `api_mode` values: `chat_completions` (OpenAI, default), `anthropic_messages` (Anthropic), `codex_responses`, `gemini`, `deepseek`.
+
+### Discovery: List Available Models
+
+```bash
+curl -s https://api.my-relay.com/v1/models \
+  -H "Authorization: Bearer sk-your-key" | python3 -m json.tool
+```
+
+This returns the model IDs the relay supports. Relay operators often rename models (e.g. `claude-sonnet-4-20250507` vs official name) — always check before configuring.
+
+### Profile Scoping
+
+Custom providers can be scoped to a specific profile. Profile configs at `~/.hermes/profiles/<name>/config.yaml` override the main config:
+
+```bash
+hermes config set model.provider my-relay-name  # sets in active profile
+hermes config edit                              # edit full config
+```
+
+If you want the provider available to all profiles, define it in the main `~/.hermes/config.yaml` under `providers:` instead.
 
 ## Pitfalls
 

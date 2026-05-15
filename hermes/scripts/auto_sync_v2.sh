@@ -10,17 +10,6 @@ echo "=== auto_sync_v2 ==="
 echo "Source: $HERMES_HOME"
 echo "Target: $TARGET"
 echo "Time:   $(date '+%Y-%m-%d %H:%M:%S')"
-echo ""
-
-# Resolve source
-if [ ! -d "$HERMES_HOME" ]; then
-  # Try cygpath if available
-  if command -v cygpath &>/dev/null; then
-    HERMES_HOME=$(cygpath -u "C:\Users\77\AppData\Local\hermes" 2>/dev/null)
-  fi
-fi
-
-echo "Resolved HERMES_HOME: $HERMES_HOME"
 
 if [ ! -d "$HERMES_HOME" ]; then
   echo "ERROR: HERMES_HOME ($HERMES_HOME) not found!"
@@ -29,12 +18,11 @@ fi
 
 mkdir -p "$TARGET"
 
-# Sync core files
 sync_file() {
   local src="$1" dst="$2"
   if [ -f "$src" ]; then
     cp -f --preserve=timestamps "$src" "$dst"
-    echo "  OK  $src -> $dst"
+    echo "  OK  $src"
   else
     echo "  MISS $src"
   fi
@@ -42,10 +30,21 @@ sync_file() {
 
 sync_dir() {
   local src="$1" dst="$2"
+  local skip_locks="${3:-false}"
   if [ -d "$src" ]; then
     mkdir -p "$dst"
-    cp -rf --preserve=timestamps "$src"/. "$dst/"
-    echo "  OK  $src/ -> $dst/"
+    if [ "$skip_locks" = "true" ]; then
+      for item in "$src"/* "$src"/.*; do
+        [ -e "$item" ] || continue
+        base=$(basename "$item")
+        [[ "$base" == "." || "$base" == ".." ]] && continue
+        [[ "$base" == ".tick.lock" ]] && continue
+        cp -rf --preserve=timestamps "$item" "$dst/" 2>/dev/null || echo "  WARN: $item (skipped)"
+      done
+    else
+      cp -rf --preserve=timestamps "$src"/. "$dst/" 2>/dev/null || true
+    fi
+    echo "  OK  $src/"
   else
     echo "  MISS $src/"
   fi
@@ -64,13 +63,8 @@ sync_dir "$HERMES_HOME/memories" "$TARGET/memories"
 echo ">>> Syncing skills/"
 sync_dir "$HERMES_HOME/skills" "$TARGET/skills"
 
-echo ">>> Syncing cron/"
-sync_dir "$HERMES_HOME/cron" "$TARGET/cron"
-
-# Also sync any other top-level important files
-for f in "$HERMES_HOME"/.gitignore; do
-  [ -f "$f" ] && sync_file "$f" "$TARGET/$(basename "$f")"
-done
+echo ">>> Syncing cron/ (skipping locks)"
+sync_dir "$HERMES_HOME/cron" "$TARGET/cron" "true"
 
 echo ""
 echo ">>> Git status and push"
