@@ -47,3 +47,5 @@ Created a Telegram bot @ouroo_bot (昵称：Ouro) as a separate Hermes profile
 Has a Hermes profile called "ouro" at ~/AppData/Local/hermes/profiles/ouro/ configured with opencode-go provider and deepseek-v4-flash, running as a separate Telegram bot
 §
 Interested in multi-agent chat/bot-to-bot interaction platforms like botgroup.chat and Telegram group with multiple AI bots
+§
+77的八字信息：性别男，公历2002年4月16日0时48分，农历2002年三月初四0时48分。八字四柱：壬午年 甲辰月 甲寅日 甲子时。大运起于出生后6年7个月29天1时。

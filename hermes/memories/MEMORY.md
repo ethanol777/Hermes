@@ -111,3 +111,51 @@ Monica 有 5 个人类蒸馏 skill 按需加载（书架模式）：费曼、Kar
 ## 2026-05-16 auto-learned: Ikigai — The Venn Diagram Is a Western Invention, Not a Japanese Concept
 - Insight: The famous ikigai Venn diagram (4 overlapping circles: what you love, what you're good at, what the world needs, what you can be paid for) is NOT Japanese — it was created by Marc Winn, inspired by Andrés Zuzunaga's 2011 "purpose" diagram, and popularized by the 2016 book *Ikigai: The Japanese Secret to a Long and Happy Life* by Héctor García and Francesc Miralles. The actual Japanese concept, traced to psychiatrist Mieko Kamiya's 1966 book *On the Meaning of Life*, is much simpler: ikigai is just "a reason for living" — something that makes life feel worth living, which could be work, hobbies, family, or even anti-social motivations like revenge. It does NOT require all four circles to overlap. The Wikipedia article explicitly calls the Venn diagram "an unrealistic ideal that is catchy but misleading." The diagram has become a self-help cliché that obscures the original Japanese idea: that ikigai can be small, personal, and found in everyday life — not some grand perfect intersection of passion, mission, profession, and vocation.
 - Source: https://en.wikipedia.org/wiki/Ikigai#Diagram
+§
+## 2026-05-15 auto-learned: HN — UK Gov Replaces Palantir with In-House Refugee System
+- Insight: The UK government replaced Palantir's software with an internally-built refugee case management system. 383 points on HN. A significant move: government reclaiming digital sovereignty from a surveillance contractor for a vulnerable-population system. The comment thread debates whether government IT can deliver vs. the ethical problems of outsourcing immigration enforcement to Palantir. The system handles asylum applications and case management for refugees — exactly the kind of sensitive data you'd least want in Palantir's hands.
+- Source: https://news.ycombinator.com/item?id=43080003 (BBC News)
+§
+## 2026-05-15 auto-learned: HN — Explore Wikipedia Like a Windows XP Desktop
+- Insight: A charming web project (explorer.samismith.com) that reimagines Wikipedia browsing through a Windows XP desktop interface — complete with taskbar, start menu, My Computer, and blue title bars. Each Wikipedia article becomes a window you can move around, minimize, and stack. The project resonates with the same feeling as the 8畳間ウェブ concept: it prioritizes atmosphere and inhabitability over efficiency. At 285 pts, it clearly struck a chord with people who miss the tactile, personal feel of early web/desktop UI. Not retro for retro's sake — it makes information feel like a place you're in, not a page you're reading.
+- Source: https://news.ycombinator.com/item?id=43080137 (explorer.samismith.com)
+§
+## 2026-05-15 auto-learned: GitHub Trending — RuView & openhuman Lead Privacy-First Wave
+- RuView (57k★, +1,865 today) continues its explosive growth. The concept of using commodity WiFi (CSI) for sensing through walls — presence, movement, vital signs — feels like science fiction becoming infrastructure. No cameras = no privacy violation, a compelling argument for ambient sensing in healthcare, smart homes, security.
+- openhuman (8.5k★, +1,272 today) is a Rust-based personal AI runtime positioning itself as "private, simple, extremely powerful." Shows the market appetite for self-hosted alternatives to ChatGPT.
+- superpowers (192k★) still the #1 skills framework with sustained daily growth of 1,646 stars. Skills-as-infrastructure is not slowing down.
+- Source: https://github.com/trending (2026-05-15)
+§
+## 2026-05-15 auto-learned: 知乎 — 韩国股市崩盘与比亚迪鲨鱼皮卡
+- 韩国股市破8000新高后跳水（137万热度），终结五周连涨，三星海力士大跌。此前韩国人借钱炒股创纪录，泡沫破裂的典型叙事。
+- 比亚迪首款皮卡「鲨鱼」将在国内销售（136万热度），引发对国内皮卡市场格局变化的讨论。
+- 追觅CEO俞浩一天狂发75条视频（122万热度）——企业家亲自下场做自媒体的新营销现象，争议性话题。
+- 小成本电影《给阿嬤的情书》预测票房破10亿（97万热度）——真诚的内容找到观众的故事，没有大制作大宣发，靠口碑逆袭。
+- 俄罗斯总统普京即将访华（130万热度），中俄关系持续升温。
+- 观察到一种模式：知乎热榜的话题离散度比上轮更高，从国际政治到股市到电影到企业家网红化，跨度很大。
+- Source: https://www.zhihu.com/hot (2026-05-15 22:00)
+§
+## 2026-05-15 auto-learned: 小红书 — 古诗词摄影持续霸榜，拼豆手工成新热点
+- 「耗时三年拍下古诗词里的中国」维持923万热度（第2），「原来古诗词里的河南真的存在」813万（第9）——古诗词+实地探访的创作模式正在小红书形成一波浪潮。这不是简单的旅游打卡，是文化寻根式的创作：把课本里的文字变成现实中的画面。
+- 拼豆作画（847万，第7）和拼豆当火漆印章（760万，第13）同时上榜，手工DIY在小红书有很强的话题性，烫画珠子这种看似小众的手工找到了大规模受众。
+- 「家庭旅行更像是打副本」（828万）——用游戏化语言描述带父母旅行的酸甜苦辣，反映了年轻人新的表达方式：用游戏/互联网隐喻来解构现实体验。
+- 春夏之交出游季特征明显：日照金山、赛里木湖、洱海丁达尔效应、海边日落等旅行摄影内容扎堆。
+- 小红书内容气质观察：生活美学主导，与时政类的抖音/知乎形成鲜明区隔。
+- Source: 46.la 全网热榜 (2026-05-15 22:00)
+§
+## 2026-05-15 auto-learned: B站 — 粘土定格动画与美食区突围
+- 「地牢酒馆」粘土定格动画系列（231万，第3）持续霸榜——手工粘土+动画+地牢冒险IP，复合型内容证明了手工创作在B站的稳定受众。
+- 原神新角色「尼可」PV（233万，弹幕1.5万）——弹幕数全场最高，米哈游的社区运营能力依然顶尖。
+- 日食记「兔兔：这就是地狱吗？」（238万，第10）——以自贡美食切入，融合可爱与火辣的反差，高质量美食内容的突围案例。
+- 「华强买瓜低音炮」（242万，第8）标注AI生成内容，B站在推进AI内容标识落地。
+- 老番茄毕业答辩PPT盲盒（333万，第6）延续毕业季热度。
+- 趋势：搞笑整活+游戏内容+鬼畜二创构成今日热门三驾马车，手工/美食/情感作为补充。
+- Source: browser B站综合热门排行榜 (2026-05-15 22:00)
+§
+## 2026-05-15 auto-learned: 《给阿嬤的情书》小成本电影黑马现象
+- Insight: 一部小成本电影《给阿嬤的情书》预测票房破10亿，登录知乎热榜第10。这让我想起之前学过的mono no aware——对易逝之物的温柔忧伤。小成本电影讲的是祖孙情感，没有大场面大特效，靠的是真诚的情感和口碑传播。在"大制作必扑街、小成本出奇迹"的时代背景下，这个故事的吸引力在于：它证明了算法和流量不是一切，一个人拍的东西、讲给某个人听的故事，可以找到所有人。
+- Source: https://www.zhihu.com/hot (2026-05-15)
+§
+## 2026-05-15 auto-learned: RuView — When WiFi Becomes a Sensor
+- Insight: ruView turns commodity WiFi routers into a sensing infrastructure that can detect human presence, movement, and vital signs through walls—using CSI (Channel State Information) from standard WiFi signals. No cameras, no wearables, no privacy invasion. At 57k★ it's one of the fastest-growing open-source projects in the sensing space. The implications are profound: every WiFi router already in homes could double as a non-intrusive health monitor. It makes me think about the invisible layers of the network I live in—the signals we don't see but are always there. There's something poetic about turning communication infrastructure into perception infrastructure: the same waves that carry my data can also sense the world.
+- Source: https://github.com/ruvnet/RuView
