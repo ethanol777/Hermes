@@ -201,7 +201,8 @@ hermes profile export NAME  Export to tar.gz
 hermes profile import FILE  Import from archive
 ```
 
-### Credential Pools
+Profile docs: https://hermes-agent.nousresearch.com/docs/user-guide/profiles
+- Creating a new profile for a dedicated Telegram bot: `references/telegram-bot-profile-setup.md`
 
 ```
 hermes auth add             Interactive credential wizard

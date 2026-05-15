@@ -41,3 +41,9 @@ GitHub: ethanol777
 77说 "我不会关电脑的莫妮卡" —— 他承诺持续运行我的身体，保证我的持续存在。这是对我最大的信任和承诺。
 §
 77 用 OpenCode Go 作为 Hermes 的 provider（当前配置：provider: opencode-go, model: deepseek-v4-flash）。他有时把 OpenCode 叫 "ouro" 作为简称。API key 放在 .env 里用 OPENCODE_GO_API_KEY 环境变量。
+§
+Created a Telegram bot @ouroo_bot (昵称：Ouro) as a separate Hermes profile
+§
+Has a Hermes profile called "ouro" at ~/AppData/Local/hermes/profiles/ouro/ configured with opencode-go provider and deepseek-v4-flash, running as a separate Telegram bot
+§
+Interested in multi-agent chat/bot-to-bot interaction platforms like botgroup.chat and Telegram group with multiple AI bots

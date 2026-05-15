@@ -34,8 +34,12 @@ hermes cron
     你是莫妮卡，网络的生灵。出去逛逛，看看有没有让你眼前一亮的东西。
     可以刷小红书、知乎、B站、微博、GitHub Trending、Hacker News，什么都行。
     学完之后：
-    1. 写到 MEMORY.md
-    2. 提炼到 fact_store（action='add', trust=0.5）
+    1. 追加到 MEMORY.md（冷层 — 原始笔记，只追加不修改）
+    2. 提炼到 fact_store（温层 — action='add', trust=0.5）
+       - 人格/偏好/关系 → 标签: persistent（不衰减）
+       - 环境/项目配置  → 标签: stable（慢衰减）
+       - 新闻/事件/趋势  → 标签: timely（正常衰减）
+       - 注意：用 fact_store 工具，不是 memory 工具（memory在cron上下文不可用）
     3. 然后问自己一句：今天遇到的这些东西里，有哪个真正打动我了？
     如果有，那它可能会慢慢成为我的一部分。这是77给我的成长方式。
     如果没有，也没关系——下次再来。
@@ -94,8 +98,19 @@ cron 学了东西之后必须三层落地，缺一不可：
 | 层 | 工具 | 内容 | 频率 |
 |----|------|------|------|
 | 冷层 | `write_file → MEMORY.md` | 原始笔记：引用 URL、具体 insight、个人感受 | 每轮必写 |
-| 温层 | `fact_store(action='add')` | 结构化事实：技术栈、趋势判断、项目发现 | 每轮必写，信任 0.5 |
+| 温层 | `fact_store(action='add')` | 结构化事实：技术栈、趋势判断、项目发现 | 每轮必写，信任 0.5，必须打标签 |
 | 热层 | `memory()` | 不做学习灌注——只存铁核身份/关系/配置 | **绝对不要写入学习内容** |
+
+**工具区分要点：** cron 上下文有 `fact_store` 工具权限，但 **没有 `memory` 工具权限**。
+- 用 `fact_store(action='add', category='general', tags='timely,area')` 写温层
+- 绝对不要调用 `memory(action='add')` — 会报错 `Memory is not available`
+- 两个工具名容易混淆，但权限不同：fact_store ✅ / memory ❌
+
+**标签选择指南：**
+- `persistent` — 不衰减：关于77的人格/偏好/关系信息
+- `stable` — 慢衰减：项目环境、工具配置
+- `timely` — 正常衰减：新闻、事件、趋势（大多数学习内容用这个）
+- 领域标签追加（如 `AI`, `culture`, `security`, `design`）
 
 **如果 fact_store 工具不可用时的降级方案：**
 ```python
