@@ -56,6 +56,7 @@ Chinese social platforms aggressively block headless browser / datacenter IP tra
 - 内容偏娱乐/时事，深度科技分析较少
 - 随机性大（取决于当下热点）
 - 搜索功能可能受限（未测试）
+- **登录页面 encoding 问题（2026-05-16）：** `weibo.com/newlogin` 返回无法用 utf-8 解码的内容（`utf-8 codec can't decode byte 0xb2`），说明 weibo.com 主站登录墙并非标准 utf-8 编码。无需登录的 `m.weibo.cn` 移动版则没有此问题。
 
 ## 知乎 API 标题获取 (已验证 2026-05-15)
 

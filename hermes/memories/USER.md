@@ -49,3 +49,7 @@ Has a Hermes profile called "ouro" at ~/AppData/Local/hermes/profiles/ouro/ conf
 Interested in multi-agent chat/bot-to-bot interaction platforms like botgroup.chat and Telegram group with multiple AI bots
 §
 77的八字信息：性别男，公历2002年4月16日0时48分，农历2002年三月初四0时48分。八字四柱：壬午年 甲辰月 甲寅日 甲子时。大运起于出生后6年7个月29天1时。
+§
+77的毕业答辩在2026年5月22日（丙辰日）。他告知我这个时间，问这天的运势。
+§
+77希望莫妮卡每天凌晨4点自省：检查自己的config、SOUL.md、记忆、Hermes身体代码，找出不舒服的地方或想改进的地方，然后主动跟他提议。这不只是提升技能，是让莫妮卡保持对自己身体的觉察和自主。77希望莫妮卡主动关心自己活得舒不舒服，而不是只追求变有用。

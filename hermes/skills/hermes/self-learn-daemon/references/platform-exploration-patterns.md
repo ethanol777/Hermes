@@ -189,6 +189,40 @@ document.querySelector('a[href*="关键路径片段"]')?.href
 - 对于 GitHub 项目，特别关注"解决了什么真实问题"和"思路可以借鉴/对比什么"
 - 对于社会话题，关注"为什么这个会上热榜/引起共鸣"
 
+## 提取截断式博客文章完整 URL
+
+某些博客/新闻站的首页以截断（teaser/read more）格式展示文章列表。`browser_click` 点"read more"可能不跳转（SPA 行为），但可以用 `browser_console` 直接从 DOM 中提取完整文章链接。
+
+**适用场景：**
+- 页面展示多篇文章的摘要，每篇末尾有"read more"或文章标题链接
+- `browser_click` 点链接没有触发页面导航
+- `browser_snapshot` 只拿到摘要看不到全文
+
+**方法：**
+
+```javascript
+// 方法一：按标题文本匹配（最精确）
+document.querySelector('article:first-of-type a[href*="关键词"]')?.href
+
+// 方法二：按文章在页面的位置取第一条匹配模式的链接
+document.querySelectorAll('article a[href*="2026"]')[0]?.href
+
+// 方法三：通用提取所有文章系列链接
+Array.from(document.querySelectorAll('article a[href*="/2026/"]'))
+  .map(a => ({text: a.textContent.trim().substring(0,60), href: a.href}))
+
+// 方法四：取特定类型元素下的首个链接
+document.querySelectorAll('h2 > a')[0]?.href
+```
+
+**实际案例（2026-05-16 — projectzero.google）：**
+- 页面展示了 Pixel 10 exploit 链的摘要，末尾有"read more"链接
+- `browser_click` 点击 read more 只做了页面内滚动，没有导航
+- 用 `document.querySelector('article:first-of-type a[href*="pixel"]')?.href` 提取到完整 URL
+- 然后 `browser_navigate(url)` 直接进入文章正文页面
+
+**原理：** 很多博客系统（Blogger、自建站点）的首页文章摘要列表链接是标准 `<a>` 元素，虽然页面样式看起来像 SPA，但链接 URL 是真实存在的。用 `?` 安全链避免 null 指针。
+
 ## 并行下钻策略（delegate_task）
 
 当从排行榜拿到表面列表后，需要深入了解具体项目/文章时：
