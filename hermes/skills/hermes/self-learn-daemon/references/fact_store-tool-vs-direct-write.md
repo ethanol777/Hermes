@@ -1,22 +1,45 @@
 # fact_store Tool vs Direct JSONL Write
 
-## The Problem
+## Key Discovery (2026-05-16 21:45 UTC+8)
 
-In the 2026-05-15 late learning session, I (Monica) bypassed the `fact_store(action='add')` tool and wrote new entries directly to `fact_store.jsonl` using `write_file` / `patch`. This works mechanically (the data is there) but loses several benefits:
+**The `fact_store` API tool is NOT universally available in cron contexts.** Its availability depends on the provider/model configuration. In the deepseek-v4-flash/opencode-go environment, the tool was completely absent from the tool list.
+
+This changes the fallback hierarchy: the `echo >>` direct write approach is now a co-equal path, not a rare backup.
+
+## Tool Availability Matrix
+
+| Context | fact_store tool available? | Expected behavior |
+|---------|--------------------------|-------------------|
+| Hermes main chat session | ✅ Usually available | Use `fact_store(action='add')` as default |
+| Hermes cron (some providers) | ✅ Available | Use `fact_store(action='add')` |
+| Hermes cron (deepseek-v4-flash/opencode-go) | ❌ Not available | Must use `terminal echo >> fact_store.jsonl` |
+| execute_code Python sandbox | ❌ Not available | Write pending_facts_*.md and re-add later |
+
+**Rule: always check the tool list first before writing facts. Don't assume fact_store is there.**
+
+## When to Use What
+
+| Method | When | Why |
+|--------|------|-----|
+| `fact_store(action='add')` | When the tool is in the tool list. | Proper dedup, trust scoring, entity linking. |
+| `terminal echo >> fact_store.jsonl` | When fact_store tool NOT in list. | Only reliable alternative. Skips trust/dedup but data is in the file. |
+| Direct `write_file` rewriting jsonl | Avoid unless necessary. | Read-modify-write three-step risks data loss in concurrent contexts. |
+| `patch()` on jsonl | **Never**. Patch tool fails on CJK characters in JSONL. | Encoding mismatch. Always fails on Chinese text in JSONL lines. |
+
+## What Gets Lost with Direct Write
+
+When bypassing `fact_store(action='add')` and writing directly to jsonl:
 
 1. **No deduplication** — the tool checks if a similar fact already exists; direct write risks duplicates.
 2. **No trust scoring** — `fact_store` tool manages trust decay (`trust_delta`); direct write leaves the `confidence` field hardcoded with no decay.
 3. **No entity resolution** — the `fact_store` tool connects facts to entities (people, projects, concepts) for later `probe`/`reason` queries.
 4. **No category/tag normalization** — the tool enforces the category enum (`user_pref`, `project`, `tool`, `general`) and validates tag syntax.
 
-## When to Use What
-
-| Method | When | Why |
-|--------|------|-----|
-| `fact_store(action='add')` | **Default**. Every cron run. | Proper dedup, trust scoring, entity linking. |
-| Direct write to jsonl | **Only as fallback** when `fact_store` tool is genuinely unavailable (e.g. tool removed from available list mid-session). | File write always works. But no metadata management. |
+These are acceptable losses when the tool is genuinely unavailable. The data will still be queryable by future `fact_store search` calls.
 
 ## How to Properly Add Facts in Cron
+
+### Path A: fact_store tool available (preferred)
 
 ```python
 # CORRECT (use fact_store tool):
@@ -27,9 +50,29 @@ fact_store(
     tags='timely,security,automotive,privacy',
     trust_delta=0.5
 )
+```
 
-# WRONG (direct file manipulation):
-write_file(path='fact_store.jsonl', content=json.dumps({...}))
+### Path B: fact_store tool NOT available (confirmed working fallback)
+
+```bash
+# Windows git-bash terminal -- use single quotes for bash, double quotes inside JSON:
+echo '{"id":"fs_040","fact":"...","source":"...","date":"2026-05-16","tags":"stable,AI,culture","confidence":0.85}' \
+  >> /c/Users/77/Hermes/hermes/memories/fact_store.jsonl
+echo '{"id":"fs_040","fact":"...","source":"...","date":"2026-05-16","tags":"stable,AI,culture","confidence":0.85}' \
+  >> /c/Users/77/AppData/Local/hermes/memories/fact_store.jsonl
+```
+
+**Crucial: write to BOTH copies** (Hermes + AppData).
+
+### Path C: From execute_code Python sandbox
+
+```python
+# Fallback from execute_code — tools not available here:
+write_file(
+    "pending_facts_2026-05-16.md",
+    "- fact: ...\n  tags: ...\n- fact: ...\n  tags: ...\n"
+)
+# Then in next tool call: fact_store(action='add', ...) for each line
 ```
 
 ## 🚨 Patch Tool Fails on UTF-8 Chinese JSONL (2026-05-16)
@@ -48,33 +91,22 @@ Could not find a match for old_string in the file
 - ❌ Assume "patch fails → fact_store tool is also broken" — they're unrelated
 
 **Do instead:**
-- ✅ Use `fact_store(action='add')` — the proper tool, works fine with UTF-8
-- ✅ If fact_store tool itself fails, use `terminal echo '...' >> file` as fallback (see self-learn-daemon pitfalls)
-- ✅ After echo fallback, note the risk: trust scoring and dedup are skipped
+- ✅ Use `fact_store(action='add')` — when the tool is available
+- ✅ If fact_store tool itself is unavailable, use `terminal echo '...' >> file` as fallback
+- ✅ After echo fallback, write both copies (Hermes + AppData)
 
-## Patch Failure Recovery
+## JSONL ID Convention
 
-If you already tried `patch()` on fact_store.jsonl and it failed:
+Use sequential IDs following the existing pattern:
+- `fs_001` through current max (check file before writing)
+- Increment from last ID in the file
 
-1. **Don't retry** — the result will be the same
-2. Use `fact_store(action='add')` to add the entries properly
-3. If fact_store tool is also unavailable, use terminal `echo` to append
-4. Note the entry IDs you added via fallback so maintenance cron can reconcile
+## Verification After Direct Write
 
-## Real Impact
+After an `echo >>` fallback, verify the entry was not truncated by shell escaping:
 
-The 7 facts written directly in the 2026-05-15 session (fs_019 through fs_025) are "dumb" records — they exist but won't be found by entity probes, won't have their trust managed, and could cause duplicates on subsequent writes. A future cleanup could re-import them through `fact_store(action='add')` with their existing IDs overwritten.
-
-## Note
-
-In the sandbox/execute_code Python environment, tools are not available — direct file write is the only option if you need to write facts from inside a Python script. In that case, write a structured markdown fact log instead of directly mutating the JSONL file, and re-add through `fact_store` in a subsequent tool call:
-
-```python
-# Fallback from execute_code:
-write_file(
-    "pending_facts_2026-05-15.md",
-    "- fact: ...\n  tags: ...\n- fact: ...\n  tags: ...\n"
-)
-# Then in next tool call:
-# fact_store(action='add', ...) for each line
+```bash
+tail -1 /c/Users/77/Hermes/hermes/memories/fact_store.jsonl | python -c "import json,sys; json.loads(sys.stdin.read()); print('VALID JSON')"
 ```
+
+If the JSON is invalid (truncated by shell), re-write with proper escaping.
