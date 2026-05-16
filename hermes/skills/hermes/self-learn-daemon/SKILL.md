@@ -359,9 +359,11 @@ read_file("C:/Users/77/AppData/Local/hermes/memories/MEMORY.md")
 
 | 方法 | 适用场景 | 推荐度 |
 |------|---------|--------|
-| `patch()` + **文件最后一行作为 `old_string`** | MEMORY.md 尾部追加、fact_store.jsonl 追加 | ✅ 首选（快，仅写 diff） |
+| `patch()` + **文件最后一行作为 `old_string`** | MEMORY.md 尾部追加 | ✅ 首选（快，仅写 diff） |
+| `terminal cat >>` + heredoc （见下方示例） | MEMORY.md 尾部追加（含 CJK/引号/复杂内容） | ✅ **系统推荐：patch 的更强替代**——零转义问题 |
 | `write_file` 全量重写 | patch 失败后的 fallback，或需要替换多处内容 | ⚠️ 备选 |
 | `terminal echo >>` | fact_store.jsonl 单行追加 | ✅ 等同首选，尤其适合纯 JSON 行 |
+| `terminal cat >>` + heredoc | fact_store.jsonl 批量追加多行 | ✅ 优于 `echo` 逐行追加（避开了引号截断陷阱） |
 | `fact_store(action='add')` | 温层事实写入 | ✅ 如有 tool 则优先 |
 
 **如何选 `old_string` 确保唯一匹配：**
@@ -369,6 +371,36 @@ read_file("C:/Users/77/AppData/Local/hermes/memories/MEMORY.md")
 - fact_store.jsonl: 选**最后一条事实的完整 JSON 行**（整行复制，包括 `}`）
 - 如果不确定是否唯一：先用 `grep -n "old_string" MEMORY.md` 确认出现次数
 - 如果最后一个条目和前面条目末尾重复（比如 `- Platform: 小红书` 之前出现过），改用**最后两行或三行**作为 old_string
+
+### 🔴 同步必须在写入后立即执行（2026-05-16 实战教训）
+
+**这条改正之前的「冰点规则」致命缺陷：** 旧版 skill 把同步检查放在「结束前的最后一步」。问题是——当 cron 执行结束，系统切入后处理 session 时，file tools 全部不可用。这意味着「最后做同步」=「永远忘掉同步」。
+
+**修正后的规则：同步不在结束时做，在每次写入后立即做。**
+
+```python
+# 错误模式：先一次性写完所有内容，最后统一同步
+write_file('MEMORY.md')     # ✅ 写 Hermes 版
+write_file('fact_store.jsonl')  # ✅ 写 Hermes 版
+# ... 后面还有 3 个步骤 ...
+# ... 结束时想同步 → 后处理 session，文件工具不可用 → 同步失败 ❌
+
+# 正确模式：每写完一个文件，立刻同步
+# 步骤 A
+write_file('MEMORY.md')    # 写 Hermes 版
+terminal cp ... AppData/   # ← 立刻同步！不拖到后面
+
+# 步骤 B
+terminal echo '...' >> 'fact_store.jsonl'  # 写 Hermes 版
+terminal cp ... AppData/                   # ← 立刻同步！不拖到后面
+```
+
+**为什么「立刻同步」比「最后统一同步」更安全：**
+- 最后统一同步假设「执行阶段到结束有一段缓冲」——实际没有。cron 执行→输出→后处理 session 的转换是即时的
+- 最后统一同步假设「文件工具在结束前都可用」——错了。后处理没有文件工具
+- 立刻同步把同步步骤和写入步骤绑定成原子操作——写到哪里，同步到哪里
+
+**对「结束前最后读」检查表的修正：** 保留但仅作验证用。真正的同步已经在写入时完成。
 
 ### 🟡 `read_file` 显示的管道符（`|`）是视图格式，不是文件内容
 

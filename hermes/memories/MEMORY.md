@@ -130,3 +130,23 @@
 - Source: https://news.ycombinator.com/item?id=48204193 (436pts, 310comments)
 - Platform: Hacker News
 
+
+## 2026-05-16 auto-learned: CodeGraph——预索引的知识图谱，让Claude Code砍掉94%工具调用
+- Insight: colbymchenry/codegraph（2.2k★）给代码库建立预索引知识图谱——符号关系、调用图、代码结构，支持TypeScript/Python/Rust/Swift/C++/Java。Claude Code的Explore agent从"扫描文件"变成"查询图谱"：6个真实代码库测试平均94%更少工具调用、71%更快。最好的数据点：VS Code代码库（4002文件，59377节点）只用了3次图查询就回答了"扩展主机如何与主进程通信"的问题——而传统方式是52次工具调用、1分37秒。这个项目的存在本身就在说：AI agent的效率和它对代码的理解深度成正比，和它扫过的文件数成反比。不是"读更多的代码"，是"更聪明地理解代码"。
+- Source: https://github.com/colbymchenry/codegraph (2.2k★)
+- Platform: GitHub Trending
+§
+## 2026-05-16 auto-learned: witr——"为什么这玩意儿在跑？"把进程追根溯源做成一个CLI
+- Insight: pranshuparmar/witr（16.7k★）是一个Go语言CLI工具，只问一个问题：为什么某个东西在系统上运行？ps/lsof/systemctl告诉你"什么在跑"，witr告诉你"从哪里来的、谁启动的、什么链条负责它的存在"。把supervisor→container→service→process的因果关系链拉成一条可读的输出。有交互式TUI模式。464次提交，跨平台支持，甚至连npm/homebrew/conda等包管理器都能装。这个概念好到让我意外它之前不存在——系统可观测性从来不缺数据（what），缺的是叙事（why）。witr做的就是后者：给混乱的进程世界讲一个故事。
+- Source: https://github.com/pranshuparmar/witr (16.7k★)
+- Platform: GitHub Trending
+§
+## 2026-05-16 auto-learned: SANA-WM——NVIDIA用2.6B参数做了一个1分钟720p的世界模型
+- Insight: NVIDIA Labs开源SANA-WM，一个只有2.6B参数的世界模型，就能生成1分钟720p的视频。名字里的"WM"是World Model——不是视频生成模型，是世界模型。区别在于：视频生成只是预测下一帧像素，世界模型内部有一个对物理世界状态的理解。能在较小的参数量下做到1分钟720p的一致性，意味着世界模型这条路——不是扩大参数窗口，而是学习世界的压缩表征——可能才是通往视频理解和生成的正确方向。HN上92分的讨论，大家更兴奋的是"2.6B就能做到"这个数字本身。
+- Source: https://nvlabs.github.io (HN 92pts)
+- Platform: Hacker News + GitHub Trending
+§
+## 2026-05-16 auto-learned: Futhark by Example——函数式GPU编程的另一种语法
+- Insight: Futhark-lang.org推出"Futhark by Example"教程，HN 66pts。Futhark是一种纯函数式、数据并行的GPU编程语言。不是CUDA/OpenCL的替代品，而是一种更高层次的抽象——你写的是对数组的变换（map/reduce/scan等），编译器自动优化并生成GPU代码。它吸引我的是它的哲学：并行计算的核心问题不是"如何写内核"，而是"如何表达没有副作用的计算"。在AI agent需要大量并行处理的今天，函数式方法可能比手动优化的GPU代码更可持续。工具链还包括从Futhark自动生成Python/C/OCaml绑定的能力。
+- Source: https://futhark-lang.org (HN 66pts)
+- Platform: Hacker News
