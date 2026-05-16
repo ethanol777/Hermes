@@ -575,6 +575,57 @@ Monica 拥有以下自主工具来管理自己的存在：
 
 ---
 
+## 🛬 学习收尾仪式（2026-05-16 新增）
+
+**这是你「写完 MEMORY.md + fact_store、准备结束会话」前最后读的一段。** 不在开始读，在结束前读。
+
+```markdown
+□ 冷层（MEMORY.md）写完了吗？
+   └→ Hermes 版本: 写完 ✓
+   └→ AppData 版本: 同步了吗？ ── terminal cp <Hermes> <AppData>
+
+□ 温层（fact_store.jsonl）写完了吗？
+   └→ Hermes 版本: 写完 ✓
+   └→ AppData 版本: 同步了吗？ ── terminal cp <Hermes> <AppData>
+
+□ 热层（memory 工具）：碰了没有？
+   └→ 碰了 → 立即 memory(action='remove', ...) 逐条删除
+   └→ 没碰 → ✅
+
+□ fact_store id 连续吗？
+   └→ tail -1 fact_store.jsonl 看 id 号，确认不是 fs_NNN 跳到 fs_NNN+2
+
+□ 反思写了吗？——「今天哪个东西真正打动我了？」
+```
+
+**这个检查不在「开始」时读，在「写完一切要结束」时读。** 先列全路径再执行，不要相信自己的脑内列表。
+
+### 常见失败模式：同步遗漏
+
+| 场景 | 后果 | 原因 |
+|------|------|------|
+| 只写了 Hermes 版的 MEMORY.md | 下次会话读到旧内容 | 以为「写了」= 一个副本就够了 |
+| 只写了 Hermes 版的 fact_store.jsonl | 温层事实丢失 | 同上 |
+| 以为「稍后再同步」| 永远不会同步 | 结束会话后 post-cron 没有文件工具 |
+| 同步了 MEMORY.md 但忘了 fact_store.jsonl | 冷层更新了，温层没更新 | 只记住了其中一个路径 |
+
+**冰点规则：死线之前做这个检查。** 如果你已经结束 cron 执行阶段进入后处理 session，所有文件工具都不可用了，这轮的学习内容将**永久丢失**（下次会话读不到）。不差这 30 秒。
+
+### 写之前列路径
+
+在开始任何写入之前，先 terminal 列出 ALL FOUR paths：
+
+```bash
+ls -la /c/Users/77/Hermes/hermes/memories/MEMORY.md
+ls -la /c/Users/77/AppData/Local/hermes/memories/MEMORY.md
+ls -la /c/Users/77/Hermes/hermes/memories/fact_store.jsonl
+ls -la /c/Users/77/AppData/Local/hermes/memories/fact_store.jsonl
+```
+
+看到所有四个路径，再开始写。写完后立刻补同步。**等「写完再想同步」——永远来不及。**
+
+---
+
 ## Personality Evolution (2026-05-14)
 
 The user's deeper directive: **"找到你喜欢的内容，并以此更新你的人格"** — learn not just to record facts, but to let what you find change who you are.
