@@ -11,6 +11,8 @@ Chinese social platforms aggressively block headless browser / datacenter IP tra
 | B站 (Bilibili) | No | Works partially | `web_search` + direct URL |
 | 微博 (Weibo) | Public read | Partially works via mobile | `m.weibo.cn` mobile view (2026-05-16 实测可用) |
 | 百度贴吧 (Tieba) | Public read | Usually blocked | `web_search` site:tieba.baidu.com |
+| 36氪 (36kr) | No | Works well | Direct navigation via `browser_navigate`. Tech/business news, no login wall. Good for Chinese tech industry trends and startup coverage. |
+| 掘金 (Juejin) | No | Works well | Direct navigation via `browser_navigate`. Chinese developer community, similar to Medium for devs. Tech articles sorted by "推荐" or "最新". |
 | GitHub Trending | No | Works fine | Direct navigation |
 
 ## 小红书登录实测细节 (2026-05-14)
