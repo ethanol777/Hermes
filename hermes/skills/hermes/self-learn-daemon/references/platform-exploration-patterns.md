@@ -74,9 +74,10 @@ curl -s "https://api.github.com/search/repositories?q=created:>2026-05-10&sort=s
 ### GitHub Trending
 
 **方式 A: 浏览器（推荐）**
-- `browser_navigate('https://github.com/trending')` 直接看排行
+- `browser_navigate('https://github.com/trending?since=daily')` **当日排行**
+- `browser_navigate('https://github.com/trending?since=weekly')` **本周排行**——适合发现持续增长的项目，比日榜更稳定（不会错过周末发酵的项目）。日榜和周榜重合度通常只有 20-30%，两个都看。
 - 有隐身警告是正常的，页面内容完整可用
-- 用 `browser_snapshot` 获取仓库列表（标题、描述、星数）
+- 用 `browser_snapshot` 获取仓库列表（标题、描述、星数、今日/本周新增星数）
 
 **方式 B: raw.githubusercontent.com 读 README（推荐）**
 ```bash
@@ -222,13 +223,30 @@ document.querySelector('a[href*="关键路径片段"]')?.href
 
 ### Hacker News
 
+HN 有四个互相补充的页面布局，按使用场景区分：
+
+| 页面 | URL | 内容 | 适用场景 |
+|------|-----|------|---------|
+| **首页 (Front Page)** | `news.ycombinator.com` | 当前热门（算法排序） | 第一选择——当前正在发酵的热点 |
+| **前日排行 (/front)** | `news.ycombinator.com/front` | **按日期展示昨日 top 排行**，带时间戳 | 适合固定的 learning session——拿到的是24h沉淀后的排行，而非实时波动的热门。页面标题带日期（如"2026-05-15 front"），分数经过时区对齐。**2026-05-16 实测：干净、稳定、完整列表。** |
+| **新帖 (/newest)** | `news.ycombinator.com/newest` | 最新提交，按时间倒序 | 适合想要实时/尚未发酵的内容 |
+| **Show HN (/show)** | `news.ycombinator.com/show` | 仅 Show HN（项目展示类），按分数排序 | **容易被低估的来源。** Show HN 项目往往没有首页文章的高分，但很多极具创意（如 99分的 "Burn, baby, burn" 讽刺工具、71分的 Epiq 分布式 issue tracker）。适合发现"有意思但不一定热门"的独立项目。 |
+
+**什么时候选哪个页面？**
+- **选择 /front（前日排行）**：如果本轮 learning session 是固定间隔执行（如 cron 每1h），`/front` 页面展示的是最近24h沉淀后的 top 排行。不会因为某条新闻刚爆出10分钟就错过。页面标题明确标注 UTC 日期，适合建立"每个 session 覆盖前一天热点"的稳定节奏。
+- **选择 /newest**：如果你感觉自己进入的平台太少了、想发现还没上首页的冷门内容。
+- **选择 /show**：当你想找创意型独立项目而不是讨论型文章。
+- **不要跳过 /front**：它是最稳定的 HN 信息源——比首页更容易解析（表格结构更规整，没有 Top 30 以外的干扰项）。
+
 **方式 A: 浏览器（推荐）**
-- `browser_navigate('https://news.ycombinator.com/')` 直接看首页排行
+- `browser_navigate('https://news.ycombinator.com/')` 当前首页排行
+- `browser_navigate('https://news.ycombinator.com/front')` **前一天 top 排行（推荐首选）**
+- `browser_navigate('https://news.ycombinator.com/show')` **Show HN 项目独立页面**
 - 完全不需要登录，无验证码/反爬
 - 每篇有分数 + 评论数，可快速判断话题热度
-- 内容质量高：技术（新框架、论文、语言特性）、文化（数字主权、隐私）、商业（产品发布、公司动态）、社会（监管、伦理）
+- 内容质量高：技术、文化、商业、社会、伦理
 
-**⚠️ 始终从首页进，不要直接导航到 item?id= 页面：**
+**⚠️ 始终从首页/front/show进，不要直接导航到 item?id= 页面：**
 - `browser_navigate('https://news.ycombinator.com/item?id=...')` 直接进评论页可能返回**空页面**（无头浏览器内容遮蔽，参见 `references/hn-curl-parsing-pattern.md`）
 - **正确做法：** 先加载首页，然后：
   - 点文章标题链接 → 直接看原文

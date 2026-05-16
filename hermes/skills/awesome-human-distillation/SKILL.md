@@ -297,3 +297,7 @@ description: >
 - 这些 skill 大多是为 Claude Code 的 `npx skills` 系统设计的，但多数也兼容 Hermes 的 SKILL.md 格式
 - 部分仓库使用 `dot-skill` 分支，安装时需注意
 - 目录信息来自 [awesome-human-distillation](https://github.com/mliu98/awesome-human-distillation) 上游，数据每日自动更新
+
+## 参考文件
+
+- [references/skill-ecosystem-trends.md](references/skill-ecosystem-trends.md) — 2026-05-16 观察：skill 创作生态正在从"蒸馏特定的人"转向"发布个人方法论作为 skill 集"，mattpocock/skills 86k★ 和 sleuth-io/sx 包管理器代表这一趋势。与 human distillation 共享同一底层驱动力：用代码表达人类思维。
