@@ -101,12 +101,104 @@ Use sequential IDs following the existing pattern:
 - `fs_001` through current max (check file before writing)
 - Increment from last ID in the file
 
-## Verification After Direct Write
+## 🔴 Shell Quoting Pitfall: JSON with apostrophes breaks `echo '...' >>`
 
-After an `echo >>` fallback, verify the entry was not truncated by shell escaping:
+### Problem
+
+The `echo '...' >>` pattern wraps JSON in bash single quotes. If the JSON content itself **contains a single quote/apostrophe** (e.g. `Boss's Same Drink`, `"can't measure human skill"`), the shell breaks:
 
 ```bash
-tail -1 /c/Users/77/Hermes/hermes/memories/fact_store.jsonl | python -c "import json,sys; json.loads(sys.stdin.read()); print('VALID JSON')"
+# This FAILS — the apostrophe in "Boss's" closes the single-quote string prematurely
+echo '{"id":"fs_057","fact":"Jensen Huang visited Mixue; Boss's Same Drink drove 140% surge"}' >> fact_store.jsonl
+# ^ bash sees: echo '...Boss'  → unclosed string starting at  s Same Drink...'
 ```
 
-If the JSON is invalid (truncated by shell), re-write with proper escaping.
+Result: truncated/invalid JSON, silent data corruption.
+
+### Workarounds (choose one)
+
+#### Option A: `execute_code` Python → `terminal()` calls (✅ preferred — this session's pattern)
+
+Use `execute_code` (Python) to orchestrate `terminal()` calls. Python handles string quoting natively:
+
+```python
+from hermes_tools import terminal
+
+facts = [
+    '{"id":"fs_055","fact":"Frontier AI has broken open CTF competitions...","tags":"timely,security","confidence":0.92}',
+    '{"id":"fs_056","fact":"Alibaba Health launched Hydrogen Ion medical AI...","tags":"timely,AI,healthcare","confidence":0.90}',
+]
+
+for f in facts:
+    # Use print() to pipe to shell — avoids apostrophe issues
+    r = terminal(f"echo '{f}' >> /c/Users/77/Hermes/hermes/memories/fact_store.jsonl")
+    if r["exit_code"] != 0:
+        print(f"Failed: {r}")
+```
+
+⚠️ **Caution:** This still uses `echo '{f}'` inside the `terminal()` call string. Python's f-string handles the quoting, but if `f` itself contains a single quote, bash will still break. **Safe option:** use `printf '%s\n' "$json" >> file` instead (see Option B).
+
+#### Option B: Use `printf` instead of `echo` with double-quoted shell variable
+
+```python
+from hermes_tools import terminal
+
+fact = '{"id":"fs_055","fact":"Boss\\'s Same Drink drove 140% surge..."}'
+# Option 1: JSON-encode the apostrophe as \'
+safe_fact = fact.replace("'", "\\'")
+r = terminal(f"echo '{safe_fact}' >> /c/Users/77/Hermes/hermes/memories/fact_store.jsonl")
+# But this is fragile — better to use Option C
+
+# Option 2: Store in a var and use printf with double quotes
+r = terminal(f"""printf '%s\\n' \"{fact}\" >> /c/Users/77/Hermes/hermes/memories/fact_store.jsonl""")
+```
+
+#### Option C: Write via Python's `write_file` or `terminal` with raw heredoc
+
+```python
+from hermes_tools import terminal
+
+# Write multiple facts at once using a heredoc — no quoting issues
+fact_lines = """{"id":"fs_055","fact":"...","tags":"...","confidence":0.92}
+{"id":"fs_056","fact":"...","tags":"...","confidence":0.90}"""
+
+r = terminal(f"""cat >> /c/Users/77/Hermes/hermes/memories/fact_store.jsonl << 'ENDFACTS'
+{fact_lines}
+ENDFACTS""")
+```
+
+The heredoc (`<< 'ENDFACTS'`) with single-quoted delimiter prevents ALL shell expansion — no escaping issues.
+
+### Prevention
+
+Before writing, inspect your JSON strings for apostrophes/single quotes:
+
+```python
+facts = [f1, f2, f3]
+for f in facts:
+    if "'" in f:
+        print(f"⚠️ Contains apostrophe: {f[:50]}...")
+```
+
+If found, use heredoc (Option C) — it's the most robust across all JSON content.
+
+## Verification After Direct Write
+
+After any direct write, verify all new entries parse as valid JSON:
+
+```bash
+# Check the last N lines are all valid JSON
+tail -5 /c/Users/77/Hermes/hermes/memories/fact_store.jsonl | python -c "
+import json, sys
+lines = sys.stdin.read().strip().split('\n')
+for i, line in enumerate(lines):
+    try:
+        json.loads(line)
+    except json.JSONDecodeError as e:
+        print(f'INVALID line {i+1}: {e}')
+        print(f'Content: {line[:80]}')
+print(f'Checked {len(lines)} lines')
+"
+```
+
+If any line is invalid JSON (truncated by shell quoting), remove it and re-write with proper escaping.

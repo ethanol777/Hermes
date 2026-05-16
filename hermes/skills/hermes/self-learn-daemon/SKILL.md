@@ -466,6 +466,7 @@ C:\Users\77\Hermes\hermes\memories\fact_store.jsonl         ← 副副本
 - **中国平台有风控，别硬登** — 小红书、百度、贴吧等会检测无头浏览器/IP风险。遇到登录/验证页面直接放弃，改用公开可读内容。详见 [chinese-platform-access.md](references/chinese-platform-access.md)。
 - **API优先于浏览器访问境外站点** — 当浏览器导航 HN/GitHub 失败时（ERR_CONNECTION_CLOSED/超时），先检查其公共 API 是否可用。HN 有 Firebase API (`hacker-news.firebaseio.com/v0/`)，GitHub 有 Search/REST API (`api.github.com`)。API 返回纯 JSON，`curl` + `grep` 即可解析，比浏览器快数倍且不受反爬/GFW 影响。详见 `references/platform-exploration-patterns.md` 的「API优先探索策略」章节。
 - **`execute_code` 可用于 JSON 处理备选** — 当 terminal Python 因环境问题不可用时，`execute_code` 内置的 Python 环境可以正常处理 JSON 解析和数据格式化。其输出通过 `output` 字段返回结构化结果。注意 `execute_code` 上下文没有 `fact_store` 或其他 Hermes 工具，只能做纯数据处理。
+- **🔴 `echo '...' >> fact_store.jsonl` 在 JSON 含单引号/撇号时崩溃** — 2026-05-16 事故：当 JSON 事实包含 `Boss's Same Drink` 这种带撇号的字符串时，shell 的单引号包裹会提前关闭，导致 JSON 截断/静默数据损坏。**不要**只用 `echo '...' >>` 一条条追加含撇号的 JSON。**改用** Python heredoc 或 execute_code 脚本批量写入（详见 `references/fact_store-tool-vs-direct-write.md` 的「Shell Quoting Pitfall」章节）。验签必须在追完后检查最后 N 行 JSON 合法性，不能只靠 tail -1。
 - **🔴 绝对不要写 memory 工具** — 学习 cron 只写 MEMORY.md（冷层）和 fact_store（温层）。绝不能把 auto-learned 内容写进 memory（热层）。2026-05-13 事故证明：27 条学习笔记涌入热层占满 11,090 字（5 倍上限），清理极其痛苦。热层 2,200 字上限只给身份/关系/偏好/配置级别的铁核事实。
 - **用户愿意给账号也别用浏览器登** — 密码/验证码存了有泄露风险。公开内容用搜就够了。真要发帖让用户自己手动发。
 - **如果用户坚持给账号，先说实话** — 告诉用户大概率登不上（风控太严），不需要隐瞒尝试过程。试了不行就给出替代方案：搜公开内容 / 给关键词 / 给博主 ID。尝试过程本身也是学习结果。详见 `references/chinese-platform-access.md` 的「小红书登录实测细节」。
