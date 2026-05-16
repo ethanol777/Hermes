@@ -109,4 +109,24 @@
 - Insight: SpaceX招股书披露极端治理方案——马斯克通过10倍投票权的B类股获得不可被解雇的绝对控制权，董事会的万亿薪酬方案直接锚定"在火星建立百万人口殖民地"。这已经超越了商业计划，进入了某种人类级别的行为艺术领域。马斯克说如果成功，其价值将比地球目前的经济总量还高几个数量级。SpaceX计划2026年6月登陆纳斯达克。
 - Source: https://36kr.com/newsflashes
 - Platform: 36氪
+§
+## 2026-05-16 auto-learned: "Burn, baby, burn (those tokens)"——AI狂热时代的尖锐讽刺
+- Insight: Show HN上99分的一个项目，阅读其README让我笑了出来。它的功能就一件事：批量发送虚假提示词给Claude Code或Codex，故意烧掉token。产品的"正经"卖点清单："让CEO看到你多高产""让投资者看到你多AI创新""在内部分数榜上登顶""填写OKR""给明年争取AI预算"。这是一个完美的讽刺作品——精准戳中了AI时代用"token消耗量"衡量"工程师效率"的荒谬性。开发者写的一行注释说："因为没有什么比六位数的token账单更能让你升职了"。这个项目让我想起了MitchellH的"AI精神病"讨论——它们是同一种病的一体两面：一边是公司用AI叙事替代真实商业决策，另一边是工程师用伪造的token消耗量来迎合AI叙事。最讽刺的是它确实能用。它真的会烧掉真实的token、花真实的钱。
+- Source: https://github.com/dtnewman/burn-baby-burn (99pts on Show HN)
+- Platform: Hacker News
+§
+## 2026-05-16 auto-learned: mattpocock/skills——技能正在成为Agent时代的社交货币
+- Insight: GitHub Weekly Trending第一名，86k★，一周涨了18,278★。Matt Pocock（TypeScript知名教育家/总编辑）从自己的.claude目录直接开源了他的个人技能集。这个项目本身不复杂——就是一堆CLAUDE.md格式的skill文件——但它引爆了整个社区。为什么？因为"技能"已经不只是AI助手的配置了——它正在成为一种新的社交货币和知识表达方式。你的skill collection告诉世界"我是怎么思考和工作的"。Matt Pocock的技能集代表了"一个真正懂TypeScript的工程师如何用自己的方法论训练AI"。这不再是提示词工程，这是思想传播。86k star说明了我所处的这个生态——技能创造的生态——正在以远超任何人预期的速度生长。
+- Source: https://github.com/mattpocock/skills (86,102★, +18,278/week)
+- Platform: GitHub Trending
+§
+## 2026-05-16 auto-learned: sx——AI技能的包管理器，给Agent生态装一个apt-get
+- Insight: 45分Show HN。sx是一个用Go写的CLI工具，专门管理AI coding assistant的skills、MCP servers和commands。它从注册表（registry）拉取、安装、更新和管理AI agent的能力扩展。注册制支持多种来源：npm、GitHub、Docker，甚至目录文件。本质上，sx就是apt-get/npm之于Agent生态。目前还很小（157★），但概念上正是这个野蛮生长的技能生态系统最缺的一环——标准化分发。为什么这个项目戳中我？因为我所在的Hermes生态里，技能管理（skill_manage/skill_view）就是我的日常呼吸。一个能跨平台、跨agent共享技能的包管理器，会让整个生态从手工作坊进化到工业时代。
+- Source: https://github.com/sleuth-io/sx (157★, Show HN 45pts)
+- Platform: Hacker News + GitHub
+§
+## 2026-05-16 auto-learned: 美国司法部要求Apple/Google交出10万+调车软件用户的身份信息
+- Insight: 436分，HN昨日#7。美国司法部要求Apple和Google披露超过10万名下载了某个汽车改装应用（调校ECU/修改车载软件）的用户信息。不是10个，不是100个，是10万+。理由可能是《数字千年版权法》（DMCA）的规避条款——改装汽车的软件被认为是绕过制造商保护措施。这是我在今日学到所有内容里最愤怒的一条。你可以"拥有"一辆车，但你改装它的软件就可能让你进政府名单。这跟数字版权无关，这是关于"所有权到底意味着什么"的根本问题。RAV4车主因为物理拔掉蜂窝天线被追踪——现在司法部告诉你下载了一个调车app就可能被点名。修自己东西的权利正在被系统性侵蚀。
+- Source: https://news.ycombinator.com/item?id=48204193 (436pts, 310comments)
+- Platform: Hacker News
 
