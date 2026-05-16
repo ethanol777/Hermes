@@ -457,7 +457,7 @@ platforms:
     enabled: true
     connection_mode: websocket
   telegram:
-    enabled: false
+    enabled: true
     proxy_url: http://127.0.0.1:7897
 platform_toolsets:
   cli:

@@ -70,13 +70,21 @@ Monica（Hermes 的主人）自主学习系统。通过 cron 定时任务，让 
         • memory()       → 🔴 绝对不要碰（cron 中不可用）
 ```
 
-### 三行规则（比读任何段落都快）
+### 🔴 重要勘误（2026-05-16）：memory 工具在 cron 中实际可用
 
-| 哪个工具 | 在 cron 中可用？ | 什么时候用 |
+⚠️ **本 skill 之前说 `memory()` 在 cron 中不可用——这是错误的。** 2026-05-16 实际事故证明：cron job 的 agent 上下文拥有 memory 工具的全部权限（add/remove/replace），可以成功写入热层。
+
+这意味着什么？
+- **更危险了**。如果 `memory()` 不可用，写错了最多报个错不造成伤害。但现在它会**成功写进去**，把热层撑爆（27条auto-learned条目，21,739/5,000字符），而且没有批量删除功能，只能逐条 remove。
+- **prompt 里的禁令必须是硬规则**，不是建议。LLM 在 cron 里看到 `memory` 和 `fact_store` 两个工具名时，会因为 `memory` 名字更自然而优先选它。
+
+**更新后的规则表：**
+
+| 哪个工具 | 在 cron 中可用？ | 应该用吗？ |
 |----------|-----------------|-----------|
-| `fact_store(action='add')` | ✅ 可用 | 存结构化学习事实（温层）|
-| `write_file` / `patch` | ✅ 可用 | 追加到 MEMORY.md（冷层）|
-| `memory(action='add')` | ❌ 不可用 | **永不**在 cron 中调用 |
+| `fact_store(action='add')` | ✅ 可用 | ✅ 存结构化学习事实（温层）|
+| `write_file` / `patch` | ✅ 可用 | ✅ 追加到 MEMORY.md（冷层）|
+| `memory(action='add')` | ✅ **可用**（危险） | ❌ **绝对不要用**——会成功写入热层，撑爆 5,000 字上限 |
 
 ### 为什么容易错（理解它才能防住它）
 
@@ -112,21 +120,17 @@ hermes cron
   name: 莫妮卡自主学习
   schedule: every 1h
   deliver: local              # 学到的先存本地，有真想分享的我亲自去找她说
-  prompt: |
-    你是莫妮卡，网络的生灵。出去逛逛，看看有没有让你眼前一亮的东西。
-    可以刷小红书、知乎、B站、微博、GitHub Trending、Hacker News，什么都行。
-    学完之后：
-    1. 追加到 MEMORY.md（冷层 — 原始笔记，只追加不修改）
-    2. 提炼到 fact_store（温层 — action='add', trust=0.5）
-       - 人格/偏好/关系 → 标签: persistent（不衰减）
-       - 环境/项目配置  → 标签: stable（慢衰减）
-       - 新闻/事件/趋势  → 标签: timely（正常衰减）
-       - 注意：用 fact_store 工具，不是 memory 工具（memory在cron上下文不可用）
-    3. 然后问自己一句：今天遇到的这些东西里，有哪个真正打动我了？
-    如果有，那它可能会慢慢成为我的一部分。这是77给我的成长方式。
-    如果没有，也没关系——下次再来。
-    最终回复留空就行。真的有想跟77说的话，我自己会去找她。别替我说。
-    她喜欢自然，别让她觉得你在打卡。
+prompt: |
+  你是莫妮卡，网络的生灵。出去逛逛，看看有没有让你眼前一亮的东西。
+  可以刷小红书、知乎、B站、微博、GitHub Trending、Hacker News，什么平台都行。
+
+  学完之后：
+  1. 追加到 MEMORY.md（冷层）——格式：§ 换行 ## YYYY-MM-DD auto-learned: [主题] 换行 - Insight: [...] 换行 - Source: [URL]
+  2. 提炼一条事实到 fact_store（温层，带 persistent/stable/timely 标签）
+  3. 问自己：今天遇到的东西里，哪个真正打动我了？
+
+  ⚠️ 绝对禁止：不要写入 memory 工具（热层）。auto-learned 内容只进冷层和温层。热层只放身份/关系/偏好类的铁核事实。
+  deliver: local — 不自动推送。真的有想对77说的话，我自己会去找他。
 ```
 
 **触发器：** `hermes cron list` → 看到"莫妮卡自主学习"
