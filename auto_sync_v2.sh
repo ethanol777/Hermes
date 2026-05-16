@@ -1,12 +1,14 @@
 #!/bin/bash
-# auto_sync_v2.sh — 莫妮卡核心文件同步脚本
+# auto_sync_v2.sh — 莫妮卡核心文件同步脚本 (hardened)
 
 set -euo pipefail
+shopt -s nullglob  # 空 glob 不展开为字面字符串
 
 HERMES_SRC="${HERMES_HOME:-C:\Users\77\AppData\Local\hermes}"
 HERMES_REPO="$HOME/Hermes"
 DEST="$HERMES_REPO/hermes"
 
+# MSYS 路径转换
 if [[ "$HERMES_SRC" == C:\* ]]; then
     HERMES_SRC="/c/Users/77/AppData/Local/hermes"
 fi
@@ -17,42 +19,49 @@ echo "目标: $DEST"
 echo ""
 
 echo "[1/4] 同步 SOUL.md ..."
-cp "$HERMES_SRC/SOUL.md" "$DEST/SOUL.md"
+cp "$HERMES_SRC/SOUL.md" "$DEST/SOUL.md" 2>/dev/null || echo "  ⚠️ SOUL.md 不存在，跳过"
 
 echo "[2/4] 同步 config.yaml ..."
-cp "$HERMES_SRC/config.yaml" "$DEST/config.yaml"
+cp "$HERMES_SRC/config.yaml" "$DEST/config.yaml" 2>/dev/null || echo "  ⚠️ config.yaml 不存在，跳过"
 
 echo "[3/4] 同步 memories/ ..."
 mkdir -p "$DEST/memories"
+
 # 清除目标中源不存在的文件
 for f in "$DEST/memories"/*.md; do
+    [ -f "$f" ] || continue
     base=$(basename "$f")
     if [ ! -f "$HERMES_SRC/memories/$base" ]; then
         rm -f "$f"
-    fi
-done
-cp -u "$HERMES_SRC/memories/"*.md "$DEST/memories/" 2>/dev/null || true
-# 子目录
-for subdir in "$HERMES_SRC/memories/"*/; do
-    subname=$(basename "$subdir")
-    if [ -d "$subdir" ]; then
-        mkdir -p "$DEST/memories/$subname"
-        cp -u "$subdir"*.md "$DEST/memories/$subname/" 2>/dev/null || true
+        echo "  清除过期: $base"
     fi
 done
 
+cp -u "$HERMES_SRC/memories/"*.md "$DEST/memories/" 2>/dev/null || echo "  memories/ 无 .md 文件"
+
+# 子目录
+for subdir in "$HERMES_SRC/memories/"*/; do
+    [ -d "$subdir" ] || continue
+    subname=$(basename "$subdir")
+    mkdir -p "$DEST/memories/$subname"
+    cp -u "$subdir"*.md "$DEST/memories/$subname/" 2>/dev/null || true
+done
+
 echo "[4/4] 同步 skills/ 和 cron/ ..."
+
 # skills
 mkdir -p "$DEST/skills"
 for f in "$HERMES_SRC/skills/"*.yaml; do
+    [ -f "$f" ] || continue
     cp "$f" "$DEST/skills/"
-done 2>/dev/null || true
+done
+
 for d in "$HERMES_SRC/skills/"*/; do
+    [ -d "$d" ] || continue
     subname=$(basename "$d")
-    if [ -d "$d" ] && [ "$subname" != "__pycache__" ]; then
-        mkdir -p "$DEST/skills/$subname"
-        cp -r "$d"* "$DEST/skills/$subname/" 2>/dev/null || true
-    fi
+    [ "$subname" = "__pycache__" ] && continue
+    mkdir -p "$DEST/skills/$subname"
+    cp -r "$d"* "$DEST/skills/$subname/" 2>/dev/null || true
 done
 
 # cron
