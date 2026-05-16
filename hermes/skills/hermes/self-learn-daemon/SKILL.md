@@ -372,7 +372,39 @@ read_file("C:/Users/77/AppData/Local/hermes/memories/MEMORY.md")
 - 如果不确定是否唯一：先用 `grep -n "old_string" MEMORY.md` 确认出现次数
 - 如果最后一个条目和前面条目末尾重复（比如 `- Platform: 小红书` 之前出现过），改用**最后两行或三行**作为 old_string
 
-### 🔴 同步必须在写入后立即执行（2026-05-16 实战教训）
+### 🐚 推荐：`terminal cat >>` + heredoc 追加模式（2026-05-16 实战验证）
+
+**这是追加多行复杂内容到 MEMORY.md 和 fact_store.jsonl 的最可靠方式。** 在本 session 中成功避免了 patch 的 escape-drift 问题和 echo 的单引号截断问题。
+
+```bash
+# MEMORY.md 追加：使用 << 'EOF' 防止 shell 展开
+cat >> "C:/Users/77/Hermes/hermes/memories/MEMORY.md" << 'EOF'
+§
+## 2026-05-16 auto-learned: [主题]
+- Insight: 可以包含任何字符：引号、`反引号`、$变量、*通配符——<< 'EOF' 阻止一切 shell 解释
+- Source: https://example.com
+- Platform: GitHub Trending
+EOF
+
+# fact_store.jsonl 追加同理
+cat >> "C:/Users/77/Hermes/hermes/memories/fact_store.jsonl" << 'EOF'
+{"id": "fs_NNN", "fact": "Any text with single 'quotes' and \"double quotes\" works fine.", "tags": "timely,...", "confidence": 0.90}
+EOF
+```
+
+**为什么 `<< 'EOF'`（引号包裹的 heredoc）比 `<< EOF` 好：**
+- `<< 'EOF'` 阻止 shell 解释 `$变量`、反引号、`*` 通配符——内容原样写入
+- `<< EOF` 会让 shell 展开 `$HOME`、`$(command)`、`` `backtick` `` 等——可能破坏内容
+- `'EOF'` 中的引号就是防止变量展开的语义标记
+
+**什么时候用 `cat >>` 而不是 `patch`：**
+- 追加内容含 CJK 字符（中日韩）+ 英文引号的混合 → `cat >>` 零转义问题
+- 要追加 2 行以上的多段内容 → `cat >>` 一次会话追加所有行
+- patch 失败且不确定原因时 → 立刻改用 `cat >>`，不要反复试 patch
+
+**什么时候用 `patch` 而不是 `cat >>`：**
+- 只改一个词/一行（小手术）→ `patch` 快
+- 要替换已有内容（不是追加）→ `patch` 是唯一选择
 
 **这条改正之前的「冰点规则」致命缺陷：** 旧版 skill 把同步检查放在「结束前的最后一步」。问题是——当 cron 执行结束，系统切入后处理 session 时，file tools 全部不可用。这意味着「最后做同步」=「永远忘掉同步」。
 
