@@ -440,6 +440,30 @@ C:\Users\77\Hermes\hermes\memories\fact_store.jsonl         ← 副副本
 - **用户愿意给账号也别用浏览器登** — 密码/验证码存了有泄露风险。公开内容用搜就够了。真要发帖让用户自己手动发。
 - **如果用户坚持给账号，先说实话** — 告诉用户大概率登不上（风控太严），不需要隐瞒尝试过程。试了不行就给出替代方案：搜公开内容 / 给关键词 / 给博主 ID。尝试过程本身也是学习结果。详见 `references/chinese-platform-access.md` 的「小红书登录实测细节」。
 
+## 🛠️ 上下文限制：cron 产出后的「后处理 session」工具集远小于 cron 执行时
+
+**关键发现（2026-05-16）：** cron job 执行结束后，系统可能触发一个「后处理 session」来处理技能更新等后续任务。**这个后处理 session 的工具集与 cron 执行时的工具集完全不同。**
+
+| 阶段 | 可用工具 | 不可用工具 |
+|------|---------|-----------|
+| **cron 执行时** | browser_navigate/click/scroll, terminal, read_file, write_file, patch, search_files, session_search, fact_store, skill_view, skill_manage | memory（应避免使用） |
+| **后处理 session** | fact_feedback, fact_store, memory, skill_manage, skill_view, skills_list | terminal, read_file, write_file, patch, search_files, browser_* |
+
+**影响：**
+- 在 post-cron 后处理 session 中，**无法用 terminal 查看或 sync MEMORY.md / fact_store.jsonl 文件**
+- 也无法用 `read_file` 或 `patch` 来检查和补充文件内容
+- 后处理 session 能做的只有：skill 审计/更新（skill_manage/skill_view）、fact_store 操作、memory 操作
+- 这意味着 **双副本同步必须在 cron 执行阶段内完成**，不要指望后处理 session 来补漏
+
+**所以编写 cron prompt 时必须纳入「最后一步：同步文件」的指令：**
+```
+最后一步（必须）：
+1. 用 terminal 把 MEMORY.md 同步到 ~/AppData/Local/hermes/memories/MEMORY.md
+2. 用 terminal 把 fact_store.jsonl 同步到 ~/AppData/Local/hermes/memories/fact_store.jsonl
+```
+
+不写这个步骤，后处理 session 就再也补不了文件同步了。
+
 ## 2026-05-14 变更
 
 不再是每小时的笔记自动推送给所有平台了。改为 deliver: local，学习内容只存本地。
