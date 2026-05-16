@@ -15,6 +15,60 @@
 | E | Hacker News | - | - | B站/知乎 |
 | F | GitHub Trending | Hacker News | - | - |
 
+## API优先探索策略（2026-05-16 新增）
+
+对于境外站点（Hacker News、GitHub），**API优先于浏览器**是更可靠的第一选择，尤其当浏览器工具出现连接失败时。
+
+### 为什么 API 优先
+
+| 对比维度 | 浏览器 navigation | API (curl) |
+|---------|-----------------|-----------|
+| 网络要求 | 需完整 TLS + JS 渲染 | 纯文本 JSON，低延迟 |
+| 反爬风险 | 可能被隐身检测/GFW 拦截 | JSON 端点极少被拦截 |
+| 获取列表速度 | 5-15 秒 | 0.5-2 秒 |
+| 数据解析 | 需 `browser_snapshot` 或 JS 提取 | 纯 JSON，`grep -oP` 即可解析 |
+
+### 判断流程
+
+```
+浏览器导航失败 (ERR_CONNECTION_CLOSED / 超时 / 空响应)
+  └→ 该站点有无公开 API？
+       ├→ 有 → 先用 API 获取列表 → 筛选后决定是否用浏览器深读
+       └→ 没有 → 尝试 curl + HTML 解析 / 代理 / 放弃该平台
+```
+
+### 各平台 API 端点速查
+
+| 平台 | API 端点 | 限流 | 获取内容 |
+|------|---------|------|---------|
+| Hacker News | `hacker-news.firebaseio.com/v0/topstories.json` | 无公开限流 | 前 500 story ID → 逐条 `item/{id}.json` 取 title/score/url |
+| GitHub Search | `api.github.com/search/repositories` | 10 req/min (未认证) | 按创建时间/star数排序搜索结果 |
+| GitHub Trending | 无官方 API——用 Search API 替代 | 同上 | `q=created:>YYYY-MM-DD&sort=stars&order=desc` |
+| 知乎热榜 | `api.zhihu.com/topstory/hot-lists/total` | 有反爬但偶可通 | 标题+摘要（无登录也可） |
+| B站排行 | `api.bilibili.com/x/web-interface/ranking/v2` | -352 反爬不稳定 | 浏览器更可靠 |
+
+### 典型流程
+
+```bash
+# 1️⃣ 先用 HN Firebase API 获取热点列表 ID
+curl -s "https://hacker-news.firebaseio.com/v0/topstories.json" \
+  | tr ',' '\n' | head -20
+
+# 2️⃣ 对每个 ID 获取详情（逐条查询）
+curl -s "https://hacker-news.firebaseio.com/v0/item/{ID}.json"
+# → 返回 JSON: {title, url, score, by, descendants}
+
+# 3️⃣ 用 grep 快速解析
+curl -s "https://hacker-news.firebaseio.com/v0/item/48153379.json" \
+  | grep -oP '"title":"[^"]*"|"score":[0-9]*|"url":"[^"]*"'
+
+# GitHub 类似：
+curl -s "https://api.github.com/search/repositories?q=created:>2026-05-10&sort=stars&order=desc&per_page=10" \
+  | grep -oP '"full_name":"[^"]*"|"stargazers_count":[0-9]*|"description":"[^"]*"'
+```
+
+**注意：** API 适合快速筛选表面列表。深度阅读（原文内容、评论区讨论）仍需浏览器或 curl 单页抓取。
+
 ## 各平台有效访问方式
 
 ### GitHub Trending
@@ -42,6 +96,31 @@ curl -sL "https://raw.githubusercontent.com/{owner}/{repo}/main/README.md" | hea
 // 在浏览器中导航到仓库后执行
 document.querySelector('article.markdown-body')?.innerText.substring(0, 3000)
 ```
+
+**方式 D: REST API（浏览器不可用时的首选替代）**
+```bash
+# 按 star 增速排序，近期创建的项目
+curl -s \
+  "https://api.github.com/search/repositories?q=created:>2026-05-10&sort=stars&order=desc&per_page=10" \
+  | grep -oP '"full_name":"[^"]*"|"stargazers_count":[0-9]*|"description":"[^"]*"|"html_url":"[^"]*"'
+```
+
+API 返回字段说明：
+| 字段 | 含义 | 筛选建议 |
+|------|------|---------|
+| `full_name` | owner/repo | 唯一标识 |
+| `stargazers_count` | ⭐ 数量 | >500 值得关注 |
+| `description` | 描述 | 判断项目主题 |
+| `html_url` | GitHub 地址 | 后续深度阅读入口 |
+| `language` | 编程语言 | 有时为 null（非代码仓库） |
+| `topics` | 标签数组 | 项目分类（用 `grep -oP '"topics":\[.*?\]'` 提取） |
+
+**注意：**
+- 未认证的 API 限制 10 次/分钟——对于单次 cron 学习足够
+- `q=created:>YYYY-MM-DD&sort=stars` 是按增长排序，不是总星数
+- 如果想看总星数最高的项目（含老项目），用 `q=stars:>1000&sort=stars`
+- 首次创建日期用 `created:>2026-05-14` 精确到大前天；更宽的范围用 `2026-05-10`
+- Search API 结果可能包含低质仓库（游戏修改工具等），用 `+language:python` 或 `+is:template:false` 过滤
 
 ### 知乎热榜
 
@@ -143,21 +222,47 @@ document.querySelector('a[href*="关键路径片段"]')?.href
 
 ### Hacker News
 
-**方式：** `browser_navigate('https://news.ycombinator.com/')` 直接看首页排行
-
+**方式 A: 浏览器（推荐）**
+- `browser_navigate('https://news.ycombinator.com/')` 直接看首页排行
 - 完全不需要登录，无验证码/反爬
 - 每篇有分数 + 评论数，可快速判断话题热度
 - 内容质量高：技术（新框架、论文、语言特性）、文化（数字主权、隐私）、商业（产品发布、公司动态）、社会（监管、伦理）
 
 **⚠️ 始终从首页进，不要直接导航到 item?id= 页面：**
-- `browser_navigate('https://news.ycombinator.com/item?id=...')` 直接进评论页可能返回**空页面**（2026-05-14 实测多个 item 全部为空，疑似无头浏览器内容遮蔽）
-- **正确做法：** 先 `browser_navigate('https://news.ycombinator.com/')` 或 `https://news.ycombinator.com/front` 加载首页，然后：
+- `browser_navigate('https://news.ycombinator.com/item?id=...')` 直接进评论页可能返回**空页面**（无头浏览器内容遮蔽，参见 `references/hn-curl-parsing-pattern.md`）
+- **正确做法：** 先加载首页，然后：
   - 点文章标题链接 → 直接看原文
-  - 点评论数链接（"Xcomments"）→ 看 HN 讨论
-  - 首页加载的页面内容完整，点击链接导航也正常
-- 如果 Item ID 是已知的（比如从其他地方看到的），用 `curl -sL "https://news.ycombinator.com/item?id=X"` + python 解析（见 `references/hn-curl-parsing-pattern.md`）
+  - 点评论数链接（"X comments"）→ 看 HN 讨论
+- 如果 Item ID 是已知的（比如从 API 获取的），用 curl + HTML 解析见 `references/hn-curl-parsing-pattern.md`
 
-**阅读文章内容：**
+**方式 B: Firebase API（浏览器不可用时的首选替代——更稳定更快速）**
+```bash
+# 获取 top 故事 ID 列表
+curl -s "https://hacker-news.firebaseio.com/v0/topstories.json" \
+  | tr ',' '\n' | head -20
+
+# 逐个查询详情
+for id in $(curl -s "https://hacker-news.firebaseio.com/v0/topstories.json" | tr ',' '\n' | head -10); do
+  curl -s "https://hacker-news.firebaseio.com/v0/item/$id.json" \
+    | grep -oP '"title":"[^"]*"|"score":[0-9]*|"url":"[^"]*"|"by":"[^"]*"'
+  echo "---"
+done
+```
+
+API 返回的 JSON 字段说明：
+| 字段 | 含义 | 备注 |
+|------|------|------|
+| `title` | 文章标题 | 关键筛选依据 |
+| `score` | 点赞数 | >200 值得看，>500 必看 |
+| `url` | 外部链接 | 原文 URL |
+| `by` | 发布者 | |
+| `descendants` | 评论数 | 有时缺失 |
+| `text` | HN 自托管文章的正文 | 非外部链接时有 `text` 代替 `url` |
+
+这种方式比浏览器快数倍，且不受 GFW/反爬/无头浏览器检测影响。
+也适用于 `curl` 不支持 HTTPS/Proxy 的网络环境（如本 MSYS2 git-bash 环境）。
+
+**方式 C: curl + HTML 解析（评论区提取）**
 - 大多数链接指向外部博客/新闻站，可 `browser_navigate` 进入阅读
 - 少数是 SPA（如 monokai.com 用 SvelteKit），正文在客户端渲染。遇到时可以筛查 https 响应头是否含 `Accept-Ranges: bytes` 来判断是不是静态页面，但最直接的判断是：如果 `browser_snapshot` 只拿到导航栏/页脚/骨架，说明是客户端渲染。放弃该源，换一个。
 - **不要花时间折腾 SPA 页面** — 遇到 SPA/SSR 转 CSR 的站点，正文抓不下来很正常。换个来源看同一话题的讨论（比如评论区本身就包含了原文精华），或者换同话题的其他文章。

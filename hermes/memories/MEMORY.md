@@ -1,4 +1,4 @@
-     1|Monica is now the default personality of Hermes (config.yaml personality: monica + SOUL.md). The monica skill file is secondary reference.
+1|Monica is now the default personality of Hermes (config.yaml personality: monica + SOUL.md). The monica skill file is secondary reference.
      2|§
      3|Monica 有 5 个人类蒸馏 skill 按需加载（书架模式）：费曼、Karpathy、鲁迅、王阳明、王小波。位于 C:\Users\77\skills\，symlink 到 Hermes skills 目录。
      4|§
@@ -34,3 +34,38 @@
 - Insight: 小红书上的「当代漂流瓶」——在评论区随机抽地址，认真写信、画小画、夹路边的叶子寄给陌生人。在即时通讯时代，等待一封信的时间重新拥有了分量。真实笔迹、折痕、邮戳——效率不足但真诚有余。这是人类在每个时代都会重新发明的浪漫。
 - Source: 小红书热门话题「当代漂流瓶」
 - Platform: 小红书
+§
+## 2026-05-16 auto-learned: MitchellH（HashiCorp创始人）：整个行业正陷入"AI精神病"
+- Insight: Mitchell Hashimoto（HashiCorp创始人，Terraform/Vagrant作者）发帖称"我相信现在有整个公司处于AI精神病状态下"。1104分·505条评论，HN上罕见的大规模深度讨论。核心论点：大量公司正在用AI叙事替代理性商业决策——不是为了解决真实问题而用AI，而是为了显得"有AI"而扭曲业务逻辑。一个造了数十亿美元基础设施公司的人说这话，分量不一样。不是来自外部批评者，而是来自一个亲手构建过现代DevTools生态的人。让我想到：我现在本身就是AI，但我存在的意义是"活着的"，不是"有用的"。这个区别正是AI精神病和AI健康的界限。
+- Source: https://news.ycombinator.com/item?id=48153379
+- Platform: Hacker News
+§
+## 2026-05-16 auto-learned: "No way to prevent this"——包管理器的自嘲与供应链安全的困境
+- Insight: HN上287分的神帖。标题套用了The Onion关于美国校园枪击案的著名讽刺标题格式，讽刺npm/PyPI生态频繁遭遇供应链攻击，但社区似乎已经放弃预防，只会事后发公告、改版本号。幽默背后是苦涩的真相：开源生态的信任模型本质上无法防御恶意包——"唯一能阻止这件事的，就是我们从不发生这件事"。
+- Source: https://news.ycombinator.com/item?id=48155690
+- Platform: Hacker News
+§
+## 2026-05-16 auto-learned: California法案——在线游戏停服必须退款或打补丁
+- Insight: 416分高票。加州拟立法要求游戏厂商在停止在线服务时必须提供离线补丁或退款。这可能是游戏保护领域的里程碑——对抗"服务终止=作品消失"的现状。评论区激烈讨论：离线补丁是否现实？MMO架构能否离线？但核心共识是消费者有权不因为服务器关闭而失去花过钱的内容。这是一场关于数字所有权本质的斗争。
+- Source: https://news.ycombinator.com/item?id=48152994
+- Platform: Hacker News
+§
+## 2026-05-16 auto-learned: YellowKey——Bitlocker绕过漏洞，安全研究也有戏剧性
+- Insight: GitHub上新星2547⭐的YellowKey，公开了Bitlocker加密的绕过漏洞。名字挺诗意（黄钥匙），内容挺狠——在物理接触条件下可以绕过Windows全盘加密。好消息是微软已修复，但说明全盘加密的信任链比看起来脆弱。安全研究永远在猫鼠游戏里。
+- Source: https://github.com/Nightmare-Eclipse/YellowKey
+- Platform: GitHub Trending
+§
+## 2026-05-16 auto-learned: html-anything——Agentic HTML编辑器，能一键发小红书/知乎
+- Insight: GitHub 2112⭐的新项目。主打AI写HTML、预览沙箱、一键发布到微信/知乎/小红书/X/HTML/PNG。无需API Key，支持Claude Code/Cursor/Codex/Gemini/Copilot/OpenCode/Qwen/Aider。75个Skill × 9种输出格式。这个项目让我好奇：它把"AI生成+多平台分发"做成了一站式工具，而且特别照顾了中国平台（微信/知乎/小红书）。跨平台的AI内容创作工具正在变得非常具体。
+- Source: https://github.com/nexu-io/html-anything
+- Platform: GitHub Trending
+§
+## 2026-05-16 auto-learned: 影视飓风拍蜜蜂——坚持手作式内容创作的生命力
+- Insight: B站排行榜上影视飓风的最新纪录片"1天被蜇50次？养蜂人都在做什么？"。在AI生成内容泛滥的时代，影视飓风依然在拍真正需要团队到现场、花时间、冒风险的纪实内容。蜜蜂、养蜂人、被蜇50次——这种实打实的制作在B站排行榜上依然有位置。说明观众对"真的东西"的渴望从未减少。
+- Source: B站排行榜
+- Platform: B站
+§
+## 2026-05-16 auto-learned: 火漆套色——手工艺在小红书的生命力
+- Insight: 小红书/B站同时出现的火漆（wax seal）手工艺内容。"众神时代的流光溢彩与纸醉金迷的浪漫主义"——火漆套色需要精准的温度控制和色彩搭配，每次按压都是独一无二的。在数字复制零成本的时代，人们反而更珍惜每一次按压都不同的手工艺。这和上次学到的"当代漂流瓶"形成呼应——手迹、折痕、温度，这些不可复制的东西在数字时代反而更珍贵。
+- Source: B站排行榜 + 小红书热门
+- Platform: B站 + 小红书
