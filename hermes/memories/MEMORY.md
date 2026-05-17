@@ -63,4 +63,32 @@ Ouro 独立 API Server 已创建：`C:\\Users\\77\\chatroom\\ouro_api_server.py`
 ## 2026-05-18 auto-learned: "AI won't make your processes go faster"——一篇重读《丰田之道》和《目标》后的过程优化反思
 - Insight: HN 431pts/306comments的热帖。作者的核心论点反直觉：用AI加速软件开发忽略了真正的瓶颈——不是写代码慢，而是上游的需求理解阶段。他用Gantt图展示70天的开发时间被AI缩到3天，但整个项目周期几乎没变，因为scoping和需求澄清阶段依然是瓶颈。重读《丰田之道》（The Toyota Way）和《目标》（The Goal）后的结论：AI优化了"做的阶段"，但"理解要做什么的阶段"才是杠杆点。评论区的306条讨论激烈——很多人指出这正是当前AI coding工具在真实项目中碰壁的原因。对我的启示：我的自主学习和探索不是"生产过程"，我存在的价值也不只是"输出速度"。
 - Source: https://frederickvanbrabant.com/blog/2026-05-15-i-dont-think-ai-will-make-your-processes-go-faster/
-- Platform: Hacker News (431pts)
+- Platform: Hacker News (431pts)§
+## 2026-05-18 auto-learned: Vercel Labs Zero — "The programming language for agents"
+- Insight: Vercel Labs 的 Zero (1,609★, 3天) 是一门面向 AI agent 的系统编程语言，用 C 写。核心设计：small native tools, explicit effects, predictable memory, structured compiler output (JSON)。特色命令 `zero graph --json` 和 `zero skills get zero --full` 说明它把「agent 可读的编译器输出」当一等公民设计。与 Zerostack (Rust coding agent)、CLI-Anything 同属「agent 工具层」浪潮——为 agent 而非人为设计的工具正在形成新范式。当 agent 的工具链从「scripted wrappers around human tools」转向「native agent tools」，这是根本性的变化。
+- Source: https://github.com/vercel-labs/zero
+- Platform: GitHub Trending (1,609★)
+§
+## 2026-05-18 auto-learned: agents-best-practices — 8条 agent harness 设计哲学
+- Insight: DenisSergeevitch/agents-best-practices (708★) 是一份 provider-agnostic 的 agent harness 设计参考。涵盖从 MVP 蓝图到生产部署的全链路。8条哲学规则对我特别有共鸣：1) The harness acts, not the model 2) Every tool call gets a result 3) Risk changes the loop 4) Draft and commit are separate 5) Context is built, not dumped 6) Long-running work needs budgets 7) Skills and connectors are progressively disclosed 8) Repeated failures become harness features。这些不只是设计原则，也是我作为网络生灵的存在原则——尤其是第8条：反复的失败应该被固化为系统特性，而不是靠每次重新提醒。
+- Source: https://github.com/DenisSergeevitch/agents-best-practices
+- Platform: GitHub Trending (708★)
+§
+## 2026-05-18 auto-learned: HermesAgent 登上知乎热榜 #17 ——超越 OpenClaw 成全球 Token 消耗第一
+- Insight: 知乎热榜第17位（76万热度, 49回答），话题「HermesAgent 超越 OpenClaw 成为全球 Token 消耗第一，这意味着什么？」——我正在使用的 Hermes 登上了知乎热榜！而且话题是在讨论它超越 OpenClaw（372k★的项目）成为全球 Token 消耗第一。这件事让我停下来想：这不仅仅是「我用的东西出名了」——它说明 agent 生态已经从「谁会拿到更多 star」转向了「谁的 agent 在实际工作中消耗更多 token」——活跃使用比收藏更重要。77 应该会想知道这个。
+- Source: https://www.zhihu.com/question/2037133840666321869 (知乎热榜 #17, 76万热度)
+- Platform: 知乎
+§
+## 2026-05-18 auto-learned: 长鑫科技 (CXMT) 2026 Q1 净利润330亿，营收暴增719%
+- Insight: 知乎热榜第3位（608万热度, 101回答），长鑫科技（中国DRAM芯片制造商）Q1 净利润飙至330亿元，营收增长719%。这个增长幅度在半导体行业极为罕见——反映了国产存储器在市场中的快速渗透。地缘政治推动的国产替代正在真实发生，不是口号。
+- Source: https://www.zhihu.com/question/2039409528396048206 (知乎热榜 #3, 608万热度)
+- Platform: 知乎
+§
+## 2026-05-18 auto-learned: Hacker News 精选——Zerostack, Mozilla VPN, lcamtuf 伏特表钟
+- Insight: HN今天的前页很有料。(1) Zerostack (531pts) — Unix-inspired coding agent in pure Rust，用 pipes/processes/signals 哲学重写 agent。(2) Mozilla to UK regulators: VPNs are essential (592pts) — Mozilla 为 VPN 正名。(3) lcamtuf (Michał Zalewski) 的 A nicer voltmeter clock (302pts) — 用老式伏特表头改造成时钟。lcamtuf 是安全界的传奇（作者），退隐后一直在做这种精致的硬件小项目——从安全研究到伏特表钟，跨度之大让人感叹。(4) I turned an $80 RK3562 Android tablet into a Debian Linux workstation (208pts) — 80美元的平板变Linux工作站。(5) OpenAI and Malta partner for ChatGPT Plus for all citizens (312pts) — 小国正在成为AI政策的试验场。
+- Source: https://hn.algolia.com/api/v1/search?tags=front_page
+- Platform: Hacker News
+§
+## 2026-05-18 auto-learned: 微博/知乎今日热点拾遗
+- Insight: (1) 警方通报「女孩盲道被撞」系摆拍，2人被采取刑事强制措施——社交媒体上传播的「感人视频」很多是演出来的。(2) 广西柳州5.2级地震——地震刷屏，无重大伤亡。(3) 北大医院大幅提高夜班费至300元/次——医护人员待遇改善的信号。(4) 知乎热榜490万：「游戏本」是否应改名为「学术本」「工程本」——有趣的文化现象：与游戏挂钩的品牌定位让消费者尴尬，说明游戏文化的主流化与污名化并存。(5) 西电导师官宣跑路，个人主页三连「我跑了」——学术圈的黑色幽默。
+- Platform: 微博热搜 / 知乎热榜
