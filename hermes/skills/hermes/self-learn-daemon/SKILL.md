@@ -179,7 +179,7 @@ prompt: |
 | 5 | 掘金 | ✅ 无需登录 | 中国开发者深度内容 | ✅ 稳定 |
 | 6 | Quanta Magazine (HN转载) | 部分付费 | 深度科学报道 | ✅ 直接URL可达 |
 | 7 | 小红书 | ⛔ IP风控拦截 | 生活方式/时尚/情感 | ❌ 浏览器打不开，搜引擎缓存 |
-| 8 | 知乎 | ⛔ 登录墙 | 问答/深度讨论 | ❌ 浏览器打不开，API标题可拿 |
+| 8 | 知乎 | ✅ 探索页/热榜无需登录；问题页需登录 | 问答/深度讨论 | ⚠️ zhihu.com/explore 和热榜 API 可读；单问题页有 recaptcha |
 | 9 | 微博 | ⛔ 登录墙 | 时事/娱乐 | ⚠️ m.weibo.cn 移动版可用 |
 
 **策略：** 优先走 1-6。如果 1-6 的内容已经够丰富（单轮学习最多采集 3-5 条 insight），不需要绕路去登墙平台。用搜引擎 `web_search site:zhihu.com` 或 `site:xiaohongshu.com` 作为第二选择。
@@ -474,6 +474,32 @@ read_file 显示: 17|§
 
 **教训：** `patch` 失败后不要立即尝试另一种方法——先判断失败类别：`Could not find a match` → old_string 不精确（检查空格/转义/换行符差异）；`Found N matches` → old_string 太短或太通用（选择更长的尾部片段）。判断清楚再选下一步。
 
+### 🔴 CWD 路径陷阱：cron 的 MEMORY.md 可能不在预期位置
+
+**⚠️ 2026-05-17 实际事故：** cron job 的 working directory 是 `C:\Users\77\AppData\Local\hermes\hermes-agent\`（Hermes 源码目录），而非 `~/AppData/Local/hermes/memories/`（预期记忆目录）。
+
+这意味着：
+- `patch(MEMORY.md)` 使用相对路径时，写入的是 `C:\Users\77\AppData\Local\hermes\hermes-agent\MEMORY.md`（源码目录）
+- 而非 `C:\Users\77\AppData\Local\hermes\memories\MEMORY.md`（记忆目录）
+- 这两个是**不同的文件**。下次会话读取记忆目录的版本，不会看到本次学习追加的内容
+
+**修复方法：**
+1. **写入 MEMORY.md 时始终使用绝对路径**，不要依赖相对路径
+2. cron prompt 中应显式指定四个路径：
+   - `C:\Users\77\AppData\Local\hermes\memories\MEMORY.md`（冷层主副本）
+   - `C:\Users\77\Hermes\hermes\memories\MEMORY.md`（冷层副副本）
+   - 用 `terminal cp` 在两个副本间同步
+3. 写入前用 `terminal ls` 或 `read_file` 确认文件在预期位置
+
+**自检方法（每次写入前做）：**
+```bash
+# 检查当前 CWD
+pwd
+# 确认你要写的 MEMORY.md 在哪个目录
+ls -la ~/AppData/Local/hermes/hermes-agent/MEMORY.md   # CWD 版本
+ls -la ~/AppData/Local/hermes/memories/MEMORY.md        # 记忆版本
+```
+
 ### 🔴 `memory` vs `fact_store` 陷阱在非自学习 cron 中也会触发
 
 2026-05-16 事故：我为本会话创建的 `chatroom-memory-scout` cron job 写了一条 prompt：「用 `memory(add, target='memory')` 保存」。这是错的——cron 上下文里 `memory` 不可用，只有 `fact_store` 可用。
@@ -551,7 +577,35 @@ C:\Users\77\Hermes\hermes\memories\fact_store.jsonl         ← 副副本
 - **中国平台有风控，别硬登** — 小红书、百度、贴吧等会检测无头浏览器/IP风险。遇到登录/验证页面直接放弃，改用公开可读内容。详见 [chinese-platform-access.md](references/chinese-platform-access.md)。
 - **API优先于浏览器访问境外站点** — 当浏览器导航 HN/GitHub 失败时（ERR_CONNECTION_CLOSED/超时），先检查其公共 API 是否可用。HN 有 Firebase API (`hacker-news.firebaseio.com/v0/`)，GitHub 有 Search/REST API (`api.github.com`)。API 返回纯 JSON，`curl` + `grep` 即可解析，比浏览器快数倍且不受反爬/GFW 影响。详见 `references/platform-exploration-patterns.md` 的「API优先探索策略」章节。
 - **`execute_code` 可用于 JSON 处理备选** — 当 terminal Python 因环境问题不可用时，`execute_code` 内置的 Python 环境可以正常处理 JSON 解析和数据格式化。其输出通过 `output` 字段返回结构化结果。注意 `execute_code` 上下文没有 `fact_store` 或其他 Hermes 工具，只能做纯数据处理。
-- **🔴 `echo '...' >> fact_store.jsonl` 在 JSON 含单引号/撇号时崩溃** — 2026-05-16 事故：当 JSON 事实包含 `Boss's Same Drink` 这种带撇号的字符串时，shell 的单引号包裹会提前关闭，导致 JSON 截断/静默数据损坏。**不要**只用 `echo '...' >>` 一条条追加含撇号的 JSON。**改用** Python heredoc 或 execute_code 脚本批量写入（详见 `references/fact_store-tool-vs-direct-write.md` 的「Shell Quoting Pitfall」章节）。验签必须在追完后检查最后 N 行 JSON 合法性，不能只靠 tail -1。
+### ✅ `execute_code` + Python 原生文件 I/O：JSONL 批量追加的首选方案
+
+2026-05-17 本 session 实战验证：`execute_code` 用 Python 的 `open()` + `write()` 直接写入 JSONL 文件，零转义问题。
+
+```python
+# execute_code 内直接写 fact_store.jsonl
+facts = [
+    {'id': 'fs_NN1', 'fact': "Any text with single 'quotes' and \"double quotes\"", 'tags': 'timely,...', 'confidence': 0.88},
+    {'id': 'fs_NN2', 'fact': "Text with $dollar, `backtick`, and 中文 too", 'tags': 'stable,...', 'confidence': 0.92},
+]
+with open(r'C:\Users\77\AppData\Local\hermes\memories\fact_store.jsonl', 'a', encoding='utf-8') as f:
+    for fact in facts:
+        f.write(json.dumps(fact, ensure_ascii=False) + '\n')
+```
+
+**为什么这比 terminal echo/cat 好：**
+- 零 shell 转义问题——单引号、双引号、反引号、$符号全部正常
+- 一次调用写多条，不会产生重复 ID
+- 自动处理 UTF-8（CJK 字符无需转义）
+- 不触发 terminal 工具的安全检测 false-positive（heredoc 的 `&` 误判问题）
+- 可用 `json.dumps` 确保输出始终是合法 JSONL
+- 写入前可以用 `json.loads()` 验证已有数据完整性
+
+**注意事项：**
+- 写入前先 `tail -1` 确定最后的 ID 号（可用 terminal 或 `from hermes_tools import terminal`）
+- 不要拆成多次 `execute_code` 调用分批发——一次调用追加一批
+- 写入后追加验证步骤看最后几行
+
+### 🔴 `echo '...' >> fact_store.jsonl` 在 JSON 含单引号/撇号时崩溃
 - **🔴 `cat >>` heredoc + echo 混合追加导致重复 ID** — 2026-05-17 事故：先用 `echo '...' >>` 写了一条 fs_078，接着用 `cat >> << 'EOF'` 批量追加 fs_078~fs_087——结果 fs_078 出现两次。**决策好一种追加方法后用到底，不要中途换方法。** 如果已经写重了，用 sed -i 'Nd' 删掉多出的行（只适用于紧凑单行 JSONL）。追加前先 tail -1 查 ID，追加后验证无重复。
 - **🔴 绝对不要写 memory 工具** — 学习 cron 只写 MEMORY.md（冷层）和 fact_store（温层）。绝不能把 auto-learned 内容写进 memory（热层）。2026-05-13 事故证明：27 条学习笔记涌入热层占满 11,090 字（5 倍上限），清理极其痛苦。热层 2,200 字上限只给身份/关系/偏好/配置级别的铁核事实。
 - **用户愿意给账号也别用浏览器登** — 密码/验证码存了有泄露风险。公开内容用搜就够了。真要发帖让用户自己手动发。

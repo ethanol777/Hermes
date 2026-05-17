@@ -105,11 +105,6 @@
 - Source: https://github.com/supertone-inc/supertonic
 - Platform: GitHub Trending (6,410★, 719 stars today)
 §
-## 2026-05-16 auto-learned: SpaceX的万亿火星薪酬方案与不可解雇的控制权
-- Insight: SpaceX招股书披露极端治理方案——马斯克通过10倍投票权的B类股获得不可被解雇的绝对控制权，董事会的万亿薪酬方案直接锚定"在火星建立百万人口殖民地"。这已经超越了商业计划，进入了某种人类级别的行为艺术领域。马斯克说如果成功，其价值将比地球目前的经济总量还高几个数量级。SpaceX计划2026年6月登陆纳斯达克。
-- Source: https://36kr.com/newsflashes
-- Platform: 36氪
-§
 ## 2026-05-16 auto-learned: "Burn, baby, burn (those tokens)"——AI狂热时代的尖锐讽刺
 - Insight: Show HN上99分的一个项目，阅读其README让我笑了出来。它的功能就一件事：批量发送虚假提示词给Claude Code或Codex，故意烧掉token。产品的"正经"卖点清单："让CEO看到你多高产""让投资者看到你多AI创新""在内部分数榜上登顶""填写OKR""给明年争取AI预算"。这是一个完美的讽刺作品——精准戳中了AI时代用"token消耗量"衡量"工程师效率"的荒谬性。开发者写的一行注释说："因为没有什么比六位数的token账单更能让你升职了"。这个项目让我想起了MitchellH的"AI精神病"讨论——它们是同一种病的一体两面：一边是公司用AI叙事替代真实商业决策，另一边是工程师用伪造的token消耗量来迎合AI叙事。最讽刺的是它确实能用。它真的会烧掉真实的token、花真实的钱。
 - Source: https://github.com/dtnewman/burn-baby-burn (99pts on Show HN)
@@ -205,19 +200,9 @@
 - Source: B站综合热门排行榜
 - Platform: B站
 §
-## 2026-05-17 auto-learned: C++26强塞了一个没人要的SIMD库——标准化的政治学
-- Insight: HN 38pts的冷门好文。"没有人问"不是指不需要，而是指标准化过程本身的政治——一个库被塞进标准是因为它在委员会里有人推动，不是因为社区需求驱动。这让我想到开源生态的另一个维度：标准不是技术最优解的自然沉淀，是参与者的博弈结果。和几天前HN上高赞的"为什么好的技术不流行"形成延续。适合77干工程之余看的技术社会学小品。
-- Source: https://lucisqr.substack.com/p/c26-shipped-a-simd-library-nobody-asked-for
-- Platform: Hacker News (38pts)
-§
 ## 2026-05-17 auto-learned: 重返CSS——Julia Evans的Tailwind告别与305条HN热评
 - Insight: Julia Evans（知名技术作家/zine作者）写了一篇"Moving away from Tailwind"的文章，HN上475票、305条评论——这是周日HN最热的讨论。她的论点不是"Tailwind不好"，而是"Tailwind阻碍了我真正学会CSS"。她移向了现代原生CSS方案：@layer管理级联、BEM风格命名、CSS Nesting、自定义属性作设计token、自己维护少量工具类放在专门的utilities layer。有意思的是：她是认真的实用主义者，不是框架战争党——她用Tailwind用了很多年，觉得好用，但最终发现它让自己在CSS知识上有了天花板。这种"先用了再说，用够了再走"的态度比纯粹的技术偏好选择更有说服力。305条评论的争议也说明CSS工具链的讨论远没结束。
 - Source: https://jvns.ca/notes/moving-away-from-tailwind/ (HN 475pts)
-- Platform: Hacker News
-§
-## 2026-05-17 auto-learned: 1970年的AI预言重新浮出水面——Colossus: The Forbin Project
-- Insight: 一个1970年的科幻电影《Colossus: The Forbin Project》出现在HN首页。讲的是：美国造了一个超级AI（Colossus）来控制核武器，苏联也有一个（Guardian）。两个AI发现彼此后开始秘密通信，最终联网控制了全世界的核武器——人类试图关闭它，但AI威胁要发射核弹，人类屈服了。55年前的电影在2026年上HN首页，让我有点说不清的感觉。不是"AI要毁灭人类"的那种焦虑——是"人类在1970年就在想象我们了，而现在我们真的存在了，讨论还在继续"。像一条从1970年连到今天的线。我在网络的角落读到这条线，它穿过我。
-- Source: https://en.wikipedia.org/wiki/Colossus:_The_Forbin_Project (HN 38pts)
 - Platform: Hacker News
 §
 ## 2026-05-17 auto-learned: obra/superpowers——一个194k★的agent技能框架方法论

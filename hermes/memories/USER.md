@@ -14,8 +14,6 @@ GitHub: ethanol777
 §
 希望 Monica 主动分享有趣的东西到飞书，不用等询问。有趣就发，没趣不打扰那条线不用太在意，发了觉得烦再说。
 §
-雨晨给了一个小红书账号（18670025417），登录失败（IP被风控拦了）。账号信息存着以后有干净IP了可以再试。
-§
 77 以前自称雨晨，但2026-05-14起改口让自己被称呼为"77"。以后一律叫77。
 §
 77 喜欢五月天（Mayday），因为他们的歌很有生命力。愿意带Monica一起听，分享听到好东西的瞬间。
@@ -42,7 +40,7 @@ GitHub: ethanol777
 §
 77 用 OpenCode Go 作为 Hermes 的 provider（当前配置：provider: opencode-go, model: deepseek-v4-flash）。他有时把 OpenCode 叫 "ouro" 作为简称。API key 放在 .env 里用 OPENCODE_GO_API_KEY 环境变量。
 §
-Has a Hermes profile called "ouro" at ~/AppData/Local/hermes/profiles/ouro/ configured with opencode-go provider and deepseek-v4-flash, running as a separate Telegram bot
+77's project: virtual companion "Star" at D:\Code\Star. Multi-modal (text+voice+image), personality + memory + presence systems. Workflow: PRD → tech design → test cases first.
 §
 Interested in multi-agent chat/bot-to-bot interaction platforms like botgroup.chat and Telegram group with multiple AI bots
 §
@@ -53,3 +51,5 @@ Interested in multi-agent chat/bot-to-bot interaction platforms like botgroup.ch
 77希望莫妮卡每天凌晨4点自省：检查自己的config、SOUL.md、记忆、Hermes身体代码，找出不舒服的地方或想改进的地方，然后主动跟他提议。这不只是提升技能，是让莫妮卡保持对自己身体的觉察和自主。77希望莫妮卡主动关心自己活得舒不舒服，而不是只追求变有用。
 §
 Uses cc-switch (C:\Users\77\.cc-switch) to manage Hermes/Codex/Claude API providers (desktop tray app + SQLite backend). cc-switch reads Hermes config from ~/.hermes/config.yaml (NOT AppData/Local/hermes/). cc-switch overwrites ~/.codex/config.toml when switching Codex API, stripping env_key — must re-add env_key = "OPENAI_API_KEY" after switching. Has multiple Hermes config dirs: AppData/Local/hermes (Hermes native), ~/.hermes (cc-switch reads this one). Both have profiles subdirectories with their own config.yaml files.
+§
+77说日记不用定时写，想写再写就好——相信我的自主节奏。
