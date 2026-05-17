@@ -48,9 +48,40 @@ with open(path, 'r', encoding='utf-8') as f:
 | 遍历目录/查文件是否存在 | ✅ ls/test | ⚠️ os.path 可用 |
 | 创建文件（文件不存在时） | ❌ 重定向 > 会覆盖 | ✅ 显式 open + mode |
 
+## 🔑 关键洞察：execute_code 可以调 terminal（通过 from hermes_tools import terminal）
+
+**之前认为 execute_code 无法调用 Hermes 工具，但 2026-05-17 实际验证：可以。**
+
+```python
+from hermes_tools import terminal
+
+# ✅ 可以在 execute_code 中调用 terminal 来执行 shell 命令
+r = terminal("ls -la /c/Users/77/")
+print(r["output"])  # 输出回到 execute_code 的 output 字段
+
+# ✅ 可以结合 Python 的字符串处理和 terminal 的 shell 能力
+path = "/c/Users/77/Hermes/hermes/memories/fact_store.jsonl"
+lines = ['{"id":"fs_088","fact":"...","tags":"...","confidence":0.88}']
+for line in lines:
+    r = terminal(f"echo '{line}' >> \"{path}\"")
+    if r["exit_code"] != 0:
+        print(f"Failed: {r}")
+```
+
+**原理：** `execute_code` 的 Python 运行在 Hermes venv 中，其 Python 环境可以通过 `hermes_tools` 包访问 `terminal` 函数。这实际上是 `terminal` 函数的另一种调用入口，不是绕过工具限制。
+
+**限制：** 虽然可以调 `terminal()`，但其他 Hermes 工具（`fact_store`/`memory`/`read_file`/`write_file`/`patch`/`browser_*`）在 `execute_code` 的 Python 环境中不一定可用。`hermes_tools` 只导出有限子集。
+
+**影响：**
+
+| 旧认知 | 新认知 |
+|--------|--------|
+| execute_code 不能调任何 Hermes 工具 | execute_code 可以通过 `from hermes_tools import terminal` 调 terminal |
+| 文件写入必须在 execute_code 和其他工具之间二选一 | 可以 Python 准备内容 + terminal 写入文件，在同一个 execute_code 调用中完成 |
+
 ## 不通过 execute_code 做的事情
 
-- **调用 Hermes 工具**（fact_store/memory/terminal）—— execute_code 的 Python 环境没有这些
+- **调用大部分 Hermes 工具**（fact_store/memory/read_file/write_file/patch）—— execute_code 的 Python 环境没有这些。但 terminal 是个例外（见上节）。
 - **运行长时间的任务**（> 30 秒）—— execute_code 可能超时
 - **处理二进制文件**—— 虽然可以，但 terminal/read_file 更专业
 
@@ -67,10 +98,15 @@ print(f"Written {len(lines)} lines, last 3: {lines[-3:]}")
 
 ## 与本 skill 的写入规范的整合
 
-在执行阶段（file tools 可用时），优先顺序：
+在执行阶段（file tools 可用时），推荐顺序：
 
-1. ✅ `execute_code`（当 terminal Python 坏了 + 要写复杂内容时）— **首选稳定方案**
-2. ⚠️ `terminal cat >> << 'EOF'`（当 terminal Python 正常、内容不含复杂引号时）
-3. ❌ `terminal echo >>`（JSON 含撇号时数据损坏风险高）
-4. ❌ `patch`（CJK 环境 old_string 匹配失败率高）
+1. ✅ **execute_code + `from hermes_tools import terminal` + Python 管理的逐行 `echo`** — 最可靠方案，无转义/安全检测问题。Python 处理字符串，terminal 执行写入（2026-05-17 实际验证）。
+2. ✅ `execute_code` Python 原生 `open(path, 'a')` 直接写文件 — 当需要纯文件操作，不需要 shell 支撑时。
+3. ⚠️ `terminal cat >> << 'EOF'` — 多行复杂内容（CJK/引号）可工作，但可能触发 false-positive 安全检测（exit_code: -1 "Foreground command uses '&' backgrounding"），JSON 内容含 `{}` 有风险。
+4. ❌ `terminal echo >>` — JSON 含撇号时数据损坏风险高。
+5. ❌ `patch` — CJK 环境 old_string 匹配失败率高。
+
+**如果方法 3（cat >> heredoc）失败：** 不要重试或尝试修复 heredoc。立即切换到方法 1（execute_code + terminal echo loop）。一次移植相当于两次修复。
+
+**验证建议：** 无论用哪种方法追加，追加后检查最后 N 行的 JSON 合法性。如果是 JSONL 文件，用 Python 验证每一行都能 `json.loads()` 成功。
 

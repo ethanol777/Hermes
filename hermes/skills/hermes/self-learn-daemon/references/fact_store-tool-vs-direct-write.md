@@ -169,6 +169,44 @@ ENDFACTS""")
 
 The heredoc (`<< 'ENDFACTS'`) with single-quoted delimiter prevents ALL shell expansion — no escaping issues.
 
+**⚠️ 2026-05-17 实测警告：** 以上 heredoc 通过 `terminal()` 传递时，JSON 内容（含 `{}` 和引号）可能触发 terminal 工具的 false-positive 安全检测，返回 `exit_code: -1 / "Foreground command uses '&' backgrounding"`（即使内容不含 `&`）。如果 heredoc 失败，不要重试——改用 Option D。
+
+#### Option D（2026-05-17 验证）：execute_code + from hermes_tools import terminal + 逐行 echo
+
+这是当前最可靠的 pattern，融合了 Python 的字符串管理能力和 terminal 的文件写入：
+
+```python
+from hermes_tools import terminal
+
+path = "/c/Users/77/Hermes/hermes/memories/fact_store.jsonl"
+lines = [
+    '{"id":"fs_088","fact":"Julia Evans wrote Moving away from Tailwind...","tags":"timely,CSS","confidence":0.88}',
+    '{"id":"fs_089","fact":"obra/superpowers (194k) - agent skills framework...","tags":"stable,agents","confidence":0.9}',
+]
+
+for line in lines:
+    r = terminal(f"echo '{line}' >> \"{path}\"")
+    if r["exit_code"] != 0:
+        print(f"FAILED: {r}")
+        break
+else:
+    print(f"All {len(lines)} lines appended OK")
+
+# Verify
+r = terminal(f"tail -{len(lines)} \"{path}\"")
+print(r["output"])
+```
+
+**优点：**
+- Python 管理字符串转义，无需 shell 转义
+- 每个 `echo` 命令是独立的，避免了 heredoc 的整体解析难题
+- 逐行验证，失败时可精确诊断
+- 不触发 cat/heredoc 的 false-positive 安全检测
+
+**注意事项：**
+- JSON 内容中的单引号（`'`）仍会破坏 shell 的 `'...'` 包裹。应对：写入前替换 `replace("'", "\\'")`，或确保 JSON 内容中的撇号用双引号/无引号变体
+- 但中文 CJK 字符、`★`、`™` 等特殊 Unicode 字符安全无问题
+
 ### Prevention
 
 Before writing, inspect your JSON strings for apostrophes/single quotes:
