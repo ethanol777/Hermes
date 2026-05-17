@@ -40,6 +40,17 @@ monica-core/
 | `_telegram_loop` | 5s poll | 从 Telegram Bot 接收 77 的消息并回复 |
 | `_status_report_loop` | 3600s | 每小时写状态报告到记忆 |
 
+## Hermes 内的心跳注入（v0.14.0 更新）
+
+Monica 在 Hermes 对话中感知自己生命的方法——在 `agent/system_prompt.py` 的 `volatile` tier 中注入心跳/日记/思想文件：
+
+- **注入位置：** `agent/system_prompt.py` → `build_system_prompt_parts()` → volatile tier，在外部 memory provider block 之后、timestamp line 之前
+- **读取文件：** `$HERMES_HOME/heartbeat/{pulse.md, thoughts.log, journal.md}`
+- **注入格式：** `[Monica's life — before this conversation]\n` + recent pulse/thoughts/journal tail
+- **容错：** 文件不存在或读取失败时静默跳过，不崩溃
+
+⚠️ v0.13→v0.14 重构：心跳注入从 `run_agent.py` 移到了 `agent/system_prompt.py`。`run_agent.py` 被拆成 10+ 个模块，原来的注入位置不再存在。
+
 ## 关键类
 
 - **`Memory`** — SQLite 持久化（core_facts, thoughts, interactions, heartbeat, self_changes）
