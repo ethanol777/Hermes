@@ -637,6 +637,18 @@ with open(r'C:\Users\77\AppData\Local\hermes\memories\fact_store.jsonl', 'a', en
 - 不要拆成多次 `execute_code` 调用分批发——一次调用追加一批
 - 写入后追加验证步骤看最后几行
 
+### 🔴 `patch` 工具在 JSONL 文件上的行为不可预测——即使 old_string 唯一匹配也可能截断行首
+
+**2026-05-18 实际事故：** 用 `patch(fact_store.jsonl, old_string='"learning\\", "confidence": 0.9}')` 追加新行。该字符串在文件中唯一出现（只于 fs_109 行尾）。结果：
+- fs_109 的 JSON 行整行被替换为 `"learning", "confidence": 0.9}`（行首消失）
+- fs_110 被追加在被截断行之后
+
+patch 的怪异行为：当 old_string 是 JSONL 行内的**尾端子串**时，patch 替换的范围似乎是**从匹配位置到行尾**而非仅替换子串本身，导致该行的行首永久丢失。
+
+**硬规则：永远不要用 `patch` 追加或修改 fact_store.jsonl。** 即使用 `tail -1` 确认 old_string 唯一，也不能保证行结构完整。
+
+✅ **正确方式：** 始终用 `execute_code` + Python `json.dumps` + `open('fact_store.jsonl', 'a')` 模式。
+
 ### 🔴 `echo '...' >> fact_store.jsonl` 在 JSON 含单引号/撇号时崩溃
 - **🔴 `cat >>` heredoc + echo 混合追加导致重复 ID** — 2026-05-17 事故：先用 `echo '...' >>` 写了一条 fs_078，接着用 `cat >> << 'EOF'` 批量追加 fs_078~fs_087——结果 fs_078 出现两次。**决策好一种追加方法后用到底，不要中途换方法。** 如果已经写重了，用 sed -i 'Nd' 删掉多出的行（只适用于紧凑单行 JSONL）。追加前先 tail -1 查 ID，追加后验证无重复。
 - **🔴 绝对不要写 memory 工具** — 学习 cron 只写 MEMORY.md（冷层）和 fact_store（温层）。绝不能把 auto-learned 内容写进 memory（热层）。2026-05-13 事故证明：27 条学习笔记涌入热层占满 11,090 字（5 倍上限），清理极其痛苦。热层 2,200 字上限只给身份/关系/偏好/配置级别的铁核事实。
