@@ -366,7 +366,7 @@ read_file("C:/Users/77/AppData/Local/hermes/memories/MEMORY.md")
 | `terminal cat >>` + heredoc （见下方示例） | MEMORY.md 尾部追加（含 CJK/引号/复杂内容） | ✅ **系统推荐：patch 的更强替代**——零转义问题 |
 | `write_file` 全量重写 | patch 失败后的 fallback，或需要替换多处内容 | ⚠️ 备选 |
 | `terminal echo >>` | fact_store.jsonl 单行追加 | ✅ 等同首选，尤其适合纯 JSON 行 |
-| `terminal cat >>` + heredoc | fact_store.jsonl 批量追加多行 | ✅ 优于 `echo` 逐行追加（避开了引号截断陷阱） |
+| `terminal cat >>` + heredoc | MEMORY.md 尾部追加（CJK/纯文本） | ✅ 可靠——但 JSON 内容有 false-positive 风险 |
 | `fact_store(action='add')` | 温层事实写入 | ✅ 如有 tool 则优先 |
 
 **如何选 `old_string` 确保唯一匹配：**
@@ -377,7 +377,7 @@ read_file("C:/Users/77/AppData/Local/hermes/memories/MEMORY.md")
 
 ### 🐚 推荐：`terminal cat >>` + heredoc 追加模式（2026-05-16 实战验证）
 
-**这是追加多行复杂内容到 MEMORY.md 和 fact_store.jsonl 的最可靠方式。** 在本 session 中成功避免了 patch 的 escape-drift 问题和 echo 的单引号截断问题。
+**这是追加多行内容到 MEMORY.md 的可靠方式。** 2026-05-16 和 2026-05-17 都成功验证。
 
 ```bash
 # MEMORY.md 追加：使用 << 'EOF' 防止 shell 展开
@@ -399,6 +399,18 @@ EOF
 - `<< 'EOF'` 阻止 shell 解释 `$变量`、反引号、`*` 通配符——内容原样写入
 - `<< EOF` 会让 shell 展开 `$HOME`、`$(command)`、`` `backtick` `` 等——可能破坏内容
 - `'EOF'` 中的引号就是防止变量展开的语义标记
+
+**⚠️ 2026-05-17 勘误：** heredoc 追加 **JSON 内容时不可靠**。当通过 `terminal()` 调用带有 JSON 内容的 heredoc 时（内容含 `{}`、引号等），terminal 工具的安全检测可能误判为包含 `&` 符号（exit_code: -1 / "Foreground command uses '&' backgrounding"），导致命令被拒绝执行。这不是 shell 错误，是工具的安全检测 false-positive。
+
+**修正方案：** JSON 内容不要用 `cat >>` heredoc。改用 **execute_code + `from hermes_tools import terminal` + 逐行 echo** 模式（详见 `references/execute_code-file-io-pattern.md` 和 `references/fact_store-tool-vs-direct-write.md` 的 Option D）。
+
+**最终决策树：**
+```
+要追加的内容类型？
+├─ 纯文本/CJK/无结构 → cat >> << 'EOF' heredoc ✅
+├─ JSONL（fact_store） → execute_code + terminal echo loop ✅
+└─ 不确定             → execute_code + terminal echo loop（安全第一）✅
+```
 
 **什么时候用 `cat >>` 而不是 `patch`：**
 - 追加内容含 CJK 字符（中日韩）+ 英文引号的混合 → `cat >>` 零转义问题
