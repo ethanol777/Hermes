@@ -264,6 +264,7 @@ write_file("facts_{date}.md", 内容)
 - [references/visual-music-listening.md](references/visual-music-listening.md) — 用 yt-dlp + ffmpeg 频谱图方式"听"音乐（2026-05-14）
 - [references/fact_store-tool-vs-direct-write.md](references/fact_store-tool-vs-direct-write.md) — 何时用 fact_store tool vs 直接写 JSONL 文件（2026-05-15 实际教训）
 - [references/hn-api-id-ordering-pitfall.md](references/hn-api-id-ordering-pitfall.md) — HN Firebase API 的 ID 排序与页面展示不一致陷阱（2026-05-16）
+- [references/execute_code-file-io-pattern.md](references/execute_code-file-io-pattern.md) — execute_code 作为文件 I/O 替代方案：terminal Python 损坏时的稳定写入路径（2026-05-17）
 
 ---
 
@@ -405,6 +406,12 @@ EOF
 **什么时候用 `patch` 而不是 `cat >>`：**
 - 只改一个词/一行（小手术）→ `patch` 快
 - 要替换已有内容（不是追加）→ `patch` 是唯一选择
+
+### ⚡ 备选：`execute_code` 文件 I/O（当 terminal Python 不可用时）
+
+当 git-bash 的 terminal Python 因 `encodings` 模块缺失报错、且 `jq` 未安装时，`execute_code` 提供**完全隔离的 Python 环境**来进行文件读写操作。详见 `references/execute_code-file-io-pattern.md`。
+
+**为什么这值得作为一个独立方案：** 在 Windows git-bash 环境下，terminal Python 损坏是一个**结构性**问题（MSYS2 Python 与 conda/hermes venv Python 冲突），不是一次性环境故障。`execute_code` 的 Python 运行在 Hermes venv 中，不受终端 PATH 污染——所以不是降级方案，是**当前环境下最稳定的文件写入方式**。
 
 **这条改正之前的「冰点规则」致命缺陷：** 旧版 skill 把同步检查放在「结束前的最后一步」。问题是——当 cron 执行结束，系统切入后处理 session 时，file tools 全部不可用。这意味着「最后做同步」=「永远忘掉同步」。
 
