@@ -391,6 +391,7 @@ def __init__(self, memory_char_limit: int = 5000, user_char_limit: int = 2500):
 
 - [references/hot-layer-cleanup-protocol.md](references/hot-layer-cleanup-protocol.md) — 热层爆表时的逐条清理流程（2026-05-16 事故后沉淀）
 - [references/memory-corruption-recovery.md](references/memory-corruption-recovery.md) — MEMORY.md 因 `replace_all` / `patch` 事故损坏后的检测与恢复方法（2026-05-17 事故后沉淀）
+- [references/safe-append-workflow.md](references/safe-append-workflow.md) — MEMORY.md 和 fact_store 的安全追加工作流，用 `execute_code` + Python I/O 代替 `patch` 做大幅追加（2026-05-18 事故后沉淀）
 
 
 ### 容量提升
@@ -438,5 +439,7 @@ def __init__(self, memory_char_limit: int = 5000, user_char_limit: int = 2500):
 - **热层条目上限 200 字/条** — 一条 auto-learned 笔记动辄 300-500 字，放热层等于吃了 1/4 容量。热层只放身份/关系/偏好/配置级别的铁核事实。
 - **热层清理只能逐条 memory(action='remove')** — memory 工具不支持批量删除，也没有"删除所有以 ## 2026 开头的条目"的过滤功能。热层爆表时唯一的修复方式是逐条 remove。预防远比修复重要。
 - **⚠️ MEMORY.md 的 patch 操作绝对不要用 `replace_all=true`** — MEMORY.md 中大量出现重复模板行（`- Platform: GitHub Trending`、`|- Insight:` 等），用 `replace_all` 会把所有匹配位置全部替换，导致条目重复插入、格式损坏。恢复时需要用 `sed -n` 提取干净行段重组文件。详见 `references/memory-corruption-recovery.md`。
+- **⚠️ patch 做大幅追加（>10 行）即使不用 replace_all 也有风险** — 2026-05-18 事故：用 patch 向 MEMORY.md 追加 ~60 行内容，new_string 中包含了 `|` 字符作为节分隔符，导致：(1) 字面量 `|` 被写入文件内容，(2) 文件格式异常难以手动修复。修复需要用 `execute_code` + Python regex 清洗 + `write_file` 全量重写。**推荐做法**：大幅追加用 `execute_code` + `read_file`（读全文件）→ Python 字符串拼接 → `write_file`（全量写回），不用 `patch`。详见 `references/safe-append-workflow.md`。
+- **fact_store 追加要注意 section 去重** — 2026-05-18 事故：用 patch 向 facts_2026-05-18.md 追加内容时创建了重复的 `## stable` 和 `## timely` 章节头。修复需要 `write_file` 全量重写。**推荐做法**：读全文件 → 判断章节是否存在 → 在已有章节下追加内容 → 全量写回。不要用 patch 做这种有状态的修改。
 - **fact_store 条目必须打 tags** — 早创建的条目可能没有 tags 字段，导致维护 cron 无法分类衰减。批量补标签时更新 fact_store 即可。
 - **fact_store 重复条目要合并不要共存** — 环境配置类事实特别容易重复（如 Windows symlink 问题、Cherry Studio 配置）。写入前搜索是硬规则。
