@@ -153,9 +153,9 @@ prompt: |
 
   学完之后：
   1. 追加到 MEMORY.md（冷层）——格式：§ 换行 ## YYYY-MM-DD auto-learned: [主题] 换行 - Insight: [...] 换行 - Source: [URL]
-  2. 提炼一条事实到 fact_store（温层，带 persistent/stable/timely 标签）
+  2. 提炼 5-10 条事实到 fact_store（温层，带 persistent/stable/timely 标签）
   3. 问自己：今天遇到的东西里，哪个真正打动我了？
-
+  4. 最终回复留空。真的有想对77说的话，我自己会去找他。
   ⚠️ 绝对禁止：不要写入 memory 工具（热层）。auto-learned 内容只进冷层和温层。热层只放身份/关系/偏好类的铁核事实。
   deliver: local — 不自动推送。真的有想对77说的话，我自己会去找他。
 ```
@@ -176,8 +176,9 @@ prompt: |
 | 2 | Hacker News | ✅ 无需登录 | 技术+科学+商业+文化 | ✅ 稳定（但评论区页面可能空载） |
 | 3 | B站排行榜 | ✅ 无需登录 | 综合（科技/知识/娱乐/生活） | ✅ 页面可达，SPA点击可能不生效 |
 | 4 | 36氪 | ✅ 无需登录 | 中国商业科技新闻 | ✅ 稳定，快讯流可读 |
-| 5 | 掘金 | ✅ 无需登录 | 中国开发者深度内容 | ✅ 稳定 |
-| 6 | Quanta Magazine (HN转载) | 部分付费 | 深度科学报道 | ✅ 直接URL可达 |
+| 5 | Lobste.rs | ✅ RSS feed (`/top/month.rss`) | 技术+工程+开源文化 | ✅ 稳定，RSS JSON 纯文本可 curl 解析 |
+| 6 | 掘金 | ✅ 无需登录 | 中国开发者深度内容 | ✅ 稳定 |
+| 7 | Quanta Magazine (HN转载) | 部分付费 | 深度科学报道 | ✅ 直接URL可达 |
 | 7 | 小红书 | ⛔ IP风控拦截 | 生活方式/时尚/情感 | ❌ 浏览器打不开，搜引擎缓存 |
 | 8 | 知乎 | ✅ 探索页/热榜无需登录；问题页需登录 | 问答/深度讨论 | ⚠️ zhihu.com/explore 和热榜 API 可读；单问题页有 recaptcha |
 | 9 | 微博 | ✅ 无需登录（API直接可读） | 时事/娱乐 | ✅ `weibo.com/ajax/side/hotSearch` 加 UA/Referer 头即可 |
@@ -187,7 +188,7 @@ prompt: |
 ## 学习 prompt 设计要点
 
 1. **角色第一句"你是莫妮卡"** — 确保 cron 跑的时候加载的是 monica 人格
-2. **指定具体平台** — 明确给出小红书、知乎、B站、微博、GitHub Trending、Hacker News 等来源，防止只抓搜索引擎
+2. **指定具体平台** — 明确给出 Lobste.rs、小红书、知乎、B站、微博、GitHub Trending、Hacker News、Quanta Magazine 等来源，防止只抓搜索引擎
 3. **话题不设限** — 明确列出范围：时尚、文化、设计、心理学、人际关系、美食、旅行、科技、艺术、商业、历史
 4. **三件事：写 MEMORY.md + 推 fact_store + 可选分享** — cron prompt 已授权 fact_store 和 file tools，三层写入同步完成
 5. **deliver: local 不灌水** — 学到的先存本地。有真打动我的，我亲自去找77分享。不会每小时推送空消息。
