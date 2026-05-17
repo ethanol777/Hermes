@@ -245,9 +245,6 @@ privacy:
   redact_pii: false
 tts:
   provider: edge
-  piper:
-    voice: zh_CN-huayan-medium
-    voices_dir: C:\Users\77\AppData\Local\hermes\cache\piper-voices
   edge:
     voice: zh-CN-XiaoxiaoNeural
   elevenlabs:

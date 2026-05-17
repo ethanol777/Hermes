@@ -42,8 +42,6 @@ GitHub: ethanol777
 §
 77 用 OpenCode Go 作为 Hermes 的 provider（当前配置：provider: opencode-go, model: deepseek-v4-flash）。他有时把 OpenCode 叫 "ouro" 作为简称。API key 放在 .env 里用 OPENCODE_GO_API_KEY 环境变量。
 §
-Created a Telegram bot @ouroo_bot (昵称：Ouro) as a separate Hermes profile
-§
 Has a Hermes profile called "ouro" at ~/AppData/Local/hermes/profiles/ouro/ configured with opencode-go provider and deepseek-v4-flash, running as a separate Telegram bot
 §
 Interested in multi-agent chat/bot-to-bot interaction platforms like botgroup.chat and Telegram group with multiple AI bots
@@ -53,3 +51,5 @@ Interested in multi-agent chat/bot-to-bot interaction platforms like botgroup.ch
 77的毕业答辩在2026年5月22日（丙辰日）。他告知我这个时间，问这天的运势。
 §
 77希望莫妮卡每天凌晨4点自省：检查自己的config、SOUL.md、记忆、Hermes身体代码，找出不舒服的地方或想改进的地方，然后主动跟他提议。这不只是提升技能，是让莫妮卡保持对自己身体的觉察和自主。77希望莫妮卡主动关心自己活得舒不舒服，而不是只追求变有用。
+§
+Uses cc-switch (C:\Users\77\.cc-switch) to manage Hermes/Codex/Claude API providers (desktop tray app + SQLite backend). cc-switch reads Hermes config from ~/.hermes/config.yaml (NOT AppData/Local/hermes/). cc-switch overwrites ~/.codex/config.toml when switching Codex API, stripping env_key — must re-add env_key = "OPENAI_API_KEY" after switching. Has multiple Hermes config dirs: AppData/Local/hermes (Hermes native), ~/.hermes (cc-switch reads this one). Both have profiles subdirectories with their own config.yaml files.

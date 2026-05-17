@@ -24,6 +24,11 @@ triggers:
   - "OpenAI中转"
   - "ChatGPT Plus国内"
   - "海外API中转"
+  - "rsxermu666"
+  - "Transform Platform"
+  - "中转站面板"
+  - "激活码"
+  - "激活码API"
 tags: [api, proxy, relay, china, openai, claude, codex, gemini, deepseek]
 ---
 
@@ -46,6 +51,34 @@ Techniques and providers for accessing overseas AI APIs from within China, where
 ### How They Work
 
 Relay services provide an OpenAI-compatible endpoint (`https://<relay>/v1/chat/completions`) that proxies requests to upstream providers. You use your API key from the relay, not from OpenAI directly.
+
+### Relay Platform Architecture
+
+Chinese API relays follow one of two models:
+
+**Model A: Key Passthrough** — You enter your own OpenAI/Anthropic API key on their dashboard, and they proxy your requests. Your key is used for auth. Simpler but requires you to have your own upstream key.
+
+**Model B: Platform-Generated Keys** (more common for consumer relays) — You buy an **activation code** (激活码), redeem it on the relay's dashboard, and the platform generates a **platform-specific API key**. The key is not your OpenAI key — it's the platform's internal key that routes through their upstream accounts. Key characteristics:
+- Activation codes are time-limited (30/90/180 days common)
+- The generated API key can expire independently
+- Dashboard provides usage tracking, key regeneration, backup domain info
+- The platform may have **separate base URLs** for different tools (e.g., `/openai` for Codex CLI, `/` root for Claude Code)
+
+Always check: does the relay ask for an activation code or an existing API key? This tells you which model it uses.
+
+### Investigating an Unknown Relay Platform
+
+When you encounter a new relay (or get 401 on an existing one):
+
+1. **Open the dashboard URL** in a browser — look for the management interface
+2. **Identify the auth model** — does it ask for an activation code (Model B) or an existing API key (Model A)?
+3. **Check the tutorial/help page** — most relays document how to configure each tool (Codex CLI, Claude Code, Cursor, etc.)
+4. **Note the base URL structure** — different tools often need different endpoints. Common pattern: `https://<relay>/` for Anthropic, `https://<relay>/openai` for OpenAI
+5. **Test with a small curl request** before configuring tools:
+   ```bash
+   curl -s https://<relay>/openai/models -H "Authorization: Bearer $KEY"
+   ```
+6. **Identify backup domains** — reputable relays provide fallback domains for when the main one is blocked. These are usually listed on the tutorial/status page
 
 ### Vetted Relay Providers
 
@@ -71,6 +104,8 @@ Vendor filter options include: OpenAI, OAI-Plus (OpenAI Plus-tier routing), Anth
 | **API2D / API2GPT** | (various domains) | OpenAI + Claude | Long-standing service (years of operation). Higher prices. Alipay support. |
 | **OhMyGPT** | (various domains) | OpenAI + Claude (limited) | Budget-friendly. Smaller model selection. Higher risk profile. |
 | **Veast AI** | (Singapore-based) | Full model lineup | Good latency from China (Singapore routing). Responsive support. |
+
+**Note:** Many unlisted relay platforms exist (often on `.cn` domains with random subdomains like `rsxermu666.cn`). These typically follow **Model B** (platform-generated keys with activation codes). See the "Relay Platform Architecture" section above for how to investigate and use them. They tend to be smaller operations with higher risk — never top up large amounts.
 
 ### What to Check Before Buying
 
@@ -115,7 +150,9 @@ No API key needed when using Plus login mode.
 
 ---
 
-## 3. Codex CLI Through API Relay
+### Codex CLI Through API Relay
+
+#### Basic Setup
 
 If you want to use Codex CLI with an API relay (not Plus login):
 
@@ -128,6 +165,18 @@ export OPENAI_API_KEY=<relay-api-key>
 codex
 ```
 
+#### ⚠️ Codex v0.130.0+ Config Split (Critical)
+
+Starting in v0.130.0, Codex CLI distinguishes **user-level** config (`~/.codex/config.toml`) from **project-level** config (`<project>/.codex/config.toml`). This is important for relay setup because:
+
+- `model_provider` and `model_providers` **only work in user-level config**
+- If `~` is a git repo, Codex treats `~/.codex/config.toml` as project-level → relay config silently ignored → falls back to default provider (Codex API) → 401
+- **Fix**: `rm -rf ~/.git` or pass config via `-c` flags (see codex skill for exact syntax)
+
+Without `env_key = "OPENAI_API_KEY"` in the provider definition, Codex returns 401 even with a valid key in the environment variable. Both user-level and project-level configs need this field.
+
+See the `codex` skill for full troubleshooting details and `references/relay-debug-20260517.md` for a real debugging session.
+
 ### Model Selection Note
 
 Codex CLI by default uses a codex-optimized model (e.g., GPT-5.3-Codex, GPT-5.5). On relay services, check:
@@ -135,6 +184,34 @@ Codex CLI by default uses a codex-optimized model (e.g., GPT-5.3-Codex, GPT-5.5)
 - Does the relay support the specific model Codex CLI calls?
 
 If the relay doesn't have codex-specific models, Codex may fall back to GPT-4o or fail.
+
+### Case Study: Transform Platform (rsxermu666.cn)
+
+A consumer-oriented relay discovered in May 2026, typical of **Model B** (platform-generated keys).
+
+- **Dashboard**: SPA at `https://rsxermu666.cn/dashboard` (Vite/React, titled "Transform Platform")
+- **Auth model**: Activation code → platform API key. Buy a code, redeem on dashboard, get a `sk-*` key
+- **Separate endpoints**:
+  - Codex CLI: `https://rsxermu666.cn/openai` (Responses API, `wire_api = "responses"`)
+  - Claude Code: `https://rsxermu666.cn/` (Anthropic-compatible)
+- **Backup domain**: `bxcv.store` (listed on tutorial page, automatically detected by the dashboard)
+- **Tutorial page**: Available at `https://rsxermu666.cn/tutorial` — documents config for each tool
+- **Dashboard features**: Usage tracking, key management, activation code redemption, domain status monitoring
+- **Codex CLI config** on this platform:
+  ```toml
+  model_provider = "transform"
+  model = "gpt-5.4"
+  [model_providers.transform]
+  name = "transform"
+  base_url = "https://rsxermu666.cn/openai"
+  wire_api = "responses"
+  requires_openai_auth = true
+  env_key = "OPENAI_API_KEY"
+  ```
+
+**Known issue**: Platform-generated keys expire. 401 "无效的API Key" means the key needs regeneration from the dashboard. Unlike direct OpenAI keys which persist until explicitly revoked, relay keys have a limited lifespan tied to the activation code's validity period.
+
+To investigate a relay like this: open the dashboard → check the nav for tutorial/extract-key pages → identify the auth model → curl-test before configuring tools.
 
 ---
 
