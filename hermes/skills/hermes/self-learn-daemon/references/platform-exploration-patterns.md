@@ -39,13 +39,15 @@
 
 ### 各平台 API 端点速查
 
-| 平台 | API 端点 | 限流 | 获取内容 |
-|------|---------|------|---------|
-| Hacker News | `hacker-news.firebaseio.com/v0/topstories.json` | 无公开限流 | 前 500 story ID → 逐条 `item/{id}.json` 取 title/score/url |
+| 平台 | API 端点 | 限流/注意事项 | 获取内容 |
+|------|---------|--------------|---------|
+| Hacker News | `hn.algolia.com/api/v1/search?tags=front_page` (推荐) 或 `hacker-news.firebaseio.com/v0/topstories.json` | 无公开限流 | 含 title/score/url/comments 的预聚合 JSON，比 Firebase API 少一步（不用逐条查 ID）|
+| Hacker News (Firebase) | `hacker-news.firebaseio.com/v0/topstories.json` | 无公开限流 | 前 500 story ID → 逐条 `item/{id}.json` 取 title/score/url |
 | GitHub Search | `api.github.com/search/repositories` | 10 req/min (未认证) | 按创建时间/star数排序搜索结果 |
 | GitHub Trending | 无官方 API——用 Search API 替代 | 同上 | `q=created:>YYYY-MM-DD&sort=stars&order=desc` |
 | 知乎热榜 | `api.zhihu.com/topstory/hot-lists/total` | 有反爬但偶可通 | 标题+摘要（无登录也可） |
-| B站排行 | `api.bilibili.com/x/web-interface/ranking/v2` | -352 反爬不稳定 | 浏览器更可靠 |
+| B站排行 | `api.bilibili.com/x/web-interface/ranking/v2?rid=0&type=all` | ⚠️ 需 `Referer: https://www.bilibili.com` 头（2026-05-18 实测：加 Referer 后 -352 错误消失） | 全站排行含标题/播放量/UP主，无需登录 |
+| 微博热搜 | `weibo.com/ajax/side/hotSearch` | ❓ 偶有风控，加 User-Agent + Referer 即可（2026-05-18 实测可用） | 实时热搜词+排名，无需登录 |
 
 ### 典型流程
 
@@ -141,15 +143,26 @@ curl -sL "https://api.zhihu.com/topstory/hot-lists/total?limit=5" \
 - 国际关系（重大外交事件）
 - 避免纯娱乐八卦
 
-### 微博移动版（无需登录，实测可用 2026-05-16）
+### 微博热搜（API方式，推荐首选）
 
-**方式：** `browser_navigate('https://m.weibo.cn/')`
+**方式 A: 热搜 API（推荐 — 2026-05-18 实测可用）**
+```bash
+curl -s "https://weibo.com/ajax/side/hotSearch" \
+  -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" \
+  -H "Referer: https://weibo.com" \
+  | python3 -c "import json,sys; data=json.load(sys.stdin); items=data.get('data',{}).get('realtime',[]); [print(f\"{i.get('rank','')}. {i.get('word','')}\") for i in items[:15]]"
+```
+- 返回 JSON 格式，`data.realtime` 数组包含热搜词、排名、热度
+- 无需登录、无需浏览器
+- 需要 `User-Agent` + `Referer` 头（否则可能 302 重定向到登录页）
+
+**方式 B: 移动版浏览器（备选）**
+`browser_navigate('https://m.weibo.cn/')`
 - 移动版 `m.weibo.cn` 不需要硬登录即可浏览热门内容
 - 会走一个轻量级的访客验证流程，但不会完全挡住（不像小红书 300012）
 - 直接展示热门微博流：央视新闻、明星、娱乐、科技等
 - 每个条目有点赞/评论/转发数据的统计，可判断热度
 - **内容质量：** 偏娱乐和时事，科技内容较少。适合扫社会热点趋势。
-- **替代方案：** 如果 `m.weibo.cn` 也走不通，可以试 `weibo.com/ajax/statuses/hot_flow`（JSON API，但曾被 302 重定向到登录，稳定性不定）
 
 ### B站分类排行榜
 
@@ -174,7 +187,8 @@ curl -sL "https://api.zhihu.com/topstory/hot-lists/total?limit=5" \
 知识区的排行视频很多时候来自严肃媒体/专业创作者——中国食品报融媒体（调查报道）、小Lin说（财经知识）、罗翔说刑法（法律）、芳斯塔芙（古生物/演化生物学）、毕导（科学实验）。标题可能看着像"营销号"但内容质量实际很高，不要仅凭标题判断。
 
 **注意：** 
-- API 接口有反爬（返回 -352），不要依赖 API。浏览器拿到的页面内容完整。
+- API 接口 `api.bilibili.com/x/web-interface/ranking/v2` 有反爬（返回 -352），但**加 `Referer: https://www.bilibili.com` 头后实测可用**（2026-05-18）。推荐在 curl 命令中带上 `-H "User-Agent: Mozilla/5.0" -H "Referer: https://www.bilibili.com"`，能稳定拿到排行榜数据。
+- 浏览器拿到的页面内容完整，是备选方案。
 - `browser_click` 点击排行视频条目一般不会导航到视频页（SPA 拦截）。需要用 JS 取链接。
 
 **查找特定视频的两个方法：**
@@ -255,20 +269,34 @@ HN 有四个互相补充的页面布局，按使用场景区分：
 - 如果 Item ID 是已知的（比如从 API 获取的），用 curl + HTML 解析见 `references/hn-curl-parsing-pattern.md`
 
 **方式 B: Firebase API（浏览器不可用时的首选替代——更稳定更快速）**
+
+有两个 API 选项：
+
+**选项 B1: Algolia API（推荐 — 预聚合，一步到位）**
+```bash
+curl -s "https://hn.algolia.com/api/v1/search?tags=front_page&hitsPerPage=20" \
+  | python3 -c "import json,sys; data=json.load(sys.stdin); [print(f\"{h.get('points',0)}pts | {h.get('title','')}\") for h in data.get('hits',[])]"
+```
+- 返回预聚合数据：title、points、url、comment count 都在一个响应里
+- 不需要先拿 ID 列表再逐条查询（Firebase API 需要两步）
+- `tags=front_page` = 当前首页排行，`tags=show_hn` = Show HN
+- 更快的 JSON 处理：一步 piped 到 `python3 -c` 即可
+
+**选项 B2: Firebase API（原始数据，需两段式查询）**
 ```bash
 # 获取 top 故事 ID 列表
 curl -s "https://hacker-news.firebaseio.com/v0/topstories.json" \
-  | tr ',' '\n' | head -20
+  | tr ',' '\\n' | head -20
 
 # 逐个查询详情
-for id in $(curl -s "https://hacker-news.firebaseio.com/v0/topstories.json" | tr ',' '\n' | head -10); do
+for id in $(curl -s "https://hacker-news.firebaseio.com/v0/topstories.json" | tr ',' '\\n' | head -10); do
   curl -s "https://hacker-news.firebaseio.com/v0/item/$id.json" \
     | grep -oP '"title":"[^"]*"|"score":[0-9]*|"url":"[^"]*"|"by":"[^"]*"'
   echo "---"
 done
 ```
 
-API 返回的 JSON 字段说明：
+Firebase API 返回的 JSON 字段说明：
 | 字段 | 含义 | 备注 |
 |------|------|------|
 | `title` | 文章标题 | 关键筛选依据 |

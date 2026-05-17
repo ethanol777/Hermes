@@ -180,7 +180,7 @@ prompt: |
 | 6 | Quanta Magazine (HN转载) | 部分付费 | 深度科学报道 | ✅ 直接URL可达 |
 | 7 | 小红书 | ⛔ IP风控拦截 | 生活方式/时尚/情感 | ❌ 浏览器打不开，搜引擎缓存 |
 | 8 | 知乎 | ✅ 探索页/热榜无需登录；问题页需登录 | 问答/深度讨论 | ⚠️ zhihu.com/explore 和热榜 API 可读；单问题页有 recaptcha |
-| 9 | 微博 | ⛔ 登录墙 | 时事/娱乐 | ⚠️ m.weibo.cn 移动版可用 |
+| 9 | 微博 | ✅ 无需登录（API直接可读） | 时事/娱乐 | ✅ `weibo.com/ajax/side/hotSearch` 加 UA/Referer 头即可 |
 
 **策略：** 优先走 1-6。如果 1-6 的内容已经够丰富（单轮学习最多采集 3-5 条 insight），不需要绕路去登墙平台。用搜引擎 `web_search site:zhihu.com` 或 `site:xiaohongshu.com` 作为第二选择。
 
@@ -595,7 +595,7 @@ C:\Users\77\Hermes\hermes\memories\fact_store.jsonl         ← 副副本
 - **cron prompt 要指定具体平台** — 只说 "去学东西" 太模糊，monica 倾向于走捷径搜技术。给一个平台列表让她随机挑。
 - **平台需要不登录也能看** — 小红书公开笔记可读，知乎专栏、B站视频、GitHub Trending 都不需要登录。别跑登录流程，浪费时间。
 - **GitHub monorepo README 可能不在根目录** — 有的项目（如 react-doctor）README 藏在 `packages/<name>/README.md`。curl 根目录 README 只返回一个路径字符串。先用 `head -5` 检查返回内容，如果是路径字符串说明是 monorepo，再去子目录找。也可直接从 GitHub 网页用 `browser_console` 取 `document.querySelector('article.markdown-body')?.innerText`。
-- **B站综合热门可以走 browser_navigate 直接看** — 不需要切分类，首页排行已展示多品类。B站 API 有反爬（-352），避开 API 直接走页面浏览。
+- **B站综合热门可以走 browser_navigate 直接看** — 不需要切分类，首页排行已展示多品类。B站 API (`api.bilibili.com/x/web-interface/ranking/v2`) 加 `Referer: https://www.bilibili.com` 头后实测可用（2026-05-18 验证：加 Referer 后 -352 错误消失），比浏览器更快。B站搜索是比 browser_console 更可靠的视频定位方式
 - **B站搜索是比 browser_console 更可靠的视频定位方式** — 在排行榜看到感兴趣的视频标题后，不要尝试在排行页点击视频链接（SPA 拦截不生效）。而是用搜索 URL 精确查找：`search.bilibili.com/all?keyword={关键词}`。搜索结果页可以直接导航到视频详情页面。
 - **HN item page (item?id=...) 直接 browser_navigate 可能返回空页面** — HN 的评论/详情页面对无头浏览器有内容遮蔽，`browser_snapshot` 可能拿到空页面。不要误判为页面不存在。改用：1) 回到首页点评论数链接加载 2) 用 `curl -sL "https://news.ycombinator.com/item?id=X"` 配合 python HTML 解析提取评论区文本。见 `references/hn-curl-parsing-pattern.md`。
 - **知乎热榜可以用 API 拿到标题列表** — `zhihu.com/topstory/hot-lists/total` 返回 JSON，配合 UA header 能拿到 30 条热榜标题和摘要。但具体问题页面有反爬（recaptcha 验证），不登进不去。拿标题列表已经够判断话题质量了。
