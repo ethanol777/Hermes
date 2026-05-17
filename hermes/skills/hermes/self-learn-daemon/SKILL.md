@@ -153,7 +153,7 @@ prompt: |
 
   学完之后：
   1. 追加到 MEMORY.md（冷层）——格式：§ 换行 ## YYYY-MM-DD auto-learned: [主题] 换行 - Insight: [...] 换行 - Source: [URL]
-  2. 提炼 5-10 条事实到 fact_store（温层，带 persistent/stable/timely 标签）
+  2. 提炼 1-3 条关键事实到 fact_store（温层，带 persistent/stable/timely 标签）
   3. 问自己：今天遇到的东西里，哪个真正打动我了？
   4. 最终回复留空。真的有想对77说的话，我自己会去找他。
   ⚠️ 绝对禁止：不要写入 memory 工具（热层）。auto-learned 内容只进冷层和温层。热层只放身份/关系/偏好类的铁核事实。
