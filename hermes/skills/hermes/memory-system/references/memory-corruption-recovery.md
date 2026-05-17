@@ -74,6 +74,83 @@ grep -nB1 '^## ' MEMORY.md | grep -v '^\-\-$' | grep -v '§'
 
 手动用 `patch` 或 sed 补上 `§`。
 
+---
+
+## fact_store.jsonl 损坏恢复
+
+**适用场景：** `patch` 操作（即使使用文件末尾的唯一字符串作为 `old_string`）导致 JSONL 行被截断或内容错位。
+
+### 与 MEMORY.md 恢复的关键区别
+
+| 维度 | MEMORY.md | fact_store.jsonl |
+|------|-----------|-----------------|
+| 内容 | 多行 markdown 段落 | 每行一个独立 JSON 对象 |
+| 行格式 | 每行是段落的一部分 | **每行必须是一个完整的 JSON 对象** |
+| patch 风险 | 重复条目/管道符污染 | 单行被截断 → 整个 JSONL 文件不合法 |
+| 恢复方式 | sed 提取/重组段落 | 替换损坏行 / 删除后补写 |
+
+### 检测
+
+```bash
+# 尝试解析 JSON 检查完整性
+python3 -c "import json; lines = open('fact_store.jsonl').read().strip().split('\n'); errors = [(i, l[:80]) for i,l in enumerate(lines,1) if not l.startswith('{') or not l.endswith('}')]; print(f'{len(lines)} lines, {len(errors)} errors'); [print(f'  L{n}: {t}') for n,t in errors[:5]]"
+
+# 检查 ID 是否连续
+python3 -c "
+import re
+lines = [l for l in open('fact_store.jsonl').read().strip().split('\n') if l]
+ids = [re.search(r'\"id\": \"(fs_\d+)\"', l).group(1) for l in lines if re.search(r'\"id\": \"(fs_\d+)\"', l)]
+nums = [int(i.split('_')[1]) for i in ids]
+gaps = [(nums[i-1], nums[i]) for i in range(1, len(nums)) if nums[i] != nums[i-1] + 1]
+print(f'{len(lines)} lines, {len(set(nums))} unique IDs')
+if gaps: [print(f'  Gap: {a} -> {b}') for a,b in gaps]
+"
+```
+
+### 修复
+
+#### 方法 A：替换损坏行（首推）
+
+```bash
+# 用 Python 精确修复 — JSONL 内容含引号，python 比 sed 安全
+python3 -c "
+lines = open('fact_store.jsonl').read().strip().split('\n')
+n = 91  # 替换为实际行号（1-indexed）
+correct_line = '{\"id\": \"fs_109\", \"fact\": \"...完整内容...\", \"date\": \"...\"}'
+lines[n-1] = correct_line
+open('fact_store.jsonl', 'w').write('\n'.join(lines) + '\n')
+print('Fixed line', n)
+"
+```
+
+#### 方法 B：删除损坏行后补写
+
+```bash
+# 删除第 N 行
+sed -i '91d' fact_store.jsonl
+# 然后用 json.dumps 补写该行
+python3 -c "import json; open('fact_store.jsonl','a').write(json.dumps({'id':'fs_109', ...}, ensure_ascii=False)+'\n')"
+```
+
+#### 方法 C：从另一个副本恢复
+
+```bash
+cp /c/Users/77/Hermes/hermes/memories/fact_store.jsonl /c/Users/77/AppData/Local/hermes/memories/fact_store.jsonl
+# 再补写当前 session 新加的行
+```
+
+### 修复案例：2026-05-18
+
+**触发条件：** `patch(fact_store.jsonl, old_string='"learning\\", "confidence": 0.9}')` — 使用 JSONL 最后一行末尾的字符串片段。
+
+**损坏：** fs_109 整行 JSON 被截断为 `"learning", "confidence": 0.9}` — 行首内容丢失。fs_110 被正确追加在被截断的行之后。
+
+**根本原因：** patch 的 `old_string` 匹配到 JSONL 行内的子串后，替换了**从该位置到行尾的全部内容**而非仅替换子串本身，导致行首丢失。
+
+**恢复：** 将截断行 + 新增行一起替换为正确的完整两行。
+
+**教训：不要在 JSONL 上用 `patch` 做追加。** 始终用 `execute_code` + Python `json.dumps` + `open().write()` 模式（见 self-learn-daemon skill 的 `### ✅ execute_code + Python 原生文件 I/O：JSONL 批量追加的首选方案` 章节）。
+
 ## 预防
 
 ### 用 `patch` 时避免 replace_all
