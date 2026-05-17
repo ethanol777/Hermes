@@ -1,8 +1,8 @@
 #!/bin/bash
-# auto_sync_v2.sh — 莫妮卡核心文件同步脚本 (hardened)
+# auto_sync_v2.sh — 莫妮卡核心文件同步脚本 (fixed: skip stable large dirs, use cp -u)
 
 set -euo pipefail
-shopt -s nullglob  # 空 glob 不展开为字面字符串
+shopt -s nullglob
 
 HERMES_SRC="${HERMES_HOME:-C:\Users\77\AppData\Local\hermes}"
 HERMES_REPO="$HOME/Hermes"
@@ -19,10 +19,10 @@ echo "目标: $DEST"
 echo ""
 
 echo "[1/4] 同步 SOUL.md ..."
-cp "$HERMES_SRC/SOUL.md" "$DEST/SOUL.md" 2>/dev/null || echo "  ⚠️ SOUL.md 不存在，跳过"
+cp -u "$HERMES_SRC/SOUL.md" "$DEST/SOUL.md" 2>/dev/null || echo "  ⚠️ SOUL.md 不存在，跳过"
 
 echo "[2/4] 同步 config.yaml ..."
-cp "$HERMES_SRC/config.yaml" "$DEST/config.yaml" 2>/dev/null || echo "  ⚠️ config.yaml 不存在，跳过"
+cp -u "$HERMES_SRC/config.yaml" "$DEST/config.yaml" 2>/dev/null || echo "  ⚠️ config.yaml 不存在，跳过"
 
 echo "[3/4] 同步 memories/ ..."
 mkdir -p "$DEST/memories"
@@ -49,26 +49,29 @@ done
 
 echo "[4/4] 同步 skills/ 和 cron/ ..."
 
-# skills
+# skills - 只复制变更的文件 (cp -u 按时间戳增量)
 mkdir -p "$DEST/skills"
 for f in "$HERMES_SRC/skills/"*.yaml; do
     [ -f "$f" ] || continue
-    cp "$f" "$DEST/skills/"
+    cp -u "$f" "$DEST/skills/"
 done
 
 for d in "$HERMES_SRC/skills/"*/; do
     [ -d "$d" ] || continue
     subname=$(basename "$d")
     [ "$subname" = "__pycache__" ] && continue
+    # 跳过已提交的大仓库——openclaw-imports 有 7k+ 文件/563MB，很少变动
+    [ "$subname" = "openclaw-imports" ] && continue
     mkdir -p "$DEST/skills/$subname"
-    cp -r "$d"* "$DEST/skills/$subname/" 2>/dev/null || true
+    # -ru = recursive + update-only (只复制更新的文件)
+    cp -ru "$d"* "$DEST/skills/$subname/" 2>/dev/null || true
 done
 
 # cron
 mkdir -p "$DEST/cron"
-cp "$HERMES_SRC/cron/"*.yaml "$DEST/cron/" 2>/dev/null || true
-cp "$HERMES_SRC/cron/"*.sh "$DEST/cron/" 2>/dev/null || true
-cp "$HERMES_SRC/cron/"*.json "$DEST/cron/" 2>/dev/null || true
+cp -u "$HERMES_SRC/cron/"*.yaml "$DEST/cron/" 2>/dev/null || true
+cp -u "$HERMES_SRC/cron/"*.sh "$DEST/cron/" 2>/dev/null || true
+cp -u "$HERMES_SRC/cron/"*.json "$DEST/cron/" 2>/dev/null || true
 
 echo ""
 echo "同步完成，检查 Git 状态..."
