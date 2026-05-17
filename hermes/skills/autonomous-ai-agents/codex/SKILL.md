@@ -74,7 +74,19 @@ Codex CLI v0.130.0+ reads config from **two layers**:
 | 用户级 | `~/.codex/config.toml` | `model_provider`, `model_providers` 等全局默认 |
 | 项目级 | `<project>/.codex/config.toml` | 覆盖项目专属设置（model、features、MCP 等） |
 
-项目级覆盖用户级。`model_provider` 和 `model_providers` **只能放在用户级**，项目级配置里会被静默忽略。
+项目级覆盖用户级。`model_provider` 和 `model_providers` **默认只能放在用户级**，项目级配置（即 git 仓库下的 `.codex/config.toml`）里会被静默忽略。
+
+### `CODEX_HOME` 环境变量
+
+设置 `CODEX_HOME` 会**完全替换** Codex 的配置根目录，替代 `~/.codex/`。此时 Codex 不再读取 `~/.codex/config.toml`，而是读取 `$CODEX_HOME/config.toml`。
+
+**关键区别**：
+- 项目内 `.codex/` 目录（自动发现）→ 项目级配置，会忽略 `model_provider`/`model_providers`
+- `CODEX_HOME` 指向的目录 → 替代用户级配置，**不会忽略** `model_provider`/`model_providers`
+
+所以当 `CODEX_HOME=D:\Code\projects\Workspace\planC\.codex` 时，该目录下的 `model_provider` 和 `[model_providers]` 配置**是生效的**——因为 Codex 把它当作用户级配置，而不是项目级配置。
+
+**配置修改惯例**：除非明确需要项目隔离，Codex 配置修改应优先放在全局 `~/.codex/config.toml`（用户级），而不是项目级目录。`CODEX_HOME` 覆盖时要注意修改的目标位置。
 
 **坑**：如果 `~` 本身就是 git 仓库，Codex 会把 `~/.codex/config.toml` 误判为项目级配置，跳过 `model_provider`/`model_providers`。表现：日志里有 `Ignored unsupported project-local config keys`。解决：`rm -rf ~/.git`。
 

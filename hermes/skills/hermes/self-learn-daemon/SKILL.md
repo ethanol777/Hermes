@@ -229,10 +229,41 @@ cron 学了东西之后必须三层落地，缺一不可：
 | 层 | 工具 | 内容 | 频率 |
 |----|------|------|------|
 | 冷层 | `write_file → MEMORY.md` | 原始笔记：引用 URL、具体 insight、个人感受 | 每轮必写 |
-| 温层 | `fact_store(action='add')` **或** `terminal echo >> fact_store.jsonl` | 结构化事实：技术栈、趋势判断、项目发现 | 每轮必写，信任 0.5，必须打标签 |
+| 温层 | `fact_store(action='add')` **或** `terminal echo >> fact_store.jsonl` **或** `write_file(facts_YYYY-MM-DD.md)` — 详见下方「温层实际实现：dated markdown vs JSONL」 | 结构化事实：技术栈、趋势判断、项目发现 | 每轮必写，信任 0.5，必须打标签 |
 | 热层 | `memory()` | 不做学习灌注——只存铁核身份/关系/配置 | **绝对不要写入学习内容** |
 
-**⚠️ 温层工具选择（2026-05-16 发现）：** fact_store API tool 的可用性因**执行上下文**而异。Cron 执行阶段通常不可用（需走 `terminal echo >>` 直接写 JSONL 文件），后处理 session 阶段可用。两者都是正式路径，不是「首选 vs 降级」关系。
+### ⚠️ 温层实际实现：dated markdown vs JSONL（2026-05-18 实测发现）
+
+本 skill 文档中标记的温层路径是 `fact_store.jsonl`（JSON 行格式），但 **实际 cron 学习会话中普遍使用 dated markdown 文件**（`facts_YYYY-MM-DD.md`）。两者是同一温层概念的不同实现，取决于上下文：
+
+| 实现方式 | 格式 | 使用场景 | 实际使用记录 |
+|---------|------|---------|------------|
+| `fact_store(action='add')` | API tool，内部操作 JSONL | fact_store 工具在工具列表中时 | ✅ 2026-05-17 使用 |
+| `terminal echo >> fact_store.jsonl` | JSON 行追加到 JSONL 文件 | fact_store 工具不可用时 | 理论路径，实际较少使用 |
+| `write_file(facts_YYYY-MM-DD.md)` | 带标签的 markdown 文件，persistent/stable/timely 分区 | 大多数 cron 学习会话 | ✅ 2026-05-14, 2026-05-18 使用 |
+
+**推荐的温层格式（基于实际经验）：**
+
+```
+# 事实 - YYYY-MM-DD cron 学习
+
+## persistent
+- **项目/趋势名**: 描述。（persistent）
+
+## stable
+- **趋势/模式**: 描述。（stable）
+
+## timely
+- **事件**: 描述。（timely）
+```
+
+这种 markdown 格式的优势：
+- `write_file` 直接写入，无需 shell 转义（无 JSON 引号问题）
+- 标签（persistent/stable/timely）直观，人类和 agent 都能读
+- 每个 session 一个独立文件，不会出现并发写入冲突
+- 适合作为 fact_store JSONL 的前置「草稿」——后续可在维护 session 中合并到 JSONL
+
+**但要注意：** 这种格式下的数据对 future session 的检索不如 JSONL 方便（不能 `grep` 一条 JSON 就得到完整事实）。如果 fact_store API tool 可用，优先使用它。不可用时用 dated markdown 文件。
 
 **工具区分要点：** 见上方 🚨 CAN'T-MISS 章节。
 

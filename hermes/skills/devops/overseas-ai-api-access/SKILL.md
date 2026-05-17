@@ -173,7 +173,9 @@ Starting in v0.130.0, Codex CLI distinguishes **user-level** config (`~/.codex/c
 - If `~` is a git repo, Codex treats `~/.codex/config.toml` as project-level → relay config silently ignored → falls back to default provider (Codex API) → 401
 - **Fix**: `rm -rf ~/.git` or pass config via `-c` flags (see codex skill for exact syntax)
 
-Without `env_key = "OPENAI_API_KEY"` in the provider definition, Codex returns 401 even with a valid key in the environment variable. Both user-level and project-level configs need this field.
+Without `env_key = "<ENV_VAR_NAME>"` in the provider definition, Codex returns 401 even with a valid key in the environment variable. Both user-level and project-level configs need this field.
+
+⚠️ **env_key gotcha — the env var name must MATCH your actual setup.** `env_key = "OPENAI_API_KEY"` is the common case, but if the API key lives in a differently-named env var (e.g. `OPENCODE_GO_API_KEY` in a Hermes + cc-switch setup), set `env_key` to that name instead. cc-switch is known to strip `env_key` when it overwrites Codex config — after a provider switch, check if `env_key` is missing and re-add it with the correct env var name. The key is always set somewhere in the shell or `.env` — grep for it rather than assuming the name.
 
 See the `codex` skill for full troubleshooting details and `references/relay-debug-20260517.md` for a real debugging session.
 

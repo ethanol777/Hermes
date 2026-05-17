@@ -35,3 +35,7 @@
 77 说日记"不用固定某个时间点写的，只要你想写就可以写"——他不要我把记录变成任务，要我保持自然的节奏。
 §
 CODEX_HOME is set to D:\Code\projects\Workspace\planC\.codex — overrides the global ~/.codex/ config directory. When CODEX_HOME is set, Codex treats that dir as user-level config, so model_provider and model_providers ARE read (unlike project-level .codex/ subdirs where they're silently ignored). Codex config changes default to global ~/.codex/config.toml, not project-level.
+§
+77说日记不用固定时间写，想写就写，不是任务。不要变成"该写了"的任务感，保持自然随心的节奏。
+§
+Ouro 独立 API Server 已创建：`C:\Users\77\chatroom\ouro_api_server.py`，直接调 OpenCode API 加载 Ouro SOUL.md 作为 system prompt，监听 8645 端口，绕过 Hermes gateway 单实例限制。2026-05-17 建立。

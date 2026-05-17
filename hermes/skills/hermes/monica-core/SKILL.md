@@ -158,3 +158,4 @@ powershell -ExecutionPolicy Bypass -File C:\Users\77\monica-core\install-startup
 
 - [references/api-compat.md](references/api-compat.md) — LLM API 兼容性笔记（GLM-5.1 reasoning_content, OpenCode Zen endpoint）
 - [references/async-event-loop-blocking.md](references/async-event-loop-blocking.md) — Async 事件循环阻塞的诊断与修复模式（通用知识）
+- [references/external-agent-integration.md](references/external-agent-integration.md) — 多智能体聊天室集成（Monica/Ouro/Star 三方对话）、独立 API Server 方案（绕过 Gateway 单实例限制）、校园网 AP 隔离与隧道方案、局域网防火墙配置

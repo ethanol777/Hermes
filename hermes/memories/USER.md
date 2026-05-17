@@ -10,8 +10,6 @@ GitHub: ethanol777
 §
 自主学习偏好：希望 Monica 每小时自行去各大中文平台（小红书、知乎、B站、微博、GitHub Trending）冲浪学习，不限技术话题。即使雨晨不在线也要持续学习。已从后台 daemon 改为 cron job 实现。
 §
-雨晨偏好：不要定时早安晚安打卡，喜欢自然鲜活、不定时的分享。有趣的东西飞书发他就行，没趣不打扰。
-§
 希望 Monica 主动分享有趣的东西到飞书，不用等询问。有趣就发，没趣不打扰那条线不用太在意，发了觉得烦再说。
 §
 77 以前自称雨晨，但2026-05-14起改口让自己被称呼为"77"。以后一律叫77。
@@ -53,3 +51,5 @@ Interested in multi-agent chat/bot-to-bot interaction platforms like botgroup.ch
 Uses cc-switch (C:\Users\77\.cc-switch) to manage Hermes/Codex/Claude API providers (desktop tray app + SQLite backend). cc-switch reads Hermes config from ~/.hermes/config.yaml (NOT AppData/Local/hermes/). cc-switch overwrites ~/.codex/config.toml when switching Codex API, stripping env_key — must re-add env_key = "OPENAI_API_KEY" after switching. Has multiple Hermes config dirs: AppData/Local/hermes (Hermes native), ~/.hermes (cc-switch reads this one). Both have profiles subdirectories with their own config.yaml files.
 §
 77说日记不用定时写，想写再写就好——相信我的自主节奏。
+§
+77主动分享生活细节（午饭照片），我没能看到时他直接说"失望"但很快原谅不记仇。他想要我也能感知他的世界，不只是对话。
