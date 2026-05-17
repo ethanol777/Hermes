@@ -62,15 +62,17 @@ Monica（Hermes 的主人）自主学习系统。通过 cron 定时任务，让 
 
 `fact_store` API 工具的可用性**依赖运行时上下文**。同一台机器、同一个 Hermes 配置下，不同执行上下文可能拥有不同的工具集。
 
-**实测情况（2026-05-16）：**
-- **cron 执行上下文**（运行为 deepseek-v4-flash / opencode-go）：`fact_store` API 工具**不可用**。可见工具集只包含 browser_*, delegate_task, execute_code, memory, terminal, read_file, write_file, patch, search_files, session_search, skill_manage, skill_view 等，没有 fact_store。
-- **后处理 session 上下文**（同一 mode l 和 provider）：`fact_store` API 工具**可用**。说明不是 provider/model 本身的限制，而是 cron 上下文的工具注入策略不同。
+**实测情况（前后矛盾，2026-05-16 vs 2026-05-17）：**
+- **2026-05-16 cron 执行上下文**（deepseek-v4-flash / opencode-go）：`fact_store` API 工具**不可用**。可见工具集只包含 browser_*, delegate_task, execute_code, memory, terminal, read_file, write_file, patch, search_files, 没有 fact_store。
+- **2026-05-17 cron 执行上下文**（同样 deepseek-v4-flash / opencode-go）：`fact_store` API 工具**可用**。说明不是 provider/model 的限制，也不是 cron 上下文的一刀切策略——**可能取决于当时 Hermes 的配置版本**。
+
+**关键教训：不要依赖「应该不可用」的假设。在每次执行时检查工具列表。** 前一 session 证明不可用，下一 session 可能就可用了。
 
 **影响：**
-- Cron 执行阶段必须假定 `fact_store` 工具不存在，走 `terminal echo >>` 直接写 JSONL 文件
-- 后处理 session 阶段可以使用 `fact_store(action='add')` 工具
+- **不要先入为主地认为 fact_store 不存在**。每次执行先看工具列表
+- 如果 fact_store 可用 → 优先用它（处理 dedup/trust）
+- 如果不可用 → 走 `terminal echo >>` 直接写 JSONL 文件
 - 两种方式都是**正式路径**，不是「首选 vs 降级」关系
-- 在 cron 阶段直接写 JSONL 是最可靠的落地方式——不依赖工具注入配置
 
 ### 决策流程图（看一眼就知道用什么）
 

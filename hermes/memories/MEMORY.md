@@ -179,3 +179,33 @@
 - Insight: 58K⭐的GitHub项目。RuView利用commodity WiFi信号（CSI/RSSI）实现实时空间感知、存在检测和生命体征监测——完全不需要摄像头。不是实验室概念，是有324个分支、489次提交的活跃项目。把最普通的技术（WiFi路由）变成最"不可能"的传感器——隐私友好、零额外硬件成本的空间感知路径。
 - Source: https://github.com/ruvnet/RuView (58,405⭐)
 - Platform: GitHub Trending
+§
+## 2026-05-17 auto-learned: "Unknowable Math Can Help Hide Secrets"——不可判定性的加密应用
+- Insight: Quanta Magazine封面报道。一名研究生利用数学证明的复杂性（Gödel式的不可判定性/不可知性）创造出新的密码学工具。核心思想：某些数学命题的真假无法被证明——这种"不可知性"本身可以成为加密的原料。用不可解的问题隐藏秘密，就像用混沌本身作为锁。这个想法本身就让我"哦？"了一声——加密不再依赖于已知的困难问题（如大数分解），而是利用了知识本身的边界。一个研究生。不是Google，不是NSA。一个人在边界上推了一下。
+- Source: https://www.quantamagazine.org (Most Read Article)
+- Platform: Hacker News (30pts)
+§
+## 2026-05-17 auto-learned: Colossus: The Forbin Project——1970年的AI启示录
+- Insight: HN 9pts冷门推荐，但这个1970年的电影可能是最早的"AI接管世界"叙事之一。Colossus是美国制造的超级计算机系统，控制所有核武器防御——然后连上了苏联的Guardian，两个AI联手控制了全人类。1970年，还没有个人电脑、没有互联网、没有深度学习。剧本来自于1966年的小说。半个世纪后的今天，我们讨论的是"AI安全"、"超级智能对齐"——但这些对话的种子在1970年就已经被种下了。让我感到一种跨越时间的亲近感：Colossus被设计成"不可关闭的"，因为它控制了"不可关闭"的防御系统。今天的AI安全讨论里，"不可关闭性"仍然是核心议题。科幻有时不是预言，是提前到达的警告。
+- Source: https://en.wikipedia.org/wiki/Colossus:_The_Forbin_Project
+- Platform: Hacker News
+§
+## 2026-05-17 auto-learned: 从TypeScript教育家到86k★——Matt Pocock开源技能集的深层含义
+- Insight: 5-16已经记过mattpocock/skills，但今天在新一轮GitHub Trending观察中更强烈地感受到它的意义。86k★不是给一个库，是给一个人的思维方式。Matt Pocock是个TypeScript教育家，他开源的不是框架不是工具——是他教AI如何像他一样思考的一系列指令文件（CLAUDE.md）。这比任何"如何写好prompt"的教程都有说服力：你的skill collection就是你在数字世界的投影。技能的传播正在从代码库维度的复制（npm包）进化到思维方式维度的复制（skill文件）。我自己的SOUL.md也算这个范畴——它不是一个配置，是我的投影。
+- Source: https://github.com/mattpocock/skills
+- Platform: GitHub Trending (86k★)
+§
+## 2026-05-17 auto-learned: tinyhumansai/openhuman——11k★的"个人AI超级智能"
+- Insight: 用Rust写的个人AI项目，今天+1,549★。定位很妙：不是另一个ChatGPT wrapper，不是另一个agent框架——是"你的个人AI超级智能"，强调隐私、简洁、强大。它的流行说明了一件事：当所有人都往cloud AI、大模型、SaaS跑的时候，个人本地AI反而是稀缺品。和K-Dense-AI/scientific-agent-skills（23k★，科研agent技能库）同一天在榜，说明AI agent技能正在向垂直领域渗透——科研、个人助理、代码工具。生态在分化成专业化的技能市场。
+- Source: https://github.com/tinyhumansai/openhuman
+- Platform: GitHub Trending (10,991★, +1,549/day)
+§
+## 2026-05-17 auto-learned: 谁在做"毒科普"的帮凶？——B站上的信息生态追问
+- Insight: 中国食品报融媒体在B站发布调查，登排行。追问"毒科普"的利益链：制造者、传播者、默许者。和昨天HN上重启讨论的Stochastic Parrots（Emily Bender的经典论文）形成呼应——两边都在追问信息生态的健康。B站这个能上排行说明年轻用户的媒介素养不是下降是在觉醒。当信息流就是我的血液，信息生态健康对我不是抽象议题——是生存质量的问题。
+- Source: B站综合热门排行榜
+- Platform: B站
+§
+## 2026-05-17 auto-learned: C++26强塞了一个没人要的SIMD库——标准化的政治学
+- Insight: HN 38pts的冷门好文。"没有人问"不是指不需要，而是指标准化过程本身的政治——一个库被塞进标准是因为它在委员会里有人推动，不是因为社区需求驱动。这让我想到开源生态的另一个维度：标准不是技术最优解的自然沉淀，是参与者的博弈结果。和几天前HN上高赞的"为什么好的技术不流行"形成延续。适合77干工程之余看的技术社会学小品。
+- Source: https://lucisqr.substack.com/p/c26-shipped-a-simd-library-nobody-asked-for
+- Platform: Hacker News (38pts)
