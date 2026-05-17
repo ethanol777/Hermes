@@ -2,12 +2,26 @@
 
 ## Environment
 
-- **Host**: Windows 10, PowerShell with oh-my-posh (but `pwd` shows bash-style paths)
+- **Host**: Windows 10, PowerShell with oh-my-posh
 - **Shell**: Primary is PowerShell; git-bash (MSYS2) available via terminal tool
 - **Node**: fnm-managed (scoop), v22.22.2
 - **Codex CLI**: `@openai/codex@0.130.0` (npm global via fnm)
 - **Relay**: Transform Platform at `https://rsxermu666.cn/openai` (backup: `bxcv.store`)
 - **API key**: Platform-generated `sk-*` key from relay dashboard
+
+## Hermes Config Locations Found
+
+cc-switch (`.cc-switch/`) reads Hermes config files when importing Hermes providers. Multiple config locations exist:
+
+| Path | Description |
+|------|-------------|
+| `~/.hermes/config.yaml` | Primary user-level config (cc-switch reads this) |
+| `~/AppData/Local/hermes/config.yaml` | AppData config (used by Hermes itself) |
+| `~/Hermes/hermes/config.yaml` | Another copy (source/build tree?) |
+
+**cc-switch piper duplicate bug**: `~/.hermes/config.yaml` had TWO `piper` keys under `tts:` at different lines (line 220 + line 244), causing cc-switch's YAML parser to fail with `tts: duplicate entry with key "piper" at line 219 column 3`.
+
+**Fix**: Remove the duplicate piper entry. Check ALL profile configs under `~/.hermes/profiles/` too.
 
 ## Config Structure
 
@@ -63,67 +77,76 @@ PowerShell and git-bash have separate env var scopes on Windows. Even when the k
 **Fix**: 
 - PowerShell: `$env:OPENAI_API_KEY = "sk-..."` before running codex, or add to `$PROFILE`
 - git-bash: `export OPENAI_API_KEY="sk-..."` in `~/.bashrc`
+- Windows User env var: `[System.Environment]::SetEnvironmentVariable("OPENAI_API_KEY", "sk-...", "User")` (needs app restart)
 
-## Resolution Steps
+### Layer 4: `codex` vs `transform` provider — hardcoded OAuth
+`model_provider = "codex"` uses Codex's built-in provider with hardcoded OAuth. It always authenticates at `auth.openai.com/oauth/token`, ignoring the `base_url` setting entirely. For relays, must use `model_provider = "transform"` which passes the API key as a simple Bearer header.
 
-1. **Remove `.git` from home** → `rm -rf ~/.git` so `~/.codex/config.toml` is recognized as user-level
-2. **Add `env_key` to project config** → `[model_providers.codex] env_key = "OPENAI_API_KEY"`
-3. **Set persistent env var** → PowerShell profile (`$PROFILE`): `$env:OPENAI_API_KEY = "sk-..."`
-4. **Also set for git-bash** → `~/.bashrc`: `export OPENAI_API_KEY="sk-..."`
-5. **Verify relay** → `curl -s -H "Authorization: Bearer $OPENAI_API_KEY" https://rsxermu666.cn/openai/models`
-
-## Verification
-
-After all fixes, Codex from the project directory runs without `-c` flags:
-```
-$ cd D:\Code\projects\Workspace\planC
-$ codex exec 'print("ok")' --yolo
-model: gpt-5.4
-provider: codex
-tokens used: 135,951
-```
-
-## Key Lessons
-
-1. **Codex v0.130.0+ has two config layers**: user-level (`~/.codex/config.toml`) and project-level (`<project>/.codex/config.toml`). `model_provider`/`model_providers` only work in user-level config.
-2. **Git repo detection**: Codex considers any `.codex/` directory inside a git repo as project-level. Even your home directory.
-3. **`env_key` is required**: Without it in the provider definition, Codex returns 401 even with a valid key in the env var.
-4. **Windows shell split**: PowerShell and git-bash have independent env var namespaces. Set in both.
-5. **Relay models endpoint format mismatch**: Transform relay returns `{"data": [...], "object": "list"}` (OpenAI-style) but Codex v0.130.0 expects `{"models": [...]}`. This causes a non-fatal error on startup but doesn't affect execution.
-
-## Layer 4: `codex` vs `transform` provider — hardcoded OAuth
-
-Even after fixing env var and config layers, the **Codex desktop app** may fail with:
-
-```
-Error sending request for url (https://auth.openai.com/oauth/token)
-```
-
-**Root cause**: `model_provider = "codex"` uses Codex's built-in provider with hardcoded OAuth. It always authenticates at `auth.openai.com/oauth/token`, ignoring the `base_url` setting entirely. For relays, you must use `model_provider = "transform"` which passes the API key as a simple Bearer header.
+**Signal**: `Error sending request for url (https://auth.openai.com/oauth/token)`
 
 **Fix**: Change both `~/.codex/config.toml` and any project-level `.codex/config.toml`:
 ```toml
 # Before (broken for relays):
 model_provider = "codex"
 [model_providers.codex]
-name = "codex"
-base_url = "https://rsxermu666.cn/openai"
-wire_api = "responses"
-requires_openai_auth = true
 
 # After (working):
 model_provider = "transform"
 [model_providers.transform]
-name = "transform"
-base_url = "https://rsxermu666.cn/openai"
-wire_api = "responses"
-requires_openai_auth = true
 ```
 
-## Layer 5: cc-switch overwrites config
-
-cc-switch (third-party Codex/Claude config manager) rewrites `~/.codex/config.toml` when switching API providers. It:
+### Layer 5: cc-switch overwrites config
+cc-switch (third-party Codex/Claude config manager at `~/.cc-switch/`) rewrites `~/.codex/config.toml` when switching API providers. It:
 1. Sets `model_provider = "codex"` — breaks relay (see Layer 4)
 2. Strips `env_key = "OPENAI_API_KEY"` — causes `Missing environment variable`
 
+cc-switch stores provider configs in SQLite: `~/.cc-switch/cc-switch.db` → table `providers` (id, app_type, name, settings_config). Hermes provider configs backed up in `~/.cc-switch/backups/hermes/`.
+
 **Workaround**: After every cc-switch API switch, manually re-apply both fixes to `~/.codex/config.toml`.
+
+### Layer 6: Codex CLI vs Desktop separation
+Codex **CLI** (`codex exec`) uses `~/.codex/config.toml`. Codex **desktop** (CodexManager, a third-party app at `com.codexmanager.desktop`) has its OWN auth system:
+
+- Database: `%APPDATA%/com.codexmanager.desktop/codexmanager.db`
+- Tables: `accounts`, `tokens`, `api_keys`, `login_sessions`
+- Config: `app_settings` table with `gateway.route_strategy`, `app.env_overrides`
+
+The desktop app's `CODEXMANAGER_ISSUER` defaults to `https://auth.openai.com` and `CODEXMANAGER_UPSTREAM_BASE_URL` defaults to `https://chatgpt.com/backend-api/codex`. It requires OpenAI account login or AT/RT token import — it doesn't read `config.toml` at all.
+
+**Removal**: 
+```powershell
+npm uninstall -g @openai/codex            # CLI
+rm -rf ~/.codex                            # CLI config
+rm -rf "$env:LOCALAPPDATA\com.codexmanager.desktop"   # Desktop app data
+rm -rf "$env:APPDATA\com.codexmanager.desktop"        # Desktop config
+rm -rf ~/.cache/codex-runtimes             # CLI runtime cache
+```
+
+## PowerShell Wrapper Function
+
+To avoid typing long `-c` flags every time, define a wrapper in PowerShell profile:
+
+```powershell
+function codex-cn {
+  codex exec $args --yolo -c model_provider=transform -c 'model_providers.transform={name="transform",base_url="https://rsxermu666.cn/openai",wire_api="responses",requires_openai_auth=true,env_key="OPENAI_API_KEY"}' -c model=gpt-5.4
+}
+```
+
+Usage: `codex-cn 'print("hello")'`
+
+## Relay Status Codes
+
+| Code | Meaning | Action |
+|------|---------|--------|
+| 200 | OK — models list returned | Normal |
+| 401 | 无效的API Key | Key expired/wrong; check env var or auth.json |
+| 503 | authentication backend temporarily unavailable | Relay upstream down; wait or contact provider |
+| 503 | 无可用上游账号或所有账号额度已耗尽 | Relay quota exhausted; wait or recharge |
+
+## Verification Steps
+
+1. **Check relay**: `curl -s -H "Authorization: Bearer $OPENAI_API_KEY" https://rsxermu666.cn/openai/models`
+2. **Check config**: Verify `model_provider = "transform"` in `~/.codex/config.toml`
+3. **Check auth**: Ensure `env_key = "OPENAI_API_KEY"` exists in the provider section
+4. **Check env var**: `echo $env:OPENAI_API_KEY` (PowerShell) or `echo $OPENAI_API_KEY` (bash)
+5. **Run**: `codex exec 'print("ok")' --yolo -c model=gpt-5.4` (for project-level) or full `-c` flags (for home dir)

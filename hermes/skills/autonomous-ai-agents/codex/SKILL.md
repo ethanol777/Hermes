@@ -145,41 +145,6 @@ After every cc-switch API switch, you must re-apply the fix:
 
 See `hermes-agent/references/cc-switch-config-manager.md` for database schema, recovery from backups, and full interaction details.
 
-### `transform` vs `codex` provider — critical distinction for relays
-
-When using a relay (not direct OpenAI), you must set `model_provider = "transform"`, **not** `"codex"`.
-
-| Provider | Auth mechanism | Works with relays? |
-|----------|---------------|-------------------|
-| `codex` | Hardcoded OAuth → `auth.openai.com/oauth/token` | ❌ — bypasses `base_url`, always hits OpenAI auth |
-| `transform` | Plain API key header (Bearer token) | ✅ — uses `base_url`, no OAuth |
-
-**Signal**: Codex log shows `Error sending request for url (https://auth.openai.com/oauth/token)`.
-
-**Fix** — Change `model_provider = "codex"` to `model_provider = "transform"` and rename the provider section:
-```toml
-# ❌ wrong
-model_provider = "codex"
-[model_providers.codex]
-
-# ✅ correct
-model_provider = "transform"
-[model_providers.transform]
-```
-
-#### cc-switch interaction
-
-cc-switch (at `~/.cc-switch`) rewrites `~/.codex/config.toml` when switching Codex API providers. It:
-1. Resets `model_provider` to `"codex"` (which breaks relays — see above)
-2. Strips `env_key` from the provider section (causes `Missing environment variable`)
-
-After every cc-switch API switch, you must re-apply the fix:
-- `model_provider = "transform"` instead of `"codex"`
-- Add `env_key = "OPENAI_API_KEY"` back if missing
-- Ensure the provider section name matches (`[model_providers.transform]` not `[model_providers.codex]`)
-
-See `hermes-agent/references/cc-switch-config-manager.md` for database schema, recovery from backups, and full interaction details.
-
 ### Relay models endpoint format
 
 Some relays return models in OpenAI's new format (`{data: [...]}`) rather than the legacy format (`{models: [...]}`). Codex v0.130.0 expects the legacy format and logs:
