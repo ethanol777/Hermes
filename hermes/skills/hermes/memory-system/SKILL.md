@@ -390,6 +390,8 @@ def __init__(self, memory_char_limit: int = 5000, user_char_limit: int = 2500):
 ## 参考文件
 
 - [references/hot-layer-cleanup-protocol.md](references/hot-layer-cleanup-protocol.md) — 热层爆表时的逐条清理流程（2026-05-16 事故后沉淀）
+- [references/memory-corruption-recovery.md](references/memory-corruption-recovery.md) — MEMORY.md 因 `replace_all` / `patch` 事故损坏后的检测与恢复方法（2026-05-17 事故后沉淀）
+
 
 ### 容量提升
 
@@ -435,5 +437,6 @@ def __init__(self, memory_char_limit: int = 5000, user_char_limit: int = 2500):
 - **🔴 学习 cron 绝对不能写 memory 工具** — 2026-05-16 勘误：之前以为 cron 没有 memory 工具权限所以写了不怕。实际 **cron 拥有完整的 memory 工具权限**，写入会成功导致热层爆表。这意味着禁令必须从"它做不到"升级为"强制不做"。prompt 里必须有显式禁止 + 每次工具调用前自检。auto-learned 条目只进冷层（MEMORY.md）和温层（fact_store），永远不进热层。2026-05-13 事故：27 条 auto-learned 条目涌入热层，占用 11,090 字（5 倍上限）。2026-05-16 又犯了一次完全相同的错误——证明文字警告不足以防止复发，需要在 cron prompt 里加入显式禁止指令。
 - **热层条目上限 200 字/条** — 一条 auto-learned 笔记动辄 300-500 字，放热层等于吃了 1/4 容量。热层只放身份/关系/偏好/配置级别的铁核事实。
 - **热层清理只能逐条 memory(action='remove')** — memory 工具不支持批量删除，也没有"删除所有以 ## 2026 开头的条目"的过滤功能。热层爆表时唯一的修复方式是逐条 remove。预防远比修复重要。
+- **⚠️ MEMORY.md 的 patch 操作绝对不要用 `replace_all=true`** — MEMORY.md 中大量出现重复模板行（`- Platform: GitHub Trending`、`|- Insight:` 等），用 `replace_all` 会把所有匹配位置全部替换，导致条目重复插入、格式损坏。恢复时需要用 `sed -n` 提取干净行段重组文件。详见 `references/memory-corruption-recovery.md`。
 - **fact_store 条目必须打 tags** — 早创建的条目可能没有 tags 字段，导致维护 cron 无法分类衰减。批量补标签时更新 fact_store 即可。
 - **fact_store 重复条目要合并不要共存** — 环境配置类事实特别容易重复（如 Windows symlink 问题、Cherry Studio 配置）。写入前搜索是硬规则。

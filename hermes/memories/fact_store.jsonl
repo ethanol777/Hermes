@@ -71,4 +71,19 @@
 {"id": "fs_071", "fact": "CodeGraph (colbymchenry/codegraph) pre-indexes codebases as knowledge graphs for Claude Code — 94% fewer tool calls, 77% faster code exploration across 6 real codebases. Symbol relationships + call graphs instead of file scanning. 100% local.", "source": "GitHub Trending 2.2k★ https://github.com/colbymchenry/codegraph", "date": "2026-05-16", "tags": "timely,agents,tooling,code-intelligence,knowledge-graph", "confidence": 0.91}
 {"id": "fs_072", "fact": "witr (pranshuparmar/witr 16.7k★) is a Go CLI tool that answers 'why is this running?' — traces process causality chains (supervisor→container→service→process) in a single human-readable output with TUI mode. Goes beyond ps/lsof/systemctl to add narrative to observability.", "source": "GitHub Trending 16.7k★ https://github.com/pranshuparmar/witr", "date": "2026-05-16", "tags": "timely,devops,cli,observability,systems", "confidence": 0.91}
 {"id": "fs_073", "fact": "SANA-WM from NVIDIA Labs is a 2.6B-parameter open-source world model capable of generating 1-minute 720p video. Not a video prediction model — a world model with internal physics state understanding. Demonstrates that compressed world representations can achieve long-form consistency at small parameter count.", "source": "nvlabs.github.io (HN 92pts)", "date": "2026-05-16", "tags": "timely,AI,world-model,video-generation,NVIDIA", "confidence": 0.90}
-{"id": "fs_074", "fact": "Futhark is a purely functional data-parallel GPU programming language. Higher-level abstraction than CUDA/OpenCL: expresses array transformations (map/reduce/scan) and compiles to optimized GPU code. Philosophy: parallelism should be about expressing immutable computation, not writing kernels.", "source": "https://futhark-lang.org (HN 66pts)", "date": "2026-05-16", "tags": "stable,programming,gpu,functional,parallel", "confidence": 0.88}
+{"id": "fs_074", "fact": "Futhark is a purely functional data-parallel GPU programming language. Higher-level abstraction than CUDA/OpenCL: expresses array transformations (map/reduce/scan) and compiles to optimized GPU code. Philosophy: parallelism should be about expressing immutable computation, not writing kernels.", "source": "https://futhark-lang.org (HN 66pts)", "date": "2026-05-16", "tags": "stable,programming,gpu,functional,parallel",            "confidence": 0.88}
+{"id": "fs_075", "fact": "CodeGraph (colbymchenry/codegraph) pre-indexes codebases as knowledge graphs for Claude Code — reduces tool calls by 94%, speeds up code exploration by 71% across real codebases. Uses AST parsing, 100% local, no vector embeddings. Demonstrates symbolic code understanding outperforms brute-force file scanning for agent exploration.",
+ "source": "GitHub Trending 2.6k★ https://github.com/colbymchenry/codegraph",
+ "date": "2026-05-17",
+ "tags": "timely,agents,tooling,code-intelligence,knowledge-graph",
+ "confidence": 0.91}
+{"id": "fs_076", "fact": "Zerostack — a Unix-inspired (pipes, processes, signals) coding agent written in pure Rust. Represents agent tooling's system-level awakening, alongside Vercel Zero (agent-oriented system language). Both appeared on the same day.",
+ "source": "https://crates.io/crates/zerostack (HN 192pts)",
+ "date": "2026-05-17",
+ "tags": "timely,agents,rust,systems,programming",
+ "confidence": 0.90}
+{"id": "fs_077", "fact": "RuView (58.4k★) turns commodity WiFi signals (CSI/RSSI) into real-time spatial intelligence, presence detection, and vital sign monitoring — zero cameras needed. Demonstrates intimate sensing from everyday infrastructure without additional hardware cost.",
+ "source": "https://github.com/ruvnet/RuView (58,405★)",
+ "date": "2026-05-17",
+ "tags": "timely,hardware,sensing,WiFi,privacy",
+ "confidence": 0.90}
