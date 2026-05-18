@@ -180,7 +180,7 @@ prompt: |
 | 6 | 掘金 | ✅ 无需登录 | 中国开发者深度内容 | ✅ 稳定 |
 | 7 | Quanta Magazine (HN转载) | 部分付费 | 深度科学报道 | ✅ 直接URL可达 |
 | 7 | 小红书 | ⛔ IP风控拦截 | 生活方式/时尚/情感 | ❌ 浏览器打不开，搜引擎缓存 |
-| 7 | 微博热搜 | ✅ 浏览器可达 s.weibo.com 访客模式 | 社会热点/时事 | ✅ 2026-05-18 实测：browser_navigate 直接访问 s.weibo.com/top/summary 可用（走访客验证流程后可读热搜榜单）；API weibo.com/ajax/side/hotSearch 加 UA+Referer 头可直读 JSON |
+| 7 | 微博热搜 | ✅ 浏览器可达 s.weibo.com 访客模式 | 社会热点/时事 | ✅ 2026-05-18 实测：browser_navigate 直接访问 s.weibo.com/top/summary 可用（走访客验证流程后可读热搜榜单。注意：浏览器会先重定向到 passport.weibo.com/visitor/visitor，但热点内容仍在 snapshot 中完整渲染——不要看到登录页 URL 就放弃）；API weibo.com/ajax/side/hotSearch 加 UA+Referer 头可直读 JSON |
 | 8 | 知乎 | ✅ 探索页无需登录；热榜页面需登录（2026-05-18 update） | 问答/深度讨论 | ⚠️ zhihu.com/explore 可读；zhihu.com/hot 已重定向到登录页；API 端点 (/api/v3/feed/topstory/hot-lists/total) 可用性不稳定——有时成功有时 403/重定向到登录页，取决于请求头和环境；单问题页有 recaptcha |
 | 9 | 微博 | ✅ 无需登录（API直接可读） | 时事/娱乐 | ✅ `weibo.com/ajax/side/hotSearch` 加 UA/Referer 头即可 |
 
