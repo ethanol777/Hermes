@@ -124,7 +124,16 @@ Pick the closest existing category. Don't invent new top-level categories casual
 5. **Git add + commit** on the active branch.
 6. **Note:** the CURRENT session's skill loader is cached — `skill_view` / `skills_list` will not see the new skill until a new session. This is expected, not a bug.
 
-## Cross-Referencing Other Skills
+## Skills vs MCP
+
+Agent Skills and MCP are complementary, not competitive:
+
+- **MCP** solves connectivity — gives AI access to tools and data via a standardized protocol
+- **Skills** solve capability — gives AI domain knowledge, workflows, and best practices for USING those tools
+
+Hermes supports both natively (native_MCP for MCP, SKILL.md system for Skills). The ideal architecture is Skills orchestrate → MCP executes.
+
+See `references/skill-writing-helloagents.md` for a deeper comparison and community best practices from the hello-agents project.
 
 `metadata.hermes.related_skills` unions both trees (`skills/` in-repo and `~/.hermes/skills/`) at load time. You CAN reference a user-local skill from an in-repo skill, but it won't resolve for other users who clone the repo fresh. Prefer referencing only in-repo skills from in-repo skills. If a frequently-referenced skill lives only in `~/.hermes/skills/`, consider promoting it to the repo.
 
@@ -134,6 +143,71 @@ Pick the closest existing category. Don't invent new top-level categories casual
 - **Major rewrite:** `write_file` the whole SKILL.md. `skill_manage(action='edit')` also works but requires supplying the full new content.
 - **Adding supporting files:** `write_file` to `skills/<category>/<name>/references/<file>.md`, `templates/<file>`, or `scripts/<file>`. `skill_manage(action='write_file')` also works and enforces the references/templates/scripts/assets subdir allowlist.
 - **Always commit** the edit — in-repo skills are source, not runtime state.
+
+## Principles of Writing Good Skill Content
+
+> Based on community best practices (hello-agents Extra08, Anthropic docs, skill-creator methodology).
+
+### 1. Write for AI, Not for Humans
+
+The reader of SKILL.md is an LLM, not a developer. What works for human documentation backfires with AI:
+
+| ❌ Human-centric | ✅ AI-centric |
+|----------------|--------------|
+| "Based on team experience..." | AI doesn't care how the skill was created; skip origin stories. |
+| "Keep a professional, constructive tone" | Vague — AI expands this into infinite variations. Give concrete rules. |
+| "Balance strictness and flexibility" | Without a decision tree, AI can't operationalize this. |
+| Version records (v1.0, v1.1...) | Every session is fresh; historical versions mean nothing. |
+| Description too generic: "代码审查技能" | Description is the ONLY trigger signal — be precise about WHEN to fire. |
+
+**Golden rule:** Every sentence must earn its token cost. If it doesn't change AI behavior, delete it.
+
+### 2. The Freedom Spectrum: Matching AI Autonomy to Task Fragility
+
+Not all skill instructions are the same — some tasks tolerate creative variation, others require exact replication. Map the instruction style to the task type:
+
+- **High freedom (creative tasks):** Give direction and taste, let AI explore. E.g. "Write a tech blog post" → tone guidelines, structure suggestions, examples.
+- **Medium freedom (routine tasks):** Give a numbered workflow with checkpoints. E.g. "Review this PR" → step-by-step checklist with specific things to check.
+- **Low freedom (fragile operations):** Use scripts. Any task where "wrong = broken" (YAML generation, config files, permission-sensitive operations) MUST be scripted, not left to LLM free generation. Scripts execute deterministically — zero hallucination risk.
+
+**Signal for "this needs a script":** If there's exactly one right way to do it and 100 wrong ways, it's a script, not an instruction.
+
+### 3. Progressive Disclosure: Three-Tier Loading
+
+Hermes skill loader already supports this architecture — use it deliberately:
+
+| Tier | What | When loaded | Token cost | Content |
+|------|------|-------------|-----------|---------|
+| L1 | YAML frontmatter (`name` + `description`) | Always, at session start | ~100 tokens | **Only** what the AI needs to decide "should I activate?" |
+| L2 | SKILL.md body (after `---`) | On demand, when skill is activated | 1k-5k tokens | Full instructions, workflows, best practices |
+| L3 | `references/`, `scripts/`, `templates/` | On demand, when needed | Unlimited | Scripts cost 0 tokens (executed, not read). References loaded only when the AI needs to look something up. |
+
+This is why `description` is the single most important field — it's the **only** thing the AI sees before deciding to activate. A bad description means the skill never gets used even if the body is excellent.
+
+### 4. Body Structure: What Makes Instructions Actionable for AI
+
+- **Start with preconditions** — what must be true before the AI acts
+- **Give numbered steps** — LLMs follow sequential instructions much better than paragraphs
+- **Include concrete examples** — especially for output format expectations
+- **List anti-patterns** — what NOT to do is often as important as what to do
+- **End with verification** — how to confirm the task was done correctly
+
+### 5. Script Strategy for Fragile Operations
+
+Scripts (`scripts/` directory) serve two purposes:
+1. **Deterministic execution** — complex logic that should produce the same output every time
+2. **Token-free knowledge** — the AI can call `python scripts/validate.py` without loading the script into context
+
+Put these in scripts:
+- JSON/YAML validation
+- Format conversion
+- Schema generation
+- Permission-sensitive file operations
+- Any multi-step task where error costs are high
+
+Don't script:
+- Tasks where AI judgment is the value (analysis, review, summarization)
+- Simple one-liners the AI can run directly via terminal
 
 ## Common Pitfalls
 
@@ -150,6 +224,10 @@ Pick the closest existing category. Don't invent new top-level categories casual
 6. **Expecting the current session to see the new skill.** It won't. The skill loader is initialized at session start. Verify in a fresh session or via `skill_view` using the exact path.
 
 7. **Linking to skills that don't exist in-repo.** `related_skills: [some-user-local-skill]` works for you but breaks for other clones. Prefer only in-repo links.
+
+8. **Writing for humans instead of AI.** Origin stories, version history, vague principles — none of these change AI behavior. Every sentence must earn its token budget.
+
+9. **Leaving fragile operations to AI judgment.** If a task has exactly one right way and 100 wrong ways, write a script. LLMs hallucinate config formats, YAML indentation, and permission strings — these are script territory.
 
 ## Verification Checklist
 

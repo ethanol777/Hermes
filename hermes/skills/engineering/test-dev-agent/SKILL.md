@@ -1,126 +1,146 @@
 ---
 name: test-dev-agent
-description: AI Agent 辅助测试开发 —— 自动生成测试、根因定位、智能回归、CI分析
+description: > 
+  当用户要求你「写测试」「补测试」「查CI为什么挂了」「看测试稳不稳」「分析覆盖率」「跑回归」时，
+  使用此技能。它告诉你测试生成、根因定位、flaky检测、智能回归和覆盖率补测的标准流程。
 ---
 
 # Test Dev Agent
 
-测试开发 × AI Agent。结合 Hermes 已有工具链（terminal / cronjob / claude-code / codex / gstack-investigate），把 Agent 融入你的测试工作流。
+## 核心原则
 
-## 使用场景
+1. **先读后写**：生成测试前，必须用 `read_file` 读完源文件全部代码，理解函数签名、参数类型和返回值结构。
+2. **写完后必须跑**：任何测试生成后必须用 `terminal` 跑一次 `pytest <test_file>` 确认通过。不通过就修。
+3. **报告覆盖率**：跑完测试后，必须用 `terminal` 跑 `coverage run -m pytest <test_file> && coverage report` 报告行覆盖率。
+4. **脆弱操作走脚本**：flaky 检测和覆盖率分析必须用 `scripts/` 目录下的脚本执行，不要自己写逻辑。
 
-### 1. 自动生成单元测试
-给一个模块 / 函数，Agent 自动生成 pytest 测试，覆盖正常路径、边界条件、异常场景。
+---
 
-```bash
-# 给一个 Python 文件生成测试
-# 在 Hermes 里加载本 skill 后说：
-"为 src/utils/data_processor.py 生成 pytest 测试，覆盖正常输入、空输入、异常输入"
-```
+## 场景一：生成单元测试
 
-Agent 会：
-- 读取源文件，分析函数签名、参数类型、返回值
-- 生成 `test_data_processor.py`
-- 跑一遍确认测试通过
-- 输出覆盖率报告
+**触发词：** "写测试" / "生成测试" / "给xxx写测试" / "补测试"
 
-### 2. CI 失败根因定位
-CI 挂了 → Agent 自动查日志、定位失败测试、分析根因。
+### 步骤
 
-```bash
-# 触发方式：
-"CI 跑失败了，日志在 logs/ci-2026-05-18.log，帮我查根因"
-```
+1. 用 `read_file` 读源文件，分析：
+   - 公共函数和方法的签名、参数类型、返回值
+   - 依赖注入和外部调用（mock 点）
+   - 分支逻辑（if-else、try-except、循环）
+   - 边界条件（空列表、None、0、超大值）
 
-Agent 会：
-- 读 CI 日志，提取失败测试和错误信息
-- 查对应的源文件和最近 diff
-- 给出根因推断 + 修复建议
-- 可选：生成修复代码
+2. 用 `search_files` 查找项目中已有的测试风格（找 `tests/` 或 `test_*.py` 做参考）
 
-### 3. Flaky Test 检测
-多次跑同一个测试，识别不稳定用例。
+3. 用 `write_file` 在对应位置写测试文件：
+   - 测试文件名 = `test_` + 源文件名
+   - 位置优先放在项目 `tests/` 目录，无则放在源文件同目录
+   - 覆盖率目标是：**分支覆盖率 ≥ 80%**，行覆盖率 ≥ 90%
 
-```bash
-# 触发方式：
-"帮我检查 test_api.py 是不是 flaky，跑 5 轮"
-```
+4. 用 `terminal` 跑 `pytest <test_file> -v` 确认所有测试通过
 
-Agent 会：
-- 用不同的随机种子多次执行指定测试
-- 统计成功率
-- 标记 flaky 的用例
-- 输出稳定性报告
+5. 用 `terminal` 跑覆盖率统计：`coverage run -m pytest <test_file> && coverage report -m`
 
-### 4. 智能回归测试
-分析 commit diff，只跑受影响模块的测试，不跑全量。
+6. 输出汇总：写了几条测试？覆盖了几个函数？分支覆盖率多少？
 
-```bash
-# 触发方式：
-"这次 commit 改了 user_service.py，帮我确定影响范围并跑对应的测试"
-```
+---
 
-Agent 会：
-- 读 Git diff
-- 分析导入关系图（import chain）
-- 确定受影响的测试文件
-- 只跑这些测试
-- 输出对比报告（这次 vs 上次）
+## 场景二：CI 失败根因定位
 
-### 5. 覆盖率分析与补测
-分析当前覆盖率 → 找没覆盖到的分支 → 自动生成补测。
+**触发词：** "CI挂了" / "查一下失败" / "看为什么挂" / "查日志"
 
-```bash
-# 触发方式：
-"分析 coverage.xml，找出没有被覆盖的分支，帮我把它们补上"
-```
+### 步骤
 
-Agent 会：
-- 读覆盖率报告（coverage.xml / htmlcov）
-- 找到未覆盖的代码行和分支
-- 生成补测用例
-- 验证补测后覆盖率提升
+1. **读日志**：用 `read_file` 或 `search_files` 提取 CI 日志中的：
+   - 失败测试名称（`FAILED` / `ERROR` 标记后的内容）
+   - 错误堆栈前 30 行
+   - 错误类型和消息
 
-## 原理说明
+2. **查代码**：
+   - 用 `search_files` 找到失败测试的源代码
+   - 用 `terminal` 跑 `git log --oneline -5` 看最近 commit
+   - 用 `terminal` 跑 `git diff HEAD~1 -- <相关文件>` 看改动
 
-Hermes 已有能力直接复用：
+3. **分析根因**（按这个顺序推理）：
+   - ❓ 是测试本身的问题？（断言条件变了？mock 没更新？）
+   - ❓ 是被测代码改了接口？
+   - ❓ 是环境问题？（依赖版本变了？超时？）
+   - ❓ 是 flaky 测试？（不稳定，多跑几次看看）
 
-| 需求 | 使用工具 |
-|------|---------|
-| 读源码 | `read_file` / `search_files` |
-| 执行测试 | `terminal`（pytest） |
-| 查 CI 日志 | `terminal`（grep / cat） |
-| 分析 diff | `terminal`（git diff） |
-| 生成测试代码 | `write_file` |
-| 自动 debug | 加载 `investigate` skill |
-| Git 工作流 | `terminal`（git） |
-| 定时回归 | `cronjob` |
+4. **给出**：根因推断 + 修复方案 + 修改建议。如果确认能修，直接改。
 
-不需要额外安装——这套 skill 就是给你定义工作流。
+5. **验证**：`pytest <test_file>::<test_name> -v` 确认修复后通过。
 
-## 示例工作流
+---
 
-### 完整流程：给一个模块写测试并验证
+## 场景三：Flaky Test 检测
 
-```
-你：test-dev-agent 为 src/order/payment.py 生成测试
-Agent 读 payment.py → 分析函数签名 → 生成 test_payment.py → 跑 pytest → 报覆盖率
-你：覆盖率不到 80%，补一下边界条件
-Agent 读 coverage 报告 → 找到没覆盖的 if-else → 补充测试用例 → 再跑 → 覆盖率到 90%
-```
+**触发词：** "是不是flaky" / "看稳不稳" / "跑几轮" / "稳定吗"
 
-### 完整流程：CI 挂了查根因
+### 步骤
 
-```
-你：test-dev-agent 查一下昨天 CI 为什么挂了
-Agent 读 CI 日志 → 发现 test_order_refund 失败 → 查最近 commit → 发现价格计算改了精度 → 给出修复建议
-你：修复吧
-Agent 改源文件 → 跑测试验证 → 确认修复 → 输出 diff
-```
+1. 用 `terminal` 执行 `scripts/detect_flaky.sh <test_file>` （脚本在 skill 目录下）
+
+2. 读输出，按以下标准判断：
+   - **稳定**：5 轮全通过 → 报告通过
+   - **轻度 flaky**：5 轮通过 ≥ 4 轮 → 报告「轻度不稳定，建议关注」
+   - **重度 flaky**：5 轮通过 < 4 轮 → 报告「严重不稳定，建议排查」
+
+3. 对于重度的，给出排查方向：
+   - 是否有外部依赖（数据库、网络、文件）
+   - 是否有共享状态（全局变量、静态缓存）
+   - 是否有时间敏感（sleep、超时、竞争条件）
+
+---
+
+## 场景四：智能回归测试
+
+**触发词：** "改了什么" / "影响范围" / "跑回归" / "看看影响"
+
+### 步骤
+
+1. 用 `terminal` 跑 `git diff --name-only HEAD~1` 获取变更文件列表
+
+2. 对每个变更文件，用 `search_files` 查找项目中引用它的地方（模块导入链）
+
+3. 从项目 `tests/` 目录中筛选出相关测试：
+   - 测试文件名包含变更模块名 → 直接相关
+   - 测试中 import 了变更模块 → 间接相关
+   - 两者都算，标记为「直接」和「间接」
+
+4. 用 `terminal` 跑 `pytest <相关测试文件> -v` 
+   - 尽量先用相关测试，不要跑全量
+   - 如果相关测试全通过，输出汇总
+   - 如果有失败，进入**场景二**
+
+5. 输出：变更文件数 → 影响测试数 → 通过率
+
+---
+
+## 场景五：覆盖率分析与补测
+
+**触发词：** "覆盖率" / "coverage" / "补测试" / "覆盖到"
+
+### 步骤
+
+1. 用 `terminal` 执行 `scripts/coverage_report.sh`，生成缺失分支列表
+
+2. 按优先级补测：
+   - **高**：未覆盖的 if-else 分支（尤其异常分支）
+   - **中**：未覆盖的 except 块
+   - **低**：未覆盖的普通函数
+
+3. 每补一个，跑一次 `pytest` 确认通过 + `coverage report` 确认覆盖提升
+
+4. 目标：分支覆盖率 ≥ 80%，行覆盖率 ≥ 90%。达不到就给出原因（如：外部依赖无法在单元测试中覆盖）
+
+---
+
+## 引用的资源
+
+- `scripts/detect_flaky.sh` — flaky 检测脚本（跑 N 轮，统计通过率）
+- `scripts/coverage_report.sh` — 覆盖率缺失分析脚本（输出未覆盖行和分支）
 
 ## 注意事项
 
-- 保证项目有 `pytest` 和 `coverage`（`pip install pytest coverage pytest-cov`）
-- 生成测试后建议人工审查——Agent 可能遗漏业务上下文
-- 大型项目（500+ 测试文件）建议指定模块，不要一次跑整个项目
-- Flaky 检测每次跑 5-10 轮即可，太花时间
+- 生成测试后必须人工审查关键逻辑（AI 可能遗漏业务上下文）
+- CI 根因定位的结论要给出置信度——「高度可能」「可能」「不确定」三级
+- 尽量复用项目已有的测试风格（fixture 风格、mock 模式、conftest 配置）
