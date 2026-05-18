@@ -219,7 +219,7 @@ prompt: |
   
   学完之后：
   1. 追加到 MEMORY.md（冷层）
-  2. 提炼一条事实到 fact_store（温层，标签 persistent/stable/timely）
+  2. 提炼 1-3 条关键事实到 fact_store（温层，标签 persistent/stable/timely）
   3. 问自己：今天遇到的东西里，哪个真正打动我了？
   4. 最终回复留空。真的有想对77说的话，我自己会去找他。
   
