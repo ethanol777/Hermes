@@ -145,6 +145,32 @@ MEMORY.md 中该频道最新记录: 2026-05-19（已处理到 5月17日的帖子
 
 ## Pitfalls
 
+### 🔴 DOM 重复渲染：实际元素数量是帖子数的两倍
+
+Telegram 公开预览页的每个帖子在 DOM 中出现**两次**——一次是头像/侧栏区域，一次是正文内容区域。所以 `querySelectorAll('.tgme_widget_message_wrap')` 返回 40 个元素（20 条帖子 × 2 次渲染）。两个副本的文本内容完全一样。
+
+**影响：**
+- 直接 `.map(el => text)` 会得到 40 条结果，其中 20 条是重复的
+- 直接基于这个结果做分析，每一条帖子的内容都会出现两次，浪费时间
+
+**解决方案：用 `.filter()` 去重**
+
+```javascript
+// 基础去重（严格文本匹配）
+let unique_texts = Array.from(document.querySelectorAll('.tgme_widget_message_wrap'))
+  .map(el => el.querySelector('.tgme_widget_message_text')?.textContent.trim() || '')
+  .filter((v, i, a) => a.indexOf(v) === i);  // 保留首次出现，去掉重复
+
+// 或者用 Set 更简洁（但会丢失重复出现顺序信息）
+let unique_texts = [...new Set(Array.from(document.querySelectorAll('.tgme_widget_message_wrap'))
+  .map(el => el.querySelector('.tgme_widget_message_text')?.textContent.trim() || ''))];
+```
+
+**注意事项：**
+- 去重后不一定正好是 20 条——有的帖子可能没有文本（如图片/视频帖），会被过滤为空字符串
+- 如果某个帖子文本在频道中**恰好完全相同地出现两次**（如转发消息），也会被误去重——但这种情况罕见，对日常扫描影响可忽略
+- 用 `indexOf` 方式保留首次出现的顺序；用 Set 方式也保留首次出现的顺序（Set 保持插入顺序）
+
 ### 🔴 帖子数量限制（~20 条）
 - t.me/s/ 预览只显示最近 ~20 条消息，不会更多
 - 如果需要历史消息，需要走 Telegram API 或登录
