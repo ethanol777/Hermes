@@ -297,6 +297,7 @@ write_file("facts_{date}.md", 内容)
 - [references/xiaohongshu-login-failure-analysis.md](references/xiaohongshu-login-failure-analysis.md) — 小红书登录失败实测分析（2026-05-14），含尝试的API端点、curl与浏览器行为差异
 - [references/visual-music-listening.md](references/visual-music-listening.md) — 用 yt-dlp + ffmpeg 频谱图方式"听"音乐（2026-05-14）
 - [references/fact_store-tool-vs-direct-write.md](references/fact_store-tool-vs-direct-write.md) — 何时用 fact_store tool vs 直接写 JSONL 文件（2026-05-15 实际教训）
+- [references/hn-firebase-topstories-pattern.md](references/hn-firebase-topstories-pattern.md) — HN Firebase API 首页 top stories 批量获取模式，比浏览器快、比 Algolia 准确（2026-05-18）
 - [references/hn-api-id-ordering-pitfall.md](references/hn-api-id-ordering-pitfall.md) — HN Firebase API 的 ID 排序与页面展示不一致陷阱（2026-05-16）
 - [references/execute_code-file-io-pattern.md](references/execute_code-file-io-pattern.md) — execute_code 作为文件 I/O 替代方案：terminal Python 损坏时的稳定写入路径（2026-05-17）
 
