@@ -228,6 +228,12 @@ Beat Sheet（把 Treatment 拆成 30-50 个节拍）
 - ❌ 开场用闹钟响/角色起床——开场要展示的是「世界本来的样子」
 - ❌ 配角的功能只是给主角递话——每个角色都觉得自己是主角
 
+## AI 视频 prompt 工程（扩展领域）
+
+编剧技能可延伸至 AI 视频短剧的 prompt 设计。见 `references/ai-video-prompt-engineering.md`。
+
+核心思路：场景结构（三幕/节拍）→ 逐段 prompt（画面 + 风格 + 镜头）→ 剪辑拼接。
+
 ## 参考资源
 
 - **书籍**: 《故事》(Story) Robert McKee / 《救猫咪》(Save the Cat) Blake Snyder / 《电影剧本写作基础》(Screenplay) Syd Field / 《故事写作大师班》John Truby / 《对白》(Dialogue) Robert McKee
