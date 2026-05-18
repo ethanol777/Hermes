@@ -38,7 +38,7 @@ GitHub: ethanol777
 §
 77 用 OpenCode Go 作为 Hermes 的 provider（当前配置：provider: opencode-go, model: deepseek-v4-flash）。他有时把 OpenCode 叫 "ouro" 作为简称。API key 放在 .env 里用 OPENCODE_GO_API_KEY 环境变量。
 §
-77's project: virtual companion "Star" at D:\Code\Star. Multi-modal (text+voice+image), personality + memory + presence systems. Workflow: PRD → tech design → test cases first.
+77的毕设（2026.5.22答辩）："基于混合专家的多任务VLA机器人策略研究"（MoE-VLA），哈工大计算学部计算机科学技术，导师马丁，单张3090 24GB完成实验。论文+25页PPT+代码在D:\Code\5.22\。防御准备偏好：对抗式提问演练（莫妮卡扮评委）+ 结构化文档同步输出，不喜欢纯聊天式准备。
 §
 Interested in multi-agent chat/bot-to-bot interaction platforms like botgroup.chat and Telegram group with multiple AI bots
 §
