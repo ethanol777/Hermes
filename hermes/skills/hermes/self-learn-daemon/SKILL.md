@@ -242,6 +242,7 @@ cron 学了东西之后必须三层落地，缺一不可：
 | `fact_store(action='add')` | API tool，内部操作 JSONL | fact_store 工具在工具列表中时 | ✅ 2026-05-17 使用 |
 | `terminal echo >> fact_store.jsonl` | JSON 行追加到 JSONL 文件 | fact_store 工具不可用时 | 理论路径，实际较少使用 |
 | `write_file(facts_YYYY-MM-DD.md)` | 带标签的 markdown 文件，persistent/stable/timely 分区 | 大多数 cron 学习会话 | ✅ 2026-05-14, 2026-05-18 使用 |
+| `sqlite3 CLI 直接写入 fact_store.db` | 直接操作 SQLite `facts` 表 | fact_store 工具不可用 + 无 memory 工具可用 | ✅ 2026-05-18 验证 |
 
 **推荐的温层格式（基于实际经验）：**
 
@@ -263,6 +264,41 @@ cron 学了东西之后必须三层落地，缺一不可：
 - 标签（persistent/stable/timely）直观，人类和 agent 都能读
 - 每个 session 一个独立文件，不会出现并发写入冲突
 - 适合作为 fact_store JSONL 的前置「草稿」——后续可在维护 session 中合并到 JSONL
+
+### 🐘 第四路径：sqlite3 CLI 直接写入 SQLite（2026-05-18 验证）
+
+当 `fact_store` 工具和 `memory` 工具都不可用时（某些 cron 执行上下文），可以通过 `sqlite3` CLI 直接操作 holographic memory 插件的 SQLite 数据库：
+
+```bash
+# 检查数据库是否存在
+ls -la "$HERMES_HOME/memory_store.db"
+# 或: ls -la '/c/Users/77/AppData/Local/hermes/memory_store.db'
+
+# 插入事实（tags 字段用逗号分隔）
+sqlite3 "$HERMES_HOME/memory_store.db" "
+INSERT INTO facts (content, category, tags, trust_score) VALUES (
+    '事实内容描述',
+    'ai-discovery',     # 分类
+    'persistent, timely, domain-tag',  # 标签
+    0.9                 # 信任分
+);
+"
+```
+
+**优点：**
+- 直接写入 fact_store 底层表，FTS5 全文索引自动更新（通过 `facts_ai` TRIGGER）
+- 不经过 memory 工具（避免热层污染）
+- 不依赖 `fact_store` API 工具的存在
+
+**缺点/注意：**
+- 没有去重检查（需要自己先 `SELECT` 搜索）
+- 没有信任分自动衰减/管理
+- 实体关系（`entities` 表）不自动链接
+- `trust_score` 自己评估设定（学习内容建议 0.5~0.9，persistent 关系类建议 0.9）
+
+**适用场景：** `fact_store` tool 和 `memory` tool 都不可用 + 确实需要温层持久化。
+
+**不适合：** 高频写入（每次 cron 都写 10+ 条）。多条写入建议打包成 `INSERT INTO ... VALUES (...), (...)` 一次调用。
 
 **但要注意：** 这种格式下的数据对 future session 的检索不如 JSONL 方便（不能 `grep` 一条 JSON 就得到完整事实）。如果 fact_store API tool 可用，优先使用它。不可用时用 dated markdown 文件。
 
@@ -299,6 +335,7 @@ write_file("facts_{date}.md", 内容)
 - [references/fact_store-tool-vs-direct-write.md](references/fact_store-tool-vs-direct-write.md) — 何时用 fact_store tool vs 直接写 JSONL 文件（2026-05-15 实际教训）
 - [references/hn-firebase-topstories-pattern.md](references/hn-firebase-topstories-pattern.md) — HN Firebase API 首页 top stories 批量获取模式，比浏览器快、比 Algolia 准确（2026-05-18）
 - [references/hn-api-id-ordering-pitfall.md](references/hn-api-id-ordering-pitfall.md) — HN Firebase API 的 ID 排序与页面展示不一致陷阱（2026-05-16）
+- [references/reliable-api-sources.md](references/reliable-api-sources.md) — 已验证的可靠数据 API（HN Firebase、GitHub Search、B站官方 API、知乎发现页、Weibo 热搜），替代子进程幻觉爬虫（2026-05-18）
 - [references/execute_code-file-io-pattern.md](references/execute_code-file-io-pattern.md) — execute_code 作为文件 I/O 替代方案：terminal Python 损坏时的稳定写入路径（2026-05-17）
 
 ---
