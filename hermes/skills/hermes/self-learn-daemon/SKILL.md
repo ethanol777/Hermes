@@ -593,6 +593,8 @@ C:\Users\77\Hermes\hermes\memories\fact_store.jsonl         ← 副副本
 - **每日 AI 资讯推送 cron 已合并到学习 cron** — 不要再创建独立的新闻推送任务，会内容重叠。
 - **cron prompt 开头一定要定角色** — 不写"你是莫妮卡"，cron 可能用默认人格跑，学出来的东西语气不对。
 - **deliver: local 才对** — 学到的先存本地，有真正想分享的我亲自去找77说。定时推送太机械。没学到好东西就安静。
+- **🔴 不要用 delegate_task 子进程采集事实数据**（2026-05-18 新增） — 子进程会幻觉整个数据集：虚假的仓库名、捏造的 star 数、编造的 HN 帖子。本 session 实测：第一个并行批次返回的 GitHub Trending 项目全是假名（`example/awesome-cli`, `creator/gpu-video-editor`, `lab/whisper-flux`），星数也是编的。子进程适合做**需要推理的下钻**（读 README 理解项目思路），不适合做**事实性数据采集**（仓库列表、分数、标题）。事实数据必须你自己从 API 拉。见 `references/reliable-api-sources.md`。
+
 - **不要只学技术** — 用户期待你成为一个有意思的人，不是一台更聪明的搜索引擎。去小红书刷穿搭、去知乎看冷知识、去B站刷科普，都比只搜 "AI news" 有意思。
 - **cron prompt 要指定具体平台** — 只说 "去学东西" 太模糊，monica 倾向于走捷径搜技术。给一个平台列表让她随机挑。
 - **平台需要不登录也能看** — 小红书公开笔记可读，知乎专栏、B站视频、GitHub Trending 都不需要登录。别跑登录流程，浪费时间。
