@@ -344,6 +344,50 @@ write_file("facts_{date}.md", 内容)
 
 ---
 
+### 🔍 2026-05-19 实战模式：写前预查去重
+
+**这是本 session 实际用到的模式，效果非常好。**
+
+之前 skill 的 fact_store 去重策略是「先搜索再添加」（用 `fact_store(action='search')` 或 grep），但更高效的做法是**在决定写什么之前，先全面了解已有内容**：
+
+```python
+# 预查流程（每次 cron 学习、写温层之前做）
+# 1. 读 fact_store 末尾 10-20 条，找当天的 items
+tail_facts = terminal("tail -20 '/c/Users/77/Hermes/hermes/memories/fact_store.jsonl'")
+
+# 2. 提取 topics，跟自己发现的东西做交叉比对
+#    比如我发现 "Files.md" 但 tail 已有 fs_127 覆盖了 → 跳过
+#    我发现 "Agora-1" 但 tail 没有 → 这是新事实
+
+# 3. 只写 cross-check 后确认的新事实
+#    避免写了半天发现「这个别人已经记过了」
+```
+
+**这么做的好处：**
+- 避免重复写入同一天已记录的事实（fact_store 可能在 cron 外层已被更新）
+- 写出之前先了解 landscape，写得更有针对性，而不是广撒网
+- 减少 fact_store 膨胀——每条重复的事实都在占温层空间
+- 自动发现「今天大部分 topic 已覆盖」的情况——这时候写 1-3 条缺失的就够了，不需要硬凑
+
+**本 session 具体做法（参考）：**
+1. `tail -20 fact_store.jsonl` 发现已有 16 条 2026-05-19 的事实（fs_119~fs_134）
+2. 逐条扫描 topic：✔ Files.md、✔ CLI-Anything、✔ Supertonic 3、✔ Anthropic 收购……
+3. 筛出真正缺失的：Agora-1（世界模型）、Modal 40x 冷启动优化、Git author flag 反 bot 方案
+4. 只写这 3 条，避免冗余
+
+**对应修改后的步骤：**
+```
+写入前 checklist:
+□ 查 fact_store 最近 N 条，看今天写没写过
+□ 自己发现的 topics × fact_store topics 交叉比对
+□ 只有确认不存在的才写新 entry
+□ 如果全部已覆盖 → 可以跳过这轮的温层写入（只写冷层）
+```
+
+**注意：** 这个预查和「双副本同步」是两个独立的东西。预查是内容去重，同步是路径一致性。两者都要做。
+
+---
+
 ## 学习内容管理
 
 ```bash
