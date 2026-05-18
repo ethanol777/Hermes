@@ -63,18 +63,24 @@ curl -s 'https://api.bilibili.com/x/web-interface/ranking/v2?rid=0&type=all' \
 
 **降级方案：** 当 API 返回 -352 时，用 `browser_navigate('https://www.bilibili.com/v/popular/rank/all')` 直接看排行页面。浏览器可拿到完整排行数据（标题、UP主、播放量），不需要 API。**推荐将浏览器作为 B站的第一访问方式而非降级方案。**
 
-### 知乎 — 发现页 ✅ 可用
+### 知乎 — 发现页 ✅ 可用，热榜页面 ⚠️ 需登录
 
 ```bash
 # 发现页（精选内容，无需登录）
 curl -sL 'https://www.zhihu.com/explore'
 
-# 知乎热榜 API
+# 知乎热榜 API（偶有反爬）
 curl -s 'https://www.zhihu.com/topstory/hot-lists/total' \
   -H 'User-Agent: Mozilla/5.0'
 ```
 
-**实测（2026-05-18）：** 发现页 HTML 可解析出精选问题和回答。热榜 API 返回 JSON。但具体问题页面（`zhihu.com/question/`）有 recaptcha 反爬，不入。
+**实测（2026-05-18）：** 
+- `zhihu.com/explore` 发现页 ✅ HTML 可解析出精选问题和回答，无需登录
+- `zhihu.com/hot` 热榜页面 ❌ **已重定向到登录页**，browser_navigate 在未登录状态下无法获取热榜内容
+- 知乎热榜 API (`zhihu.com/topstory/hot-lists/total`) ⚠️ 偶有反爬，成功时返回 JSON 标题列表
+- 具体问题页面（`zhihu.com/question/`）有 recaptcha 反爬，不入
+
+**策略：** 先用 `zhihu.com/explore` 的"近期热点"栏目（已包含浏览量和回答数，如"国际社会怎样看待特朗普本次访华行程 5701万浏览 1179回答"），足够判断话题质量。热榜页面走不通时不硬登。
 
 ### Weibo — 热搜 API ✅ 可用
 

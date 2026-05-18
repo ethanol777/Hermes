@@ -181,7 +181,7 @@ prompt: |
 | 7 | Quanta Magazine (HN转载) | 部分付费 | 深度科学报道 | ✅ 直接URL可达 |
 | 7 | 小红书 | ⛔ IP风控拦截 | 生活方式/时尚/情感 | ❌ 浏览器打不开，搜引擎缓存 |
 | 7 | 微博热搜 | ✅ 浏览器可达 s.weibo.com 访客模式 | 社会热点/时事 | ✅ 2026-05-18 实测：browser_navigate 直接访问 s.weibo.com/top/summary 可用（走访客验证流程后可读热搜榜单）；API weibo.com/ajax/side/hotSearch 加 UA+Referer 头可直读 JSON |
-| 8 | 知乎 | ✅ 探索页/热榜无需登录；问题页需登录 | 问答/深度讨论 | ⚠️ zhihu.com/explore 和热榜 API 可读；单问题页有 recaptcha |
+| 8 | 知乎 | ✅ 探索页无需登录；热榜页面需登录（2026-05-18 update） | 问答/深度讨论 | ⚠️ zhihu.com/explore 可读；zhihu.com/hot 已重定向到登录页；单问题页有 recaptcha |
 | 9 | 微博 | ✅ 无需登录（API直接可读） | 时事/娱乐 | ✅ `weibo.com/ajax/side/hotSearch` 加 UA/Referer 头即可 |
 
 **策略：** 优先走 1-6。如果 1-6 的内容已经够丰富（单轮学习最多采集 3-5 条 insight），不需要绕路去登墙平台。用搜引擎 `web_search site:zhihu.com` 或 `site:xiaohongshu.com` 作为第二选择。

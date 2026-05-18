@@ -127,7 +127,27 @@ API 返回字段说明：
 
 ### 知乎热榜
 
-**方式 A: 热榜 API（标题摘要级别）**
+**方式 A: 发现页（推荐 — 2026-05-18 实测：zhihu.com/hot 已需登录，explore 仍可用）**
+```bash
+# 发现页 HTML 可解析精选问答
+curl -sL 'https://www.zhihu.com/explore' \
+  -H "User-Agent: Mozilla/5.0" \
+  | python3 -c "
+import sys, re
+html = sys.stdin.read()
+# 提取热问题标题+浏览数
+questions = re.findall(r'<a[^>]*href=\"/question/[^\"]+\"[^>]*>(.*?)</a>', html)
+for q in questions:
+    q = re.sub(r'<[^>]+>', '', q).strip()
+    if len(q) > 10:
+        print(q)
+"
+```
+- `zhihu.com/explore` 的"近期热点"栏目给出高质量热题（含浏览量和回答数），足以判断话题质量
+- `zhihu.com/hot` ❌ **已重定向到登录页面**，未登录状态下不可读
+- 发现页的"潜力好问题"和"圆桌讨论"也值得看
+
+**方式 B: 热榜 API（标题摘要级别，偶有反爬）**
 ```
 curl -sL "https://api.zhihu.com/topstory/hot-lists/total?limit=5" \
   -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
