@@ -119,3 +119,152 @@ version: 1.0.0
 - **模态切换的决策逻辑最难** — 比 LLM 调用本身更复杂
 - **先跑通文字再上语音/图片** — 每一种模态都增加一倍的复杂度
 - **记忆层不要一开始就全做** — 热层够用就行，温层 MVP 再上，冷层最后
+
+---
+
+> **案例参考**: `references/star-project-architecture.md` 包含一个完整的虚拟恋人智能体项目架构，涵盖上述 Phase 1-3 的全部模式的具体实现。在接手类似项目时先读这个文件，可以看到各模块如何协作、数据流如何组织。
+
+---
+
+## Phase 3: Build & Test（从设计到实现的通用模式）
+
+从 Star 项目的完整实现中提取的、从"设计文档"到"可运行系统"的 build-time 模式。适用于任何三层（memory/skills/decision）架构的 AI agent 系统。
+
+### 1. 记忆系统实现模式
+
+三层记忆的推荐实现路径：
+
+| 层 | 存储 | 容量 | 字段 | 实现要点 |
+|----|------|------|------|----------|
+| **Hot** | deque (内存) | 最近 10-20 轮 | role, content, timestamp | 无持久化，session 内有效 |
+| **Warm** | SQLite | 500 条活跃 | id, content, category, importance, access_count, tags | LLM 提取值得记的事；按重要度衰减 |
+| **Cold** | Markdown 文件 | 无限 | 日记格式 | 每晚自动写日记；warm→cold 归档通道 |
+
+关键设计决策：
+- **LLM 参与存储决策**：每次对话回复后，LLM 判断"这段话有什么值得记住的"。规则：日常寒暄不存，能帮助理解用户的才存。这比"全部存然后检索"更省 token 也更高价值密度。
+- **衰减机制**：7 天未访问降权（-0.1），归零后归档到冷层。上限 500 条活跃记忆。
+- **温层有 4 个分类**：user_pref（偏好）/ fact（事实）/ event（事件）/ emotion（情绪），方便检索时过滤。
+
+### 2. 技能系统+ MCP 集成模式
+
+```
+技能匹配（用户输入 → SkillManager）
+  ↓
+渐进式加载（metadata → body → scripts，三级）
+  ↓
+MCP 数据预取（如果技能声明了 mcp_tools）
+  ↓
+LLM 根据 skill body + 实时数据 生成回复
+```
+
+关键设计：
+- **Skills 包装 MCP**：MCP 工具不直接暴露给 LLM（会炸上下文），而是通过 SKILL.md 里声明 `mcp_tools`，系统在执行技能前自动预取数据注入 prompt。
+- **三线渐进式披露**（L1 metadata → L2 body → L3 scripts）是 token 节省的关键。metadata 只有 ~50 tokens/技能，body 在匹配后才加载。
+- **城市名提取**：对于天气等需要"动态参数"的技能，维护一个已知实体表（如 50+ 中国城市名），在参数提取时用"在输入中查找"模式，比交给 LLM 提取更可靠。
+
+### 3. 决策引擎自由度光谱
+
+四种路由各有明确的自由度参数，防止 LLM 在"需要精准"的场景过度发挥：
+
+| 路由 | temperature | max_tokens | 用途 |
+|------|------------|------------|------|
+| SILENCE | 0 | 0 | 不调 LLM |
+| REPLY | 0.3 | 100 | 简短回应，低随机 |
+| AGENT | 0.1 | 2000 | 工具调用，精准优先 |
+| CHAT | 0.8 | 600 | 人格驱动，高自由度 |
+
+路由判定顺序：SILENCE 规则 → REPLY/CHAT/AGENT 规则 → Skills-aware 匹配 → LLM 兜底。注意：**AGENT 规则层也应当查 SkillManager 获取 matched_skill**，让下游知道具体匹配了哪个技能。
+
+### 4. Config 校验模式
+
+不要在启动时静默吞错误。对 config.yaml 做字段级校验（但不阻止启动）：
+
+```python
+VALID_LLM_FIELDS = {"provider", "base_url", "api_key", ...}
+VALID_LOG_LEVELS = {"DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"}
+
+def _validate_config(raw: dict):
+    for k in raw.get("llm", {}):
+        if k not in VALID_LLM_FIELDS:
+            logger.warning(f"LLM 未知字段 '{k}'")
+    if raw.get("log_level", "").upper() not in VALID_LOG_LEVELS:
+        logger.warning(f"无效 log_level: {raw['log_level']}")
+```
+
+### 5. 优雅关闭模式
+
+注册 SIGINT/SIGTERM 处理器，按逆序释放资源：
+
+```python
+_shutdown_event = asyncio.Event()
+
+def _signal_handler(sig, frame):
+    _shutdown_event.set()
+
+async def main():
+    signal.signal(signal.SIGINT, _signal_handler)
+    signal.signal(signal.SIGTERM, _signal_handler)
+
+    # 启动时初始化
+    resources = [mcp_clients, memory, heartbeat, ...]
+
+    # 等待 CLI 循环或关闭信号
+    done, pending = await asyncio.wait(
+        [cli_task, asyncio.create_task(_shutdown_event.wait())],
+        return_when=asyncio.FIRST_COMPLETED,
+    )
+    for task in pending:
+        task.cancel()
+
+    # 逆序释放
+    await heartbeat.stop()
+    await mcp.disconnect_all()
+    memory.close()
+```
+
+### 6. 存在感心跳模式
+
+定时后台任务 + 空闲追踪，让 agent 在用户不主动说话时也有"活着"的感知：
+
+```python
+class PresenceHeartbeat:
+    def __init__(self, interval_minutes=30):
+        self._interval = interval_minutes * 60
+        self._last_interaction = datetime.now()
+
+    def notify_interaction(self):
+        self._last_interaction = datetime.now()  # 用户说话时调用
+
+    async def _beat(self):
+        idle = (datetime.now() - self._last_interaction).total_seconds() / 60
+        if idle > 120:  # 空闲超过 2 小时
+            logger.info(f"长时间未对话（{idle:.0f} 分钟）")
+```
+
+### 7. Token 预算跟踪
+
+基于 tiktoken 的上下文窗口用量估算 + 三段报警（正常/警告/危急）：
+
+- `< 75%` — 正常
+- `75-90%` — 建议压缩历史（保留最近 5-8 轮）
+- `> 90%` — 必须压缩（只保留最近 3 轮）
+
+实现要点：tiktoken 不是所有模型都有精确编码表，用最接近的模型编码，并保留降级估算（`count_tokens` 方法）。
+
+### 8. Agent 项目测试模式
+
+不要只写单元测试。对 agent 系统，**按依赖顺序写集成测试**，每个模块独立验证 + 全链路冒烟：
+
+```
+测试执行顺序：
+配置 → 身份 → 情绪 → 决策引擎 → 输出路由 → 热层 → 温层 → 冷层
+→ 记忆集成 → LLM 客户端 → 技能管理器 → MCP → CLI 通道 → 外部服务
+```
+
+每类测试覆盖：
+- **正常路径**（happy path）
+- **边界条件**（空输入、None、超限）
+- **降级行为**（依赖缺失时不崩溃，返回提示）
+- **资源泄露**（连接/文件是否正确关闭）
+
+测试脚本独立于 pytest，用 `asyncio.run()` + assert 模式，方便在任意环境单文件跑。输出格式：`✅ 测试名` 或 `❌ 测试名 — 原因`，最终汇总通过率。

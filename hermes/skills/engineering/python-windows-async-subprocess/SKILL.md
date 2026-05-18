@@ -62,14 +62,31 @@ line_bytes = await proc.stdout.readline()
 line = line_bytes.decode("utf-8", errors="replace").strip()
 ```
 
-### 3. 环境变量继承
+### 3. 环境变量继承（最高频陷阱）
 
-**永远不要**手工构造 env dict。用 `dict(os.environ)` 复制当前环境，再覆盖需要改的字段：
+**永远不要**手工构造 env dict。最直接的坑：只设 `PATH` 会丢失 `HTTP_PROXY`、`HTTPS_PROXY`、`ALL_PROXY` 等代理环境变量，导致子进程无法访问外网。
 
 ```python
 import os
-env = dict(os.environ)          # ✅ 保留所有（代理、PATH、TEMP…）
-env["PYTHONIOENCODING"] = "utf-8"  # 覆盖需要的字段
+# ✅ 正确：复制当前环境，再覆盖需要的字段
+env = dict(os.environ)          # 保留所有（HTTP_PROXY、PATH、TEMP…）
+env["PYTHONIOENCODING"] = "utf-8"  # 只覆盖需要的字段
+
+# ❌ 错误：丢失代理变量，子进程无法访问外网
+env = {"PATH": os.environ.get("PATH", "")}
+env["PYTHONIOENCODING"] = "utf-8"
+```
+
+注意：`create_subprocess_exec` 不传 `env=` 时会自动继承父进程环境（这是安全行为）。只在需要**修改**环境时才传 `env=`。所以以下写法等价且安全：
+
+```python
+# 都不传 → 继承环境（最安全）
+proc = await asyncio.create_subprocess_exec(cmd, ...)
+
+# 传完整副本 + 修改 → 也安全
+env = dict(os.environ)
+env["CUSTOM_VAR"] = "value"
+proc = await asyncio.create_subprocess_exec(cmd, ..., env=env)
 ```
 
 ### 4. 后台读取循环
