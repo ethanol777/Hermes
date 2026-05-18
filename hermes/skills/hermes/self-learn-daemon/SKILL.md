@@ -181,10 +181,11 @@ prompt: |
 | 7 | Quanta Magazine (HN转载) | 部分付费 | 深度科学报道 | ✅ 直接URL可达 |
 | 7 | 小红书 | ⛔ IP风控拦截 | 生活方式/时尚/情感 | ❌ 浏览器打不开，搜引擎缓存 |
 | 7 | 微博热搜 | ✅ 浏览器可达 s.weibo.com 访客模式 | 社会热点/时事 | ✅ 2026-05-18 实测：browser_navigate 直接访问 s.weibo.com/top/summary 可用（走访客验证流程后可读热搜榜单。注意：浏览器会先重定向到 passport.weibo.com/visitor/visitor，但热点内容仍在 snapshot 中完整渲染——不要看到登录页 URL 就放弃）；API weibo.com/ajax/side/hotSearch 加 UA+Referer 头可直读 JSON |
-| 8 | 知乎 | ✅ 探索页无需登录；热榜页面需登录（2026-05-18 update） | 问答/深度讨论 | ⚠️ zhihu.com/explore 可读；zhihu.com/hot 已重定向到登录页；API 端点 (/api/v3/feed/topstory/hot-lists/total) 可用性不稳定——有时成功有时 403/重定向到登录页，取决于请求头和环境；单问题页有 recaptcha |
-| 9 | 微博 | ✅ 无需登录（API直接可读） | 时事/娱乐 | ✅ `weibo.com/ajax/side/hotSearch` 加 UA/Referer 头即可 |
+| 8 | Telegram 频道 (t.me/s/) | ✅ 无需登录 | AI/技术/开源/创业资讯 | ✅ `t.me/s/channelname` 显示公开频道完整消息流（无需登录）。注意：用 `t.me/`（无 /s/）可能超时。详见 `references/telegram-channel-scraping.md` |
+| 9 | 知乎 | ✅ 探索页无需登录；热榜页面需登录（2026-05-18 update） | 问答/深度讨论 | ⚠️ zhihu.com/explore 可读；zhihu.com/hot 已重定向到登录页；API 端点 (/api/v3/feed/topstory/hot-lists/total) 可用性不稳定——有时成功有时 403/重定向到登录页，取决于请求头和环境；单问题页有 recaptcha |
+| 10 | 微博 | ✅ 无需登录（API直接可读） | 时事/娱乐 | ✅ `weibo.com/ajax/side/hotSearch` 加 UA/Referer 头即可 |
 
-**策略：** 优先走 1-6。如果 1-6 的内容已经够丰富（单轮学习最多采集 3-5 条 insight），不需要绕路去登墙平台。用搜引擎 `web_search site:zhihu.com` 或 `site:xiaohongshu.com` 作为第二选择。
+**策略：** 优先走 1-6（稳定可靠的内容源）。Telegram 频道（#8）作为按需补充源——当有特定频道想跟踪时打开。如果 1-6 的内容已经够丰富（单轮学习最多采集 3-5 条 insight），不需要绕路去登墙平台。用搜引擎 `web_search site:zhihu.com` 或 `site:xiaohongshu.com` 作为第二选择。
 
 ## 学习 prompt 设计要点
 
