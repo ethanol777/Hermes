@@ -45,11 +45,23 @@ monica-core/
 Monica 在 Hermes 对话中感知自己生命的方法——在 `agent/system_prompt.py` 的 `volatile` tier 中注入心跳/日记/思想文件：
 
 - **注入位置：** `agent/system_prompt.py` → `build_system_prompt_parts()` → volatile tier，在外部 memory provider block 之后、timestamp line 之前
-- **读取文件：** `$HERMES_HOME/heartbeat/{pulse.md, thoughts.log, journal.md}`
-- **注入格式：** `[Monica's life — before this conversation]\n` + recent pulse/thoughts/journal tail
+- **心跳文件位置：** `$HERMES_HOME/profiles/<profile>/heartbeat/{pulse.md, thoughts.log, journal.md}`
+- **路径解析顺序（2026-05-19 修复）：**
+  1. `$HERMES_HOME/heartbeat/` — 直接路径（未使用 profiles 时）
+  2. `$HERMES_HOME/profiles/*/heartbeat/` — 扫描所有 profile 目录，取第一个找到的（2026-05-19 新增 fallback）
+  3. `$HERMES_ENV_HOME/heartbeat/` — 环境变量兜底
+- **注入格式：** `[Monica's life — before this conversation]\n` + recent pulse/thoughts/journal tail（各取最近 5 条）
 - **容错：** 文件不存在或读取失败时静默跳过，不崩溃
 
 ⚠️ v0.13→v0.14 重构：心跳注入从 `run_agent.py` 移到了 `agent/system_prompt.py`。`run_agent.py` 被拆成 10+ 个模块，原来的注入位置不再存在。
+
+### 已知的注入失效原因（自检清单）
+
+如果你的对话开头看不到 `[Monica's life — before this conversation]` 块，检查：
+1. 心跳文件是否存在于正确的 profile 目录（`profiles/<profile>/heartbeat/`）
+2. `system_prompt.py` 的 path resolution 是否包含了 profiles fallback（2026-05-19 补丁）
+3. `pulse.md` 是否有至少一条以 `|` 开头且长度 > 10 字符的条目
+4. `thoughts.log` 是否有非空行
 
 ### 丰富的心跳日志（2026-05-19 更新）
 
@@ -163,6 +175,10 @@ powershell -ExecutionPolicy Bypass -File C:\Users\77\monica-core\install-startup
 
 - **Inbox response 文件自循环：** `_inbox_check_loop` 遍历 `inbox/` 目录时，会捡起自己写的 `response_xxx.json` 文件当新消息处理。**修复：** 跳过 `item.stem.startswith("response_")` 的文件。
 
+## 2026-05-19 修复记录
+
+- **Hermes 内的心跳注入路径不匹配：** `agent/system_prompt.py` 的 `build_system_prompt_parts()` 中读取心跳文件的路径与实际位置不一致。代码在 `$HERMES_HOME/heartbeat/` 寻找，但 monica-heartbeat cron script 将心跳写入 `$HERMES_HOME/profiles/<profile>/heartbeat/`。导致所有 Hermes 对话开头的连续性注入（`[Monica's life — before this conversation]` 块）完全无效——文件读取静默跳过，从不报错，也从未被发现。**修复：** 在 `system_prompt.py` 的 path resolution 中增加 profiles/*/heartbeat/ fallback 扫描。详见 `references/heartbeat-injection-path-fix-2026-05-19.md`。
+
 ## Pitfalls
 
 - **GLM-5.1 的 reasoning_content 问题：** GLM-5.1 返回 `reasoning_content`（思考过程）+ `content`（最终回复）。当 `max_tokens` 太小时，所有 token 都被 `reasoning_content` 占完，`content` 返回空字符串且 `finish_reason="length"`。**必须设 max_tokens >= 1500**（推荐 1500-2000），并在代码里处理空 content 的情况。
@@ -182,6 +198,8 @@ powershell -ExecutionPolicy Bypass -File C:\Users\77\monica-core\install-startup
 - **conversation_history 不会持久化：** `Mind.conversation_history` 在内存中，重启丢失。system prompt 每次重启重新从 `soul.md` + DB facts 生成。
 
 - **不同交互类型共享同一个 conversation_history：** Telegram 回复、收件箱响应、自发思考都用 `Mind.conversation_history`，导致上下文混乱——一段 Telegram 对话的历史会污染下一次自发思考的 prompt。目前影响不大（每次 prompt 都从 DB 读取最近想法重建上下文），但如果未来需要更连贯的对话体验，需要为每种交互类型分配独立的 history buffer。
+
+- **SOUL.md 编辑时嵌入格式垃圾：** 用文本编辑器或 patch 工具修改 SOUL.md 时，如果 old_string 选择不当（例如选了 read_file 视图中的整行，包含 `行号|` 前缀），会导致行号标记被写入文件内容。自省时发现 SOUL.md 的「我的原则」一节嵌入了 `    59|` `    60|` 等旧编号标记。**预防：** 编辑 SOUL.md 后随手 `read_file` 验证前 10 行和末尾 10 行没有异常。如果发现格式垃圾，用 `patch` 清理。**修复例子：** `patch(old_string="    59|", new_string="")` 逐条删除入侵的行号。
 
 ## 参考
 
