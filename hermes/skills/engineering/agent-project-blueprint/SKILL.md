@@ -168,14 +168,145 @@ class TokenBudget:
 - 按 q/ESC 退出
 - 跨平台键盘检测：Windows 用 `msvcrt`，Unix 用 `select.select`
 
-### 8. 情绪管线
+### 8. Chat UI 模式
+
+基于 rich 的对话界面层，替代裸 `print()` / `input()`，为聊天提供专业的终端渲染。
+
+#### 8.1 消息 Panel 格式化
+
+每条消息渲染为一个圆角 Panel，带角色标签 + 时间戳：
+
+```python
+from rich.panel import Panel
+from rich.text import Text
+from rich import box
+
+def render_user(content):
+    ts = datetime.now().strftime("%H:%M:%S")
+    return Panel(
+        Text(content),
+        title=f"[bold cyan]👤 你[/]  [dim]{ts}[/]",
+        title_align="left", box=box.ROUNDED,
+        border_style="cyan", padding=(0, 1),
+    )
+
+def render_assistant(content, title="✨ Star"):
+    ts = datetime.now().strftime("%H:%M:%S")
+    return Panel(
+        Text(content),
+        title=f"[bold magenta]{title}[/]  [dim]{ts}[/]",
+        title_align="left", box=box.ROUNDED,
+        border_style="magenta", padding=(0, 1),
+    )
+```
+
+三种消息类型：`show_user()` / `show_assistant()` / `show_system()`（系统消息用纯色无角色标签）。
+
+#### 8.2 异步 Loading Spinner
+
+LLM 调用期间显示动画 spinner，调用完成后不留痕迹：
+
+```python
+async def show_thinking(self, message="正在思考"):
+    self._thinking = True
+    self._thinking_task = asyncio.create_task(self._thinking_loop(message))
+    await asyncio.sleep(0.05)  # 让出控制权让 spinner 启动
+
+async def hide_thinking(self):
+    self._thinking = False
+    if self._thinking_task:
+        await self._thinking_task
+
+async def _thinking_loop(self, message):
+    from rich.live import Live
+    from rich.spinner import Spinner
+    spinner = Spinner("dots", text=f"✨ {message}...")
+    with Live(spinner, refresh_per_second=10, transient=True):
+        while self._thinking:
+            await asyncio.sleep(0.1)
+```
+
+**关键点：**
+- `transient=True` → spinner 退出时不留终端痕迹
+- 在独立 asyncio Task 中运行 `Live` 上下文管理器，不阻塞主循环
+- `show_thinking()` 内部 `await asyncio.sleep(0.05)` 确保后台任务启动完成
+- `hide_thinking()` 必须被调用，且在 `finally` 块中保证无论是否异常都执行
+
+#### 8.3 日志静音
+
+对话期间压制 HTTP 库的 INFO 日志，避免刷屏：
+
+```python
+NOISY_LOGGERS = ["httpx", "httpcore", "openai._base_client", "openai._client"]
+
+def suppress_noisy_loggers():
+    for name in NOISY_LOGGERS:
+        logging.getLogger(name).setLevel(logging.WARNING)
+```
+
+- 必须在应用启动初期调用（第一个 HTTP 请求发出之前）
+- 在 `__main__.py` 的 `load_config()` 之后立即执行
+- 只提升到 WARNING（保留错误信息），不静音到 CRITICAL
+
+#### 8.4 Styled Input
+
+用 `Console.input()` 替代原生 `input()`，支持 rich 样式标记：
+
+```python
+from rich.console import Console
+console = Console()
+text = console.input("[bold cyan]你 >[/] ").strip()
+```
+
+在 async 环境中包装为：
+
+```python
+async def get_input():
+    return await asyncio.get_event_loop().run_in_executor(
+        None, lambda: console.input("[bold cyan]你 >[/] ").strip()
+    )
+```
+
+#### 8.5 优雅退出
+
+避免用 `sys.exit(0)` 中断事件循环——它阻止了 `finally` 块的资源清理（MCP 断开、心跳停止、记忆关闭）：
+
+```python
+# 错误做法 ❌
+sys.exit(0)  # 触发 SystemExit，cleanup 不执行
+
+# 正确做法 ✅
+# 在命令处理方法中返回退出信号
+async def handle_command(text) -> bool:
+    if text == "/exit":
+        self.ui.goodbye()
+        return True   # 主循环检查返回值并 break
+    return False
+
+# 主循环
+while True:
+    text = await get_input()
+    if text.startswith("/"):
+        if await handle_command(text):
+            break  # 让 main() 的 finally 正常执行 cleanup
+```
+
+#### 8.6 关键 Pitfalls
+
+- **Live + input() 冲突**：`Live` 上下文管理器和 `input()` 不能在同一线程中同时使用。spinner 必须运行在独立 asyncio Task 中，且主循环在 spinner 启动后不能调用阻塞的 `input()`
+- **Live 不能在 executor 中运行**：`run_in_executor` 的线程中不能启动 `Live`（rich 的 Live 需要主线程控制终端）。spinner 必须用 `asyncio.create_task` 在事件循环中启动
+- **Console.input() 必须在主线程**：`Console.input()` 接管了 stdin，如果在 executor 中运行且同时有 Live 在主线程，可能导致输入不回显。正确模式：spinner 用 Task 放在主线程事件循环，input 用 `run_in_executor` 放在线程池
+- **`\r` 残影**：如果不用 `transient=True` 的 `Live`，手动 `print("\r...")` 的 spinner 在终端可能留下字符残影。始终用 `Live(transient=True)`
+- **日志抑制要早**：如果在 `logging.basicConfig` 之后才设置日志级别，某些日志器可能已经发出了 INFO 输出。`setLevel(WARNING)` 必须在 logging.basicConfig 之前或紧接其后
+
+### 9. 情绪管线
 
 - 每次用户输入 → LLM 分析情绪（失败时规则关键词降级）
 - 情绪状态影响回复的温度、长度、风格
 - 强度随时间自然衰减
 - **关键陷阱**：关键词降级的积极词不要包含"好"这类过于通用的字——"好难过"会被误判为积极
 
-### 9. 配置校验
+### 10. 配置校验
 
 启动时对 config.yaml 做字段合法性检查：
 - LLM 字段白名单
@@ -184,7 +315,7 @@ class TokenBudget:
 - MCP server name/command 必填校验
 - 不合法的字段打 warning 但不阻断启动
 
-### 10. 优雅关闭
+### 11. 优雅关闭
 
 信号处理器（SIGINT/SIGTERM）：
 1. 停止心跳守护进程
