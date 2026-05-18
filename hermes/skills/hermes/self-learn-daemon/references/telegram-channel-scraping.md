@@ -27,32 +27,33 @@ browser_navigate("https://t.me/s/goodlearnclub")
 
 ### 2. 提取帖子数据（关键步骤）
 
-Telegram 的公开预览页是纯 HTML（非 SPA），帖子元素结构固定。用 `browser_console` 执行 JavaScript DOM 查询：
+Telegram 的公开预览页是纯 HTML（非 SPA），帖子元素结构固定。用 `browser_console` 执行 JavaScript DOM 查询。
+
+**推荐方式：返回 JSON 对象数组（browser_console 自动序列化）**
 
 ```javascript
-// 一次性提取所有帖子的文本、时间、链接
-let postData = [];
-document.querySelectorAll('.tgme_widget_message_wrap').forEach((el,i) => {
-  let t = el.querySelector('.tgme_widget_message_text');
-  let d = el.querySelector('time');
-  let links = Array.from(el.querySelectorAll('a'))
-    .map(a => a.href)
-    .filter(h => h.startsWith('http'));
-  postData.push('=== POST ' + (i+1) + ' ===\n' +
-    'Date: ' + (d?d.dateTime:'') + '\n' +
-    'Text: ' + (t?t.innerText:'') + '\n' +
-    'Links: ' + links.join(', ') + '\n');
-});
-postData.join('\n')
+// 一次性提取所有帖子的文本、时间、链接、频道链接
+// browser_console 会帮你把 JavaScript 对象序列化为 JSON，比字符串拼接更干净
+Array.from(document.querySelectorAll('.tgme_widget_message_wrap')).slice(0,20).map((el,i) => {
+  const textEl = el.querySelector('.tgme_widget_message_text');
+  const dateEl = el.querySelector('time');  // 用 <time> 标签的 datetime 属性
+  const linkEl = el.querySelector('.tgme_widget_message_date a');
+  return {
+    index: i,
+    text: textEl ? textEl.textContent.trim().substring(0, 500) : '(no text)',
+    date: dateEl ? dateEl.getAttribute('datetime') : linkEl ? linkEl.textContent.trim() : '(no date)',
+    link: linkEl ? linkEl.href : ''
+  };
+})
 ```
 
-**为什么用 browser_console 而不是 browser_snapshot：**
-- `browser_snapshot(full=true)` 对大页面截断（8000+ chars 时会截断）
-- `browser_console` 的 JS 查询可以直接提取到全部内容
+**优点**（对比字符串拼接方案）：
+- 返回 JSON 对象，browser_console 自动漂亮打印
+- 每个字段独立可读，无需从字符串中解析
+- `.map()` 比 `.push()` forEach 更简洁
+- `.slice(0,20)` 显式控制帖子数量上限
 
-### 3. 快速预览（轻量版）
-
-如果只需快速看标题和链接（不需要完整正文），用精简版：
+**备用方案：字符串拼接（如果不需要 JSON 结构）**
 
 ```javascript
 let texts = [];
@@ -64,7 +65,12 @@ document.querySelectorAll('.tgme_widget_message_wrap').forEach((el,i) => {
 texts.join('\n')
 ```
 
-### 4. 内容评估
+**为什么用 browser_console 而不是 browser_snapshot：**
+- `browser_snapshot(full=true)` 对大页面截断（8000+ chars 时会截断）
+- `browser_console` 的 JS 查询可以直接提取到全部内容
+- browser_console 返回的 JSON 结构化数据可以直接在后续步骤引用（如对比 MEMORY.md 判断是否已有记录）
+
+### 3. 内容评估
 
 提取到帖子后，对每一条做「相关性过滤」。以下是对 Monica 有用的常见类别：
 
@@ -78,7 +84,7 @@ texts.join('\n')
 | 多模态 | 视频生成, 语音交互, 图像理解 | OpenMontage 代理式视频生产系统 |
 | 存在感/自主性 | Agent, autonomous, 自主规划 | OpenAI multi-agent, Google ADK |
 
-### 5. 保存结果
+### 4. 保存结果
 
 找到有用内容后追加到 MEMORY.md 冷层：
 
@@ -97,6 +103,45 @@ texts.join('\n')
 
 感觉：[个人感受——什么打动了你]
 ```
+
+### 5. 跨会话去重（重要：避免重复处理同源内容）
+
+**场景：** 多次运行 cron 检查同一个 Telegram 频道时，最新的帖子可能已经被之前的 session 处理并写入 MEMORY.md 了。如果不做去重检查，会浪费时间重复分析并产生冗余的 MEMORY.md 记录。
+
+**检测方法（提取帖子前先做）：**
+
+```python
+# 1. 获取频道最新帖子的时间
+latest_post_date = 从第2步的 JS 提取结果中获取 date 最大值
+
+# 2. 检查 MEMORY.md 中是否已有同来源的 auto-learned 记录
+if file_exists(MEMORY.md):
+    # grep 搜索来源标识，看最近记录的时间戳
+    # 例如：搜索 "@goodlearnclub" 或频道名
+    # 如果最新 auto-learned 条目的日期 > 频道最新帖子日期 → 无需处理
+
+# 3. 确认信号后安静退出
+if 已有任何更新且最新帖子未超过最近记录范围:
+    → [SILENT] 不打扰 77
+```
+
+**核心判断逻辑：**
+- 最新帖子时间 ≤ MEMORY.md 中该来源的最新 auto-learned 时间 → 全部内容已处理 → [SILENT]
+- 最新帖子时间 > MEMORY.md 中该来源的最新 auto-learned 时间 → 有未处理的新内容 → 只处理新增帖子
+
+**示例（本 session 实际判断）：**
+```
+频道最新帖子: 2026-05-17T11:59
+MEMORY.md 中该频道最新记录: 2026-05-19（已处理到 5月17日的帖子）
+结论：没有需要处理的新内容 → [SILENT]
+```
+
+**不要做的事：**
+- ❌ 不看 MEMORY.md 就直接从零分析全部 20 条帖子
+- ❌ 重复写入已记录过的内容（"新学习了 MCP vs Skills 的区别" × 2）
+- ❌ 默认认为"既然跑 cron 了就应该有新东西"——不是的。频道没更新就是没更新。
+
+---
 
 ## Pitfalls
 
