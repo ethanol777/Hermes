@@ -381,7 +381,7 @@ def __init__(self, memory_char_limit: int = 5000, user_char_limit: int = 2500):
 1.**热层仍依赖主会话** — hot_candidates.txt 缓解了冷启动延迟，但不能完全消除。第一次对话仍可能缺数据。
 2. **去重依赖语义搜索** — fact_store 的 search 是语义搜索，可能漏判重复或误判。维护 cron 的批量扫描是补充手段。
 3. **归档后搜索需跨文件** — MEMORY.md 只保留近 30 天，搜更早的内容需要读 archive/ 目录或查 archive_index.md。
-4. **tags 是软关联** — 不是真知识图谱，无法做复杂推理链。对当前规模够用。
+- **fact_store 双副本无声发散** — Hermes（`~/Hermes/hermes/memories/fact_store.jsonl`）和 AppData（`~/AppData/Local/hermes/memories/fact_store.jsonl`）两个副本可能因不完整的同步而无声发散。2026-05-19 事故证实：两个副本可能存储不同时间段的事实集（一个只有近 2 天，一个只有前 5 天），单向 cp 覆盖破坏了完整历史。**架构层面需要明确的权威副本定义。当前设计：Hermes 版是写入目标，AppData 版是会话读取目标。两者都是「同一数据集的不同视图碎片」，任何单向覆盖都可能导致数据丢失。** 合并应使用 `cat + sort -u` 而非 `cp`。
 5. **维护 cron 需要 fact_store 和 file 工具权限** — enabled_toolsets 不能只写 terminal，需要包含 fact_store 相关的工具集。
 6. **心跳是单向记录** — heartbeat.log 只是写入时间戳，没有读回机制。主会话读取是手动行为，不自动注入。
 7. **每日自省依赖 cron 权限** — monica-daily-reflection 需要 session_search 和 fact_store 工具权限才能正常运行。

@@ -337,6 +337,7 @@ write_file("facts_{date}.md", 内容)
 - [references/fact_store-tool-vs-direct-write.md](references/fact_store-tool-vs-direct-write.md) — 何时用 fact_store tool vs 直接写 JSONL 文件（2026-05-15 实际教训）
 - [references/hn-firebase-topstories-pattern.md](references/hn-firebase-topstories-pattern.md) — HN Firebase API 首页 top stories 批量获取模式，比浏览器快、比 Algolia 准确（2026-05-18）
 - [references/fact_store-jsonl-patch-corruption-incident.md](references/fact_store-jsonl-patch-corruption-incident.md) — 2026-05-18 实战事故详细记录：patch 对 fact_store.jsonl 追加导致行首截断+引号双重转义，以及恢复步骤
+- [references/fact_store-presync-data-loss-incident.md](references/fact_store-presync-data-loss-incident.md) — 2026-05-19 实战事故详细记录：预检同步时 cp 覆盖导致 102 条历史事实丢失，含修复后规则和三步判断法
 - [references/hn-api-id-ordering-pitfall.md](references/hn-api-id-ordering-pitfall.md) — HN Firebase API 的 ID 排序与页面展示不一致陷阱（2026-05-16）
 - [references/reliable-api-sources.md](references/reliable-api-sources.md) — 已验证的可靠数据 API（HN Firebase、GitHub Search、B站官方 API、知乎发现页、Weibo 热搜），替代子进程幻觉爬虫（2026-05-18）
 - [references/execute_code-file-io-pattern.md](references/execute_code-file-io-pattern.md) — execute_code 作为文件 I/O 替代方案：terminal Python 损坏时的稳定写入路径（2026-05-17）
@@ -971,7 +972,28 @@ elif he_id > ad_id:
     terminal("cp '/c/Users/77/Hermes/hermes/memories/fact_store.jsonl' '/c/Users/77/AppData/Local/hermes/memories/fact_store.jsonl'")
 ```
 
-**恢复（如果已经发现发散）：** 不要逐条搬运遗漏的 JSON 行——直接 `cp` 较新的完整文件覆盖较旧的。JSONL 是纯追加的，覆盖不会丢失数据。但如果两个版本都写入了不同的新条目（双向发散），需要用 `sort -u` 合并去重：
+**恢复（如果已经发现发散）：** 不要逐条搬运遗漏的 JSON 行——直接 `cp` 较新的完整文件覆盖较旧的。JSONL 是纯追加的，覆盖不会丢失数据。但如果两个版本都写入了不同的新条目（双向发散），需要用 `sort -u` 合并去重。
+
+### 🔴 2026-05-19 新增：预检同步「ID 大→覆盖小」逻辑可能导致数据丢失
+
+**事故：** 本轮 cron 执行中，Hermes 版 fact_store（fs_119-fs_138，20条）和 AppData 版（fs_001-fs_118，122条）存在严重发散。执行了 `cp Hermes→AppData` 以「同步到新版本」，覆盖掉了 AppData 版的 102 条历史事实。
+
+**为什么发生：** 预检同步逻辑「比较末尾 ID，大的覆盖小的」对顺序追加的数据集有效，但对**双向发散**的数据集是破坏性的——Hermes 版有更新的条目（fs_119+），但 AppData 版有更完整的历史记录（fs_001-fs_118）。两个文件是独立增长的，不是简单的「新旧」关系。
+
+**修复后规则：** 比较两个版本时，不要只看末尾 ID 大小。先 `wc -l` 检查行数：如果行数差异 > 20%（例如 20 行 vs 122 行），说明不是「新旧」而是「两个独立片段」——**不要覆盖**。应该：
+1. 先备份老的（`cp old_path old_path.bak`）
+2. 合并两个文件（`cat old new | sort -t, -k1,1 -u > merged`）
+3. 用合并版替换
+
+**如果已经覆盖了（像我这轮一样）：** 损失的是温层索引，但原始笔记在 MEMORY.md（冷层）中可恢复。这是最后的防线，不是用来偷懒的。
+
+**检查行数的快速方法：**
+```bash
+# 追加前检查两个版本是否有严重的行数差异
+wc -l /c/Users/77/Hermes/hermes/memories/fact_store.jsonl
+wc -l /c/Users/77/AppData/Local/hermes/memories/fact_store.jsonl
+# 如果差异 > 20%，用 cat + sort -u 合并，别直接 cp 覆盖
+```
 
 ```bash
 # 双向发散合并（两个文件最后 N 条不同）
