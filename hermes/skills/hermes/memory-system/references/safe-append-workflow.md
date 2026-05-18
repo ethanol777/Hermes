@@ -1,14 +1,47 @@
 # MEMORY.md / fact_store 安全追加工作流
 
-## 问题：为什么不用 `patch` 做大块追加？
+## 问题：用 `patch` 还是 `execute_code` 做大块追加？
 
 | 方案 | 风险 | 适用场景 |
 |------|------|----------|
-| `patch(old, new)` | new_string 中的特殊字符（`\|`, `#`, `-`）可能被误解析为格式标记；多行 old_string 很难唯一匹配 | 小修改（<5 行），唯一 old_string |
+| `patch(old_string, new_string)` | new_string 中的特殊字符（`\|`, `#`, `-`）可能被误解析；多行 old_string 难唯一匹配 | **小修改（<5 行）或末尾追加（old_string 为最后一行）** |
 | `patch(replace_all=true)` | ⚠️ 极高风险，匹配所有重复位置，瞬间破坏文件 | **绝对不要用** |
 | `execute_code` + `read_file` + `write_file` | 无特殊字符风险，全量写回保证一致性 | **大幅追加的首选方案** |
 
-## 推荐方案：`execute_code` + Python 文件 I/O
+## 关键发现（2026-05-18）：patch 对末尾追加是安全的
+
+**只要满足两个条件，patch 对末尾追加完全可靠：**
+
+1. **old_string = 文件最后一行**（确保唯一匹配，不会被文件中其他位置误匹配）
+2. **new_string = old_string + 新内容**（保留最后一行，在其后插入新内容）
+
+**实战验证：** 本 session 向 MEMORY.md 末尾追加了 ~100 行内容，old_string 选用文件最后一行 `| 2026-05-14 — 我在 Hermes 里搭了一套存在感系统`，new_string 为该行 + 全部新内容。patch 一次成功，零错误。
+
+**所以，对于「末尾追加」场景，patch 是比 execute_code 更简单的方案**——不需要读全文件、不需要 JSON 序列化、不需要处理行号解码。
+
+## 使用 `patch` 做末尾追加的模板
+
+```patch
+SELECT:
+  old_string: "<文件最后一行>"
+  new_string: "<文件最后一行>\n\n§\n\n## YYYY-MM-DD auto-learned: 新内容..."
+  # ⚠️ 不要设 replace_all=true
+```
+
+**验证步骤：**
+```bash
+# 写入后用 read_file 确认追加成功
+read_file("MEMORY.md", offset=-10)  # 看最后10行
+```
+
+## 何时必须用 `execute_code` + Python I/O
+
+- 追加的内容中包含 `|` 作为行首字符（patch 会将其解析为格式标记）
+- 需要修改文件中间部分而非末尾追加
+- 需要做条件判断（如检查 section 是否已存在再决定是否追加）
+- need_string 中包含 JSON 花括号 `{}` 导致 patch 匹配异常
+
+## `execute_code` + Python 文件 I/O 方案（备选）
 
 ### 追加到 MEMORY.md
 
@@ -36,13 +69,9 @@ clean_lines = [strip_line_prefix(l) for l in lines]
 new_section = f"""
 §
 
-## 2026-05-18 auto-learned: 网络闲逛记录 — 午后版
+## YYYY-MM-DD auto-learned: 主题
 
-### Hacker News 上的意外发现
-
-**Something Interesting** — description here.
-
-- Insight: Key takeaway from today's exploration.
+- Insight: Key takeaway.
 - Source: https://example.com
 """
 
@@ -51,12 +80,12 @@ clean_lines.append(new_section)
 write_file('/path/to/MEMORY.md', '\n'.join(clean_lines))
 ```
 
-### 追加到 fact_store（温层文件）
+### 追加到 fact_store（温层文件，带 section 去重）
 
 ```python
 from hermes_tools import read_file, write_file
 
-content = read_file('/path/to/facts_2026-05-18.md')['content']
+content = read_file('/path/to/facts_YYYY-MM-DD.md')['content']
 lines = content.split('\n')
 
 # 检查 sections 是否存在，不要重复创建
@@ -73,32 +102,10 @@ if not has_timely:
     new_facts.append('\n## timely')
     new_facts.append('- **New timely fact**: description (timely)')
 
-# 或者如果 section 已存在，直接在最后一个条目后面追加
-# 找到当前文件末尾位置
+# 追加到末尾
 content_rstrip = content.rstrip()
 content_rstrip += '\n' + '\n'.join(new_facts)
-write_file('/path/to/facts_2026-05-18.md', content_rstrip)
-```
-
-### 更可靠的方式：完全在 execute_code 内部构建新文件
-
-```python
-from hermes_tools import write_file
-
-# 如果文件较小（< 200 行），直接全量构建
-new_content = """# 事实 - 2026-05-18 cron 巡检
-
-## persistent
-- **CLI-Anything**: description (persistent)
-
-## stable
-- **Existing stable**: description (stable)
-
-## timely
-- **Existing timely**: description (timely)
-"""
-
-write_file('/path/to/facts_2026-05-18.md', new_content)
+write_file('/path/to/facts_YYYY-MM-DD.md', content_rstrip)
 ```
 
 ## 恢复指南

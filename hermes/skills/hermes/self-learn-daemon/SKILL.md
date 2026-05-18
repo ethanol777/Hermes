@@ -547,28 +547,30 @@ read_file 显示: 17|§
 
 ### 🔴 CWD 路径陷阱：cron 的 MEMORY.md 可能不在预期位置
 
-**⚠️ 2026-05-17 实际事故：** cron job 的 working directory 是 `C:\Users\77\AppData\Local\hermes\hermes-agent\`（Hermes 源码目录），而非 `~/AppData/Local/hermes/memories/`（预期记忆目录）。
+**⚠️ 2026-05-17 实际事故：** cron job 的 working directory 是 `C:\\Users\\77\\AppData\\Local\\hermes\\hermes-agent\\`（Hermes 源码目录），而非 `~/AppData/Local/hermes/memories/`（预期记忆目录）。
 
 这意味着：
-- `patch(MEMORY.md)` 使用相对路径时，写入的是 `C:\Users\77\AppData\Local\hermes\hermes-agent\MEMORY.md`（源码目录）
-- 而非 `C:\Users\77\AppData\Local\hermes\memories\MEMORY.md`（记忆目录）
+- `patch(MEMORY.md)` 使用相对路径时，写入的是 `C:\\Users\\77\\AppData\\Local\\hermes\\hermes-agent\\MEMORY.md`（源码目录）
+- 而非 `C:\\Users\\77\\AppData\\Local\\hermes\\memories\\MEMORY.md`（记忆目录）
 - 这两个是**不同的文件**。下次会话读取记忆目录的版本，不会看到本次学习追加的内容
 
-**修复方法：**
-1. **写入 MEMORY.md 时始终使用绝对路径**，不要依赖相对路径
-2. cron prompt 中应显式指定四个路径：
-   - `C:\Users\77\AppData\Local\hermes\memories\MEMORY.md`（冷层主副本）
-   - `C:\Users\77\Hermes\hermes\memories\MEMORY.md`（冷层副副本）
-   - 用 `terminal cp` 在两个副本间同步
-3. 写入前用 `terminal ls` 或 `read_file` 确认文件在预期位置
+**实际验证（2026-05-18）：** 本 session 读取的 MEMORY.md 路径为 `C:\\Users\\77\\AppData\\Local\\hermes\\hermes-agent\\MEMORY.md`（CWD 版本），文件已有 933 行累计内容来自最近 5 天的多个 cron session。**说明在这个环境中，CWD 版本就是正在使用的主 MEMORY.md，而非记忆目录版本。** 不要盲目假设 `memories/` 目录下的副本才是主副本——以实际找到的、有历史内容的文件为准。
+
+**修正后的修复方法（发现优先于假设）：**
+1. **不要依赖文档中的固定路径** — 每次 session 开始，先发现 MEMORY.md 的实际位置
+2. **发现流程：** 先用 `read_file("MEMORY.md")`（相对路径，解析自 CWD），如果找到且内容不为空，这就是你的主 MEMORY.md。如果文件不存在或内容为空，再检查 `memories/` 目录下的版本
+3. **确认后使用绝对路径写入** — 一旦确认实际路径，后续所有写入都用该绝对路径
+4. **关于同步：** 如果确认 CWD 版本是主副本（已有历史内容），先判断 `memories/` 目录下的版本是否存在：
+   - 存在且也有内容 → 需要双写同步以确保两个副本一致
+   - 不存在或为空 → 只写 CWD 版本即可（`memories/` 是旧配置的残留路径，不存在二次副本）
 
 **自检方法（每次写入前做）：**
 ```bash
-# 检查当前 CWD
-pwd
-# 确认你要写的 MEMORY.md 在哪个目录
-ls -la ~/AppData/Local/hermes/hermes-agent/MEMORY.md   # CWD 版本
-ls -la ~/AppData/Local/hermes/memories/MEMORY.md        # 记忆版本
+# 1. 检查 CWD
+read_file("MEMORY.md")  # 相对路径 → CWD 版本
+# 2. 检查记忆目录版本（确认是否有二次副本需要同步）
+read_file("C:/Users/77/AppData/Local/hermes/memories/MEMORY.md")
+# 3. 比较：哪个有历史内容就用哪个。如果只有 CWD 版本有内容，它就是主副本。
 ```
 
 ### 🔴 `memory` vs `fact_store` 陷阱在非自学习 cron 中也会触发
