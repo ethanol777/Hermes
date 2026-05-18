@@ -187,8 +187,8 @@ curl -s "https://weibo.com/ajax/side/hotSearch" \
 知识区的排行视频很多时候来自严肃媒体/专业创作者——中国食品报融媒体（调查报道）、小Lin说（财经知识）、罗翔说刑法（法律）、芳斯塔芙（古生物/演化生物学）、毕导（科学实验）。标题可能看着像"营销号"但内容质量实际很高，不要仅凭标题判断。
 
 **注意：** 
-- API 接口 `api.bilibili.com/x/web-interface/ranking/v2` 有反爬（返回 -352），但**加 `Referer: https://www.bilibili.com` 头后实测可用**（2026-05-18）。推荐在 curl 命令中带上 `-H "User-Agent: Mozilla/5.0" -H "Referer: https://www.bilibili.com"`，能稳定拿到排行榜数据。
-- 浏览器拿到的页面内容完整，是备选方案。
+- API 接口 `api.bilibili.com/x/web-interface/ranking/v2` 有反爬（返回 -352），**2026-05-18 实测即使加 `Referer: https://www.bilibili.com` 头也返回 -352**。推荐优先使用 `browser_navigate` 直接访问排行页面作为第一方案，API 作为备选。
+- 浏览器访问 `https://www.bilibili.com/v/popular/rank/all` 可完整获取排行数据（标题、UP主、播放量），无需登录。
 - `browser_click` 点击排行视频条目一般不会导航到视频页（SPA 拦截）。需要用 JS 取链接。
 
 **查找特定视频的两个方法：**

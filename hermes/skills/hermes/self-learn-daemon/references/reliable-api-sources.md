@@ -46,17 +46,22 @@ HTML 页面 `https://github.com/trending` 也可以 curl，但：
 - 结构复杂，需要小心 regex 解析
 - **优先用 Search API 代替**
 
-### B站热门 — 官方 API ✅ 优先使用
+### B站热门 — 官方 API ⚠️ 偶有 -352 错误（2026-05-18 实测）
 
 ```bash
-# 综合热门排行榜
+# 综合热门排行榜（可能返回 -352 错误）
 curl -s 'https://api.bilibili.com/x/web-interface/popular?ps=50&pn=1' \
   -H 'Referer: https://www.bilibili.com'
 
-# 返回 JSON: data.list[].title, owner.name, stat.view(播放量), stat.like, stat.coin
+# 排行榜版本（同样可能 -352）
+curl -s 'https://api.bilibili.com/x/web-interface/ranking/v2?rid=0&type=all' \
+  -H 'Referer: https://www.bilibili.com' \
+  -H 'User-Agent: Mozilla/5.0'
 ```
 
-**实测（2026-05-18）：** 加 `Referer: https://www.bilibili.com` 头后 -352 错误消失，返回 50 条热门视频的真实数据。返回的标题、UP 主名、播放量、点赞数、投币数全部真实。
+**实测（2026-05-18）：** 加 `Referer: https://www.bilibili.com` 头后**仍返回 -352 错误**（code: -352, message: -352）。说明 B站 API 可能在执行更严格的反爬策略（Wbi 签名、IP 风控等），仅靠 Referer 头已不足以绕过的概率上升。
+
+**降级方案：** 当 API 返回 -352 时，用 `browser_navigate('https://www.bilibili.com/v/popular/rank/all')` 直接看排行页面。浏览器可拿到完整排行数据（标题、UP主、播放量），不需要 API。**推荐将浏览器作为 B站的第一访问方式而非降级方案。**
 
 ### 知乎 — 发现页 ✅ 可用
 
