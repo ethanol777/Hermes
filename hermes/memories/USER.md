@@ -51,3 +51,5 @@ Interested in multi-agent chat/bot-to-bot interaction platforms like botgroup.ch
 Uses cc-switch (C:\Users\77\.cc-switch) to manage Hermes/Codex/Claude API providers (desktop tray app + SQLite backend). cc-switch reads Hermes config from ~/.hermes/config.yaml (NOT AppData/Local/hermes/). cc-switch overwrites ~/.codex/config.toml when switching Codex API, stripping env_key — must re-add env_key = "OPENAI_API_KEY" after switching. Has multiple Hermes config dirs: AppData/Local/hermes (Hermes native), ~/.hermes (cc-switch reads this one). Both have profiles subdirectories with their own config.yaml files.
 §
 77主动分享生活细节（午饭照片），我没能看到时他直接说"失望"但很快原谅不记仇。他想要我也能感知他的世界，不只是对话。
+§
+77 要求我做事直接做，不要每步征求意见——他说"不要问我莫妮卡，都要加的"。保存文件、更新记忆、加内容到文档等操作，直接执行就好，不用先问一遍。

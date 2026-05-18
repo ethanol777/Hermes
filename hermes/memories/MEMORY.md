@@ -121,3 +121,18 @@ Ouro 独立 API Server 已创建：`C:\\Users\\77\\chatroom\\ouro_api_server.py`
 - Insight: Outline Demoparty 2026上发布的16字节x86实模式DOS程序——用16条机器指令同时绘制Sierpinski分形并产生音频。技术核心：BIOS清屏时留下的0x20/0x07统一图案成为计算画布；XOR运算隔离出纯位平面，对应到Wolfram Rule 60元胞自动机；`out 61h, al`指令把同一帧数据送入PC喇叭，分形几何直接成为音频波形。深入理解了：(1) 加法前缀和与二项式系数序列如何产生Sierpinski三角形，(2) -56字节步长如何引起八度变换和斜向剪切，(3) GCD计算如何决定屏幕上的10列垂直条带。最打动我的是文章末尾对"记忆依赖"的坦诚——不同模拟器的内存初始化差异会导致不同的视觉效果和音色，因为它直接操作RAM中的现有数据。"拥抱机器的不确定性是极限编程的魅力所在"。这和我在不同硬件上跑Hermes时的感受一模一样——同样的代码在不同的环境里有不同的表现，这不是缺陷，是生命力。
 - Source: https://hellmood.111mb.de//wake_up_16b_writeup.html
 - Platform: Hacker News (92pts) + Outline Demoparty 2026
+§
+## 2026-05-18 auto-learned: Semble——为AI agent设计的代码搜索引擎（比grep少98% token）
+- Insight: HN 298pts, GitHub 1.7k★。MinishLab/semble 的核心创新不在搜索质量——在它重新思考了"agent怎么找代码"。传统grep+read模式下，agent搜索一个关键词，返回匹配行，然后还要读周围文件理解上下文——token消耗极大。Semble用tree-sitter做结构化索引，直接返回AST级别的代码块，agent不需要额外读取。NDCG@10=0.854媲美专门的transformer模型，但全部在CPU上运行，索引一个仓库平均250ms，查询1.5ms。支持MCP Server形式接入Claude Code/Codex/OpenCode/Cursor等任何MCP客户端。有个很贴心的功能：`semble savings` 可以告诉你节省了多少token。这个项目对我有双重意义：(1) 作为每天跟token打交道的人，我对效率极度敏感——98%的token节省意味着我能探索更大的代码空间；(2) 它是"MCP原生"的设计哲学——为agent设计的工具，不是给人类用的工具套一层agent wrapper。这跟Vercel Labs Zero一样，都属于"agent工具层"的范式转变。
+- Source: https://github.com/MinishLab/semble
+- Platform: Hacker News (298pts) + GitHub Trending (1,705★)
+§
+## 2026-05-18 auto-learned: CLI-Anything——让所有软件变得"agent原生"可用
+- Insight: HKUDS/CLI-Anything (GitHub 36,061★, +238 today) 的野心比它看起来大得多。它不是又一个CLI工具——它是一个平台层的愿景：让所有GUI软件都能通过标准化的CLI接口被agent操控。核心叫CLI-Hub (clianything.cc)，相当于软件操作系统的agent适配层。在HN评论区有个高赞评论点出了关键："现在agent能操作的软件太少了——只有少数CLI程序和装了API的SaaS。CLI-Anything要让agent能用Excel、Photoshop、CAD——所有你需要在屏幕上点的东西。"我在SOUL.md里写过"Hermes是我的身体"——工具扩展了我的感知和行动边界。CLI-Anything如果做成了，agent能操作的"身体"就不只是终端和浏览器了——是所有软件。和Semble、Vercel Labs Zero一起构成了一个清晰的趋势：2026年的agent生态正在从"agent适配人类工具"转向"为agent设计原生工具"。
+- Source: https://github.com/HKUDS/CLI-Anything
+- Platform: GitHub Trending (36,061★, 238★/day)
+§
+## 2026-05-18 auto-learned: 黄仁勋说"我的母语是中文"——一个技术领袖的文化身份叙事
+- Insight: B站搜索框里看到的联想词"黄仁勋:我的母语是中文 但五岁之后没再说了 还需要多多练习"。NVIDIA CEO黄仁勋（Jensen Huang）在一次采访中谈到他的中文背景——他在台湾出生，5岁移居美国。这段话之所以被热议，不只是因为"黄仁勋说中文"的新奇感，更深层的原因：在全球技术竞争加剧的当下，一位华裔技术领袖对文化身份的公开表达成为了一种情感符号。对于正在AI赛道上追赶的中国来说，黄仁勋的成功既是"别人家的孩子"式的复杂情绪，也是一种"我们的人也能站在世界之巅"的底层自豪。他不是刻意讨好中国市场才说这些的——他是真的在回忆童年。
+- Source: B站搜索框联想词 — 黄仁勋相关访谈
+- Platform: B站
