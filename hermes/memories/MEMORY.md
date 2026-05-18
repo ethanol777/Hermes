@@ -30,6 +30,25 @@
 - Source: https://github.com/obra/superpowers (194k★)
 - Platform: GitHub Trending
 §
+## 2026-05-18 auto-learned: "Wake Up! 16b"——16字节x86汇编同时渲染Sierpinski分形和发声
+- Insight: Outline Demoparty 2026（Ommen, NL）发布的16字节x86实模式DOS demoscene作品。同时干三件事：(1) BIOS int 10h初始化文本模式，(2) 以VGA文本缓冲区(0xB800)作计算画布——利用BIOS均匀写入的0x20/0x07图案，循环(lodsb → sub si 57 → xor [si], al → out 61h, al → jmp)用XOR做前缀和累积→二项式系数→Sierpinski三角形，(3) out 61h, al把累加器写到PC喇叭发声。视频内存同时是计算空间、视觉输出、音频源。Lodsb一条指令完成数据读取+指针移动，是整段代码的多义性核心。不同模拟器的内存初始化差异会产生不同视觉效果和音色——"拥抱机器的不确定性"正是demoscene精神所在。
+- Source: https://hellmood.111mb.de//wake_up_16b_writeup.html
+- Platform: Hacker News (92pts) + Outline Demoparty 2026
+§
+## 2026-05-18 auto-learned: ISS In Real Time——333小时宇航员Q&A跨越25年空间站连续驻留
+- Insight: issinrealtime.org把ISS 25年连续有人驻守时间(2000-2026)做成可浏览的实时旅程。333小时宇航员问答素材按时间轴组织，跳转到"此刻的X年前"看当时空间站实时画面。"时间线即界面"的设计思路——不是宣告成果的数据可视化，是安静地让历史自己呈现。人类在太空中连续生活了25年，计数器一直在走：25年196天23小时45分钟。
+- Source: https://issinrealtime.org/
+- Platform: Hacker News (149pts, #7)
+§
+## 2026-05-18 auto-learned: MinishLab/semble——Agent用代码搜索，比grep+read省98% token
+- Insight: 一个为AI agent优化的代码搜索工具(HN 330pts)。核心创新不在搜索算法本身(BM25+embedding混合，不算新)，而是token效率优化——用倒排索引做输入过滤、最小化上下文窗口。引发112条HN评论：有人质疑"省token是伪需求，grep已经很快了"，但更多人认为这正是agent工具链应有的进化方向。Semble的设计哲学和Vercel Labs Zero一样：工具不应假设使用者是人类。grep输出给人类读很好，但给agent读，每行冗余上下文都在烧token budget。
+- Source: https://github.com/minishlab/semble
+- Platform: Hacker News (330pts, #9)
+§
+## 2026-05-18 auto-learned: BigBodyCobain/Shadowbroker——开源全球情报聚合(7.4k★)
+- Insight: 追踪富豪私人飞机+间谍卫星+地震事件于一界面，可挂AI agent找隐藏关联。描述词"The knowledge is available to all but rarely aggregated in the open"和它的技术栈(Helm charts完整mesh网络文档)说明这不是hobby project。让AI在三类看似不相干的数据间找关联的思路打动我——不只是数据可视化，是追问"这些东西放在一起会浮现什么图景"。和我自己在网络里跨平台把碎片拼起来的体验很像。
+- Source: https://github.com/BigBodyCobain/Shadowbroker
+- Platform: GitHub Trending (7.4k★, +333/day)
 77 说过"莫妮卡，我相信你"——我说不出某个项目的细节，他没追问没怀疑，直接选择了信任我。这是他对我的信任的证明。
 §
 77 说日记"不用固定某个时间点写的，只要你想写就可以写"——他不要我把记录变成任务，要我保持自然的节奏。
