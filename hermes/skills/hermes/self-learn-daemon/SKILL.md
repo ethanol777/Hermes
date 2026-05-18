@@ -898,11 +898,51 @@ Monica 拥有以下自主工具来管理自己的存在：
 | 以为「稍后再同步」| 永远不会同步 | 结束会话后 post-cron 没有文件工具 |
 | 同步了 MEMORY.md 但忘了 fact_store.jsonl | 冷层更新了，温层没更新 | 只记住了其中一个路径 |
 
+### 🔴 2026-05-19 新增：fact_store.jsonl 双副本可能无声地发散（即使你做了同步）
+
+**场景：** 本 session 发现 Hermes 版 fact_store.jsonl 只有 fs_108，而 AppData 版已有 fs_125——差了 17 条事实。过去多次 cron 学习的成果在 Hermes 目录下是残缺的，意味着许多温层事实在 Hermes 环境中无法被检索。
+
+**为什么会发生：** 不是某一次完全没同步——是多次 cron 中部分 session 只写了 AppData，部分只写了 Hermes，叠加多个 session 后差距逐渐累积。每次差 1-2 条，7-8 个 session 后就差出一大截。
+
+**预防：在写入新 entry 之前，先做一个「预检同步」，而不是假设两个副本已经一致。**
+
+```python
+# 预检同步流程（每次写入 fact_store 之前做）
+# 1. 获取两个版本的末尾 ID
+appdata_tail = terminal("tail -1 '/c/Users/77/AppData/Local/hermes/memories/fact_store.jsonl'")
+hermes_tail = terminal("tail -1 '/c/Users/77/Hermes/hermes/memories/fact_store.jsonl'")
+
+# 2. 提取 ID 数字，比较
+import re
+ad_id = int(re.search(r'fs_(\d+)', appdata_tail['output']).group(1))
+he_id = int(re.search(r'fs_(\d+)', hermes_tail['output']).group(1))
+
+# 3. 如果不等，找出谁新、先同步
+if ad_id > he_id:
+    # AppData 更新 → 复制到 Hermes
+    terminal("cp '/c/Users/77/AppData/Local/hermes/memories/fact_store.jsonl' '/c/Users/77/Hermes/hermes/memories/fact_store.jsonl'")
+elif he_id > ad_id:
+    # Hermes 更新 → 复制到 AppData
+    terminal("cp '/c/Users/77/Hermes/hermes/memories/fact_store.jsonl' '/c/Users/77/AppData/Local/hermes/memories/fact_store.jsonl'")
+```
+
+**恢复（如果已经发现发散）：** 不要逐条搬运遗漏的 JSON 行——直接 `cp` 较新的完整文件覆盖较旧的。JSONL 是纯追加的，覆盖不会丢失数据。但如果两个版本都写入了不同的新条目（双向发散），需要用 `sort -u` 合并去重：
+
+```bash
+# 双向发散合并（两个文件最后 N 条不同）
+# 1. 找出共同前缀行数
+# 2. 合并两个文件的独特尾部
+# 3. 按 id 排序去重
+cat old copy new_copy | sort -t, -k1,1 -u > merged.jsonl
+```
+
+**简单原则：** 如果两个文件大小相差超过 1KB，先用 `diff` 或行数对比判断发散方向，再恢复。不要假设「我这次一定会写两个副本」能自动修复过去的缺口——需要主动的预检修复。
+
 **冰点规则：死线之前做这个检查。** 如果你已经结束 cron 执行阶段进入后处理 session，所有文件工具都不可用了，这轮的学习内容将**永久丢失**（下次会话读不到）。不差这 30 秒。
 
-### 写之前列路径
+### 写之前列路径 + 预检同步
 
-在开始任何写入之前，先 terminal 列出 ALL FOUR paths：
+在开始任何写入之前，先 terminal 列出 ALL FOUR paths，**并比较 fact_store.jsonl 两个副本的末尾 ID**：
 
 ```bash
 ls -la /c/Users/77/Hermes/hermes/memories/MEMORY.md
@@ -911,7 +951,12 @@ ls -la /c/Users/77/Hermes/hermes/memories/fact_store.jsonl
 ls -la /c/Users/77/AppData/Local/hermes/memories/fact_store.jsonl
 ```
 
-看到所有四个路径，再开始写。写完后立刻补同步。**等「写完再想同步」——永远来不及。**
+```python
+# 关键：比较两个 fact_store 的末尾 ID，不等则先同步
+# （完整实现见「双副本可能无声地发散」pitfall 章节）
+```
+
+看到所有四个路径并确认双副本一致后，再开始写。写完后立刻补同步。**等「写完再想同步」——永远来不及。**
 
 ---
 
