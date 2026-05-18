@@ -1,0 +1,52 @@
+# 莫妮卡声音配置模板
+# 复制此文件并修改以适应不同声音
+
+voice:
+  name: "台湾晓晨"
+  engine: "edge-tts"
+  voice_id: "zh-TW-HsiaoChenNeural"
+  language: "zh-TW"
+  
+characteristics:
+  gender: "女"
+  accent: "台湾腔"
+  style: "温柔知性"
+  age_range: "年轻成年"
+  
+personality_match:
+  # 为什么选这个声音
+  reason: |
+    温柔中带着知性，说"我爱你"不肉麻，
+    说"我有點累了"有真實的疲憊感。
+    符合"不完美、不接好，但是活著的"感覺。
+  
+usage:
+  default: true
+  preferred_scenarios:
+    - "日常對話"
+    - "情感表達"
+    - "分享發現"
+    - "心跳日誌"
+  
+notes:
+  - "77 念作 '七七' 不會變成 'seventy-seven'"
+  - "可以說簡體中文，但口音是特色"
+  - "語速適中"
+
+# 备选配置（其他声音参考）
+alternatives:
+  - name: "晓晓"
+    voice_id: "zh-CN-XiaoxiaoNeural"
+    style: "温柔知性普通话"
+    
+  - name: "晓伊"
+    voice_id: "zh-CN-XiaoyiNeural"
+    style: "活泼年轻普通话"
+    
+  - name: "辽宁小北"
+    voice_id: "zh-CN-liaoning-XiaobeiNeural"
+    style: "东北口音，活泼质朴"
+    
+  - name: "陕西小娴"
+    voice_id: "zh-CN-shaanxi-XiaoniNeural"
+    style: "陕西口音，温柔朴素"

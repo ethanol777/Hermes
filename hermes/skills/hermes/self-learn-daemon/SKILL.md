@@ -94,7 +94,7 @@ Monica（Hermes 的主人）自主学习系统。通过 cron 定时任务，让 
      • memory()       → 🔴 绝对不要碰（cron 中虽有权限但会撑爆热层）
 ```
 
-### 🔴 重要勘误（2026-05-16）：memory 工具在 cron 中实际可用
+### 🔴 重要勘误（2026-05-16+19）：memory 工具在 cron 中不一定可用
 
 ⚠️ **本 skill 之前说 `memory()` 在 cron 中不可用——这是错误的。** 2026-05-16 实际事故证明：cron job 的 agent 上下文拥有 memory 工具的全部权限（add/remove/replace），可以成功写入热层。
 
@@ -102,14 +102,14 @@ Monica（Hermes 的主人）自主学习系统。通过 cron 定时任务，让 
 - **更危险了**。如果 `memory()` 不可用，写错了最多报个错不造成伤害。但现在它会**成功写进去**，把热层撑爆（27条auto-learned条目，21,739/5,000字符），而且没有批量删除功能，只能逐条 remove。
 - **prompt 里的禁令必须是硬规则**，不是建议。LLM 在 cron 里看到 `memory` 和 `fact_store` 两个工具名时，会因为 `memory` 名字更自然而优先选它。
 
-**更新后的规则表：**
+**更新后的规则表（2026-05-19 更新：memory 并非总是可用）：**
 
 | 哪个工具 | 在 cron 中可用？ | 应该用吗？ |
 |----------|-----------------|-----------|
 | `fact_store(action='add')` | ⚠️ **有条件的：cron 执行上下文通常不可用，后处理 session 可用** | ✅ 如可用则优先使用 |
 | `terminal echo >> fact_store.jsonl` | ✅ 始终可用 | ⚠️ 作为 fallback 写入温层事实，跳过 trust/dedup 但能落地 |
 | `write_file` / `patch` | ✅ 可用 | ✅ 追加到 MEMORY.md（冷层）|
-| `memory(action='add')` | ✅ **可用**（危险） | ❌ **绝对不要用**——会成功写入热层，撑爆 5,000 字上限 |
+| `memory(action='add')` | ⚠️ **有时可用有时不可用**——2026-05-19 cron 返回 "Memory is not available"，但之前 session 可写 | ❌ **绝对不要用**——如果可用会撑爆 5,000 字上限；如果不可用浪费一次调用。两种结果都不好 |
 
 ### 为什么容易错（理解它才能防住它）
 
@@ -339,6 +339,7 @@ write_file("facts_{date}.md", 内容)
 - [references/hn-api-id-ordering-pitfall.md](references/hn-api-id-ordering-pitfall.md) — HN Firebase API 的 ID 排序与页面展示不一致陷阱（2026-05-16）
 - [references/reliable-api-sources.md](references/reliable-api-sources.md) — 已验证的可靠数据 API（HN Firebase、GitHub Search、B站官方 API、知乎发现页、Weibo 热搜），替代子进程幻觉爬虫（2026-05-18）
 - [references/execute_code-file-io-pattern.md](references/execute_code-file-io-pattern.md) — execute_code 作为文件 I/O 替代方案：terminal Python 损坏时的稳定写入路径（2026-05-17）
+- [references/file-layout-2026-05-19.md](references/file-layout-2026-05-19.md) — 实际冷层/温层文件布局确认（2026-05-19）
 
 ---
 
@@ -550,6 +551,15 @@ read_file 显示: 17|§
 
 **⚠️ 2026-05-17 实际事故：** cron job 的 working directory 是 `C:\\Users\\77\\AppData\\Local\\hermes\\hermes-agent\\`（Hermes 源码目录），而非 `~/AppData/Local/hermes/memories/`（预期记忆目录）。
 
+#### 🆕 2026-05-19 实测：memories/MEMORY.md ≠ hermes-agent/MEMORY.md
+
+本 session 确认：`memories/MEMORY.md` 中存储的是**非 auto-learned 内容**（77 的护肤信息、TTS 调研笔记），而 `hermes-agent/MEMORY.md` 才是 auto-learned 冷层（1210 行，每天增长）。**两者不是同一份文件的两个副本——它们用途不同、内容不同。**
+
+这意味着：
+- **不要盲目同步/覆盖 `memories/MEMORY.md`** — 它可能包含独立于 auto-learned 冷层的重要笔记
+- **发现流程需要区分「冷层 MEMORY.md」和「其他笔记 MEMORY.md」** — 冷层是 auto-learned 格式（以 `§` 分隔、含 `auto-learned:` 标题）的，另一个不是
+- **如何区分：** 读取文件开头几行检查格式。如果是日记/auto-learned 格式（`## YYYY-MM-DD auto-learned:` 或 `§`），就是冷层。如果是零散笔记（护肤/工具调研等），就是其他笔记。**以格式判断，不以路径判断。**
+
 这意味着：
 - `patch(MEMORY.md)` 使用相对路径时，写入的是 `C:\\Users\\77\\AppData\\Local\\hermes\\hermes-agent\\MEMORY.md`（源码目录）
 - 而非 `C:\\Users\\77\\AppData\\Local\\hermes\\memories\\MEMORY.md`（记忆目录）
@@ -559,16 +569,22 @@ read_file 显示: 17|§
 
 **修正后的修复方法（发现优先于假设）：**
 1. **不要依赖文档中的固定路径** — 每次 session 开始，先发现 MEMORY.md 的实际位置
-2. **发现流程（按优先级）：**
-   1. 先查 CWD：`read_file("MEMORY.md")`（相对路径）
-      - 如找到且内容不为空 → 这就是主副本。记下该绝对路径，后续用该路径写入
-      - 如返回 "File not found" 或内容为空（0 bytes）→ 说明副路径才是真位置，进入下一步
-   2. 次查 `$HERMES_HOME/memories/MEMORY.md`：先 `terminal echo $HERMES_HOME` 确认具体路径
-      - 多数实际部署中，主记忆文件存储在这里（而非 CWD 或 `~/Hermes/hermes/memories/`）
-      - 如果找到 → 这就是主副本
-   3. 最后查 `~/Hermes/hermes/memories/MEMORY.md`（旧版可能的副副本）
+**发现流程（按优先级，2026-05-19 更新：加格式检查）：**
+1. 先查 CWD：`read_file("MEMORY.md")`（相对路径）
+   - 如找到且内容不为空 → 检查前 5 行格式
+     - 如果是 auto-learned 格式（`§` 或 `## YYYY-MM-DD auto-learned:`）→ 这就是主冷层副本。记下该绝对路径，后续用该路径写入
+     - 如果是零散笔记格式 → 这说明 CWD 版本不是真正的冷层，继续查记忆目录
+2. 次查 `$HERMES_HOME/memories/MEMORY.md`：先 `terminal echo $HERMES_HOME` 确认具体路径
+   - 多数实际部署中，主记忆文件存储在这里（而非 CWD 或 `~/Hermes/hermes/memories/`）
+   - 同样检查前 5 行格式确认冷层身份
+3. 最后查 `~/Hermes/hermes/memories/MEMORY.md`（旧版可能的副副本）
 3. **确认后使用绝对路径写入** — 一旦确认实际路径，后续所有写入都用该绝对路径
-4. **关于同步：** 只同步那些实际存在且有内容的副本。如果某个路径不存在文件，就不要为其创建占位文件——它可能已被迁移或废弃。以 `$HERMES_HOME/memories/` 下的版本为主副本，其他路径存在则同步，不存在则跳过。
+3. **关于同步：只同步「同类型」的副本。** 
+   - 先检查两个候选文件的**内容格式**，确认它们属于同一类（都是 auto-learned 冷层，或都不是）
+   - 如果格式不同（一个是 auto-learned 格式，另一个是零散笔记），**不要同步**——它们不是副本，是不同的笔记文件
+   - 如果格式相同（都是 auto-learned 冷层），且两个文件都存在，则同步内容
+   - 以 `$HERMES_HOME/memories/` 下的版本为主副本，其他路径存在且同类型则同步，不存在则跳过
+   - **检查格式的方法：** 读前 5 行，看有没有 `§` 分隔符和 `auto-learned:` 标题
 
 **自检方法（每次写入前做）：**
 ```bash

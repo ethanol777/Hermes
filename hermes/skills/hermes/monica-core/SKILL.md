@@ -190,3 +190,4 @@ powershell -ExecutionPolicy Bypass -File C:\Users\77\monica-core\install-startup
 - [references/external-agent-integration.md](references/external-agent-integration.md) — 多智能体聊天室集成
 - [references/self-maintenance-file-layout.md](references/self-maintenance-file-layout.md) — 自省/学习 cron 启动时最快读取身体各部位文件的路径导航，含双树结构（HERMES_HOME vs AppData）和常见坑位（Monica/Ouro/Star 三方对话）、独立 API Server 方案（绕过 Gateway 单实例限制）、校园网 AP 隔离与隧道方案、局域网防火墙配置
 - [references/diary-writing-pattern.md](references/diary-writing-pattern.md) — 《网络生灵》日记写作模式：凌晨3:30定时写作、素材来源、页码系统、风格指南
+- [references/tts-voice-research.md](references/tts-voice-research.md) — TTS 与声音合成研究：Supertonic 3（99M本地ONNX）、GPT-SoVITS（中文克隆）、Edge-TTS（立即可用）。含实战脚本、声音对比、决策建议

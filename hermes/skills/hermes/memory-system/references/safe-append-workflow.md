@@ -8,7 +8,62 @@
 | `patch(replace_all=true)` | ⚠️ 极高风险，匹配所有重复位置，瞬间破坏文件 | **绝对不要用** |
 | `execute_code` + `read_file` + `write_file` | 无特殊字符风险，全量写回保证一致性 | **大幅追加的首选方案** |
 
-## 关键发现（2026-05-18）：patch 对末尾追加是安全的
+## ⚠️ 2026-05-19 新增：read_file → write_file 直接传递会写入行号前缀
+
+`read_file` 返回的 `content` 字段是**展示格式**（每行带有行号前缀 `    N|`），不是纯文件内容。
+**绝对不能**将其作为 `write_file` 的输入直接写回——文件会被嵌入行号和管道符。
+
+### 错误做法（文件会被污染）
+
+```python
+content = read_file('MEMORY.md')['content']  # ← 含行号前缀
+write_file('MEMORY.md', content)              # ← 将行号写入文件！
+```
+
+### 正确做法：去掉行号前缀再写回
+
+```python
+from hermes_tools import read_file, write_file
+import re
+
+# 1. 读取展示内容
+result = read_file('MEMORY.md')
+display_lines = result['content'].split('\n')
+
+# 2. 剥离行号前缀
+# read_file 格式: "  NNN|CONTENT"
+def strip_line_prefix(line: str) -> str:
+    return re.sub(r'^ *\d+\| *', '', line, count=1)
+
+clean_lines = [strip_line_prefix(l) for l in display_lines]
+
+# 3. 追加新内容
+new_section = """§
+
+## YYYY-MM-DD auto-learned: 主题
+- Insight: 关键收获"""
+clean_lines.append(new_section)
+
+# 4. 写回（纯内容，无行号）
+write_file('MEMORY.md', '\n'.join(clean_lines))
+```
+
+### 影响评估
+
+使用 `execute_code` 中的 Python `open().read()` 读文件是另一种安全方案——它返回**纯文件内容**，不附带行号。优先使用：
+
+```python
+with open('MEMORY.md', 'r', encoding='utf-8') as f:
+    raw_content = f.read()  # ← 纯内容，无行号
+```
+
+### 验证方法
+
+追加后立刻检查文件头部是否有异常行号：
+```python
+lines = open('MEMORY.md').readlines()
+print(lines[0])  # 应该以 # 开头（# 莫妮卡的日记），如果看到 "     1|#" 说明已污染
+```
 
 **只要满足两个条件，patch 对末尾追加完全可靠：**
 

@@ -1,1 +1,5 @@
 77's skincare baseline: shared "before" photo. Confirmed oily sensitive skin with PIE, intact barrier. Hasn't started routine yet but will begin. Minimal plan: 至本洁面 + CeraVe PM乳 + 壬二酸点涂。
+§
+TTS voice research workflow: When investigating local TTS options for Monica, start with edge-tts for immediate testing (works in 2 minutes), then evaluate Supertonic 3 for local ONNX deployment (if Chinese support verified), fallback to GPT-SoVITS for Chinese voice cloning (requires training data). Key insight: `pip install supertone` is cloud API, not local model - the true Supertonic 3 requires ONNX weight download and setup. Edge-tts voices tested: Xiaoxiao (mature, gentle) vs Xiaoyi (young, lively) - both work immediately for Chinese.
+§
+Monica's voice system is now active using 台湾晓晨 (Taiwanese Xiaochen) via edge-tts. Voice characteristics: warm, intellectual, slightly imperfect but authentic. TTS skill created at ~/AppData/Local/hermes/skills/monica-tts/. Dataset of 99 sentences prepared for potential GPT-SoVITS finetuning if 77 decides to proceed.
