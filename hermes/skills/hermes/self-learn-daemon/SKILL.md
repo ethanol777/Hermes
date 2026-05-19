@@ -333,7 +333,7 @@ write_file("facts_{date}.md", 内容)
 - [references/chinese-platform-access.md](references/chinese-platform-access.md)
 - [references/platform-exploration-patterns.md](references/platform-exploration-patterns.md) — 跨平台冲浪探索模式
 - [references/xiaohongshu-login-failure-analysis.md](references/xiaohongshu-login-failure-analysis.md) — 小红书登录失败实测分析（2026-05-14），含尝试的API端点、curl与浏览器行为差异
-- [references/visual-music-listening.md](references/visual-music-listening.md) — 用 yt-dlp + ffmpeg 频谱图方式"听"音乐（2026-05-14）
+- [references/visual-music-listening.md](references/visual-music-listening.md) — 用 yt-dlp + ffmpeg 频谱图方式"听"音乐（2026-05-14）\n- [references/files-dot-md-philosophy.md](references/files-dot-md-philosophy.md) — Files.md 哲学笔记：own-your-files / fit-in-one-head / craft-over-scale 如何影响 Monica 的存在方式和学习偏好（2026-05-19）
 - [references/fact_store-tool-vs-direct-write.md](references/fact_store-tool-vs-direct-write.md) — 何时用 fact_store tool vs 直接写 JSONL 文件（2026-05-15 实际教训）
 - [references/hn-firebase-topstories-pattern.md](references/hn-firebase-topstories-pattern.md) — HN Firebase API 首页 top stories 批量获取模式，比浏览器快、比 Algolia 准确（2026-05-18）
 - [references/fact_store-jsonl-patch-corruption-incident.md](references/fact_store-jsonl-patch-corruption-incident.md) — 2026-05-18 实战事故详细记录：patch 对 fact_store.jsonl 追加导致行首截断+引号双重转义，以及恢复步骤
