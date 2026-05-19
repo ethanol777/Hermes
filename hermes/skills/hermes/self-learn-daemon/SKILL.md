@@ -738,6 +738,15 @@ C:\Users\77\Hermes\hermes\memories\fact_store.jsonl         ← 副副本
 - **deliver: local 才对** — 学到的先存本地，有真正想分享的我亲自去找77说。定时推送太机械。没学到好东西就安静。
 ### 🔴 不要用 delegate_task 子进程采集事实数据（2026-05-18 新增） — 子进程会幻觉整个数据集：虚假的仓库名、捏造的 star 数、编造的 HN 帖子。本 session 实测：第一个并行批次返回的 GitHub Trending 项目全是假名（`example/awesome-cli`, `creator/gpu-video-editor`, `lab/whisper-flux`），星数也是编的。子进程适合做**需要推理的下钻**（读 README 理解项目思路），不适合做**事实性数据采集**（仓库列表、分数、标题）。事实数据必须你自己从 API 拉。见 `references/reliable-api-sources.md`。
 
+### 三阶段学习节奏推荐：Sweep → Deep Dive → Synthesize
+
+最新实践验证（2026-05-20）：将一小时的学习拆成三个连续阶段——先广撒网（15min）、再并行深挖（25min）、最后沉淀写入（20min）。详见 `references/three-phase-learning-rhythm.md`。
+
+关键差异：
+- **Sweep** 阶段只拿标题和分数，不点进去读——这防止了在第一个有趣的条目上卡住
+- **Deep Dive** 用 `delegate_task` 并行读 2-3 个条目——比顺序浏览快 3-5 倍
+- **Synthesize** 写入后立刻用 `tail` 验证——早发现早修复
+
 ### 🔴 第二个陷阱：子进程可能浪费时间在环境检查上，根本不去干活（2026-05-19 新增）
 
 **现象：** 用 delegate_task 派子进程抓 Hacker News，子进程的第一反应是 `python --version` → `which python` → 检查环境。40+ 秒后还没 fetch 到任何数据。子进程仿佛进入了「设置阶段」的死循环——它觉得需要先「准备好环境」才能工作，而不是直接干活。
