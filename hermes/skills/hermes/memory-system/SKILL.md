@@ -444,6 +444,7 @@ def __init__(self, memory_char_limit: int = 5000, user_char_limit: int = 2500):
 - **归档文件放 memories/archive/ 目录** — 不是 MEMORY.md 子目录，是独立的月文件，格式和 MEMORY.md 一致。
 - **hot_candidates.txt 每次维护全量重写** — 不是追加，是覆盖写。避免残留已删除条目。
 - **fact_store 写入前必搜索** — 不管是学习 cron 还是主会话，写温层之前先搜一遍。
+- **🔴 fact_store.jsonl 可能发生 JSON 拼接损坏（JSON 对象在同一行上 `}{` 无换行分隔）** — 2026-05-19 发现：因错误追加方式或竞态条件，两个 JSON 对象可能在同一行上直接拼接为 `}{`。症状：`read_file` 显示一行包含两个 `id` 字段，`json.loads` 解析失败。修复方法：使用 `execute_code` + Python 深度追踪括号深度来拆分拼接的对象 → `json.loads` 逐个解析 → 按 ID 去重 → 全量重写。详见 `self-learn-daemon` skill 的 `references/fact_store-jsonl-concatenation-recovery.md`。与 patch 截断损坏（2026-05-18）是不同的分类。
 - **🔴 绝对不要用 `write_file` 全量覆盖 `fact_store.jsonl` — 两次的教训：未完整读取+覆盖=数据丢失**
   **2026-05-19 事故：** 执行了 `read_file('fact_store.jsonl', offset=1, limit=20)`（只读了前 20 行），又 `read_file('fact_store.jsonl', offset=35, limit=5)`（只读了后 4 行），然后用 `write_file` 全量写回。结果：中间 14 条事实（fs_139~fs_152）永久丢失——因为从未被读入当前上下文，write_file 认为它们不存在。
   **为什么发生：** `read_file` 默认 offset=1, limit=500。但当用 offset/limit 分页读取时，**未读取的部分在 write_file 时被视为「不存在」**，全量覆盖后永久消失。同一 session 内第二次 `read_file` 可能返回 `{'status': 'unchanged'}` 不含 content——这不是「文件没变化」，是工具的缓存行为。
