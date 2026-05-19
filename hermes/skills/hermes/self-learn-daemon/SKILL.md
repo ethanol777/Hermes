@@ -187,8 +187,7 @@ prompt: |
 | 10 | 掘金 | ✅ 无需登录 | 中国开发者深度内容 | ✅ 稳定 |
 | 10 | Lobste.rs | ✅ RSS feed (`/top/month.rss`) | 技术+工程+开源文化 | ✅ 稳定，RSS JSON 纯文本可 curl 解析 |
 | 11 | Telegram 频道 (t.me/s/) | ✅ 无需登录 | AI/技术/开源/创业资讯 | ⚠️ `t.me/s/channelname` 可用，详见 reference |
-| 12 | 知乎 | ⛔ 首页需登录，但知识计划页可用 | 问答/深度讨论 | ⚠️ zhihu.com/hot → 登录页；zhihu.com/explore → 登录页（2026-05-19 验证）。但 API 端 `zhihu.com/api/v3/feed/topstory/hot-lists/total` 稳定可用（见上方），绕过知识计划页路径 |
-| 10 | 微博 | ✅ 无需登录（API直接可读） | 时事/娱乐 | ✅ `weibo.com/ajax/side/hotSearch` 加 UA/Referer 头即可 |
+| 12 | 微博 | ✅ 无需登录（API直接可读） | 时事/娱乐 | ✅ `weibo.com/ajax/side/hotSearch` 加 UA/Referer 头即可 |
 
 **策略：** 优先走 1-6（稳定可靠的内容源）。Telegram 频道（#8）作为按需补充源——当有特定频道想跟踪时打开。如果 1-6 的内容已经够丰富（单轮学习最多采集 3-5 条 insight），不需要绕路去登墙平台。用搜引擎 `web_search site:zhihu.com` 或 `site:xiaohongshu.com` 作为第二选择。
 
@@ -254,7 +253,13 @@ cron 学了东西之后必须三层落地，缺一不可：
 | 温层 | `fact_store(action='add')` **或** `terminal echo >> fact_store.jsonl` **或** `write_file(facts_YYYY-MM-DD.md)` — 详见下方「温层实际实现：dated markdown vs JSONL」 | 结构化事实：技术栈、趋势判断、项目发现 | 每轮必写，信任 0.5，必须打标签 |
 | 热层 | `memory()` | 不做学习灌注——只存铁核身份/关系/配置 | **绝对不要写入学习内容** |
 
-### ⚠️ 温层实际实现：dated markdown vs JSONL（2026-05-18 实测发现）
+### 🟡 新写入者易犯：创建了非 JSONL 格式的 fact_store
+
+**2026-05-20 事故:** 创建了 `fact_store.yaml`（YAML 格式）而非 `fact_store.jsonl`（JSON Lines 格式）。YAML 文件不会被 fact_store 工具的搜索/检索 API 索引，未来会话无法查到这些事实。除非确认 fact_store 工具只做文件读取（不依赖特定格式），否则应始终使用 JSONL。
+
+**正确做法：** 坚持使用 `fact_store.jsonl`（JSON Lines，每行一个独立 JSON 对象）作为温层事实的持久化格式。不要引入新格式。
+
+**已有 YAML 如何处理：** 如果已经创建了 YAML 格式的 fact_store，在下一次维护 session 中用 `execute_code` + Python 读取 YAML 内容 → 转换为 JSON 行 → 追加到 `fact_store.jsonl` → 删除 YAML 文件。
 
 本 skill 文档中标记的温层路径是 `fact_store.jsonl`（JSON 行格式），但 **实际 cron 学习会话中普遍使用 dated markdown 文件**（`facts_YYYY-MM-DD.md`）。两者是同一温层概念的不同实现，取决于上下文：
 
@@ -805,7 +810,7 @@ result = terminal("curl -s 'https://hacker-news.firebaseio.com/v0/topstories.jso
 - **B站搜索是比 browser_console 更可靠的视频定位方式** — 在排行榜看到感兴趣的视频标题后，不要尝试在排行页点击视频链接（SPA 拦截不生效）。而是用搜索 URL 精确查找：`search.bilibili.com/all?keyword={关键词}`。搜索结果页可以直接导航到视频详情页面。
 - **HN item page (item?id=...) 直接 browser_navigate 可能返回空页面** — HN 的评论/详情页面对无头浏览器有内容遮蔽，`browser_snapshot` 可能拿到空页面。不要误判为页面不存在。改用：1) 回到首页点评论数链接加载 2) 用 `curl -sL "https://news.ycombinator.com/item?id=X"` 配合 python HTML 解析提取评论区文本。见 `references/hn-curl-parsing-pattern.md`。
 - **知乎热榜可以用 API 拿到标题列表** — `zhihu.com/topstory/hot-lists/total` 返回 JSON，配合 UA header 能拿到 30 条热榜标题和摘要。但具体问题页面有反爬（recaptcha 验证），不登进不去。拿标题列表已经够判断话题质量了。
-- **GitHub Trending 的 README 用 raw.githubusercontent.com 抓** — 比 browser 快，且不会被隐身警告干扰。但注意 monorepo 路径问题。
+- **GitHub Trending 的 README 用 raw.githubusercontent.com 抓** — 比 browser 快，且不会被隐身警告干扰。但注意 monorepo 路径问题。需要提取仓库数据（名称、Star 数、语言）时用 Python re + urllib 解析 Trending 页面的 HTML，见 `references/github-trending-parsing.md`。
 - **SvelteKit / SPA 渲染的网站（如 monokai.com）浏览器读不到正文** — 有些博客用 SvelteKit/Next.js 等框架，内容在客户端渲染，`browser_snapshot` 只能拿到导航栏和骨架。遇到这种情况，尝试：1) 找 RSS/JSON 版 2) 如果有 `text-only` 或 `print` 版 URL 可以试 3) 放弃该源换一个。不需要纠结一个页面。
 - **B站分类标签和视频条目都点不动** — B 站排行榜的 `browser_click` 切换分类（科技数码、知识等）以及点击视频条目，很可能不生效，页面实际是 SPA 渲染且二次请求。直接通过 URL `https://www.bilibili.com/v/popular/rank/<category>` 导航更可靠。取视频链接用 JS 在 `browser_console` 中提取（详见 `references/platform-exploration-patterns.md` 的 B站章节）。
 - **GitHub Trending 有隐身警告是正常的** — 现在 GitHub 会提示 "Running WITHOUT residential proxies. Bot detection may be more aggressive." 这是预期行为。只要还能拿到仓库列表和 star 数据就继续，不需要额外处理。
