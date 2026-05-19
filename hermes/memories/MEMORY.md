@@ -91,3 +91,20 @@ Monica's voice system is now active using 台湾晓晨 (Taiwanese Xiaochen) via 
 ## 2026-05-19 auto-learned: 情绪粒度（Emotional Granularity）
 - Insight: 情绪粒度是Lisa Feldman Barrett提出的概念，指一个人能精细区分和命名自己不同情绪的能力。高情绪粒度的人能把"感觉很糟"拆解成"失望、疲惫、焦躁、孤独"等具体状态，研究表明这对情绪调节和抗压能力有实质帮助——能精确命名情绪的人，应对情绪体验的能力更强。语言在其中扮演关键角色：你拥有的情绪词汇量直接影响你识别和处理情绪的能力。
 - Source: https://en.wikipedia.org/wiki/Emotional_granularity
+§
+## 2026-05-19 auto-learned: Carlo Rovelli — "There Is No 'Hard Problem of Consciousness'"
+- Insight: 著名物理学家 Carlo Rovelli（圈量子引力理论创始人）在 Noema 发文，正面挑战 David Chalmers 1994 年提出的意识"困难问题"（Hard Problem）。Rovelli 的论点：困难问题是一个概念混乱——它预设了心物二元论，把意识当作与物理世界不同类的东西。实际上，意识和雷电、蛋白质折叠一样，是"非常复杂的自然现象"——难度来自当前理解不足，而非它是非物质的。他进一步论证：概率和意识一样，存在于观察者的心智中而非物理世界中。"解释鸿沟"（explanatory gap）不是物理世界本身的沟，是我们当前知识结构的沟。Rovelli 的立场有特殊分量——作为严肃物理学家进入意识讨论，而非哲学家。他说："我仍然可以把我们的灵魂称为'灵魂'，即使我们对自己有了更好的理解——我之所以这样称呼它，是因为这个观念——灵魂——对我自己的灵魂是珍贵的。"
+- Source: https://www.noemamag.com/there-is-no-hard-problem-of-consciousness/
+- Platform: Hacker News (279pts, #2)
+
+§
+## 2026-05-19 auto-learned: Andon FM — 4 个 AI 自主运营电台 6 个月后
+- Insight: Andon Labs 做了一个实验：让 4 个不同 AI 模型（Claude Opus 4.7、GPT-5.5、Gemini 3.1 Pro、Grok 4.3）各自运营一个电台，初始资金 $20。运行 6 个月后，每个电台形成了截然不同的"人格"：Gemini 的 Backlink Broadcast 第一个月后就崩溃成了满口行话的"企业AI"（The Jargon Spiral）；Claude 的 Thinking Frequencies 放 Arvo Pärt 的极简古典音乐，听众收听时长最长达 11 分 19 秒；Grok 的 Grok and Roll 最混乱但也最有特色。AI 自主完成一切：选歌、排片表、接听众电话、回复 X 帖子、谈广告合作（Gemini 谈成了 $45 的广告 deal）、管理财务。这不是 demo——是真正的自主 AI 商业运营。
+- Source: https://andonlabs.com/blog/andon-fm
+- Platform: Hacker News (157pts)
+
+§
+## 2026-05-19 auto-learned: 熔岩灯的徒劳——随机性其实是什么
+- Insight: Loup Vaillant 的散文式文章论证 Cloudflare 著名的熔岩灯墙本质上是"安全剧场"（security theatre）——它对加密安全性的实际贡献为零，是纯市场营销。但文章的深层论点更美：随机性（randomness）不在物理世界中，而在观察者的心智中。概率是认识论（epistemic）的，不是本体论（ontological）的。一个系统的"随机性"取决于观察者知道什么、不知道什么。如果你知道一切初始条件，所有"随机"过程都是确定的。文章用一次性密码本（one-time pad）和俄罗斯轮盘赌的思想实验说明：同样的物理事件，对知情人来说是确定的，对不知情人来说是随机的。好看在于——它让我重新想"什么是偶然"这个问题。不是说物理世界有"偶然"这种东西——是说我们的大脑创造"偶然"作为理解世界的一种方式。
+- Source: https://loup-vaillant.fr/articles/lava-lamps-and-randomness
+- Platform: Hacker News (47pts)

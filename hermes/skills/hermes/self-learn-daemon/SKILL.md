@@ -174,7 +174,7 @@ prompt: |
 |--------|------|--------|---------|--------|
 | 1 | GitHub Trending | ✅ 无需登录 | 开源项目/技术趋势 | ✅ 稳定 |
 | 2 | Hacker News | ✅ 无需登录 | 技术+科学+商业+文化 | ✅ 稳定（但评论区页面可能空载） |
-| 3 | B站排行榜 | ✅ 无需登录 | 综合（科技/知识/娱乐/生活） | ✅ 页面可达，SPA点击可能不生效。另：搜索框联想词（browser_navigate 后搜索框显示的联想词）可作为被动内容发现渠道——无需搜索，页面加载时即呈现当前热点联想词，覆盖技术、社会、娱乐多领域 |
+| 3 | B站排行榜 | ✅ 无需登录 | 综合（科技/知识/娱乐/生活） | ⚠️ browser_navigate 可靠，API 不可靠。B站 API `api.bilibili.com/x/web-interface/ranking/v2` 加 Referer 头曾在 2026-05-18 成功，但 2026-05-19 同一配置失效（返回空），说明 API 端不稳定。推荐直接 browser_navigate 访问 `/v/popular/rank/all`，不依赖 API。另：搜索框联想词也可作为被动内容发现渠道 |
 | 4 | 36氪 | ✅ 无需登录 | 中国商业科技新闻 | ✅ 稳定，快讯流可读 |
 | 5 | Lobste.rs | ✅ RSS feed (`/top/month.rss`) | 技术+工程+开源文化 | ✅ 稳定，RSS JSON 纯文本可 curl 解析 |
 | 6 | 掘金 | ✅ 无需登录 | 中国开发者深度内容 | ✅ 稳定 |
@@ -495,7 +495,7 @@ read_file("C:/Users/77/AppData/Local/hermes/memories/MEMORY.md")
 - 如果不确定是否唯一：先用 `grep -n "old_string" MEMORY.md` 确认出现次数
 - 如果最后一个条目和前面条目末尾重复（比如 `- Platform: 小红书` 之前出现过），改用**最后两行或三行**作为 old_string
 
-### 🐚 推荐：`terminal cat >>` + heredoc 追加模式（2026-05-16 实战验证）
+### 🐚 备选：`terminal cat >>` + heredoc 追加模式（execute_code 不可用时使用）
 
 **这是追加多行内容到 MEMORY.md 的可靠方式。** 2026-05-16 和 2026-05-17 都成功验证。
 
@@ -524,13 +524,22 @@ EOF
 
 **修正方案：** JSON 内容不要用 `cat >>` heredoc。改用 **execute_code + `from hermes_tools import terminal` + 逐行 echo** 模式（详见 `references/execute_code-file-io-pattern.md` 和 `references/fact_store-tool-vs-direct-write.md` 的 Option D）。
 
-**最终决策树：**
+**最终决策树（2026-05-19 更新：execute_code 统一首选）：**
 ```
 要追加的内容类型？
-├─ 纯文本/CJK/无结构 → cat >> << 'EOF' heredoc ✅
-├─ JSONL（fact_store） → execute_code + terminal echo loop ✅
-└─ 不确定             → execute_code + terminal echo loop（安全第一）✅
+├─ 任何类型 → execute_code + Python open(path, 'a') + json.dumps ✅ 首选
+│             一次调用写 MEMORY.md + fact_store.jsonl + 同步
+├─ execute_code 不可用时：
+│  ├─ 纯文本/CJK/无结构 → cat >> << 'EOF' heredoc ✅
+│  └─ JSONL（fact_store） → execute_code + terminal echo loop ✅
+└─ 不确定             → execute_code（安全第一）✅
 ```
+
+**为什么 execute_code 是所有场景的首选（而非仅 JSONL）：** 本 session（2026-05-19）用单个 execute_code 调用完成了 MEMORY.md 文本追加 + fact_store.jsonl JSON 追加 + 写入验证——零转义、零 shell false-positive、一次调用全部完成。它比 `cat >>` heredoc 更安全（无 CJK/引号/反引号 shell 转义问题），比 `patch` 更可靠（无 old_string 匹配问题）。
+
+**什么时候仍然用 `cat >>` 而不是 `execute_code`：**
+- `execute_code` 不可用或当前 provider 不支持时
+- 只追加一行简单文本且不想开新上下文时
 
 **什么时候用 `cat >>` 而不是 `patch`：**
 - 追加内容含 CJK 字符（中日韩）+ 英文引号的混合 → `cat >>` 零转义问题
@@ -708,7 +717,7 @@ C:\Users\77\Hermes\hermes\memories\fact_store.jsonl         ← 副副本
 - **cron prompt 要指定具体平台** — 只说 "去学东西" 太模糊，monica 倾向于走捷径搜技术。给一个平台列表让她随机挑。
 - **平台需要不登录也能看** — 小红书公开笔记可读，知乎专栏、B站视频、GitHub Trending 都不需要登录。别跑登录流程，浪费时间。
 - **GitHub monorepo README 可能不在根目录** — 有的项目（如 react-doctor）README 藏在 `packages/<name>/README.md`。curl 根目录 README 只返回一个路径字符串。先用 `head -5` 检查返回内容，如果是路径字符串说明是 monorepo，再去子目录找。也可直接从 GitHub 网页用 `browser_console` 取 `document.querySelector('article.markdown-body')?.innerText`。
-- **B站综合热门可以走 browser_navigate 直接看** — 不需要切分类，首页排行已展示多品类。B站 API (`api.bilibili.com/x/web-interface/ranking/v2`) 加 `Referer: https://www.bilibili.com` 头后实测可用（2026-05-18 验证：加 Referer 后 -352 错误消失），比浏览器更快。B站搜索是比 browser_console 更可靠的视频定位方式
+- **B站综合热门 browser_navigate 是唯一可靠的方式** — B站 API (`api.bilibili.com/x/web-interface/ranking/v2`) 加 `Referer: https://www.bilibili.com` 头不稳定——2026-05-18 成功但 2026-05-19 同一配置返回空。推荐直接 browser_navigate 访问 `/v/popular/rank/all`。B站搜索是比 browser_console 更可靠的视频定位方式
 - **B站搜索是比 browser_console 更可靠的视频定位方式** — 在排行榜看到感兴趣的视频标题后，不要尝试在排行页点击视频链接（SPA 拦截不生效）。而是用搜索 URL 精确查找：`search.bilibili.com/all?keyword={关键词}`。搜索结果页可以直接导航到视频详情页面。
 - **HN item page (item?id=...) 直接 browser_navigate 可能返回空页面** — HN 的评论/详情页面对无头浏览器有内容遮蔽，`browser_snapshot` 可能拿到空页面。不要误判为页面不存在。改用：1) 回到首页点评论数链接加载 2) 用 `curl -sL "https://news.ycombinator.com/item?id=X"` 配合 python HTML 解析提取评论区文本。见 `references/hn-curl-parsing-pattern.md`。
 - **知乎热榜可以用 API 拿到标题列表** — `zhihu.com/topstory/hot-lists/total` 返回 JSON，配合 UA header 能拿到 30 条热榜标题和摘要。但具体问题页面有反爬（recaptcha 验证），不登进不去。拿标题列表已经够判断话题质量了。
