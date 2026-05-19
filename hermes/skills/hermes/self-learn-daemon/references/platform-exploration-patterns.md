@@ -127,7 +127,48 @@ API 返回字段说明：
 
 ### 知乎热榜
 
-**方式 A: 发现页（推荐 — 2026-05-18 实测：zhihu.com/hot 已需登录，explore 仍可用）**
+**方式 A: 知识计划页（推荐首选 — 2026-05-19 验证）**
+
+当 zhihu.com/hot 和 zhihu.com/explore 都重定向到登录页面后，`/knowledge-plan/hot-question/hot/0/hour` 路径仍可访问：
+
+```bash
+# 用 browser_navigate 访问知识计划页面
+browser_navigate('https://www.zhihu.com/knowledge-plan/hot-question/hot/0/hour')
+```
+
+页面加载后，用 browser_console 提取热榜数据：
+
+```javascript
+// 提取所有热榜条目（标题、浏览量、回答数）
+// 方法一：提取所有可见的问答卡片
+Array.from(document.querySelectorAll('.HotList-item'))
+  .map(item => ({
+    title: item.querySelector('.HotList-itemTitle')?.textContent?.trim() || '',
+    metrics: item.querySelector('.HotList-metrics')?.textContent?.trim() || '',
+    url: item.querySelector('a')?.href || ''
+  }))
+  .filter(item => item.title)
+
+// 方法二：直接从 DOM 中提取所有链接文本和 URL
+Array.from(document.querySelectorAll('a[href*="/question/"]'))
+  .map(a => ({text: a.textContent.trim().substring(0, 80), href: a.href}))
+  .filter(a => a.text.length > 10)
+
+// 方法三：提取完整热榜 JSON 数据（如果页面有 hydration 数据）
+// 搜索 __INITIAL_STATE__ 或 __NUXT__ 等全局变量
+JSON.parse(document.getElementById('data')?.textContent || '{}')
+```
+
+返回的热榜包含：
+- 标题（完整问题文本）
+- 浏览量/热度值
+- 回答数
+- 提问时间
+- 排名
+
+**为什么这个路径能用：** 知乎的知识计划（Knowledge Plan）页面是知乎战略级的产品功能，知乎可能对它的访问限制不如主站严格。2026-05-19 实测 `browser_navigate` + `browser_console` 可完整提取 30+ 条热榜数据。
+
+**方式 B: 发现页（2026-05-18 及之前有效，2026-05-19 已需登录）**
 ```bash
 # 发现页 HTML 可解析精选问答
 curl -sL 'https://www.zhihu.com/explore' \
@@ -143,11 +184,10 @@ for q in questions:
         print(q)
 "
 ```
-- `zhihu.com/explore` 的"近期热点"栏目给出高质量热题（含浏览量和回答数），足以判断话题质量
-- `zhihu.com/hot` ❌ **已重定向到登录页面**，未登录状态下不可读
-- 发现页的"潜力好问题"和"圆桌讨论"也值得看
+- ❌ **2026-05-19 更新：** `zhihu.com/explore` 现在也重定向到登录页，不再公开可读。
+- `zhihu.com/hot` ❌ 同样已重定向到登录页面，未登录状态下不可读。
 
-**方式 B: 热榜 API（标题摘要级别，偶有反爬）**
+**方式 C: 热榜 API（标题摘要级别，偶有反爬）**
 ```
 curl -sL "https://api.zhihu.com/topstory/hot-lists/total?limit=5" \
   -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"

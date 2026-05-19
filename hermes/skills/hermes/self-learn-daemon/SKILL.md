@@ -183,7 +183,7 @@ prompt: |
 | 7 | 小红书 | ⛔ IP风控拦截 | 生活方式/时尚/情感 | ❌ 浏览器打不开，搜引擎缓存 |
 | 7 | 微博热搜 | ✅ 浏览器可达 s.weibo.com 访客模式 | 社会热点/时事 | ✅ 2026-05-18 实测：browser_navigate 直接访问 s.weibo.com/top/summary 可用（走访客验证流程后可读热搜榜单。注意：浏览器会先重定向到 passport.weibo.com/visitor/visitor，但热点内容仍在 snapshot 中完整渲染——不要看到登录页 URL 就放弃）；API weibo.com/ajax/side/hotSearch 加 UA+Referer 头可直读 JSON |
 | 8 | Telegram 频道 (t.me/s/) | ✅ 无需登录 | AI/技术/开源/创业资讯 | ✅ `t.me/s/channelname` 显示公开频道完整消息流（无需登录）。注意：用 `t.me/`（无 /s/）可能超时。详见 `references/telegram-channel-scraping.md` |
-| 9 | 知乎 | ⛔ 所有页面均需登录（2026-05-19 update） | 问答/深度讨论 | ❌ zhihu.com/hot → 登录页；zhihu.com/explore → 登录页。不再有匿名可读的入口。API 端点 (/api/v3/feed/topstory/hot-lists/total) 可能仍工作但不可靠。推荐降级为 web_search site:zhihu.com 作为替代 |
+| 9 | 知乎 | ⛔ 首页需登录，但知识计划页可用 | 问答/深度讨论 | ⚠️ zhihu.com/hot → 登录页；zhihu.com/explore → 登录页（2026-05-19 验证）。但 `/knowledge-plan/hot-question/hot/0/hour` 路径可通过 browser_navigate 访问 + browser_console JS 提取热榜标题/浏览量/回答数。知识计划路径绕过登录后完整展示 30+ 条热榜，每条含标题+浏览量+回答数，足以判断话题质量。推荐优先用知识计划页，API 端点和 web_search 作为备选。详见 `references/platform-exploration-patterns.md` |
 | 10 | 微博 | ✅ 无需登录（API直接可读） | 时事/娱乐 | ✅ `weibo.com/ajax/side/hotSearch` 加 UA/Referer 头即可 |
 
 **策略：** 优先走 1-6（稳定可靠的内容源）。Telegram 频道（#8）作为按需补充源——当有特定频道想跟踪时打开。如果 1-6 的内容已经够丰富（单轮学习最多采集 3-5 条 insight），不需要绕路去登墙平台。用搜引擎 `web_search site:zhihu.com` 或 `site:xiaohongshu.com` 作为第二选择。
