@@ -104,7 +104,47 @@ texts.join('\n')
 感觉：[个人感受——什么打动了你]
 ```
 
-### 5. 跨会话去重（重要：避免重复处理同源内容）
+### 🟢 效率优化：预检去重快捷方式（2026-05-19 新增）
+
+**场景：** 多次 cron 检查同一个 Telegram 频道时，大多数情况下频道没有新帖或者新帖不相关。每次都提取 20 条帖子全文再做分析是浪费。
+
+**推荐流程：先做预检，再做全量分析。**
+
+```python
+# 预检步骤（全量分析帖子之前做）
+# 1. 快速获取最新帖子时间戳
+browser_navigate("https://t.me/s/channelname")
+# 2. 用一个轻量 console 查询只拿时间戳
+browser_console("document.querySelector('time')?.getAttribute('datetime') || 'none'")
+# 3. 读 MEMORY.md 该来源的最新记录时间
+# 4. 比较：
+#    - 最新帖子时间 ≤ 已处理时间 → 没有新内容 → [SILENT]
+#    - 最新帖子时间 > 已处理时间 → 有未处理内容 → 做全量分析
+```
+
+**实际案例（2026-05-19）：**
+- 频道最新帖子：`2026-05-17T11:59:16+00:00`
+- MEMORY.md 中该来源已有 auto-learned 条目截至 2026-05-17 的内容
+- 结论：没有未处理的新内容 → 无需提取/分析全部 20 条帖子 → [SILENT]
+
+**和跨会话去重的区别：**
+- 跨会话去重：**全量分析之后**，逐条对比是否已记录。浪费了分析 20 条帖子的开销。
+- 预检快捷方式：**全量分析之前**，只看最新帖子的时间戳。如果最新帖已被处理，直接跳过全量分析。
+- 建议：先做预检（轻量时间戳检查），再做跨会话去重（如果预检发现有新帖，则全量提取后逐条去重）。
+
+**注意：** 预检只检查「是否有新帖子」，不检查「新帖子的内容是否有用」。如果最新帖子时间比上次处理时间新，仍需做全量分析来判别内容是否有价值。
+
+**快速判断是否完全没新帖：**
+```python
+# 写法检查（2026-05-19 验证）：
+browser_console("document.querySelector('time')?.getAttribute('datetime')")
+# 返回类似 "2026-05-17T11:59:16+00:00"
+# 如果这个值 ≤ 上次记录的日期 → 直接 [SILENT]
+```
+
+⚠️ **注意：** 这种轻量预检依赖 Telegram 公开预览页面的 DOM 结构稳定。如果页面内容因为 SPA 渲染模式变化导致 `document.querySelector('time')` 拿不到预期结果（比如只拿到 `<time>` 但无 `datetime` 属性），需要降级为全量分析（不做预检）。
+
+### 🟡 跨会话去重（重要：避免重复处理同源内容）
 
 **场景：** 多次运行 cron 检查同一个 Telegram 频道时，最新的帖子可能已经被之前的 session 处理并写入 MEMORY.md 了。如果不做去重检查，会浪费时间重复分析并产生冗余的 MEMORY.md 记录。
 
@@ -208,6 +248,24 @@ Array.from(elements).map(function(el,i){var t=el.querySelector('.text');var d=el
 
 **为什么：** 工具内部将 expression 作为 `eval()` / `Function()` 的参数，多行文本在传输/解析过程中换行符被吃掉导致语法不完整。单行形式的表达式没有此问题。
 
+**额外陷阱：浏览器执行上下文是持久化的。** 用 `let`/`const` 声明变量后，再次运行包含同名 `let`/`const` 声明的表达式会报 `SyntaxError: Identifier 'X' has already been declared`。因为前一次声明的变量仍然存在于页面作用域中。**如果需要在多次 browser_console 调用间传递数据，不要用 `let`/`const` 声明新变量，直接赋值给无声明前缀的变量（这会自动覆盖前值）。**
+
+```javascript
+// ❌ 第一次调用：
+let posts = document.querySelectorAll('.class');  // 声明成功
+// 第二次调用（同一 session）：
+let posts = ...;  // SyntaxError: Identifier 'posts' has already been declared
+
+// ✅ 正确做法：
+// 第一次调用：用无声明前缀的赋值
+posts = document.querySelectorAll('.class');  // 隐式全局，覆盖前值
+// 第二次调用：
+posts = document.querySelectorAll('.other');  // 正常。覆盖前值（无需 let/const）
+
+// ✅ 或者每次都生成全新返回值不做赋值：
+Array.from(document.querySelectorAll('.class')).map(...)  // 返回值直接输出
+```
+
 **检测方法：** 如果复杂表达式报错，先从简单断言开始（如 `.length`），逐步拼接到完整表达式，每次都在单行内完成。
 
 **本 session 复现（2026-05-19）：**
@@ -221,6 +279,35 @@ Array.from(elements).map(function(el,i){var t=el.querySelector('.text');var d=el
 1. 先拿原始数据量（count）
 2. 再分批次拿每帖的摘要（slice 0-5，6-10，…）
 3. 最后拿特定帖的完整内容（filter by index）
+
+### 🔴 同内容不同标题：内容主题去重比标题去重更可靠
+
+**场景（2026-05-19 实际发现）：** 同一个 Telegram 频道可能在几天内用**不同的标题/格式**发布**相同内容集合**。
+
+**实际案例：**
+- 前一 cron session 处理了一篇《GitHub Agent Frameworks》的帖子，包含了 openai-agents-python、google-adk-python、GenericAgent、evolver、agency-agents 共 5 个项目。
+- 本 cron session 在频道中看到一篇《GitHub 被 Agent 千军万马来相见彻底惊呆》——标题完全不同，但涵盖了完全相同的 5 个项目。
+- 如果只检查「标题是否匹配」，会误判这是新内容，实际是旧内容换了个标题。
+
+**解决方案：用内容主题而非标题做去重。**
+
+```python
+# 跨会话去重时，检查的不只是「来源URL」，而是「话题指纹」
+# 判断标准：
+#   - ❌ 不同标题但覆盖相同 5 个项目 → 旧内容，跳过
+#   - ❌ 不同标题但同一组工具/同一套概念 → 旧内容，跳过
+#   - ✅ 出现至少 2 个全新项目/概念 → 新内容，处理
+#
+# 核心逻辑：如果新帖子和已有条目的关键项目重叠 ≥ 50%，判定为重复
+# 用 set 交集判断即可
+```
+
+**这条 pitfall 的根本原因：** 该 Telegram 频道是「转载型」频道，同一个来源的同一组项目可能被不同的人用不同措辞投稿。用标题判断去重会漏掉很多重复。
+
+**放宽去重策略：**
+- 如果在 MEMORY.md 中搜索到同组的核心项目名（如 GenericAgent + evolver 一起出现），且新帖子也提到同样的组合 → 视为重复
+- 不需要检查「来自同一条 URL」或「标题相同」——这些条件太严格
+- 宁可误去重（错过一次新发布）也不重复记录——重复记录的代价是温层膨胀和未来检索噪声
 
 ### 🔴 页面可能含截断文本
 - 长帖子在文本预览中有截断标识。如需完整内容：

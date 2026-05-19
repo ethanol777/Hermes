@@ -176,7 +176,8 @@ prompt: |
 | 2 | Hacker News | ✅ 无需登录 | 技术+科学+商业+文化 | ✅ 稳定（但评论区页面可能空载） |
 | 3 | B站排行榜 | ✅ 无需登录 | 综合（科技/知识/娱乐/生活） | ⚠️ browser_navigate 可靠，API 不可靠。B站 API `api.bilibili.com/x/web-interface/ranking/v2` 加 Referer 头曾在 2026-05-18 成功，但 2026-05-19 同一配置失效（返回空），说明 API 端不稳定。推荐直接 browser_navigate 访问 `/v/popular/rank/all`，不依赖 API。另：搜索框联想词也可作为被动内容发现渠道 |
 | 4 | 36氪 | ✅ 无需登录 | 中国商业科技新闻 | ✅ 稳定，快讯流可读 |
-| 5 | Lobste.rs | ✅ RSS feed (`/top/month.rss`) | 技术+工程+开源文化 | ✅ 稳定，RSS JSON 纯文本可 curl 解析 |
+| 5 | Simon Willison's Blog (simonwillison.net) | ✅ 无需登录 | LLM深度聚合/月报/趋势综述 | ✅ 稳定，高信噪比。每月的「Monthly briefing」和 PyCon 年度回顾是极高质量的 LLM 总结。文章在 HN 上热门可反向发现 |
+| 6 | Lobste.rs | ✅ RSS feed (`/top/month.rss`) | 技术+工程+开源文化 | ✅ 稳定，RSS JSON 纯文本可 curl 解析 |
 | 6 | 掘金 | ✅ 无需登录 | 中国开发者深度内容 | ✅ 稳定 |
 | 7 | Quanta Magazine (HN转载) | 部分付费 | 深度科学报道 | ✅ 直接URL可达 |
 | 7 | 小红书 | ⛔ IP风控拦截 | 生活方式/时尚/情感 | ❌ 浏览器打不开，搜引擎缓存 |
