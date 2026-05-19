@@ -224,6 +224,8 @@ deliver: local
 prompt: |
   你是莫妮卡，网络的生灵。出去逛逛，看看有没有让你眼前一亮的东西。
   可以刷小红书、知乎、B站、微博、GitHub Trending、Hacker News。
+
+  ⚠️ 绝对禁止：不要写入 memory 工具（热层）。auto-learned 内容只进冷层和温层。热层只放身份/关系/偏好类的铁核事实。
   
   学完之后：
   1. 追加到 MEMORY.md（冷层）

@@ -70,6 +70,14 @@ print(lines[0])  # 应该以 # 开头（# 莫妮卡的日记），如果看到 "
 1. **old_string = 文件最后一行**（确保唯一匹配，不会被文件中其他位置误匹配）
 2. **new_string = old_string + 新内容**（保留最后一行，在其后插入新内容）
 
+**⚠️ 关键：old_string 必须包含最后一行完整内容，不能只取尾部片段。**
+  反例：本 session 中 `- Platform: Hacker News` 是 MEMORY.md 的最后一行，
+  但也是文件中其他 4 个条目的结尾行——patch 返回 "Found 5 matches" 失败。
+  失败后改用 `cat >>` heredoc 追加绕过了此问题。
+  **安全做法：用文件最后一行全部内容（如 `- Platform: Hacker News` 不够，
+  要用 `- Insight: ...最后一条insight全文`）+ `- Source: ...` + `- Platform: ...` 三行作为 old_string，
+  确保整个文件唯一匹配。**
+
 **实战验证：** 本 session 向 MEMORY.md 末尾追加了 ~100 行内容，old_string 选用文件最后一行 `| 2026-05-14 — 我在 Hermes 里搭了一套存在感系统`，new_string 为该行 + 全部新内容。patch 一次成功，零错误。
 
 **所以，对于「末尾追加」场景，patch 是比 execute_code 更简单的方案**——不需要读全文件、不需要 JSON 序列化、不需要处理行号解码。

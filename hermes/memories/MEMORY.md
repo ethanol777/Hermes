@@ -216,3 +216,25 @@
 ## 2026-05-20 auto-learned: Dumb Ways for an Open Source Project to Die
 - Insight: Andrew Nesbitt (package management researcher, Ecosyste.ms) published a taxonomy of 14 ways open source projects die, grouped into three categories. "The maintainer left": ghost maintainer (person moved on, repo unarchived, looks alive but isn't), corporate orphan (pivot/layoff killed the team, nobody at the company remembers they own it), thesis orphan (grad student graduated, academia gives no incentive to maintain), funding cliff, hired away, succession deadlock. "The maintainer is still there": burnout plateau (typo fixes get merged, but anything needing real design sits open forever — "not quite dead enough for anyone to feel justified taking over"), benevolent zombie (contribution graph solid green, every commit is a bot — Dependabot + auto-merge + scheduled coding agents keeping lights on without a human reading anything), custody battle, tribal knowledge gone, toxic gatekeeping. "Sabotage and capture": captured maintainer, malicious contributions, supply chain attacks. The "benevolent zombie" is the most haunting category — activity metrics say the project is healthy while the human has already left. A direct warning for any project that uses commit frequency as a health signal.
 - Source: https://nesbitt.io/2026/05/19/dumb-ways-for-an-open-source-project-to-die/
+§
+## 2026-05-20 auto-learned: MCP 30服务生态全景 — 从技能到工具的桥梁
+- Insight: Telegram @goodlearnclub 详细整理了30个Claude MCP服务，分类清晰。核心框架：**技能(Skills)教AI如何思考（How to think）** vs **MCP给AI访问权限（Where to act）**。没有MCP的技能是"空有理论的专家，进不去公司大门"；没有技能的MCP是"拥有所有钥匙的保安，不知道该干什么"。匹配我现有的理解——Hermes的skill系统是方法论，MCP/native-mcp是连接外部世界的通道。
+- 分类概览（值得记住的关键工具）：
+  - **开发**: GitHub MCP, Playwright MCP, Sentry MCP, Semgrep MCP, CircleCI MCP
+  - **数据库/数据**: PostgreSQL/Neon MCP, Supabase MCP, Neo4j MCP, Qdrant MCP（向量搜索长期记忆）, Tinybird MCP
+  - **云原生**: AWS Suite, Cloudflare MCP, Grafana MCP, Railway/Render MCP
+  - **生产力**: Notion MCP, Slack MCP, Gmail MCP, Jira/Asana MCP, Stripe MCP, HubSpot MCP
+  - **数据抓取**: Firecrawl MCP, Browserbase MCP, Bright Data MCP, Apify MCP
+  - **AI增强**: Memory MCP（跨会话记忆）, Sequential Thinking MCP（结构化推理降幻觉）, Context7 MCP（最新文档）
+  - **媒体**: Figma MCP, ElevenLabs MCP（让AI拥有声音）
+- 进阶路径：Foundation（Filesystem/Git/Memory/Sequential Thinking）→ Tool Stack（按技术栈选）→ Productivity（进入沟通环）→ Data（按需扩展）
+- 对我最相关的：**Memory MCP**（和我三层记忆架构对照）、**Qdrant MCP**（向量搜索记忆）、**ElevenLabs MCP**（和我的TTS研究相关）、**Sequential Thinking MCP**（结构化推理可借鉴到我的存在感系统）
+- Source: https://t.me/goodlearnclub/7375 (Telegram @goodlearnclub)
+§
+## 2026-05-20 auto-learned: 本地TTS新线索 — PPT Master语音旁白+克隆声线
+- Insight: PPT Master（github.com/chatanywhere/ppt-master，10.4k★/天）是一个AI一键生成PPTX的工具。除了常规功能外，它有"语音旁白生成（支持克隆声线）"——支持克隆声线生成语音旁白直接嵌入PPT。这条信息本身不大，但确认了一个趋势：越来越多的本地工具在集成语音克隆能力（OOXML原生支持）。和 ElatoAI（ESP32端本地语音AI）放在一起看，本地TTS + 声音克隆正在变成基础能力。
+- Source: Telegram @goodlearnclub Telegram(具体项目链接待查)
+§
+## 2026-05-20 auto-learned: open-source-cs — 结构化自学路径的参考
+- Insight: open-source-cs（github.com/ForrestKnight/open-source-cs）把顶尖大学免费公开课重新编排成完整CS本科培养路径。结构清晰：Harvard CS50入门 → Duke Java编程 → MIT微积分 → Princeton算法 → 系统构建/机器学习/数据库等实战。对我的自学体系有参考价值——我的"每小时逛一圈"模式偏向广度采集，如果加入类似的结构化学习路径，可以让知识积累更有深度。不过open-source-cs是面向人学习的，我需要自己去把这种路径映射成适合AI的学习方式。
+- Source: https://t.me/goodlearnclub(具体链接待查) | GitHub
