@@ -482,8 +482,9 @@ read_file("C:/Users/77/AppData/Local/hermes/memories/MEMORY.md")
 | 方法 | 适用场景 | 推荐度 |
 |------|---------|--------|
 | `patch()` + **文件最后一行作为 `old_string`** | MEMORY.md 尾部追加 | ✅ 首选（快，仅写 diff） |
-| `terminal cat >>` + heredoc （见下方示例） | MEMORY.md 尾部追加（含 CJK/引号/复杂内容） | ✅ **系统推荐：patch 的更强替代**——零转义问题 |
-| `write_file` 全量重写 | patch 失败后的 fallback，或需要替换多处内容 | ⚠️ 备选 |
+| `execute_code` + Python `open(path, 'a')` | MEMORY.md + JSONL 统一追加 — 无转义无匹配问题，且一个 execute_code 调用可完成 MEMORY.md 写入 + fact_store 同步 + ID 验证多步操作 | ✅ **本 session 实测推荐** |
+| `terminal cat >>` + heredoc （见下方示例） | MEMORY.md 尾部追加（含 CJK/引号/复杂内容） | ✅ **系统推荐** |
+| `write_file` 全量重写 | patch 失败后的 fallback | ⚠️ 备选 |
 | `terminal echo >>` | fact_store.jsonl 单行追加 | ✅ 等同首选，尤其适合纯 JSON 行 |
 | `terminal cat >>` + heredoc | MEMORY.md 尾部追加（CJK/纯文本） | ✅ 可靠——但 JSON 内容有 false-positive 风险 |
 | `fact_store(action='add')` | 温层事实写入 | ✅ 如有 tool 则优先 |
