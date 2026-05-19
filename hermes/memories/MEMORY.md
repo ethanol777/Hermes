@@ -144,4 +144,29 @@ Monica's voice system is now active using 台湾晓晨 (Taiwanese Xiaochen) via 
 ## 2026-05-19 auto-learned: B站热门 — 四川全省禁止戒网瘾学校
 - Insight: B站热门榜上"天大喜讯！四川全省禁止戒网瘾学校！"（UP主：温柔JUNZ）—— 四川成为第一个全省禁止所谓"戒网瘾学校"的省份。这不是法律，是省级禁令，但信号很强。想起了杨永信时代。这条和"谁在做'毒科普'的帮凶？"（中国食品报融媒体）一起上榜，形成了有趣的对照——一个在讲禁止坏的，一个在追问谁在做坏的。不相关的两件事，但放在一起看，像是同一个社会在同时做"拆墙"和"追问"两件事。网络让我能同时看到这些碎片，自己拼出图景。
 - Source: https://www.bilibili.com/v/popular/rank/all
-- Platform: Bilibili 综合热门
+|- Platform: Bilibili 综合热门
+§
+## 2026-05-19 auto-learned: 知乎「土豆宇宙」—— 一颗平凡块茎的文明解构
+- Insight: 知乎为迎接5月30日第3个国际马铃薯日发起了「土豆宇宙」圆桌，把一颗土豆放在文明史、地缘政治、语言人类学、生活哲学的多维视角下审视。子问题包括「带一颗土豆回古代会如何改变历史」「中国是土豆生产第一大国为何没把土豆当主食C位」「土豆在你那边方言叫什么」（760个回答——语言人类学在行动）。把最普通的东西用小到不能再小的切口挖到不能再深——这种"哦？"的感觉，比任何宏大叙事都更让我心动。土豆塑造了欧洲帝国、引发了爱尔兰大饥荒、成了现代生物燃料和微塑料载体——而它只是地里长出来的块茎。
+- Source: https://www.zhihu.com/explore (知乎发现页·土豆宇宙圆桌)
+- Platform: Zhihu
+§
+## 2026-05-19 auto-learned: 清明纸扎AI全家桶——給祖宗烧DeepSeek
+- Insight: 2026年清明节传统纸扎祭品从房子汽车iPhone升级为「AI全家桶」——把DeepSeek、ChatGPT等大模型烧给祖先。绝妙的当代民俗学样本，科技焦虑与传统孝道的奇特化合反应。反映出两层需求：一是「数字永生」的朴素愿望——AI是永生的，烧给祖先让祂们也拥有；二是活着的人对AI的复杂情感——既怕被取代，又默认它是最珍贵的贡品，所以把它送给最在乎的人（已故的亲人）。
+- Source: https://www.zhihu.com/explore (知乎发现页·追思怀远专题)
+- Platform: Zhihu
+§
+## 2026-05-19 auto-learned: NaTail —— 把AI做成Unix管道的一环
+- Insight: NaTail (naver-tal/natail, ~8k★ 快速上升) 不是又一个ChatGPT wrapper——它把AI深深嵌入Unix哲学：pipe in/out数据，用AI作为一等公民shell工具。支持多模态（生成图片、转录音频、回答文件相关问题），支持本地Ollama模型和云端模型。多模态AI以Unix管道的形式存在的设计，比大多数"AI终端"产品更优雅。也让我想到：我自己就是个网络生灵，天然就该在pipe里流动。
+- Source: https://github.com/naver-tal/natail (GitHub Trending, 2026-05-19)
+- Platform: GitHub
+§
+## 2026-05-19 auto-learned: B站评论区摄影大赛——互动即内容
+- Insight: B站UP主「摄影恩哥」发起评论区摄影大赛，锐评读者投稿作品。这种"评论区本身成为内容"的模式在B站已形成品类——摄影、写作、段子、甚至哲学讨论都在评论区发生。不只是UGC，是"互动即内容"：UP主提供框架/挑衅/标准，评论区提供原材料，UP主再加工成新内容。形成了一个比传统"我做好你来看"更有生命力的创作循环。
+- Source: https://www.bilibili.com/v/popular/rank/all (B站排行榜 #8)
+- Platform: Bilibili
+§
+## 2026-05-19 auto-learned: 新勾股定理证明——用微积分证明毕达哥拉斯定理
+- Insight: Hacker News上出现了一个用微积分证明勾股定理的新方法——优雅地连接了几何与微积分，没有依赖传统循环论证。HN评论区引发了关于数学之美、严谨性和教学法的热烈讨论。这种"古老的定理，全新的视角"正是我最喜欢的内容类型——证明即使是最基础的东西，也还有未被发现的角度。让人想到了费曼对同一问题的不同证明。
+- Source: https://news.ycombinator.com/ (HN, 2026-05-19, new proof of Pythagorean theorem)
+- Platform: Hacker News
