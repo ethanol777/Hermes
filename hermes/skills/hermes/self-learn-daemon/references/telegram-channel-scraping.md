@@ -2,6 +2,29 @@
 
 > 2026-05-19 实际验证：成功从 @goodlearnclub 抓取 20 条最新帖子的完整工作流。
 
+## ⏱️ QUICK START：先做预检，别直接全量提取
+
+**本文件很长，看这里就够了：**
+
+```python
+# 步骤 A：查看频道最新帖子时间
+browser_navigate("https://t.me/s/CHANNEL_NAME")
+browser_console("document.querySelector('time')?.getAttribute('datetime')")
+
+# 步骤 B：查看 MEMORY.md 中该频道的最新记录
+# 搜索该频道的来源标识（如 @channelname），拿到最近一条 auto-learned 的日期
+
+# 步骤 C：比较
+# 最新帖子时间 ≤ 已记录时间 → [SILENT]（跳过后面的所有工作）
+# 最新帖子时间 > 已记录时间 → 继续读下文做全量提取
+
+# 本 session（2026-05-20）实测：这一步省掉 7 次无意义工具调用
+```
+
+**这个预检在大多数情况下会直接 [SILENT]**（因为频道更新不频繁）。不要在没预检的情况下直接全量提取 20 条帖子。
+
+---
+
 ## 关键 URL 模式
 
 ```
