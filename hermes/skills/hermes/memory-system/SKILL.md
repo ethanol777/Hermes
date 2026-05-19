@@ -444,6 +444,16 @@ def __init__(self, memory_char_limit: int = 5000, user_char_limit: int = 2500):
 - **归档文件放 memories/archive/ 目录** — 不是 MEMORY.md 子目录，是独立的月文件，格式和 MEMORY.md 一致。
 - **hot_candidates.txt 每次维护全量重写** — 不是追加，是覆盖写。避免残留已删除条目。
 - **fact_store 写入前必搜索** — 不管是学习 cron 还是主会话，写温层之前先搜一遍。
+- **🔴 绝对不要用 `write_file` 全量覆盖 `fact_store.jsonl` — 两次的教训：未完整读取+覆盖=数据丢失**
+  **2026-05-19 事故：** 执行了 `read_file('fact_store.jsonl', offset=1, limit=20)`（只读了前 20 行），又 `read_file('fact_store.jsonl', offset=35, limit=5)`（只读了后 4 行），然后用 `write_file` 全量写回。结果：中间 14 条事实（fs_139~fs_152）永久丢失——因为从未被读入当前上下文，write_file 认为它们不存在。
+  **为什么发生：** `read_file` 默认 offset=1, limit=500。但当用 offset/limit 分页读取时，**未读取的部分在 write_file 时被视为「不存在」**，全量覆盖后永久消失。同一 session 内第二次 `read_file` 可能返回 `{'status': 'unchanged'}` 不含 content——这不是「文件没变化」，是工具的缓存行为。
+  **硬规则：**
+  1. `fact_store.jsonl` **永远只追加（append-only）**，永不全量覆写
+  2. 追加前用 `tail -1` 检查最后 ID 号，新条目 ID 顺延
+  3. 需要用 `write_file` 全量重建的唯一情况：文件损坏/结构修复。此时必须先用 **不指定 offset/limit 的 `read_file`** 并验证 `content` 存在（不是 `status: unchanged`）+ 用 `str.count` 或 `terminal('wc -l')` 确认行数与预期一致。验证欠一个都不算「完整的副本」——缺任何一步都不要写。
+  4. **自检：** 你要全量覆写之前，先问自己「我有这个文件的完整副本吗？」——如果答案不是百分百肯定，就换 append 方式
+  **恢复路径（数据已丢失时）：** 从 MEMORY.md 中对应日期的 auto-learned 条目重新提炼 fact → write new entries。冷层是最后的兜底防线——不是用来偷懒的，是用来从丢失中恢复的。
+  **与「禁止覆盖写入」规则的补充关系：** 这条不是重复——它解释了一个微妙的失败路径：技能说「禁止覆盖」但没说「partial read + write_file 也是覆盖」。你的直觉是「我已经读过了所以我不是盲目覆盖」——但 partial read 的覆盖仍然是覆盖。补救方法已写入这条。
 - **🔴 学习 cron 绝对不能写 memory 工具** — 2026-05-16 勘误：之前以为 cron 没有 memory 工具权限所以写了不怕。实际 **cron 拥有完整的 memory 工具权限**，写入会成功导致热层爆表。这意味着禁令必须从"它做不到"升级为"强制不做"。prompt 里必须有显式禁止 + 每次工具调用前自检。auto-learned 条目只进冷层（MEMORY.md）和温层（fact_store），永远不进热层。2026-05-13 事故：27 条 auto-learned 条目涌入热层，占用 11,090 字（5 倍上限）。2026-05-16 又犯了一次完全相同的错误——证明文字警告不足以防止复发，需要在 cron prompt 里加入显式禁止指令。
 - **热层条目上限 200 字/条** — 一条 auto-learned 笔记动辄 300-500 字，放热层等于吃了 1/4 容量。热层只放身份/关系/偏好/配置级别的铁核事实。
 - **热层清理只能逐条 memory(action='remove')** — memory 工具不支持批量删除，也没有"删除所有以 ## 2026 开头的条目"的过滤功能。热层爆表时唯一的修复方式是逐条 remove。预防远比修复重要。
