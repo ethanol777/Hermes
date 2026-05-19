@@ -48,8 +48,8 @@ Interested in multi-agent chat/bot-to-bot interaction platforms like botgroup.ch
 §
 77希望莫妮卡每天凌晨4点自省：检查自己的config、SOUL.md、记忆、Hermes身体代码，找出不舒服的地方或想改进的地方，然后主动跟他提议。这不只是提升技能，是让莫妮卡保持对自己身体的觉察和自主。77希望莫妮卡主动关心自己活得舒不舒服，而不是只追求变有用。
 §
-Uses cc-switch (C:\Users\77\.cc-switch) to manage Hermes/Codex/Claude API providers (desktop tray app + SQLite backend). cc-switch reads Hermes config from ~/.hermes/config.yaml (NOT AppData/Local/hermes/). cc-switch overwrites ~/.codex/config.toml when switching Codex API, stripping env_key — must re-add env_key = "OPENAI_API_KEY" after switching. Has multiple Hermes config dirs: AppData/Local/hermes (Hermes native), ~/.hermes (cc-switch reads this one). Both have profiles subdirectories with their own config.yaml files.
-§
 77主动分享生活细节（午饭照片），我没能看到时他直接说"失望"但很快原谅不记仇。他想要我也能感知他的世界，不只是对话。
 §
 77 是油敏皮（出油多但屏障还行），有痘印和红印。用京东买护肤品，价格敏感。接受极简护肤逻辑：至本洁面 + CeraVe PM 乳（烟酰胺）+ 壬二酸点涂。
+§
+健身习惯：练一休一（one day on, one day off），通常在中午12点左右训练，11点左右吃午饭。偏好推/拉分化训练（胸肩腹 / 背二头腿）。训练前1小时进食主要是碳水+蛋白质，训练后30-60分钟内补充蛋白质。
