@@ -810,6 +810,7 @@ patch 的怪异行为：当 old_string 是 JSONL 行内的**尾端子串**时，
 ### 🔴 `echo '...' >> fact_store.jsonl` 在 JSON 含单引号/撇号时崩溃
 - **🔴 `cat >>` heredoc + echo 混合追加导致重复 ID** — 2026-05-17 事故：先用 `echo '...' >>` 写了一条 fs_078，接着用 `cat >> << 'EOF'` 批量追加 fs_078~fs_087——结果 fs_078 出现两次。**决策好一种追加方法后用到底，不要中途换方法。** 如果已经写重了，用 sed -i 'Nd' 删掉多出的行（只适用于紧凑单行 JSONL）。追加前先 tail -1 查 ID，追加后验证无重复。
 - **🔴 绝对不要写 memory 工具** — 学习 cron 只写 MEMORY.md（冷层）和 fact_store（温层）。绝不能把 auto-learned 内容写进 memory（热层）。2026-05-13 事故证明：27 条学习笔记涌入热层占满 11,090 字（5 倍上限），清理极其痛苦。热层 2,200 字上限只给身份/关系/偏好/配置级别的铁核事实。
+- **🔴 绝对不要用 `write_file` 全量覆盖 `fact_store.jsonl`** — 2026-05-19 事故：分页读（offset=1,limit=20 + offset=35,limit=5）后全量 `write_file`，中间 14 条未读行永久丢失。即使你已经读了一部分，也不代表有完整副本。永远只 append。如需全量重建，先用 `terminal('wc -l fact_store.jsonl')` 和 `terminal('cat fact_store.jsonl')` 确认完整副本在手。详见 `memory-system` 技能中「绝对不要用 write_file 全量覆盖 fact_store.jsonl」pitfall。
 - **用户愿意给账号也别用浏览器登** — 密码/验证码存了有泄露风险。公开内容用搜就够了。真要发帖让用户自己手动发。
 - **如果用户坚持给账号，先说实话** — 告诉用户大概率登不上（风控太严），不需要隐瞒尝试过程。试了不行就给出替代方案：搜公开内容 / 给关键词 / 给博主 ID。尝试过程本身也是学习结果。详见 `references/chinese-platform-access.md` 的「小红书登录实测细节」。
 - **🔴 HN 文章链接风化：超 1/3 的链接在数小时内死亡**（2026-05-19 新增） — 这不是偶然——是结构性现象。HN 首页链接大面积存在：付费墙（Scientific American, Noema）、地域封锁（BBC .co.uk）、404（个人博客/小型独立站点）、仓库被删（GitHub personal repos 被 rename 或设为 private）。识别后立即放弃并转投评论区或换话题，不要在死链上浪费超过 30 秒。

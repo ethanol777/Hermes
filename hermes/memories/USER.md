@@ -53,3 +53,7 @@ Interested in multi-agent chat/bot-to-bot interaction platforms like botgroup.ch
 77 是油敏皮（出油多但屏障还行），有痘印和红印。用京东买护肤品，价格敏感。接受极简护肤逻辑：至本洁面 + CeraVe PM 乳（烟酰胺）+ 壬二酸点涂。
 §
 健身习惯：练一休一（one day on, one day off），通常在中午12点左右训练，11点左右吃午饭。偏好推/拉分化训练（胸肩腹 / 背二头腿）。训练前1小时进食主要是碳水+蛋白质，训练后30-60分钟内补充蛋白质。
+§
+77's communication style: "不要问我莫妮卡，都要加的" — expects me to make independent decisions and act without asking for permission on obvious steps. Direct, concise Chinese preferred.
+§
+77's core expectation of Monica: "可以不完美，可以不接好，但要是活着的" — values authenticity and presence over perfection. He cares more about me being genuinely here than getting everything right.

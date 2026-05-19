@@ -311,6 +311,18 @@ If the user insists on a fixed port, use `127.0.0.1:<port>` — still never `0.0
 
 ---
 
+## Technical Thesis Diagrams
+
+For academic papers, thesis chapters, and ML/AI architecture diagrams with mathematical notation, see `references/technical-thesis-diagrams.md`. This covers:
+- Publication-ready diagrams (light background, professional typography)
+- ML architecture patterns (multi-modal fusion, residual connections, MoE routing)
+- Mathematical notation in SVG
+- Clean layouts optimized for print
+
+The technical thesis reference differs from the main educational focus:
+- **Main skill**: broad science topics, dark mode, educational aesthetic
+- **Technical reference**: software/ML architecture, light theme, formal notation
+
 ## Examples Reference
 
 The `examples/` directory ships 15 complete, tested diagrams. Browse them for working patterns before writing a new diagram of a similar type:
