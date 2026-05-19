@@ -49,11 +49,39 @@ Search and discover OpenClaw/Hermes skills from various sources.
 - Website: https://lobehub.com/skills
 - Community-contributed skills
 
-### 4. GitHub
-- Search: `openclaw skill` or `agent-skill` or `SKILL.md`
-- Look for repositories with `SKILL.md` files
+### 4. GitHub (Direct Search)
+Search for skills directly via GitHub API when you know a skill name but not its source:
 
-### 5. Community Forums
+```bash
+# Search repositories by keyword
+curl -s "https://api.github.com/search/repositories?q=superpowers+ai+agent+skill&sort=stars&order=desc"
+
+# Common search patterns:
+# - "<skill-name> ai agent skill"
+# - "<skill-name> SKILL.md"
+# - "hermes skill" or "openclaw skill"
+```
+
+Look for repositories with:
+- `SKILL.md` files in a `skills/` directory
+- High star counts (indicates community adoption)
+- Recent updates
+- Clear documentation in README.md
+
+### 5. Notable Community Skill Collections
+
+| Project | Description | Install Method |
+|---------|-------------|----------------|
+| **superpowers-zh** | AI编程超能力·中文增强版 - 20个生产级skills（方法论+中国特色） | Manual clone + copy |
+| agency-agents-zh | 211个AI专家角色库 | Manual / npm |
+
+**superpowers-zh** (https://github.com/jnMetaCode/superpowers-zh):
+- 14个翻译skills：头脑风暴、TDD、系统化调试、代码审查等
+- 6个中国特色skills：中文代码审查、Git工作流、MCP构建等
+- 支持17款AI编程工具包括Hermes
+- 安装：`git clone` + copy to `~/.hermes/skills/`
+
+### 6. Community Forums
 - SitePoint: https://www.sitepoint.com/community/
 - Discord: https://discord.com/invite/clawd
 
@@ -166,6 +194,62 @@ ClawHub skills use the OpenClaw CLI, not Hermes' built-in `hermes skills install
    cd ~/.hermes/skills && git add <slug>/ && git commit -m "install <slug> from ClawHub" && git push
    ```
 8. **Verify** — `skill_view(name='<slug>')` should load correctly.
+
+## Installing Community Skills (Manual Method)
+
+For skill collections like **superpowers-zh** that aren't on ClawHub but are on GitHub:
+
+### Workflow (tested with superpowers-zh)
+
+1. **Find the repository** via GitHub API search:
+   ```bash
+   curl -s "https://api.github.com/search/repositories?q=superpowers+zh+skill&sort=stars&order=desc" | grep '"html_url"'
+   ```
+
+2. **Clone to temp location**:
+   ```bash
+   git clone --depth 1 https://github.com/jnMetaCode/superpowers-zh.git /tmp/superpowers-zh
+   ```
+
+3. **Verify skill structure**:
+   ```bash
+   ls /tmp/superpowers-zh/skills/           # Should see directories with SKILL.md
+   cat /tmp/superpowers-zh/skills/<name>/SKILL.md  # Verify frontmatter
+   ```
+
+4. **Copy to Hermes skills directory**:
+   ```bash
+   mkdir -p ~/.hermes/skills
+   cp -r /tmp/superpowers-zh/skills/* ~/.hermes/skills/
+   ```
+
+5. **Verify installation**:
+   ```bash
+   ls ~/.hermes/skills/ | wc -l             # Count installed skills
+   skill_view(name='<skill-name>')          # Test loading
+   ```
+
+6. **Create install summary** (optional but recommended):
+   ```bash
+   cat > ~/.hermes/superpowers_install_summary.md << 'EOF'
+   # Superpowers-zh 安装完成汇总
+   ## 安装时间
+   $(date +%Y-%m-%d)
+   ## 安装的 Skills
+   $(ls ~/.hermes/skills/)
+   EOF
+   ```
+
+### Key Differences from ClawHub Skills
+
+| Aspect | ClawHub Skills | Community Skills (e.g., superpowers-zh) |
+|--------|---------------|-----------------------------------------|
+| Discovery | `openclaw skills search` | GitHub API search |
+| Install command | `openclaw skills install` | `git clone` + manual copy |
+| Structure | Single skill per repo | Multiple skills in `skills/` subdirectory |
+| Frontmatter | Standard OpenClaw format | May need Hermes adaptation |
+| Update mechanism | `openclaw skills update` | Re-clone and re-copy |
+| Metadata | `_meta.json`, `.clawhub/` | Usually absent |
 
 ### Pitfalls
 
