@@ -53,31 +53,52 @@ context: |
 **流程：**
 
 ```
-1. 读 MEMORY.md 最后几行，确认最后一段的格式
-2. 读 fact_store.jsonl 最后 3 行，确认最后的 ID 号（tail -3）
-3. 写 MEMORY.md（append）：
+1. 读 MEMORY.md 最后几行，确认最后一段的格式（tail -5 或 read_file offset=-5）
+2. 读 fact_store.jsonl 最后 3 行，确认最后的 ID 号（tail -3 fact_store.jsonl）
+3. 写 MEMORY.md（追加——注意：write_file 不追加，它覆盖。正确方式见下方）：
    §
    ## YYYY-MM-DD auto-learned: [主题]
    - Insight: [个人感受 + 事实 + 为什么打动我]
    - Source: [URL]
    - Platform: [来源]
-4. 写 fact_store.jsonl（append）：
+4. 写 fact_store.jsonl（追加）：
    {"id": "fs_NNN", "fact": "...", "source": "...", "date": "YYYY-MM-DD", "tags": "类别,领域1,领域2", "confidence": 0.9}
 5. 验证：tail -2 确认最后一条正确写入
-6. 同同步作副本（如有需要）
+6. 同步副本（如有需要）
 ```
 
-### 关于验证
+### 写入实现：三种方法，按优先级选
 
-写入后立即验证，不要等到最后。
+**方法 A（推荐）：execute_code + hermes_tools read_file/write_file**
+```python
+from hermes_tools import read_file, write_file
+result = read_file(path)
+current = result["content"]  # 读全量文件
+write_file(path, current + new_content)  # 追加后全量写回
+```
+适用于 MEMORY.md（markdown 追加）和 fact_store.jsonl（JSONL 追加）。一个 execute_code 调用可完成读→拼→写+验证。注意：`read_file` 在 execute_code 的每个新调用中总是返回完整内容（无缓存），不会出现主会话中二次读取返回「unchanged」的问题。
 
+**方法 B（备选）：execute_code + Python 原生 open()**
+```python
+with open(path, 'a', encoding='utf-8') as f:
+    f.write(new_content)
+```
+适用于纯追加（不依赖已有内容）。注意路径用 Windows 原生格式（`r'C:\Users\77\...'`），不用 MSYS2 的 `/c/` 前缀（Python 不识别 `/c/` 路径翻译）。
+
+**方法 C（万不得已）：terminal + cat heredoc**
 ```bash
-# MEMORY.md 验证：看最后 3 段
-tail -20 "/c/Users/77/Hermes/hermes/memories/MEMORY.md" | grep "auto-learned"
-
-# fact_store.jsonl 验证：看最后一条
-tail -2 "/c/Users/77/Hermes/hermes/memories/fact_store.jsonl" | python3 -c "import sys,json; [print(json.loads(l)['id'], json.loads(l)['fact'][:60]) for l in sys.stdin]"
+cat >> "$MEMORY_PATH" << 'EOF'
+内容在这
+EOF
 ```
+用 `'EOF'`（单引号包裹）防止 shell 展开。⚠️ JSON 内容可能触发 terminal 的安全检测 false-positive（误判为含 `&` 符号）。
+
+**什么情况下用哪种：**
+| 场景 | 推荐方法 | 原因 |
+|------|---------|------|
+| MEMORY.md 追加 | 方法 A | 可同时读尾部格式 + 写入，一致性高 |
+| fact_store.jsonl 追加 | 方法 A 或 B | A 可用 json.dumps 确保合法 JSON；B 更轻量 |
+| 只有 terminal 可用 | 方法 C | 备选中的备选，注意 heredoc 安全检测 |
 
 ## 本节奏的优势
 
