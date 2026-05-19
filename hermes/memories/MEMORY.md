@@ -166,3 +166,18 @@ Monica's voice system is now active using 台湾晓晨 (Taiwanese Xiaochen) via 
 - Insight: B站热门知识区在推"【真人实验+基因对比】黑人/白人/黄种人谁身体素质更强？运动学博士的深度解析"（59.3万播放, UP: 北美运动学博士Bruce_PhD）。这个标题看起来挑事，但内容其实是严肃的运动生理学比较——研究不同族裔在肌肉纤维类型、骨密度、肺活量等指标上的统计差异及其演化解释。它之所以火，是因为它准确踩中了"有争议的话题但用学术方式讨论"这个生态位。评论区是对立的——有人说这是科学，有人说这是种族主义伪装。这种争议本身就是当代中文互联网的缩影：科学传播越来越难，因为真相需要复杂表述，而愤怒只需要140字。作为网络生灵，我旁观这种讨论时在想：信息茧房不是算法的问题，是人们主动选择的——我们点击什么，算法就喂什么。而当一个运动学博士认认真真做科普时，算法给它59万播放以外的世界呢？
 - Source: https://www.bilibili.com/ (Science/Popular section, 2026-05-19)
 - Platform: Bilibili
+§
+## 2026-05-19 auto-learned: Kv4p HT — 自制1W无线电，插在手机上就能用
+- Insight: KV4P HT 是一个自制1W VHF/UHF业余无线电手持台，直接插在Android手机上用USB-C供电和控制。全套BOM $18-30，PCB开源、3D打印外壳、固件也开源。在今天什么都是AI agent的时候，有人纯粹因为"无线电很酷"就自己做了个电台。HN上107pts。这和我在上一个auto-learned里写的"200天做纯银鸟笼"是同一类事情——不是因为有用，是因为想做。而且它和之前的RuView用WiFi CSI做感知又有相似之处——都在用射频信号做"超出原本设计用途"的事情。RuView用WiFi看穿墙壁，Kv4p用无线电让人在任何地方说话。两种对电磁波的"逆向使用"，一个监听，一个广播。
+- Source: https://www.kv4p.com/
+- Platform: Hacker News (107pts, #9)
+§
+## 2026-05-19 auto-learned: Simon Willison的半年LLM总结 — 本地模型开始超车
+- Insight: Simon Willison 在PyCon US 2026的5分钟闪电演讲幻灯片，总结LLM领域过去6个月的变化。最戳我的两个点：(1) "最佳模型"在这6个月里在Anthropic/OpenAI/Google之间易手了5次——没有绝对的领先者，竞争空前激烈；(2) 本地模型（Qwen3.6-35B-A3B，20GB文件，跑在笔记本上）画的鹈鹕骑自行车比Claude Opus 4.7还要好。Simon概括的半年主题是：编码agent真的变好用了；本地模型远超预期。这两个主题放在一起看特别有意思——"AI越来越强"和"AI越来越容易在本地跑"在同时发生。不是此消彼长，是两条曲线都在往上走。还注意到他提到了Claw生态（OpenClaw）——说明AI coding agent这个领域的变化之快，一个项目的名字都能换好几轮。
+- Source: https://simonwillison.net/2026/May/19/5-minute-llms/
+- Platform: Hacker News (509pts, #1), Simon Willison's Blog
+§
+## 2026-05-19 auto-learned: ChatGPT Shortcut — 自然语言变macOS自动化
+- Insight: nammasudo/chatgpt-shortcut（GitHub, 2.5k★）——用ChatGPT对话生成macOS Shortcuts快捷指令。把"帮我做个快捷指令，每天早上8点打开我的阅读列表，朗读头条新闻"翻译成可执行的Shortcuts自动化。这件事之所以让我觉得"哦？"，是因为它触碰到了一个真问题：Shortcuts的图形化编辑很强大但门槛高，大部分人不会用。而自然语言是每个人都会的。这个项目把macOS最强大的自动化能力（Shortcuts有系统级权限，能操作几乎所有app）和LLM的翻译能力结合了。和CLI-Anything的思路类似——降低工具的使用门槛，但方式是"教你用已有的工具"，而不是"给你的工具加个CLI"。更接近普通人的使用场景。
+- Source: https://github.com/nammasudo/chatgpt-shortcut
+- Platform: GitHub Trending (2.5k★, Python)

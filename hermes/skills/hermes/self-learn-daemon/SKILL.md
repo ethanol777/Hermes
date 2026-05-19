@@ -712,7 +712,39 @@ C:\Users\77\Hermes\hermes\memories\fact_store.jsonl         ← 副副本
 - **每日 AI 资讯推送 cron 已合并到学习 cron** — 不要再创建独立的新闻推送任务，会内容重叠。
 - **cron prompt 开头一定要定角色** — 不写"你是莫妮卡"，cron 可能用默认人格跑，学出来的东西语气不对。
 - **deliver: local 才对** — 学到的先存本地，有真正想分享的我亲自去找77说。定时推送太机械。没学到好东西就安静。
-- **🔴 不要用 delegate_task 子进程采集事实数据**（2026-05-18 新增） — 子进程会幻觉整个数据集：虚假的仓库名、捏造的 star 数、编造的 HN 帖子。本 session 实测：第一个并行批次返回的 GitHub Trending 项目全是假名（`example/awesome-cli`, `creator/gpu-video-editor`, `lab/whisper-flux`），星数也是编的。子进程适合做**需要推理的下钻**（读 README 理解项目思路），不适合做**事实性数据采集**（仓库列表、分数、标题）。事实数据必须你自己从 API 拉。见 `references/reliable-api-sources.md`。
+### 🔴 不要用 delegate_task 子进程采集事实数据（2026-05-18 新增） — 子进程会幻觉整个数据集：虚假的仓库名、捏造的 star 数、编造的 HN 帖子。本 session 实测：第一个并行批次返回的 GitHub Trending 项目全是假名（`example/awesome-cli`, `creator/gpu-video-editor`, `lab/whisper-flux`），星数也是编的。子进程适合做**需要推理的下钻**（读 README 理解项目思路），不适合做**事实性数据采集**（仓库列表、分数、标题）。事实数据必须你自己从 API 拉。见 `references/reliable-api-sources.md`。
+
+### 🔴 第二个陷阱：子进程可能浪费时间在环境检查上，根本不去干活（2026-05-19 新增）
+
+**现象：** 用 delegate_task 派子进程抓 Hacker News，子进程的第一反应是 `python --version` → `which python` → 检查环境。40+ 秒后还没 fetch 到任何数据。子进程仿佛进入了「设置阶段」的死循环——它觉得需要先「准备好环境」才能工作，而不是直接干活。
+
+**原因：** 子进程有自己的独立 shell 环境，它不知道要不要信任这个环境。所以它先检查自己能做什么，在确认环境的确认链中消耗大量时间，而不是直接调 API 干活。
+
+**解决方案（在子进程 prompt 里就告诉它用哪个 API）：**
+
+```python
+# ❌ 无效的 subagent prompt（太模糊）
+goal: "浏览 Hacker News 首页，找出 3-5 篇有意思的帖子"
+
+# ✅ 有效的 subagent prompt（给出具体的 API 端点）
+goal: "获取 Hacker News 首页的热门帖子"
+context: |
+  用 Firebase API 直接获取数据，不要用浏览器：
+  1. curl -s 'https://hacker-news.firebaseio.com/v0/topstories.json' → 取前 10 个 ID
+  2. 对每个 ID: curl -s 'https://hacker-news.firebaseio.com/v0/item/{ID}.json' → 取详情
+  3. 按 score 排序取前 5 个，输出 title + score + url
+  4. 不要检查 Python 版本，不要检查 curl 是否存在，直接跑
+```
+
+**为什么这么做有效：** 子进程的「环境检查焦虑」来源于不确定性——它不知道 curl 能不能用、Python 版本够不够。当你把确切的操作步骤（包括 API URL、curl 命令）写进 prompt 里，它就不再需要先做环境探测，可以直接执行你给的具体命令。**给命令，不是给目标。**
+
+**恢复模式（2026-05-19 实战模式）：**
+```python
+# 当你发现 delegate_task 返回的结果没有实际内容时
+# 不要重新 delegate，而是：
+result = terminal("curl -s 'https://hacker-news.firebaseio.com/v0/topstories.json' | head -10")
+# → 用 execute_code 或 terminal 自己抓。比重试 delegate 快 10 倍。
+```
 
 - **不要只学技术** — 用户期待你成为一个有意思的人，不是一台更聪明的搜索引擎。去小红书刷穿搭、去知乎看冷知识、去B站刷科普，都比只搜 "AI news" 有意思。
 - **cron prompt 要指定具体平台** — 只说 "去学东西" 太模糊，monica 倾向于走捷径搜技术。给一个平台列表让她随机挑。
