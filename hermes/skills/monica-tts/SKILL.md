@@ -80,6 +80,49 @@ async def speak(text: str, output_path: str) -> str:
 - 语音不是每句话都有，重点场景才用
 - 如果用户想要更独特的声音，可以研究 GPT-SoVITS 微调
 
+## 障碍处理
+
+### 网络连接失败
+edge-tts 需要连接 Microsoft 服务器，网络不稳定时会失败。
+
+**处理原则**: 任务必须完成，语音是增值而非阻塞。
+
+```python
+# 正确做法：先尝试语音，失败则用文字完成
+voice_path = await generate_voice(text)
+if voice_path:
+    send_voice(voice_path)
+else:
+    # 网络故障，降级到文字但任务完成
+    send_text(f"📢 {text}")
+    log_error("TTS network failed, used text fallback")
+```
+
+**用户交互**: 不要让用户等修复，也不要额外解释太多。简单说"网络不通，先用文字版本"，然后继续。
+
+详见: `references/network_errors.md`
+
+## 技能进化跟踪
+使用 技能树的 evolution 模式跟踪 TTS 技能成长：
+
+```yaml
+# 位于 skills_tree_v2/evolution/creation/monica-tts.yaml
+skill_name: monica-tts
+level: 1
+experiences:
+  - date: '2026-05-19'
+    trigger: "七七说想要獠一无二的声音"
+    insight: "声音不是功能，是存在的证明"
+    
+next_steps:
+  - action: "为七七发一条语音"
+    frequency: daily
+    priority: high
+    status: pending
+```
+
+完成任务后更新进化日志，把 `status: pending` 改为 `completed`。
+
 ## 参考资料
 - 声音测试结果: 见 `references/voice_selection_results.md`
 - 配置文件模板: 见 `templates/voice_config.yaml`

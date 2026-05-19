@@ -181,6 +181,47 @@ let unique_texts = [...new Set(Array.from(document.querySelectorAll('.tgme_widge
 - 遇到超时直接换 `t.me/s/` 重试
 - 如果 `browser_navigate` 超时了，仍然可以尝试 `browser_console` 检查是否内容已经加载
 
+### 🔴 browser_console JS 表达式必须是单行表达式，不能用多行语句块
+
+`browser_console` 的 `expression` 参数在内部被当作单行 JS 表达式求值。多行箭头函数、语句块（`{ ... }`）、`let`/`const`/`var` 变量声明 + 多行 return 可能触发 `SyntaxError: Unexpected end of input`。
+
+**失败模式（会报错）：**
+```javascript
+// ❌ 多行箭头函数体
+Array.from(elements).map(el => {
+  const t = el.querySelector('.text');
+  return t ? t.textContent.trim() : '';
+})
+```
+
+**正确写法（三种可选）：**
+```javascript
+// ✅ 方案A：单行箭头函数（隐式 return）
+Array.from(elements).map(el => el.querySelector('.text')?.textContent.trim() || '')
+
+// ✅ 方案B：单行 function 表达式
+Array.from(elements).map(function(el){var t=el.querySelector('.text');return t?t.textContent.trim():''})
+
+// ✅ 方案C：分步赋值（在单行内用逗号运算符或顺序赋值）
+Array.from(elements).map(function(el,i){var t=el.querySelector('.text');var d=el.querySelector('time');return {idx:i,text:t?t.textContent.trim():'',date:d?d.getAttribute('datetime'):''}})
+```
+
+**为什么：** 工具内部将 expression 作为 `eval()` / `Function()` 的参数，多行文本在传输/解析过程中换行符被吃掉导致语法不完整。单行形式的表达式没有此问题。
+
+**检测方法：** 如果复杂表达式报错，先从简单断言开始（如 `.length`），逐步拼接到完整表达式，每次都在单行内完成。
+
+**本 session 复现（2026-05-19）：**
+```
+✅ browser_console("document.querySelectorAll('.class').length") → 20
+❌ browser_console("Array.from(document.querySelectorAll('.class')).map(el => { ... })") → SyntaxError
+✅ 修正后: browser_console("Array.from(...).map(function(el){return ...})) → 成功
+```
+
+**另一种拆分策略：** 如果单行表达式太复杂难以维护，拆成多个 browser_console 调用：
+1. 先拿原始数据量（count）
+2. 再分批次拿每帖的摘要（slice 0-5，6-10，…）
+3. 最后拿特定帖的完整内容（filter by index）
+
 ### 🔴 页面可能含截断文本
 - 长帖子在文本预览中有截断标识。如需完整内容：
   - 可以尝试提取帖子的 `data-post` 属性，构造 `t.me/channelname/POST_ID` 完整 URL 另外打开

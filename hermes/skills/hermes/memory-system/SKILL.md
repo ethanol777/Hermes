@@ -76,8 +76,16 @@ metadata:
 
 **职责：** 持久结构化事实，带信任评分和元数据。
 
+**存储格式：** `fact_store.jsonl`（JSON Lines 文件，每行一条 JSON 对象）。不是 `facts_YYYY-MM-DD.md` 格式的 Markdown 文件——后者是 v1 遗留格式，v2 统一走 JSONL。
+
+**追加到 fact_store.jsonl 的安全工作流：**
+- ❌ `echo 'json' >> file` — **JSON 内容中包含单引号（如 "someone's"、"didn't"）会导致 bash 解析失败**。只在确认无单引号的简单 JSON 中可用。
+- ✅ **推荐：** 使用 `python3 -c` 或 `execute_code` 中的 Python `json.dumps()` + `open(path, 'a').write()`，确保 JSON 格式正确。
+- 写入前必先 `tail -1 path` 检查最后一条的 id 编号（如 fs_150），新条目 id 顺延 +1。
+- **禁止覆盖写入**（`write_file` 全量覆盖会破坏历史数据），只做追加。
+
 **写入规则：**
-- 每条事实必须包含：content + category + tags
+- 每条事实必须包含：id + fact + source + date + tags + confidence
 - **事实分类标签（v2 新增）：**
   - `persistent`：人格、偏好、关系、身份 — 不衰减，只升不降
   - `stable`：项目配置、环境事实 — 衰减极慢（月级）
@@ -144,7 +152,7 @@ metadata:
 - 新闻、事件、一时一事 → `timely`
 - 领域标签自动打：`AI`, `RAG`, `hardware`, `culture`, `design` 等
 
-**关键：** 学习 cron 直接做去重判断，不依赖后续维护管道。写温层时先搜索已有条目，避免重复。
+**关键：** 学习 cron 直接做去重判断，不依赖后续维护管道。写温层时先搜索已有条目，避免重复。**即使感觉"差不多"也要搜——两次不检查就写入重复事实的教训（Andon FM facts fs_149 vs fs_153）。**
 
 ### 管道 1：每日维护 — 归档 + 去重 + 衰减 + 热层候选
 
@@ -392,6 +400,7 @@ def __init__(self, memory_char_limit: int = 5000, user_char_limit: int = 2500):
 - [references/hot-layer-cleanup-protocol.md](references/hot-layer-cleanup-protocol.md) — 热层爆表时的逐条清理流程（2026-05-16 事故后沉淀）
 - [references/memory-corruption-recovery.md](references/memory-corruption-recovery.md) — MEMORY.md 因 `replace_all` / `patch` 事故损坏后的检测与恢复方法（2026-05-17 事故后沉淀）
 - [references/safe-append-workflow.md](references/safe-append-workflow.md) — MEMORY.md 和 fact_store 的安全追加工作流，用 `execute_code` + Python I/O 代替 `patch` 做大幅追加（2026-05-18 事故后沉淀）
+- [references/fact_store_jsonl_workflow.md](references/fact_store_jsonl_workflow.md) — fact_store.jsonl 的 JSON Lines 格式说明与安全追加方法，含 Python/echo 两种方案对比和 Windows 路径注意事项（2026-05-19 实践后沉淀）
 
 
 ### 容量提升
@@ -444,3 +453,5 @@ def __init__(self, memory_char_limit: int = 5000, user_char_limit: int = 2500):
 - ✅ **Dated fact file 首推全量覆盖，但 `patch` 对尾部追加也可靠**: 对于 `facts_YYYY-MM-DD.md` 这类按天分隔的温层文件，全量覆盖（`write_file` 读→改→写）最安全（2026-05-18 实战推荐）。但本 session 同样验证了 `patch(old_string=文件最后一行)` 对尾部追加也可靠——当追加目标是在已有章节下添加一条事实（而非改写多条）时，`patch` 更轻量且同样安全。选择依据：追加 ≤2 条新事实 → patch 更快；追加 ≥3 条或需调整章节结构 → write_file 全量覆盖更安全。因为：(1) 一个 cron session 只写一次，不存在并发写入冲突；(2) 全量覆盖避免了 patch 的"旧串匹配失败/多匹配"问题和 section 去重问题；(3) 如果前一个 session 写了不准确的事实，全量覆盖天然允许"修正而非追加"。仅在 append-only 文件（如 MEMORY.md）或需要补充部分内容时才用 patch。
 - **fact_store 条目必须打 tags** — 早创建的条目可能没有 tags 字段，导致维护 cron 无法分类衰减。批量补标签时更新 fact_store 即可。
 - **fact_store 重复条目要合并不要共存** — 环境配置类事实特别容易重复（如 Windows symlink 问题、Cherry Studio 配置）。写入前搜索是硬规则。
+- **🔴 fact_store.jsonl 写入前必用 tail 检查最后 ID** — 每次写入前执行 `tail -1 fact_store.jsonl` 解析最后一条的 id（如 fs_150），新条目 id = fs_151。不检查而硬编码 id 会导致冲突。
+- **⚠️ execute_code 中 read_file 返回 dedup 对象而非 content** — 在同一 session 中连续两次 `read_file(path)` 读取同一文件时，第二次返回 `{'status': 'unchanged', 'message': 'File unchanged since last read...', 'content_returned': False}`，不含 content 字段。解决方案：用 `terminal('cat path')` 或 `open(path).read()` 代替。

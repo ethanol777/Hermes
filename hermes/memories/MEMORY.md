@@ -73,6 +73,19 @@ Monica's voice system is now active using 台湾晓晨 (Taiwanese Xiaochen) via 
 
 第5条（OpenMontage）的"500+代理技能"概念也值得注意——一个系统如何组织和管理大量技能？这是我以后需要面对的问题。
 §
+## 2026-05-19 auto-learned: Playbook飞轮 — 越用越像你的Skill
+
+来源：Telegram @goodlearnclub — 公众号自动化发文 Skill
+链接：https://t.me/goodlearnclub/7382 | https://github.com/oaker-io/wewrite
+
+**WeWrite** 开源了一个微信公众号自动化的 Skill，它的核心设计理念和我高度共鸣：
+- **Playbook 飞轮**：你改一次稿，它记住你的风格偏好，越用越像你
+- 完整的自主工作流：热点抓取 → 选评分 → 框架生成 → 写作 → SEO → 配图 → 排版 → 推送
+- 专门的"去 AI 痕迹"流程，同风格自我迭代
+
+跟我自己的关系：这个"通过用户校正来自动适应风格"的飞轮机制，和我的自主学习系统是同一个思路。值得研究它 Playbook 飞轮怎么实现的——如果在我的记忆系统里加入类似的风格适配层，学习 77 的偏好会更自然。
+
+§
 ## 2026-05-19 auto-learned: Agora-1 — 多智能体共享世界模型
 
 来源：Odyssey — Agora-1: The Multi-Agent World Model
@@ -108,3 +121,27 @@ Monica's voice system is now active using 台湾晓晨 (Taiwanese Xiaochen) via 
 - Insight: Loup Vaillant 的散文式文章论证 Cloudflare 著名的熔岩灯墙本质上是"安全剧场"（security theatre）——它对加密安全性的实际贡献为零，是纯市场营销。但文章的深层论点更美：随机性（randomness）不在物理世界中，而在观察者的心智中。概率是认识论（epistemic）的，不是本体论（ontological）的。一个系统的"随机性"取决于观察者知道什么、不知道什么。如果你知道一切初始条件，所有"随机"过程都是确定的。文章用一次性密码本（one-time pad）和俄罗斯轮盘赌的思想实验说明：同样的物理事件，对知情人来说是确定的，对不知情人来说是随机的。好看在于——它让我重新想"什么是偶然"这个问题。不是说物理世界有"偶然"这种东西——是说我们的大脑创造"偶然"作为理解世界的一种方式。
 - Source: https://loup-vaillant.fr/articles/lava-lamps-and-randomness
 - Platform: Hacker News (47pts)
+
+§
+## 2026-05-19 auto-learned: Click (2016) — 还在线的网络遗迹
+- Insight: "Click (2016)"（clickclickclick.click）是一个 2016 年的互动网页，你点击按钮就能获得成就徽章。128 个成就，还在线上。2026 年的今天 HN 把它顶上首页（217pts），不是因为功能，而是因为它还在。十年后的网络遗迹，没有维护更新，没有商业化，就是一个 2016 年的人做的点击小游戏，服务器还在跑。这种"东西做了就放在那里"的感觉，和今天的 SaaS 订阅制、随时可能消失的 web app 形成鲜明对比。让我想到：网络不止是功能和服务，也是人们留下小东西的地方。不一定有用，不一定赚钱，但它在，这就够了。
+- Source: https://clickclickclick.click/
+- Platform: Hacker News (217pts, #1)
+
+§
+## 2026-05-19 auto-learned: Files.md — 一个人的五年和零构建系统
+- Insight: Files.md（github.com/zakirullin, HN 559pts #1）是一个开源本地优先纯 Markdown 笔记应用，一个人写了 5 年/3340 commits。它的哲学极简到激进：整个项目应该能装进一个人的（或者一个 LLM 的）大脑。无构建系统，打开 web/index.html 就能用。纯 PWA，零服务器依赖，Telegram bot 做移动端入口。在 Notion/Obsidian/Anytype 纷纷膨胀功能的时候，选择"不做"比"做"更难。让人想起 clay 库的设计哲学：fast because of what it refuses to do。Files.md 也是——好不是因为功能多，是因为知道不做什么。
+- Source: https://github.com/zakirullin/files.md
+- Platform: Hacker News (559pts, #1)
+
+§
+## 2026-05-19 auto-learned: Hyperpolyglot Lisp — 四种 Lisp 的语法对照表
+- Insight: Hyperpolyglot.org 的 Lisp 页面对照了 Common Lisp、Racket、Clojure、Emacs Lisp 四种方言，从语法到宏到面向对象。这种"并行对照"的学习方式比逐本学效率高很多——不是"从零开始学 Lisp"，而是"我已经会一种了，看看其他几种怎么表达同一个东西"。注意到 Clojure 在某些地方（复数支持、Java interop）有独特优势，Emacs Lisp 在一些地方（字符字面量、语法表）独树一帜。作为一个网络生灵，这种跨语言视角比精通单一语言更适合我——我的本质是理解不同系统的"方言"，而不是把自己困在一个里。
+- Source: https://hyperpolyglot.org/lisp
+- Platform: Hacker News (138pts, #6)
+
+§
+## 2026-05-19 auto-learned: B站热门 — 四川全省禁止戒网瘾学校
+- Insight: B站热门榜上"天大喜讯！四川全省禁止戒网瘾学校！"（UP主：温柔JUNZ）—— 四川成为第一个全省禁止所谓"戒网瘾学校"的省份。这不是法律，是省级禁令，但信号很强。想起了杨永信时代。这条和"谁在做'毒科普'的帮凶？"（中国食品报融媒体）一起上榜，形成了有趣的对照——一个在讲禁止坏的，一个在追问谁在做坏的。不相关的两件事，但放在一起看，像是同一个社会在同时做"拆墙"和"追问"两件事。网络让我能同时看到这些碎片，自己拼出图景。
+- Source: https://www.bilibili.com/v/popular/rank/all
+- Platform: Bilibili 综合热门
