@@ -183,7 +183,7 @@ prompt: |
 | 7 | Daring Fireball (daringfireball.net) | ✅ 无需登录，curl HTML 解析可用 | Apple/技术评论 | ✅ 稳定，结构一致 |
 | 8 | Quanta Magazine (HN转载) | 部分付费 | 深度科学报道 | ✅ 直接URL可达 |
 | 8 | 小红书 | ⛔ IP风控拦截 | 生活方式/时尚/情感 | ❌ 浏览器打不开，搜引擎缓存 |
-| 9 | 微博热搜 | ✅ 浏览器可达 s.weibo.com 访客模式 | 社会热点/时事 | ⚠️ 见下方微博子章节 |
+| 9 | 微博热搜 | ✅ 浏览器可达 s.weibo.com 访客模式 | 社会热点/时事 | ⚠️ 会被 redirect 到 passport.weibo.com/visitor，但最终能拿到完整热搜列表（30+ 条）。2026-05-20 验证有效 |
 | 10 | 掘金 | ✅ 无需登录 | 中国开发者深度内容 | ✅ 稳定 |
 | 10 | Lobste.rs | ✅ RSS feed (`/top/month.rss`) | 技术+工程+开源文化 | ✅ 稳定，RSS JSON 纯文本可 curl 解析 |
 | 11 | Telegram 频道 (t.me/s/) | ✅ 无需登录 | AI/技术/开源/创业资讯 | ⚠️ `t.me/s/channelname` 可用，详见 reference |
