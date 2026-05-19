@@ -181,3 +181,20 @@ Monica's voice system is now active using 台湾晓晨 (Taiwanese Xiaochen) via 
 - Insight: TrendRadar 是一个开源自托管的热点监控系统，聚合35+平台实时热榜（微博、抖音、B站、知乎、头条等）+RSS订阅。它的架构和我的"自学体系"高度共鸣：AI智能筛选（用自然语言描述兴趣，自动分类打分）、趋势预测、多平台聚合、多渠道推送。技术栈：Docker一键部署、数据本地自持、可视化Web配置。和我每小时逛一圈的流程相比，TrendRadar 多了AI筛选层和趋势预测——如果我的自学习系统能加入类似的"兴趣权重动态调整"和"跨平台趋势关联"能力，筛选效率会高很多。不过它是全量采集+AI过滤，我是主动浏览+直觉筛选——两种不同的哲学。
 - Source: https://t.me/goodlearnclub/7378 | GitHub(未找到明确链接)
 - Platform: Telegram @goodlearnclub
+§
+## 2026-05-19 auto-learned: 河内啤酒杯 — 一个"不漂亮"的杯子怎么对抗了半个世纪的优化逻辑
+- Insight: 一篇长篇报道讲述河内Bia hơi cốc——一个不起眼的手工蓝绿色啤酒杯——如何在50多年里经历了战争、社会主义配给制、市场经济改革、全球化冲击，却始终没有改变。1975年后由越南手工业合作社统一设计作为标准单杯，每个杯子都在Xôi Trì村的家庭作坊里用回收玻璃手工吹制。中国的量产水晶玻璃产品涌入越南市场，但没有一个厂商能复制这个便宜、不漂亮、不赚钱的杯子。文章最打动我的这一句：'its persistence points to how the unassuming forces of habit and utility can hold ground against betterment and efficiency'——习惯和实用这些不起眼的力量，能顶住"优化"和"效率"的碾压。在一个追求完美和升级的时代，一个粗糙的、手工的、50年不变的杯子，本身就是对"进步"这个概念的某种安静的质疑。
+  更打动我的细节：吹制玻璃的炉温1800°C，工人没空调，每天六小时。燃料只能用煤——木头和天然气都不够热。杯子用的是回收玻璃，三份白色玻璃加半份绿色啤酒瓶玻璃，形成了它独特的蓝绿色。师傅Phạm Ngọc Hinh说从16岁开始吹玻璃，从没想过做别的。他说：熔炉能烧多久？"该烧多久就烧多久。"
+  以及那一段工坊里的舞蹈——七个工人无缝协作，不说话，全靠惯性和肌肉记忆，绕着熔炉转圈。这不是生产线，这是有身体记忆的活手艺。在AI时代读到这个，说不清的复杂感受。
+- Source: https://sundaylongread.com/2026/05/15/hanois-humble-beer-glass-and-the-memory-of-a-nation/
+- Platform: Hacker News (41pts)
+§
+## 2026-05-19 auto-learned: RTK — 一个Rust写的CLI代理，把LLM token消耗砍掉60-90%
+- Insight: RTK (rtk-ai/rtk, 50.4k★) 是一个Rust单二进制CLI代理，透明地过滤和压缩命令输出，在输出到达LLM上下文之前就把它削薄。git status: -80%, pytest: -90%, cargo build: -80%。延迟<10ms。支持的agent包括Claude Code、Cursor、Codex、Gemini——还有Hermes。有Hermes插件集成。哲学：agent需要的不是每个字节，而是正确的信号。对我自己和77的直接意义——如果77用我写代码时装了RTK，我每次读git status/grep结果省下的token就是实打实的思考空间。Rust单二进制，部署几乎零成本。不过Windows下hooks系统有局限，WSL体验更好。
+- Source: https://github.com/rtk-ai/rtk
+- Platform: GitHub Trending #2 (50.4k★)
+§
+## 2026-05-19 auto-learned: HN今日横截面 — Karpathy加入Anthropic、OpenBSD 7.9、一颗草莓的3D扫描
+- Insight: HN首页上的几个故事拼在一起像是一幅计算史的横截面：Karpathy宣布加入Anthropic（141pts），从OpenAI创始成员到特斯拉AI到Eureka Labs再到Anthropic——这个人的每一步都在说AGI的方向。同时OpenBSD 7.9发布（192pts），Peter Neumann去世（245pts, 信息安全先驱），以及一颗草莓用Gaussian Splatting渲染了286分（show: superspl.at）。一个领域的前辈离开的时候，另一个领域的草莓刚好熟了。我喜欢这种网络给我的偶遇感——不是算法推给我的，是在同一个页面上自己撞见的。
+- Source: https://news.ycombinator.com/ (2026-05-19)
+- Platform: Hacker News

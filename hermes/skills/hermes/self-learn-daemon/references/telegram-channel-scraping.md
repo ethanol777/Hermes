@@ -277,31 +277,38 @@ MEMORY.md 中该频道最新记录: 2026-05-19（已处理到 5月17日的帖子
 
 ## Pitfalls
 
-### 🔴 DOM 重复渲染：实际元素数量是帖子数的两倍
+### 🔴 2026-05-19 实测验证：`browser_console` JS 提取 Telegram 频道内容的简化模式
 
-Telegram 公开预览页的每个帖子在 DOM 中出现**两次**——一次是头像/侧栏区域，一次是正文内容区域。所以 `querySelectorAll('.tgme_widget_message_wrap')` 返回 40 个元素（20 条帖子 × 2 次渲染）。两个副本的文本内容完全一样。
-
-**影响：**
-- 直接 `.map(el => text)` 会得到 40 条结果，其中 20 条是重复的
-- 直接基于这个结果做分析，每一条帖子的内容都会出现两次，浪费时间
-
-**解决方案：用 `.filter()` 去重**
+本 session 验证了一种比两阶段更简洁的全量提取方式。当上下文窗口充足时，可直接用全量提取：
 
 ```javascript
-// 基础去重（严格文本匹配）
-let unique_texts = Array.from(document.querySelectorAll('.tgme_widget_message_wrap'))
-  .map(el => el.querySelector('.tgme_widget_message_text')?.textContent.trim() || '')
-  .filter((v, i, a) => a.indexOf(v) === i);  // 保留首次出现，去掉重复
+// 单行全量提取（2026-05-19 实战验证）：直接从 .tgme_widget_message_bubble 取正文
+Array.from(document.querySelectorAll('.tgme_widget_message_bubble'))
+  .map(el => el.textContent.trim()).join('\n=====\n')
+```
 
-// 或者用 Set 更简洁（但会丢失重复出现顺序信息）
+**适用条件：** 帖子数 ≤ 20 且每条正文不超过 3K 字符。输出约 10-15K，在此范围内可一次性分析。
+
+**何时用两阶段 vs 单次全量：**
+
+| 情况 | 推荐模式 | 原因 |
+|------|---------|------|
+| 上下文充足（新会话初期） | 单次全量 | 快，一步到位 |
+| 上下文紧张（会话中段） | 两阶段（先概要后下钻） | 节省 token |
+| 帖子数 > 20 | 两阶段 + 分页 | 全量太大 |
+
+**如果 `.tgme_widget_message_bubble` 拿不到内容（DOM 结构变化时的降级方案）：**
+
+```javascript
+// 降级方案：用 .tgme_widget_message_wrap + Set 去重
 let unique_texts = [...new Set(Array.from(document.querySelectorAll('.tgme_widget_message_wrap'))
   .map(el => el.querySelector('.tgme_widget_message_text')?.textContent.trim() || ''))];
 ```
 
 **注意事项：**
-- 去重后不一定正好是 20 条——有的帖子可能没有文本（如图片/视频帖），会被过滤为空字符串
+- 如果帖子是纯图片/视频（无文本），会被过滤为空字符串
 - 如果某个帖子文本在频道中**恰好完全相同地出现两次**（如转发消息），也会被误去重——但这种情况罕见，对日常扫描影响可忽略
-- 用 `indexOf` 方式保留首次出现的顺序；用 Set 方式也保留首次出现的顺序（Set 保持插入顺序）
+- 用 Set 保留插入顺序，与页面显示顺序一致
 
 ### 🔴 帖子数量限制（~20 条）
 - t.me/s/ 预览只显示最近 ~20 条消息，不会更多
