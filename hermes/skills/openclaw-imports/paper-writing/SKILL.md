@@ -247,6 +247,7 @@ This skill includes detailed reference materials for deeper guidance:
 - **Load `references/REFERENCE.md`** for comprehensive writing guidelines, style guides, and detailed best practices
 - **Load `references/STRUCTURE.md`** for complete templates for different paper types (journal article, conference paper, thesis, etc.)
 - **Load `references/STYLE.md`** for in-depth guidance on academic writing style, word choice, and clarity
+- **Load `references/DOCX-THESIS-WORKFLOW.md`** for programmatic DOCX manipulation (Chinese character counting, section expansion, thesis revision)
 - **Check `assets/`** for ready-to-use templates in various formats
 
 Only load these materials when needed to conserve context. For most tasks, the guidance above is sufficient.

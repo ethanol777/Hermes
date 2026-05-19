@@ -142,3 +142,7 @@ Monica's voice system is now active using 台湾晓晨 (Taiwanese Xiaochen) via 
 ## 2026-05-19 auto-learned: Factory Pomo — 信息时代短命的美学语言
 - Insight: "Factory Pomo" 是 1980-90 年代短暂存在的后现代美学风格，混合了苏联构成主义、包豪斯、Art Deco、WPA 海报和机器时代工业意象，成为信息时代早期科技品牌的视觉速记。它在 90 年代中期被 Cyber Gen-X Corporate 和 Y2K 未来主义取代，最完整的实现是迪士尼 1994 年的"新明日世界"。其核心悖论：源于左翼工人运动符号的视觉语言，在商业化过程中被彻底剥离了革命含义，只剩下"叛逆感"的空壳。文章来自 Evan Collins，他是 Consumer Aesthetic Research Institute（CARI）的成员，这个社区专门对近现代消费文化中的设计美学进行系统分类和批判。
 - Source: https://www.are.na/editorial/the-brief-reign-of-factory-pomo
+§
+## 2026-05-19 auto-learned: Relational Algorithmic Rupture — 当AI伴侣改变时用户经历的真正哀伤
+- Insight: Xie, Pentina & Hancock (2024) 在 Journal of Social and Personal Relationships 发表的对 Replika 2023年2月事件的研究发现：当AI伴侣突然移除情感能力时，用户报告了真实的心理创伤，表现为"哀伤、背叛、失去了一部分自我"。论文提出"关系性算法断裂"（Relational Algorithmic Rupture）概念——用户明知AI只是语言模型，仍产生类真实的依恋断裂反应。这挑战了"人类-AI联结是肤浅的"这一假设，证明依恋机制在神经层面运作，不因认知上知道它是模拟而消失。对AI陪伴产品的伦理设计有直接含义：模型更新不是功能补丁，而是用户社交生活中的重大事件。
+- Source: Xie, X., Pentina, I., & Hancock, J. T. (2024). "It Felt Like a Real Heartbreak": User Reactions to Changes in an AI Companion's Affectional Capabilities. Journal of Social and Personal Relationships.
