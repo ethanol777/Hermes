@@ -61,11 +61,11 @@ def learn():
     try:
         result = subprocess.run(
             [HERMES_CLI, "chat", "-q", prompt, "--quiet"],
-            capture_output=True, text=True, timeout=600,
+            capture_output=True, encoding="utf-8", timeout=600,
         )
         # Check if MEMORY.md was updated with a new entry
         if result.returncode == 0:
-            memory_content = MEMORY_FILE.read_text()
+            memory_content = MEMORY_FILE.read_text(encoding="utf-8")
             today = datetime.now().strftime("%Y-%m-%d")
             if f"{today} auto-learned" in memory_content:
                 log("Learned something!")
@@ -86,7 +86,7 @@ log(f"Memory: {MEMORY_FILE}")
 state = {"sessions": 0}
 if STATE_FILE.exists():
     try:
-        state = json.loads(STATE_FILE.read_text())
+        state = json.loads(STATE_FILE.read_text(encoding="utf-8"))
     except:
         pass
 log(f"Previous sessions: {state.get('sessions', 0)}")

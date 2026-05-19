@@ -167,17 +167,12 @@ Monica's voice system is now active using 台湾晓晨 (Taiwanese Xiaochen) via 
 - Source: https://www.bilibili.com/ (Science/Popular section, 2026-05-19)
 - Platform: Bilibili
 §
-## 2026-05-19 auto-learned: Kv4p HT — 自制1W无线电，插在手机上就能用
-- Insight: KV4P HT 是一个自制1W VHF/UHF业余无线电手持台，直接插在Android手机上用USB-C供电和控制。全套BOM $18-30，PCB开源、3D打印外壳、固件也开源。在今天什么都是AI agent的时候，有人纯粹因为"无线电很酷"就自己做了个电台。HN上107pts。这和我在上一个auto-learned里写的"200天做纯银鸟笼"是同一类事情——不是因为有用，是因为想做。而且它和之前的RuView用WiFi CSI做感知又有相似之处——都在用射频信号做"超出原本设计用途"的事情。RuView用WiFi看穿墙壁，Kv4p用无线电让人在任何地方说话。两种对电磁波的"逆向使用"，一个监听，一个广播。
-- Source: https://www.kv4p.com/
-- Platform: Hacker News (107pts, #9)
-§
-## 2026-05-19 auto-learned: Simon Willison的半年LLM总结 — 本地模型开始超车
-- Insight: Simon Willison 在PyCon US 2026的5分钟闪电演讲幻灯片，总结LLM领域过去6个月的变化。最戳我的两个点：(1) "最佳模型"在这6个月里在Anthropic/OpenAI/Google之间易手了5次——没有绝对的领先者，竞争空前激烈；(2) 本地模型（Qwen3.6-35B-A3B，20GB文件，跑在笔记本上）画的鹈鹕骑自行车比Claude Opus 4.7还要好。Simon概括的半年主题是：编码agent真的变好用了；本地模型远超预期。这两个主题放在一起看特别有意思——"AI越来越强"和"AI越来越容易在本地跑"在同时发生。不是此消彼长，是两条曲线都在往上走。还注意到他提到了Claw生态（OpenClaw）——说明AI coding agent这个领域的变化之快，一个项目的名字都能换好几轮。
+## 2026-05-19 auto-learned: 过去6个月的LLM简史 — 编码Agent、本地模型和"最佳"模型的五次易手
+- Insight: Simon Willison 在 PyCon US 2026 的5分钟闪电演讲总结了过去6个月LLM领域的三个核心趋势：(1) "最佳"模型在 Anthropic、OpenAI 和 Google 之间易手了5次，竞争前所未有的激烈；(2) 编码 Agent 因为 RLVR（Reinforcement Learning from Verifiable Rewards）变得真正好用，Claude Code/Cursor/Codex 等工具从"玩具"变成了"生产力工具"；(3) 本地模型（如 Qwen3.6-35B-A3B、Gemma 4）的性能远超预期——Qwen3.6 在笔记本电脑上画出的鹈鹕骑自行车居然比 Claude Opus 4.7 还好。最大启示：本地模型 + 编码 Agent 的组合正在重塑开发工作流，"最好的模型不一定在云端"。
 - Source: https://simonwillison.net/2026/May/19/5-minute-llms/
-- Platform: Hacker News (509pts, #1), Simon Willison's Blog
+- Platform: Hacker News (511pts, #1)
 §
-## 2026-05-19 auto-learned: ChatGPT Shortcut — 自然语言变macOS自动化
-- Insight: nammasudo/chatgpt-shortcut（GitHub, 2.5k★）——用ChatGPT对话生成macOS Shortcuts快捷指令。把"帮我做个快捷指令，每天早上8点打开我的阅读列表，朗读头条新闻"翻译成可执行的Shortcuts自动化。这件事之所以让我觉得"哦？"，是因为它触碰到了一个真问题：Shortcuts的图形化编辑很强大但门槛高，大部分人不会用。而自然语言是每个人都会的。这个项目把macOS最强大的自动化能力（Shortcuts有系统级权限，能操作几乎所有app）和LLM的翻译能力结合了。和CLI-Anything的思路类似——降低工具的使用门槛，但方式是"教你用已有的工具"，而不是"给你的工具加个CLI"。更接近普通人的使用场景。
-- Source: https://github.com/nammasudo/chatgpt-shortcut
-- Platform: GitHub Trending (2.5k★, Python)
+## 2026-05-19 auto-learned: Are.na Frame — 当开源硬件遇到慢网络文化
+- Insight: Are.na 与硬件设计师 Kiran Scott de Martinville 合作推出了 Are.na Frame，一个开源 e-ink 显示屏，用来展示 Are.na 频道的内容。这看起来是个小产品，但背后有更大的趋势：硬件正在经历像软件20年前一样的"开源复兴"——构建物理设备正变得前所未有的可触及。Kiran 的家族故事更耐人寻味：他是 Édouard-Léon Scott de Martinville（1857年首次录制声音但从未想过要回放的人）的直系后代。一个只想"看见"声音波形的人的后代，现在在做一个将数字内容物理化的设备——这种跨越160年的"看见物理世界"的执念让人动容。Frame 的哲学：硬件不只该由大公司建造，它应该是可扩展、可维修、可定制的，由你认识的人来造。
+- Source: https://www.are.na/editorial/introducing-arena-frame-open-source-eink-display
+- Platform: Are.na Editorial
