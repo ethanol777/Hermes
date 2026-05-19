@@ -401,6 +401,7 @@ def __init__(self, memory_char_limit: int = 5000, user_char_limit: int = 2500):
 - [references/memory-corruption-recovery.md](references/memory-corruption-recovery.md) — MEMORY.md 因 `replace_all` / `patch` 事故损坏后的检测与恢复方法（2026-05-17 事故后沉淀）
 - [references/safe-append-workflow.md](references/safe-append-workflow.md) — MEMORY.md 和 fact_store 的安全追加工作流，用 `execute_code` + Python I/O 代替 `patch` 做大幅追加（2026-05-18 事故后沉淀）
 - [references/fact_store_jsonl_workflow.md](references/fact_store_jsonl_workflow.md) — fact_store.jsonl 的 JSON Lines 格式说明与安全追加方法，含 Python/echo 两种方案对比和 Windows 路径注意事项（2026-05-19 实践后沉淀）
+- [references/agentmemory-metadata-tier-pattern.md](references/agentmemory-metadata-tier-pattern.md) — agentmemory 的单向量库 + metadata 标签模拟分层记忆的设计模式，与当前三层架构的对比分析（2026-05-20 学习沉淀）
 
 
 ### 容量提升
