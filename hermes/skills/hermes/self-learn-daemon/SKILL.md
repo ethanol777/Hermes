@@ -341,7 +341,8 @@ write_file("facts_{date}.md", 内容)
 - [references/fact_store-presync-data-loss-incident.md](references/fact_store-presync-data-loss-incident.md) — 2026-05-19 实战事故详细记录：预检同步时 cp 覆盖导致 102 条历史事实丢失，含修复后规则和三步判断法
 - [references/hn-api-id-ordering-pitfall.md](references/hn-api-id-ordering-pitfall.md) — HN Firebase API 的 ID 排序与页面展示不一致陷阱（2026-05-16）
 - [references/reliable-api-sources.md](references/reliable-api-sources.md) — 已验证的可靠数据 API（HN Firebase、GitHub Search、B站官方 API、知乎发现页、Weibo 热搜），替代子进程幻觉爬虫（2026-05-18）
-- [references/execute_code-file-io-pattern.md](references/execute_code-file-io-pattern.md) — execute_code 作为文件 I/O 替代方案：terminal Python 损坏时的稳定写入路径（2026-05-17）
+- [references/execute_code-file-io-pattern.md](references/execute_code-file-io-pattern.md)
+- [references/memory-md-format-evolution.md](references/memory-md-format-evolution.md) — MEMORY.md 的 `|` 前缀格式演变与处理策略（2026-05-19） — execute_code 作为文件 I/O 替代方案：terminal Python 损坏时的稳定写入路径（2026-05-17）
 - [references/file-layout-2026-05-19.md](references/file-layout-2026-05-19.md) — 实际冷层/温层文件布局确认（2026-05-19）
 
 ---
@@ -603,6 +604,28 @@ read_file 显示: 17|§
 **验证：** patch 成功后，用 `tail -5 MEMORY.md` 或 `read_file(offset=-5)` 确认追加内容完整，并检查是否有多余的管道符前缀。
 
 **教训：** `patch` 失败后不要立即尝试另一种方法——先判断失败类别：`Could not find a match` → old_string 不精确（检查空格/转义/换行符差异）；`Found N matches` → old_string 太短或太通用（选择更长的尾部片段）。判断清楚再选下一步。
+
+### ⚠️ 2026-05-19 勘误：部分 MEMORY.md 条目确实包含行首 `|`
+
+上面一节说「read_file 的 `|` 只是视图装饰，不是文件内容」——对绝大多数文件是对的，但对 **MEMORY.md 后期条目**例外。
+
+本 session 发现：MEMORY.md 中从 ~2026-05-19 起的部分条目（`## 2026-05-19 auto-learned:` 等）**实际文件内容以 `|##` 开头**（即文件里有 `|` 前缀）。这不是 read_file 的显示格式，是文件本身的内容。
+
+这是因为之前追加时：
+- 用 `cat >>` heredoc 追加时，终端输出的 `|` 前缀被误写入文件
+- 用 Python `open().write()` 主动加了 `|` 来「匹配已有格式」
+- 不同 session 用了不同的追加方法，导致格式不一致
+
+**这意味着三种格式都可能在 MEMORY.md 中出现：**
+1. 纯 markdown：`# 标题`（文件内容不含 `|`）— 早期条目
+2. 带 pipe：`|# 标题`（文件内容含 `|`）— 中期条目
+3. `read_file 装饰格式`：`  13|# 标题` — 只在 read_file 输出中出现
+
+**追加时如何安全操作：**
+- 用 Python `open().readlines()` 读取纯文件内容（无 read_file 装饰）
+- 扫描最近的一个 # 标题行，**检测它是否以 `|##` 开头**
+- 新条目前缀与之保持一致
+- 见 `references/memory-md-format-evolution.md`
 
 ### 🔴 CWD 路径陷阱：cron 的 MEMORY.md 可能不在预期位置
 
