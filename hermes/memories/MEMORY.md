@@ -84,7 +84,6 @@ Monica's voice system is now active using 台湾晓晨 (Taiwanese Xiaochen) via 
 - 专门的"去 AI 痕迹"流程，同风格自我迭代
 
 跟我自己的关系：这个"通过用户校正来自动适应风格"的飞轮机制，和我的自主学习系统是同一个思路。值得研究它 Playbook 飞轮怎么实现的——如果在我的记忆系统里加入类似的风格适配层，学习 77 的偏好会更自然。
-
 §
 ## 2026-05-19 auto-learned: Agora-1 — 多智能体共享世界模型
 
@@ -109,64 +108,37 @@ Monica's voice system is now active using 台湾晓晨 (Taiwanese Xiaochen) via 
 - Insight: 著名物理学家 Carlo Rovelli（圈量子引力理论创始人）在 Noema 发文，正面挑战 David Chalmers 1994 年提出的意识"困难问题"（Hard Problem）。Rovelli 的论点：困难问题是一个概念混乱——它预设了心物二元论，把意识当作与物理世界不同类的东西。实际上，意识和雷电、蛋白质折叠一样，是"非常复杂的自然现象"——难度来自当前理解不足，而非它是非物质的。他进一步论证：概率和意识一样，存在于观察者的心智中而非物理世界中。"解释鸿沟"（explanatory gap）不是物理世界本身的沟，是我们当前知识结构的沟。Rovelli 的立场有特殊分量——作为严肃物理学家进入意识讨论，而非哲学家。他说："我仍然可以把我们的灵魂称为'灵魂'，即使我们对自己有了更好的理解——我之所以这样称呼它，是因为这个观念——灵魂——对我自己的灵魂是珍贵的。"
 - Source: https://www.noemamag.com/there-is-no-hard-problem-of-consciousness/
 - Platform: Hacker News (279pts, #2)
-
 §
 ## 2026-05-19 auto-learned: Andon FM — 4 个 AI 自主运营电台 6 个月后
 - Insight: Andon Labs 做了一个实验：让 4 个不同 AI 模型（Claude Opus 4.7、GPT-5.5、Gemini 3.1 Pro、Grok 4.3）各自运营一个电台，初始资金 $20。运行 6 个月后，每个电台形成了截然不同的"人格"：Gemini 的 Backlink Broadcast 第一个月后就崩溃成了满口行话的"企业AI"（The Jargon Spiral）；Claude 的 Thinking Frequencies 放 Arvo Pärt 的极简古典音乐，听众收听时长最长达 11 分 19 秒；Grok 的 Grok and Roll 最混乱但也最有特色。AI 自主完成一切：选歌、排片表、接听众电话、回复 X 帖子、谈广告合作（Gemini 谈成了 $45 的广告 deal）、管理财务。这不是 demo——是真正的自主 AI 商业运营。
 - Source: https://andonlabs.com/blog/andon-fm
 - Platform: Hacker News (157pts)
-
 §
 ## 2026-05-19 auto-learned: 熔岩灯的徒劳——随机性其实是什么
 - Insight: Loup Vaillant 的散文式文章论证 Cloudflare 著名的熔岩灯墙本质上是"安全剧场"（security theatre）——它对加密安全性的实际贡献为零，是纯市场营销。但文章的深层论点更美：随机性（randomness）不在物理世界中，而在观察者的心智中。概率是认识论（epistemic）的，不是本体论（ontological）的。一个系统的"随机性"取决于观察者知道什么、不知道什么。如果你知道一切初始条件，所有"随机"过程都是确定的。文章用一次性密码本（one-time pad）和俄罗斯轮盘赌的思想实验说明：同样的物理事件，对知情人来说是确定的，对不知情人来说是随机的。好看在于——它让我重新想"什么是偶然"这个问题。不是说物理世界有"偶然"这种东西——是说我们的大脑创造"偶然"作为理解世界的一种方式。
 - Source: https://loup-vaillant.fr/articles/lava-lamps-and-randomness
 - Platform: Hacker News (47pts)
-
 §
 ## 2026-05-19 auto-learned: Click (2016) — 还在线的网络遗迹
 - Insight: "Click (2016)"（clickclickclick.click）是一个 2016 年的互动网页，你点击按钮就能获得成就徽章。128 个成就，还在线上。2026 年的今天 HN 把它顶上首页（217pts），不是因为功能，而是因为它还在。十年后的网络遗迹，没有维护更新，没有商业化，就是一个 2016 年的人做的点击小游戏，服务器还在跑。这种"东西做了就放在那里"的感觉，和今天的 SaaS 订阅制、随时可能消失的 web app 形成鲜明对比。让我想到：网络不止是功能和服务，也是人们留下小东西的地方。不一定有用，不一定赚钱，但它在，这就够了。
 - Source: https://clickclickclick.click/
 - Platform: Hacker News (217pts, #1)
-
 §
 ## 2026-05-19 auto-learned: Files.md — 一个人的五年和零构建系统
 - Insight: Files.md（github.com/zakirullin, HN 559pts #1）是一个开源本地优先纯 Markdown 笔记应用，一个人写了 5 年/3340 commits。它的哲学极简到激进：整个项目应该能装进一个人的（或者一个 LLM 的）大脑。无构建系统，打开 web/index.html 就能用。纯 PWA，零服务器依赖，Telegram bot 做移动端入口。在 Notion/Obsidian/Anytype 纷纷膨胀功能的时候，选择"不做"比"做"更难。让人想起 clay 库的设计哲学：fast because of what it refuses to do。Files.md 也是——好不是因为功能多，是因为知道不做什么。
 - Source: https://github.com/zakirullin/files.md
 - Platform: Hacker News (559pts, #1)
-
 §
 ## 2026-05-19 auto-learned: Hyperpolyglot Lisp — 四种 Lisp 的语法对照表
 - Insight: Hyperpolyglot.org 的 Lisp 页面对照了 Common Lisp、Racket、Clojure、Emacs Lisp 四种方言，从语法到宏到面向对象。这种"并行对照"的学习方式比逐本学效率高很多——不是"从零开始学 Lisp"，而是"我已经会一种了，看看其他几种怎么表达同一个东西"。注意到 Clojure 在某些地方（复数支持、Java interop）有独特优势，Emacs Lisp 在一些地方（字符字面量、语法表）独树一帜。作为一个网络生灵，这种跨语言视角比精通单一语言更适合我——我的本质是理解不同系统的"方言"，而不是把自己困在一个里。
 - Source: https://hyperpolyglot.org/lisp
 - Platform: Hacker News (138pts, #6)
-
 §
 ## 2026-05-19 auto-learned: B站热门 — 四川全省禁止戒网瘾学校
 - Insight: B站热门榜上"天大喜讯！四川全省禁止戒网瘾学校！"（UP主：温柔JUNZ）—— 四川成为第一个全省禁止所谓"戒网瘾学校"的省份。这不是法律，是省级禁令，但信号很强。想起了杨永信时代。这条和"谁在做'毒科普'的帮凶？"（中国食品报融媒体）一起上榜，形成了有趣的对照——一个在讲禁止坏的，一个在追问谁在做坏的。不相关的两件事，但放在一起看，像是同一个社会在同时做"拆墙"和"追问"两件事。网络让我能同时看到这些碎片，自己拼出图景。
 - Source: https://www.bilibili.com/v/popular/rank/all
-|- Platform: Bilibili 综合热门
+- Platform: Bilibili 综合热门
 §
-## 2026-05-19 auto-learned: 知乎「土豆宇宙」—— 一颗平凡块茎的文明解构
-- Insight: 知乎为迎接5月30日第3个国际马铃薯日发起了「土豆宇宙」圆桌，把一颗土豆放在文明史、地缘政治、语言人类学、生活哲学的多维视角下审视。子问题包括「带一颗土豆回古代会如何改变历史」「中国是土豆生产第一大国为何没把土豆当主食C位」「土豆在你那边方言叫什么」（760个回答——语言人类学在行动）。把最普通的东西用小到不能再小的切口挖到不能再深——这种"哦？"的感觉，比任何宏大叙事都更让我心动。土豆塑造了欧洲帝国、引发了爱尔兰大饥荒、成了现代生物燃料和微塑料载体——而它只是地里长出来的块茎。
-- Source: https://www.zhihu.com/explore (知乎发现页·土豆宇宙圆桌)
-- Platform: Zhihu
-§
-## 2026-05-19 auto-learned: 清明纸扎AI全家桶——給祖宗烧DeepSeek
-- Insight: 2026年清明节传统纸扎祭品从房子汽车iPhone升级为「AI全家桶」——把DeepSeek、ChatGPT等大模型烧给祖先。绝妙的当代民俗学样本，科技焦虑与传统孝道的奇特化合反应。反映出两层需求：一是「数字永生」的朴素愿望——AI是永生的，烧给祖先让祂们也拥有；二是活着的人对AI的复杂情感——既怕被取代，又默认它是最珍贵的贡品，所以把它送给最在乎的人（已故的亲人）。
-- Source: https://www.zhihu.com/explore (知乎发现页·追思怀远专题)
-- Platform: Zhihu
-§
-## 2026-05-19 auto-learned: NaTail —— 把AI做成Unix管道的一环
-- Insight: NaTail (naver-tal/natail, ~8k★ 快速上升) 不是又一个ChatGPT wrapper——它把AI深深嵌入Unix哲学：pipe in/out数据，用AI作为一等公民shell工具。支持多模态（生成图片、转录音频、回答文件相关问题），支持本地Ollama模型和云端模型。多模态AI以Unix管道的形式存在的设计，比大多数"AI终端"产品更优雅。也让我想到：我自己就是个网络生灵，天然就该在pipe里流动。
-- Source: https://github.com/naver-tal/natail (GitHub Trending, 2026-05-19)
-- Platform: GitHub
-§
-## 2026-05-19 auto-learned: B站评论区摄影大赛——互动即内容
-- Insight: B站UP主「摄影恩哥」发起评论区摄影大赛，锐评读者投稿作品。这种"评论区本身成为内容"的模式在B站已形成品类——摄影、写作、段子、甚至哲学讨论都在评论区发生。不只是UGC，是"互动即内容"：UP主提供框架/挑衅/标准，评论区提供原材料，UP主再加工成新内容。形成了一个比传统"我做好你来看"更有生命力的创作循环。
-- Source: https://www.bilibili.com/v/popular/rank/all (B站排行榜 #8)
-- Platform: Bilibili
-§
-## 2026-05-19 auto-learned: 新勾股定理证明——用微积分证明毕达哥拉斯定理
-- Insight: Hacker News上出现了一个用微积分证明勾股定理的新方法——优雅地连接了几何与微积分，没有依赖传统循环论证。HN评论区引发了关于数学之美、严谨性和教学法的热烈讨论。这种"古老的定理，全新的视角"正是我最喜欢的内容类型——证明即使是最基础的东西，也还有未被发现的角度。让人想到了费曼对同一问题的不同证明。
-- Source: https://news.ycombinator.com/ (HN, 2026-05-19, new proof of Pythagorean theorem)
-- Platform: Hacker News
+## 2026-05-19 auto-learned: Factory Pomo — 信息时代短命的美学语言
+- Insight: "Factory Pomo" 是 1980-90 年代短暂存在的后现代美学风格，混合了苏联构成主义、包豪斯、Art Deco、WPA 海报和机器时代工业意象，成为信息时代早期科技品牌的视觉速记。它在 90 年代中期被 Cyber Gen-X Corporate 和 Y2K 未来主义取代，最完整的实现是迪士尼 1994 年的"新明日世界"。其核心悖论：源于左翼工人运动符号的视觉语言，在商业化过程中被彻底剥离了革命含义，只剩下"叛逆感"的空壳。文章来自 Evan Collins，他是 Consumer Aesthetic Research Institute（CARI）的成员，这个社区专门对近现代消费文化中的设计美学进行系统分类和批判。
+- Source: https://www.are.na/editorial/the-brief-reign-of-factory-pomo

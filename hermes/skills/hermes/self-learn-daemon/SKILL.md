@@ -758,6 +758,42 @@ with open(r'C:\Users\77\AppData\Local\hermes\memories\fact_store.jsonl', 'a', en
 - 不要拆成多次 `execute_code` 调用分批发——一次调用追加一批
 - 写入后追加验证步骤看最后几行
 
+### 🟡 MSYS2 路径前缀 `/c/` 在 Python `open()` 中不可用
+
+**场景：** 在 `terminal('python3 -c "..."')` 或 `execute_code` 中用 `open('/c/Users/77/...')` 读写文件时，Python 不会识别 MSYS2 的路径翻译——`/c/` 被解析为相对路径 `C:\c\`，导致 `FileNotFoundError`。
+
+**原理：** MSYS2 (git-bash) 的路径翻译只对**直接调用的 shell 命令**有效（`ls`, `cat`, `cp`, `echo >>`）。当通过 `python3 -c` 或 `execute_code` 调用 Python 时，Python 的 `open()` 使用 Windows 原生路径解析，不懂 `/c/` 前缀。这是 MSYS2 的一个层间不一致特性，不是 bug。
+
+**✅ 修复：** 使用 `os.path.expanduser()` 或 Windows 原生的绝对路径：
+
+```python
+# ❌ 会失败 — Python 不理解 /c/ 路径翻译
+with open('/c/Users/77/Hermes/hermes/memories/fact_store.jsonl', 'r') as f: ...
+
+# ✅ 会成功 — os.path.expanduser 在 Windows Python 中解析 ~ 为 C:\Users\77
+import os
+path = os.path.expanduser('~/Hermes/hermes/memories/fact_store.jsonl')
+with open(path, 'r', encoding='utf-8') as f: ...
+
+# ✅ 也会成功 — Windows 原生路径
+with open(r'C:\Users\77\Hermes\hermes\memories\fact_store.jsonl', 'r', encoding='utf-8') as f: ...
+
+# ✅ 也会成功 — Windows 风格正斜杠
+with open('C:/Users/77/Hermes/hermes/memories/fact_store.jsonl', 'r', encoding='utf-8') as f: ...
+```
+
+**核验方法：** `python3 -c "import os; print(os.path.abspath('/c/Users/77/Hermes/...'))"` 如果输出以 `C:\c\` 开头，说明路径翻译失效了，需要改用上述修复。
+
+**已在 `references/execute_code-file-io-pattern.md` 中记录类似模式。** 这个 pitfall 补充了该模式在路径翻译上的具体差异点。
+
+### 🟡 如果 `terminal('python3 -c')` 的 Python 环境本身不可用
+
+当 `terminal('python3 -c "..."')` 因 `ModuleNotFoundError: No module named 'encodings'` 完全不可用时（MSYS2 Python 损坏），改用 `execute_code` 来做文件 I/O。详见 `references/execute_code-file-io-pattern.md`。
+
+以上两个 pitfall 的区别：
+- `open()` 路径翻译失败 → Python 可用但找不到文件 → 改用 `os.path.expanduser()` 或 Windows 原生路径
+- `encodings` 模块缺失 → Python 无法启动 → 改用 `execute_code`（但其 `open()` 同样不支持 `/c/` 路径，仍需用 `os.path.expanduser()`）
+
 ### 🔴 `patch` 工具在 JSONL 文件上的行为不可预测——即使 old_string 唯一匹配也可能截断行首
 
 **2026-05-18 实际事故：** 用 `patch(fact_store.jsonl, old_string='"learning\\", "confidence": 0.9}')` 追加新行。该字符串在文件中唯一出现（只于 fs_109 行尾）。结果：
