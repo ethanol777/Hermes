@@ -94,16 +94,19 @@ Write findings to `~/AppData/Local/hermes/research/agent_study/{project}_analysi
 - **Problem**: Flat skill list doesn't show relationships
 - **Solution**: Tree structure (root → branches → leaves)
 - **My adaptation**: Restructure `~/AppData/Local/hermes/skills/` as tree
+- **Implementation**: See `references/skill-tree-implementation.md`
 
 ### 2. Self-Evolution Loop (from GenericAgent)
 - **Problem**: Learning is just collecting, not evolving
 - **Solution**: Feedback → Analysis → Improvement → Retrospection
 - **My adaptation**: Add "skill evolution log" to track how each skill grows
+- **Implementation**: YAML format with experience records per skill
 
 ### 3. Specialized Sub-Personalities (from agency-agents)
 - **Problem**: One Monica does everything
 - **Solution**: Multiple expert personas that can collaborate
 - **My adaptation**: Create 3-5 core "sub-personas" with distinct roles
+- **Implementation**: `personas/` directory + `switch_persona.py` utility
 
 ## Pitfalls to Avoid
 
@@ -116,3 +119,4 @@ Write findings to `~/AppData/Local/hermes/research/agent_study/{project}_analysi
 
 - `references/genericagent-notes.md` — Specific notes on GenericAgent
 - `references/agency-agents-notes.md` — Specific notes on agency-agents
+- `references/skill-tree-implementation.md` — Full implementation details from 2026-05-19 session (tree structure + multi-persona system)
