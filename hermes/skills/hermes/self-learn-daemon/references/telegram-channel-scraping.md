@@ -29,15 +29,107 @@ browser_navigate("https://t.me/s/goodlearnclub")
 
 Telegram 的公开预览页是纯 HTML（非 SPA），帖子元素结构固定。用 `browser_console` 执行 JavaScript DOM 查询。
 
-**推荐方式：返回 JSON 对象数组（browser_console 自动序列化）**
+### ⚠️ 2026-05-19 实践经验：优先用 `var` + `for` 循环，避免复杂 `.map()` 表达式
+
+**`browser_console` 的 `expression` 参数在传输时被压成单行。** 多行 `.map()` 箭头函数体（`{ const ...; return ... }`）在传输时换行符丢失，触发 `SyntaxError: Unexpected end of input`。
+
+**本 session 实际验证：以下模式每次成功。**
+
+```javascript
+// ✅ 可靠模式：var + for 循环 + JSON.stringify（本 session 实战验证）
+var msgs = document.querySelectorAll('.tgme_widget_message_wrap');
+var result = [];
+for (var i = 0; i < msgs.length; i++) {
+  var textEl = msgs[i].querySelector('.tgme_widget_message_text');
+  var dateEl = msgs[i].querySelector('time');
+  var linkEl = msgs[i].querySelector('a.tgme_widget_message_date');
+  var text = textEl ? textEl.textContent.trim().substring(0, 300) : '';
+  if (!text) continue;
+  var link = linkEl ? linkEl.href : '';
+  var date = dateEl ? dateEl.getAttribute('datetime') : '';
+  result.push({i:i, t:text.substring(0,100), l:link, d:date});
+}
+JSON.stringify(result)
+```
+
+**为什么这个模式更可靠（单行 `.map()` 的对比）：**
+- 箭头函数体中的 `{ const ... }` 块语句在单行化后丢失结构，报 SyntaxError
+- `var` 声明在每次调用后都会覆盖前值（如果之前用 `let` 声明过同名变量，第二次调用会因 `Identifier already declared` 报错）
+- `var` 不会触发重复声明错误——即使前一次会话用 `var` 声明了同名变量，再次调用用 `var` 声明会默默覆盖（var 的作用域提升行为）
+- `JSON.stringify(result)` 在表达式末尾，browser_console 自动反序列化显示为结构化 JSON
+- `.substring(0,100)` 控制单帖文本长度，避免输出过大
+
+**代价：** 多了几行代码，但可靠得多。函数式简洁在 browser_console 的上下文里不值得。
+
+**什么时候可以用 `.map()`：** 只在单行隐式 return 表达式中可用（无 `{ }` 块体）。
+
+```javascript
+// ✅ 单行 .map() 可以（无块体）
+Array.from(document.querySelectorAll('.class')).map(el => el.textContent.trim())
+
+// ❌ 多行 .map() 会挂（有块体）
+Array.from(document.querySelectorAll('.class')).map(el => {
+  const t = el.querySelector('.text');
+  return t ? t.textContent.trim() : '';
+})
+```
+
+### 🟢 效率模式：两阶段提取（先概要 → 再下钻）
+
+**2026-05-19 实战验证：** 一次性提取所有 20 条帖子的完整正文（2-3K char 每条）不仅浪费时间，还会让 context 窗口爆满。更好的方式：
+
+**阶段 1：提取概要（所有帖子，轻量级）**
+```javascript
+// 每个帖子只取前 100 个字符 + 链接 + 时间
+var msgs = document.querySelectorAll('.tgme_widget_message_wrap');
+var result = [];
+for (var i = 0; i < msgs.length; i++) {
+  var el = msgs[i];
+  var text = el.querySelector('.tgme_widget_message_text');
+  var link = el.querySelector('a.tgme_widget_message_date');
+  var date = el.querySelector('time');
+  result.push({
+    i: i,
+    t: (text ? text.textContent.trim().substring(0, 100) : ''),
+    l: (link ? link.href : ''),
+    d: (date ? date.getAttribute('datetime') : '')
+  });
+}
+JSON.stringify(result)
+```
+
+**阶段 2：深度提取（仅相关帖子，按索引精准定位）**
+```javascript
+// 提取索引为 [3, 5, 10, 19] 等特定帖子的完整正文（最多 3000 字符）
+var msgs = document.querySelectorAll('.tgme_widget_message_wrap');
+var result = [];
+var targets = [3, 5, 10, 19];  // ← 替换为你在阶段1发现的感兴趣索引
+for (var i = 0; i < targets.length; i++) {
+  var idx = targets[i];
+  var el = msgs[idx];
+  if (!el) continue;
+  var text = el.querySelector('.tgme_widget_message_text');
+  if (!text) continue;
+  result.push({i: idx, full: text.textContent.trim().substring(0, 3000)});
+}
+JSON.stringify(result)
+```
+
+**为什么两阶段比一次性全量好：**
+- 阶段 1 产出很小（20 条 × ~100 char = ~2K），可以轻松扫一眼判断哪些值得深读
+- 阶段 2 只取需要的帖子，不污染 context
+- 如果不确定好帖子 > 5 个，可以先试再选——不用一次性全量提取
+
+### 推荐方式：返回 JSON 对象数组（browser_console 自动序列化）
+
+如无特殊性能需求，可用以下简洁模式。注意：用 `function` 代替箭头函数避免单行限制。
 
 ```javascript
 // 一次性提取所有帖子的文本、时间、链接、频道链接
-// browser_console 会帮你把 JavaScript 对象序列化为 JSON，比字符串拼接更干净
-Array.from(document.querySelectorAll('.tgme_widget_message_wrap')).slice(0,20).map((el,i) => {
-  const textEl = el.querySelector('.tgme_widget_message_text');
-  const dateEl = el.querySelector('time');  // 用 <time> 标签的 datetime 属性
-  const linkEl = el.querySelector('.tgme_widget_message_date a');
+Array.from(document.querySelectorAll('.tgme_widget_message_wrap')).slice(0,20).map(function(el,i) {
+  var textEl = el.querySelector('.tgme_widget_message_text');
+  var dateEl = el.querySelector('time');
+  var linkEl = el.querySelector('.tgme_widget_message_date a');
   return {
     index: i,
     text: textEl ? textEl.textContent.trim().substring(0, 500) : '(no text)',

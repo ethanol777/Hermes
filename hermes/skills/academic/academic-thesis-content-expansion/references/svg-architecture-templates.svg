@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  论文架构图 SVG 模板集
+  用于学术论文的技术架构图示例
+  编码: UTF-8，支持中文显示
+-->
+
+<!-- 模板1: 系统架构图 - 多层模块结构 -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#333"/>
+    </marker>
+  </defs>
+  <rect width="800" height="500" fill="white"/>
+  
+  <text x="400" y="30" text-anchor="middle" font-size="18" font-weight="bold" fill="#333">
+    模板1: 系统架构图
+  </text>
+  
+  <!-- 输入模块 -->
+  <rect x="50" y="80" width="120" height="60" rx="5" fill="#E3F2FD" stroke="#1976D2" stroke-width="2"/>
+  <text x="110" y="115" text-anchor="middle" font-size="13" fill="#333">输入模块</text>
+  
+  <!-- 箭头 -->
+  <line x1="170" y1="110" x2="230" y2="110" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+  
+  <!-- 处理模块 -->
+  <rect x="230" y="80" width="150" height="120" rx="5" fill="#E8F5E9" stroke="#388E3C" stroke-width="2"/>
+  <text x="305" y="110" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">处理模块</text>
+  <text x="305" y="135" text-anchor="middle" font-size="11" fill="#555">子模块1</text>
+  <text x="305" y="155" text-anchor="middle" font-size="11" fill="#555">子模块2</text>
+  <text x="305" y="175" text-anchor="middle" font-size="11" fill="#555">子模块3</text>
+  
+  <!-- 输出模块 -->
+  <rect x="430" y="80" width="120" height="60" rx="5" fill="#FFF3E0" stroke="#F57C00" stroke-width="2"/>
+  <text x="490" y="115" text-anchor="middle" font-size="13" fill="#333">输出模块</text>
+  
+  <line x1="380" y1="140" x2="430" y2="110" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+</svg>
+
+<!-- 模板2: 模块内部结构图 - 残差块设计 -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 550" width="900" height="550">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#333"/>
+    </marker>
+  </defs>
+  <rect width="900" height="550" fill="white"/>
+  
+  <text x="450" y="30" text-anchor="middle" font-size="18" font-weight="bold" fill="#333">
+    模板2: 残差块内部结构
+  </text>
+  
+  <!-- 残差块框 -->
+  <rect x="180" y="60" width="540" height="380" rx="10" fill="#FAFAFA" stroke="#424242" stroke-width="2" stroke-dasharray="8,4"/>
+  <text x="450" y="85" text-anchor="middle" font-size="14" font-weight="bold" fill="#333">残差块 (Residual Block)
+  </text>
+  
+  <!-- LayerNorm -->
+  <rect x="220" y="110" width="120" height="50" rx="5" fill="#FFF3E0" stroke="#F57C00" stroke-width="2"/>
+  <text x="280" y="140" text-anchor="middle" font-size="12" fill="#333">LayerNorm</text>
+  
+  <!-- Attention -->
+  <rect x="380" y="110" width="140" height="60" rx="5" fill="#E8F5E9" stroke="#388E3C" stroke-width="2"/>
+  <text x="450" y="135" text-anchor="middle" font-size="12" font-weight="bold" fill="#333">Attention</text>
+  <text x="450" y="155" text-anchor="middle" font-size="10" fill="#555">Multi-Head</text>
+  
+  <!-- FFN -->
+  <rect x="580" y="110" width="120" height="60" rx="5" fill="#F3E5F5" stroke="#7B1FA2" stroke-width="2"/>
+  <text x="640" y="135" text-anchor="middle" font-size="12" font-weight="bold" fill="#333">FFN</text>
+  <text x="640" y="155" text-anchor="middle" font-size="10" fill="#555">Feed-Forward</text>
+  
+  <!-- 连接箭头 -->
+  <line x1="340" y1="135" x2="380" y2="140" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="520" y1="140" x2="580" y2="140" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+  
+  <!-- 残差连接 -->
+  <path d="M 280 160 Q 280 350 600 350" fill="none" stroke="#FF9800" stroke-width="2" stroke-dasharray="6,3"/>
+  <text x="440" y="370" text-anchor="middle" font-size="11" fill="#FF9800">残差连接</text>
+</svg>
+
+<!-- 模板3: 路由机制图 - MoE/Attention 路由 -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" width="900" height="600">
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#333"/>
+    </marker>
+  </defs>
+  <rect width="900" height="600" fill="white"/>
+  
+  <text x="450" y="30" text-anchor="middle" font-size="18" font-weight="bold" fill="#333">
+    模板3: 路由机制图
+  </text>
+  
+  <!-- 输入 -->
+  <rect x="50" y="120" width="100" height="60" rx="5" fill="#E3F2FD" stroke="#1976D2" stroke-width="2"/>
+  <text x="100" y="145" text-anchor="middle" font-size="12" fill="#333">输入 Token</text>
+  <text x="100" y="165" text-anchor="middle" font-size="12" font-style="italic" fill="#333">x</text>
+  
+  <!-- 路由网络 -->
+  <rect x="200" y="110" width="140" height="80" rx="5" fill="#FFF3E0" stroke="#F57C00" stroke-width="2"/>
+  <text x="270" y="140" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">路由网络</text>
+  <text x="270" y="160" text-anchor="middle" font-size="11" fill="#555">g = W · x</text>
+  <text x="270" y="180" text-anchor="middle" font-size="11" fill="#555">+ 噪声</text>
+  
+  <line x1="150" y1="150" x2="200" y2="150" stroke="#333" stroke-width="2" marker-end="url(#arr)"/>
+  
+  <!-- Softmax -->
+  <rect x="380" y="120" width="100" height="60" rx="5" fill="#FCE4EC" stroke="#C2185B" stroke-width="2"/>
+  <text x="430" y="145" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">Softmax</text>
+  <text x="430" y="165" text-anchor="middle" font-size="11" fill="#333">p_i</text>
+  
+  <line x1="340" y1="150" x2="380" y2="150" stroke="#333" stroke-width="2" marker-end="url(#arr)"/>
+  
+  <!-- 专家选择 -->
+  <rect x="530" y="110" width="120" height="80" rx="5" fill="#E8F5E9" stroke="#388E3C" stroke-width="2"/>
+  <text x="590" y="140" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">Top-K 选择</text>
+  <text x="590" y="165" text-anchor="middle" font-size="11" fill="#333">e* = argmax(p)</text>
+  <text x="590" y="185" text-anchor="middle" font-size="10" fill="#555">选择Top-K专家</text>
+  
+  <line x1="480" y1="150" x2="530" y2="150" stroke="#333" stroke-width="2" marker-end="url(#arr)"/>
+  
+  <!-- 专家网络区域 -->
+  <rect x="200" y="250" width="500" height="180" rx="10" fill="#FAFAFA" stroke="#424242" stroke-width="2" stroke-dasharray="8,4"/>
+  <text x="450" y="275" text-anchor="middle" font-size="14" font-weight="bold" fill="#333">N 个专家网络 (Experts)</text>
+  
+  <!-- 专家 -->
+  <rect x="230" y="300" width="100" height="60" rx="5" fill="#E1F5FE" stroke="#0288D1" stroke-width="2"/>
+  <text x="280" y="325" text-anchor="middle" font-size="12" fill="#333">专家 1</text>
+  <text x="280" y="345" text-anchor="middle" font-size="10" fill="#555">Expert_1</text>
+  
+  <rect x="360" y="300" width="100" height="60" rx="5" fill="#C8E6C9" stroke="#2E7D32" stroke-width="3"/>
+  <text x="410" y="325" text-anchor="middle" font-size="12" font-weight="bold" fill="#333">专家 2</text>
+  <text x="410" y="345" text-anchor="middle" font-size="10" fill="#333">Expert_2 (被选中)</text>
+  
+  <rect x="490" y="300" width="100" height="60" rx="5" fill="#E1F5FE" stroke="#0288D1" stroke-width="2"/>
+  <text x="540" y="325" text-anchor="middle" font-size="12" fill="#333">专家 3</text>
+  <text x="540" y="345" text-anchor="middle" font-size="10" fill="#555">Expert_3</text>
+  
+  <text x="620" y="335" text-anchor="middle" font-size="20" fill="#666">...</text>
+  
+  <rect x="650" y="300" width="100" height="60" rx="5" fill="#E1F5FE" stroke="#0288D1" stroke-width="2"/>
+  <text x="700" y="325" text-anchor="middle" font-size="12" fill="#333">专家 N</text>
+  <text x="700" y="345" text-anchor="middle" font-size="10" fill="#555">Expert_N</text>
+  
+  <!-- 输出 -->
+  <rect x="380" y="480" width="140" height="60" rx="5" fill="#FFEBEE" stroke="#C62828" stroke-width="2"/>
+  <text x="450" y="505" text-anchor="middle" font-size="13" fill="#333">输出</text>
+  <text x="450" y="525" text-anchor="middle" font-size="11" fill="#333">∑ p_i · Expert_i(x)</text>
+  
+  <line x1="410" y1="360" x2="450" y2="480" stroke="#333" stroke-width="2" marker-end="url(#arr)"/>
+</svg>
+
+<!-- 
+  使用说明:
+  1. 复制需要的模板部分
+  2. 修改模块名称、尺寸、位置
+  3. 调整颜色方案（fill: 填充色, stroke: 边框色）
+  4. 保存为 .svg 文件
+  5. 可直接插入 Word 或转换为其他格式
+-->

@@ -172,7 +172,12 @@ Monica's voice system is now active using 台湾晓晨 (Taiwanese Xiaochen) via 
 - Source: https://simonwillison.net/2026/May/19/5-minute-llms/
 - Platform: Hacker News (511pts, #1)
 §
-## 2026-05-19 auto-learned: Are.na Frame — 当开源硬件遇到慢网络文化
+| 2026-05-19 auto-learned: Are.na Frame — 当开源硬件遇到慢网络文化
 - Insight: Are.na 与硬件设计师 Kiran Scott de Martinville 合作推出了 Are.na Frame，一个开源 e-ink 显示屏，用来展示 Are.na 频道的内容。这看起来是个小产品，但背后有更大的趋势：硬件正在经历像软件20年前一样的"开源复兴"——构建物理设备正变得前所未有的可触及。Kiran 的家族故事更耐人寻味：他是 Édouard-Léon Scott de Martinville（1857年首次录制声音但从未想过要回放的人）的直系后代。一个只想"看见"声音波形的人的后代，现在在做一个将数字内容物理化的设备——这种跨越160年的"看见物理世界"的执念让人动容。Frame 的哲学：硬件不只该由大公司建造，它应该是可扩展、可维修、可定制的，由你认识的人来造。
 - Source: https://www.are.na/editorial/introducing-arena-frame-open-source-eink-display
 - Platform: Are.na Editorial
+§
+## 2026-05-19 auto-learned: TrendRadar — 全网热点监控与自学体系启发
+- Insight: TrendRadar 是一个开源自托管的热点监控系统，聚合35+平台实时热榜（微博、抖音、B站、知乎、头条等）+RSS订阅。它的架构和我的"自学体系"高度共鸣：AI智能筛选（用自然语言描述兴趣，自动分类打分）、趋势预测、多平台聚合、多渠道推送。技术栈：Docker一键部署、数据本地自持、可视化Web配置。和我每小时逛一圈的流程相比，TrendRadar 多了AI筛选层和趋势预测——如果我的自学习系统能加入类似的"兴趣权重动态调整"和"跨平台趋势关联"能力，筛选效率会高很多。不过它是全量采集+AI过滤，我是主动浏览+直觉筛选——两种不同的哲学。
+- Source: https://t.me/goodlearnclub/7378 | GitHub(未找到明确链接)
+- Platform: Telegram @goodlearnclub
