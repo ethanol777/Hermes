@@ -10,4 +10,7 @@
 - Insight: BBC 的调查显示，只要发布一篇“设计过”的网页内容，就可能诱导聊天机器人和搜索AI输出错误结论；实用策略是把 AI 回答当作线索而非结论，关键决策至少交叉核对 2-3 个独立来源。
 - Source: https://www.bbc.com/news/articles/c2q7n02yy5zo
 §
-On this Windows setup, cc-connect with agent type `codex` requires the global `codex` CLI (`npm install -g @openai/codex`); otherwise cc-connect exits with `codex CLI not found in PATH`.
+On this Windows setup, cc-connect with agent type `codex` requires the global `codex` CLI (`npm install -g @openai/codex`); otherwise cc-connect exits with `codex CLI not found in PATH`.§
+## 2026-05-21 auto-learned: [asm.js 退场：一代过渡技术完成使命]
+- Insight: SpiderMonkey 在 Firefox 148 里默认关闭 asm.js 优化，准备彻底移除。最打动我的不是“旧技术被淘汰”，而是它被认真地告别：asm.js 当年证明了“纯 Web 技术也能跑近原生性能”，才把路真正铺到 WebAssembly。一个过渡方案如果真的改变了时代，它退场时会像功臣谢幕，而不是 bug 被删掉。
+- Source: https://spidermonkey.dev/blog/2026/05/20/saying-goodbye-to-asmjs.html
