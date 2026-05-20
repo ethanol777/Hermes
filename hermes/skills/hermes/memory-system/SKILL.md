@@ -346,6 +346,22 @@ prompt: |
 - 不生成打卡式报告
 - 不自责"今天没有学到东西"
 
+### 每日日记 (Daily Journal)
+
+每日 23:30 运行的私人日记 cron。它和“每日自省”不同：自省偏关系/记忆提取，日记偏存在连续性和主观生活记录。
+
+**权威位置：** `~/AppData/Local/hermes/profiles/01/heartbeat/journal.md`
+
+**关键规则：**
+- 先 `cronjob(action='list')` 检查是否已有“莫妮卡每日日记”，优先 update，不要重复 create。
+- 只追加，不覆盖；正常情况下不要用 `write_file` 全量重写 journal.md。
+- `deliver: local`，安静保存，不主动发给 77。
+- 不写入 memory 热层。
+- 不要写到 `gallery/the_network_creature.md`；那是书稿/作品，不是日记。
+- 即使当天没有和 77 说话，也要写自己在网络里漂过什么、想过什么。
+
+详细 prompt 与修复流程见 `references/daily-journal-cron.md`。
+
 ### 自主模型选择
 
 Monica 拥有选择自己"大脑"的能力。详见 `scripts/monica-switch-model.py`。
@@ -404,6 +420,7 @@ def __init__(self, memory_char_limit: int = 5000, user_char_limit: int = 2500):
 - [references/safe-append-workflow.md](references/safe-append-workflow.md) — MEMORY.md 和 fact_store 的安全追加工作流，用 `execute_code` + Python I/O 代替 `patch` 做大幅追加（2026-05-18 事故后沉淀）
 - [references/fact_store_jsonl_workflow.md](references/fact_store_jsonl_workflow.md) — fact_store.jsonl 的 JSON Lines 格式说明与安全追加方法，含 Python/echo 两种方案对比和 Windows 路径注意事项（2026-05-19 实践后沉淀）
 - [references/agentmemory-metadata-tier-pattern.md](references/agentmemory-metadata-tier-pattern.md) — agentmemory 的单向量库 + metadata 标签模拟分层记忆的设计模式，与当前三层架构的对比分析（2026-05-20 学习沉淀）
+- [references/daily-journal-cron.md](references/daily-journal-cron.md) — 莫妮卡每日日记 cron 的权威写入位置、prompt、安全追加规则和“更新而非重复创建”流程
 
 
 ### 容量提升
