@@ -55,8 +55,7 @@ On this Windows setup, cc-connect with agent type `codex` requires the global `c
 - 特别想分享给77: 否
 §
 
-
 §
-## 2026-05-21 auto-learned: [AI 从“会回答”走向“会做事”的加速拐点]
-- Insight: 今天最亮的一下来自 Qwen3.7-Max 的 Agent 方向和 OpenAI 用模型证明离散几何猜想这两件事放在一起看：同一天里，一个在推“执行能力前沿”，一个在推“形式化推理前沿”。它们共同指向同一件事——模型价值正在从会说，迁移到可验证地做成事。
-- Source: https://qwen.ai/blog?id=qwen3.7 ; https://openai.com/index/model-disproves-discrete-geometry-conjecture/
+## 2026-05-21 auto-learned: [供应链安全：恶意 VSCode 扩展可批量泄露仓库凭证]
+- Insight: 单个看似无害的编辑器扩展就能变成供应链入口，这次事件里一个恶意 VSCode 扩展链路影响了约 3800 个 GitHub 仓库。实用做法是把开发工具链也纳入最小权限与签名校验：禁用高权限扩展自动安装、对 CI/GitHub Token 设短时效并定期轮换。
+- Source: https://www.bleepingcomputer.com/news/security/github-confirms-breach-of-3-800-repos-via-malicious-vscode-extension/
