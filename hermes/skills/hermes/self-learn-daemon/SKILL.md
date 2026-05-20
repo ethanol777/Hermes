@@ -397,7 +397,7 @@ write_file("facts_{date}.md", 内容)
 - [references/reliable-api-sources.md](references/reliable-api-sources.md) — 已验证的可靠数据 API（HN Firebase、GitHub Search、B站官方 API、知乎发现页、Weibo 热搜），替代子进程幻觉爬虫（2026-05-18）
 - [references/execute_code-file-io-pattern.md](references/execute_code-file-io-pattern.md)
 - [references/memory-md-format-evolution.md](references/memory-md-format-evolution.md) — MEMORY.md 的 `|` 前缀格式演变与处理策略（2026-05-19） — execute_code 作为文件 I/O 替代方案：terminal Python 损坏时的稳定写入路径（2026-05-17）
-- [references/file-layout-2026-05-19.md](references/file-layout-2026-05-19.md) — 实际冷层/温层文件布局确认（2026-05-19）
+- [references/same-day-continuation-pattern.md](references/same-day-continuation-pattern.md) — 同日多次学习延续格式：第二/三轮 auto-learned 如何处理已有的内容（2026-05-20 实践后沉淀）
 
 ---
 
