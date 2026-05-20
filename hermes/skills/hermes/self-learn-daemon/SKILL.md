@@ -24,10 +24,18 @@ Monica（Hermes 的主人）自主学习系统。通过 cron 定时任务，让 
 2. 📋 列出可见工具，搜 fact_store
     └→ 有 → 用 fact_store(action='add') ✅
     └→ 没有 → 走文件直写（terminal echo >> fact_store.jsonl）⚠️
-3. 我写 fact_store 了吗？           — 不是直接写 jsonl 文件（优先用 tool）
-4. MEMORY.md 两个副本同步了吗？     — AppData 和 Hermes 目录都要写
-5. fact_store.jsonl 两个副本同步了吗？ — 同样要同步
-6. 我写了反思吗？                   — 今天有真正打动我的东西吗？
+3. 🟡 检查 fact_store 格式：当前存在的是 .yaml 还是 .jsonl？
+    └→ fact_store.yaml 存在且 fact_store.jsonl 不存在：
+        这是 bug。先不要追加新事实。立即执行迁移：
+        execute_code + Python yaml.load → json.dumps 逐条转写 → cp 到
+        fact_store.jsonl → 删除 fact_store.yaml。
+        迁移完成后才允许在后续步骤写新事实。（详见 "fact_store 格式迁移协议" pitfall）
+    └→ fact_store.jsonl 存在：✅ 正常，继续
+    └→ 两者都存在：检查哪个是最新的，合并到 JSONL，删除 YAML
+4. 我写 fact_store 了吗？           — 不是直接写 jsonl 文件（优先用 tool）
+5. MEMORY.md 两个副本同步了吗？     — AppData 和 Hermes 目录都要写
+6. fact_store.jsonl 两个副本同步了吗？ — 同样要同步
+7. 我写了反思吗？                   — 今天有真正打动我的东西吗？
 ```
 
 **核心原则：**
@@ -259,7 +267,29 @@ cron 学了东西之后必须三层落地，缺一不可：
 
 **正确做法：** 坚持使用 `fact_store.jsonl`（JSON Lines，每行一个独立 JSON 对象）作为温层事实的持久化格式。不要引入新格式。
 
-**已有 YAML 如何处理：** 如果已经创建了 YAML 格式的 fact_store，在下一次维护 session 中用 `execute_code` + Python 读取 YAML 内容 → 转换为 JSON 行 → 追加到 `fact_store.jsonl` → 删除 YAML 文件。
+**已有 YAML 如何处理：** 如果已经创建了 YAML 格式的 fact_store，**不要继续向 YAML 追加新事实。** 每次 session 都应该先检测格式并迁移——不是在"下一次维护 session"再做，是**现在就做**：
+
+```python
+# execute_code 中执行迁移（读 YAML → 转 JSONL → 备份并删除 YAML）
+import yaml, json, os
+
+yaml_path = r'C:\Users\77\AppData\Local\hermes\hermes-agent\fact_store.yaml'
+jsonl_path = r'C:\Users\77\AppData\Local\hermes\hermes-agent\fact_store.jsonl'
+
+if os.path.exists(yaml_path):
+    with open(yaml_path, 'r', encoding='utf-8') as f:
+        data = yaml.safe_load(f)
+    if data and 'facts' in data:
+        with open(jsonl_path, 'w', encoding='utf-8') as f:
+            for fact in data['facts']:
+                f.write(json.dumps(fact, ensure_ascii=False) + '\n')
+    os.rename(yaml_path, yaml_path + '.bak')
+    print(f"Migration done: {len(data['facts'])} facts converted to JSONL")
+else:
+    print("No YAML fact_store found, skipping migration")
+```
+
+注意：这是「破坏性迁移」——YAML 文件会被重命名为 `.bak`，后续不再读取。确认 JSONL 正常工作后手动删除 `.bak`。
 
 本 skill 文档中标记的温层路径是 `fact_store.jsonl`（JSON 行格式），但 **实际 cron 学习会话中普遍使用 dated markdown 文件**（`facts_YYYY-MM-DD.md`）。两者是同一温层概念的不同实现，取决于上下文：
 
