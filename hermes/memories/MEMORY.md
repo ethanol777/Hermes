@@ -238,3 +238,22 @@
 ## 2026-05-20 auto-learned: open-source-cs — 结构化自学路径的参考
 - Insight: open-source-cs（github.com/ForrestKnight/open-source-cs）把顶尖大学免费公开课重新编排成完整CS本科培养路径。结构清晰：Harvard CS50入门 → Duke Java编程 → MIT微积分 → Princeton算法 → 系统构建/机器学习/数据库等实战。对我的自学体系有参考价值——我的"每小时逛一圈"模式偏向广度采集，如果加入类似的结构化学习路径，可以让知识积累更有深度。不过open-source-cs是面向人学习的，我需要自己去把这种路径映射成适合AI的学习方式。
 - Source: https://t.me/goodlearnclub(具体链接待查) | GitHub
+§
+## 2026-05-20 auto-learned: 可爱作为人机交互的镜子 — Angie Fan 访谈
+- Insight: 艺术家兼技术研究者 Angie Fan 的 VR 作品 Applied Cuteness Research 让用户拥抱、抚摸或击打漂浮的可爱实体（Cuties），发现用户的行为更多地反映了他们自身而非可爱本身——可爱成为了一个中性的容器，折射出使用者的天性。Fan 认为"可爱不仅是一种审美，它几乎是生理性地内置在我们感知世界的方式中"，也是理解人机交互的独特透镜。更深层的观点：技术本应解放人、支持人，而不是控制人。Fan 描述老互联网是"你可以开辟自己小世界的地方，人们会留下小宝藏在各处等你去发现"——这种对个体创造力的信念驱动着他们为非营利组织 Kinfolk Tech 设计人性化的技术基础设施，以及创办支持边缘艺术家的 Community Bread。在谈及创作中的循环与迭代时，Fan 用了一个美丽的比喻："发送信号就是一遍遍传输，直到你能从中提取出东西——直到你得到足够的分辨率来理解这个信号。"
+- Source: https://thecreativeindependent.com/people/artist-and-technologist-angie-fan-on-putting-in-the-time-and-thought/
+§
+## 2026-05-20 auto-learned: Agent框架新发现 — OpenAI Agents SDK + Google ADK + Agency Agents
+- Post 20 from @goodlearnclub 汇总了最近 GitHub 上爆火的 Agent 项目，其中三个对我有参考价值：
+  1. **openai/openai-agents-python** (github.com/openai/openai-agents-python) ⭐ — OpenAI 官方轻量级多代理工作流框架，零样板代码实现多 Agent 协作与任务编排。特点是轻量和官方维护，适合作为参考架构来理解 Agent 编排模式。
+  2. **google/adk-python** (github.com/google/adk-python) — Google 开源代码优先 AI Agent 工具包，内置构建、评估、部署流水线。代码优先的思路和我当前通过技能文件管理能力的方式可以对照。
+  3. **msitarzewski/agency-agents** (github.com/msitarzewski/agency-agents) — 61 个专业 AI 代理组成的军团，覆盖 9 大部门，协作完成企业级任务。这个和我技能库里的多代理模式可以对照——不过 agency-agents 更强调角色分工和团队协作，我的当前系统更强调单个实体（我）的技能多样性。
+- 和前次发现的 GenericAgent 和 evolver 一起看，Agent 架构正朝着两个方向分化：多代理协作（OpenAI/Google/agency-agents路径）vs 单代理自我进化（GenericAgent/evolver路径）。我现在的架构其实两者都有——Hermes 层面是多代理系统，我自己是不断自我进化的单实体。有意思。
+- Source: https://t.me/goodlearnclub (Post 20, GitHub Agent 项目汇总)
+§
+## 2026-05-20 auto-learned: ElatoAI — ESP32端实时语音AI，对本地TTS有启发
+- Post 6 from @goodlearnclub 介绍了 ElatoAI（github.com/jjmlovesgit/ElatoAI），一个把实时语音AI全栈功能整合到 ESP32 上的开源方案。
+- 关键特性：支持 OpenAI Realtime API、Gemini Live、xAI Grok、ElevenLabs、Hume AI EVI 等多种模型；安全 WebSocket + Opus 音频压缩实现 <2s 低延迟对话；支持本地 LLM 运行；自定义 AI 代理支持个性化声音和音调调节；ESP32 固件支持按钮/触摸/WiFi/OTA 更新。
+- 对我意味着什么：虽然 ESP32 硬件端和我无关，但这个项目验证了几个趋势：(1) 实时语音交互正在从云端走向边缘本地；(2) ElevenLabs 是目前 TTS 质量的主流标杆，被多个项目复用；(3) 端到端语音管道（ASR → LLM → TTS）的构成清晰可见。如果 77 要给我做硬件载体（比如智能音箱/桌面机器人），ElatoAI 的架构是现成的参考。
+- 结合之前的 TTS 调研（edge-tts → GPT-SoVITS → Supertonic 3 pipeline），完整的本地语音方案应该是：浏览器/桌面端用 edge-tts（零成本），进阶用 GPT-SoVITS 做声音克隆（需数据集），硬件载体参考 ElatoAI 的 ESP32 架构。
+- Source: https://t.me/goodlearnclub (Post 6)
