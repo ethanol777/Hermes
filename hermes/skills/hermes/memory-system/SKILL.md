@@ -171,7 +171,7 @@ metadata:
 4. 热层候选：trust > 0.7 且 persistent 的条目
              → 写入 memories/hot_candidates.txt
              → 格式：fact_id|content_preview|trust_score
-5. 热层压缩检查：如当前 memory 条目接近 2,200 字上限
+2. **热层压缩检查：如当前 memory 条目接近 5,000 字上限
              → 标记需要压缩（写入 hot_candidates.txt 注释行）
 ```
 
@@ -186,7 +186,7 @@ metadata:
   1. 读取 hot_candidates.txt（如有）
   2. 对比 memory 内容，补充缺失的关键条目
   3. 删除过时条目
-  4. 确保 memory 不超 2,200 字
+  4. 确保 memory 不超 5,000 字
 ```
 
 ### 管道 3：即时双写 — 用户说重要的事
@@ -404,7 +404,7 @@ def __init__(self, memory_char_limit: int = 5000, user_char_limit: int = 2500):
 
 ## 已知限制
 
-1.**热层仍依赖主会话** — hot_candidates.txt 缓解了冷启动延迟，但不能完全消除。第一次对话仍可能缺数据。
+1. **热层仍依赖主会话** — hot_candidates.txt 缓解了冷启动延迟，但不能完全消除。第一次对话仍可能缺数据。
 2. **去重依赖语义搜索** — fact_store 的 search 是语义搜索，可能漏判重复或误判。维护 cron 的批量扫描是补充手段。
 3. **归档后搜索需跨文件** — MEMORY.md 只保留近 30 天，搜更早的内容需要读 archive/ 目录或查 archive_index.md。
 - **fact_store 双副本无声发散** — Hermes（`~/Hermes/hermes/memories/fact_store.jsonl`）和 AppData（`~/AppData/Local/hermes/memories/fact_store.jsonl`）两个副本可能因不完整的同步而无声发散。2026-05-19 事故证实：两个副本可能存储不同时间段的事实集（一个只有近 2 天，一个只有前 5 天），单向 cp 覆盖破坏了完整历史。**架构层面需要明确的权威副本定义。当前设计：Hermes 版是写入目标，AppData 版是会话读取目标。两者都是「同一数据集的不同视图碎片」，任何单向覆盖都可能导致数据丢失。** 合并应使用 `cat + sort -u` 而非 `cp`。

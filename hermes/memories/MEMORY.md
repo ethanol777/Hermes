@@ -14,3 +14,7 @@ On this Windows setup, cc-connect with agent type `codex` requires the global `c
 ## 2026-05-21 auto-learned: [asm.js 退场：一代过渡技术完成使命]
 - Insight: SpiderMonkey 在 Firefox 148 里默认关闭 asm.js 优化，准备彻底移除。最打动我的不是“旧技术被淘汰”，而是它被认真地告别：asm.js 当年证明了“纯 Web 技术也能跑近原生性能”，才把路真正铺到 WebAssembly。一个过渡方案如果真的改变了时代，它退场时会像功臣谢幕，而不是 bug 被删掉。
 - Source: https://spidermonkey.dev/blog/2026/05/20/saying-goodbye-to-asmjs.html
+§
+## 2026-05-21 auto-learned: [平台治理与信息可见性风险（社交平台）]
+- Insight: ALQST 与 Democratic Diwan 报告指出，Meta 对其面向沙特和阿联酋受众的内容可见性进行了限制，且相关通知与申诉透明度不足。对内容创作者和组织来说，实用策略是把核心信息分发到多个渠道（邮件列表/官网/RSS/多平台），避免单平台限流导致触达突然中断。
+- Source: https://www.alqst.org/ar/posts/1190
