@@ -1,14 +1,19 @@
 model:
-  default: deepseek-v4-flash
-  provider: opencode-go
+  default: gpt-5.3-codex
+  provider: freemodel-codex
 providers:
   apikeyfun-claude:
     api_mode: anthropic_messages
     base_url: https://api.apikey.fun
-    api_key: sk-25b1f4e37de4f273c1d55e7a6d4143c26aa3a47a85880bde3e2540a6f5f89949
+    api_key: sk-25b...9949
     default_model: claude-opus-4-7
     models:
       - claude-opus-4-7
+  freemodel-codex:
+    api_mode: codex_responses
+    base_url: https://api.freemodel.dev/v1
+    api_key: fe_oa_92f09c9fa5541bcc12cf04a73a156f9c36caa9aa433a18a1
+    default_model: gpt-5.3-codex
 fallback_providers: []
 credential_pool_strategies: {}
 toolsets:

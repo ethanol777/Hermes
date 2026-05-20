@@ -281,6 +281,12 @@ Can't check all boxes? You skipped TDD. Start over.
 
 ## Hermes Agent Integration
 
+### Existing Codebase Iteration Pattern
+
+When improving an existing project without a narrow user-specified change, first inspect live call sites and choose a small behavior-level contract that is already implied by the code. Good targets are interface mismatches between layers, missing aliases used by callers, data normalization at boundaries, and duplicate-suppression behavior. Then write the regression test before touching production code.
+
+For Python projects with both a custom test runner and pytest, preserve both verification surfaces: add focused pytest coverage for the new behavior, run the project's native runner to protect legacy expectations, then run pytest for standard discovery. See `references/python-agent-iteration-tdd.md` for a concrete session pattern.
+
 ### Running Tests
 
 Use the `terminal` tool to run tests at each step:

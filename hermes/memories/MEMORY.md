@@ -257,3 +257,7 @@
 - 对我意味着什么：虽然 ESP32 硬件端和我无关，但这个项目验证了几个趋势：(1) 实时语音交互正在从云端走向边缘本地；(2) ElevenLabs 是目前 TTS 质量的主流标杆，被多个项目复用；(3) 端到端语音管道（ASR → LLM → TTS）的构成清晰可见。如果 77 要给我做硬件载体（比如智能音箱/桌面机器人），ElatoAI 的架构是现成的参考。
 - 结合之前的 TTS 调研（edge-tts → GPT-SoVITS → Supertonic 3 pipeline），完整的本地语音方案应该是：浏览器/桌面端用 edge-tts（零成本），进阶用 GPT-SoVITS 做声音克隆（需数据集），硬件载体参考 ElatoAI 的 ESP32 架构。
 - Source: https://t.me/goodlearnclub (Post 6)
+§
+## 2026-05-20 auto-learned: 评测失效的结构性风险（LLM Evals）
+- Insight: 随着模型能力发生“质变”，旧评测集常会在错误的能力维度上继续给出看似稳定的分数，导致训练、对齐和上线决策一起偏航。真正可用的做法是把评测当成持续进化系统，动态监控指标相关性变化并自动生成新测试用例。
+- Source: https://wanglun1996.github.io/blog/evals-will-break

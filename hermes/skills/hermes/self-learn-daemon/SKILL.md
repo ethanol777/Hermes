@@ -537,16 +537,17 @@ read_file("C:/Users/77/AppData/Local/hermes/memories/MEMORY.md")
 
 | 方法 | 适用场景 | 推荐度 |
 |------|---------|--------|
-| `patch()` + **文件最后一行作为 `old_string`** | MEMORY.md 尾部追加 | ✅ 首选（快，仅写 diff） |
-| `execute_code` + Python `open(path, 'a')` | MEMORY.md + JSONL 统一追加 — 无转义无匹配问题，且一个 execute_code 调用可完成 MEMORY.md 写入 + fact_store 同步 + ID 验证多步操作 | ✅ **本 session 实测推荐** |
-| `terminal cat >>` + heredoc （见下方示例） | MEMORY.md 尾部追加（含 CJK/引号/复杂内容） | ✅ **系统推荐** |
-| `write_file` 全量重写 | patch 失败后的 fallback | ⚠️ 备选 |
+| `patch()` + **文件最后一行作为 `old_string`** | MEMORY.md 尾部追加 | ✅ **首选（纯文本场景）**——快，仅写 diff。具体做法：用当前文件最后一条 `- Source:` 行作为 old_string（该行包含 URL 列表，几乎不可能重复），把「新内容 + 新 Source 行」作为 new_string 一次性写入。2026-05-20 验证有效。 |
+| `execute_code` + Python `open(path, 'a')` | MEMORY.md + JSONL 统一追加 — 无转义无匹配问题，且一个 execute_code 调用可完成 MEMORY.md 写入 + fact_store 同步 + ID 验证多步操作 | ✅ **多文件/混合内容场景首选** |
+| `terminal cat >>` + heredoc （见下方示例） | MEMORY.md 尾部追加（含 CJK/引号/复杂内容） | ✅ **系统推荐**（patch 不可用时） |
+| `write_file` 全量重写 | patch 失败后的 fallback | ⚠️ 备选（有覆盖风险，慎用） |
 | `terminal echo >>` | fact_store.jsonl 单行追加 | ✅ 等同首选，尤其适合纯 JSON 行 |
 | `terminal cat >>` + heredoc | MEMORY.md 尾部追加（CJK/纯文本） | ✅ 可靠——但 JSON 内容有 false-positive 风险 |
 | `fact_store(action='add')` | 温层事实写入 | ✅ 如有 tool 则优先 |
 
 **如何选 `old_string` 确保唯一匹配：**
 - MEMORY.md: 选当前**最后一个条目末尾的最后一行**（如 `- Platform: 小红书`），而不是文件中间某行的模板片段
+- **最佳实践（2026-05-20 验证）：** 用文件最后一个 `- Source:` 行作为 old_string。该行包含一串 URL 列表，几乎不可能在文件别处重复出现。将「新内容 + 新 Source 行」作为 new_string，一步完成追加。比选定单行「- Platform:」安全得多（Platform 行可能在多个条目中出现）。
 - fact_store.jsonl: 选**最后一条事实的完整 JSON 行**（整行复制，包括 `}`）
 - 如果不确定是否唯一：先用 `grep -n "old_string" MEMORY.md` 确认出现次数
 - 如果最后一个条目和前面条目末尾重复（比如 `- Platform: 小红书` 之前出现过），改用**最后两行或三行**作为 old_string
