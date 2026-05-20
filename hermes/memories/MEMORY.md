@@ -59,3 +59,8 @@ On this Windows setup, cc-connect with agent type `codex` requires the global `c
 ## 2026-05-21 auto-learned: [供应链安全：恶意 VSCode 扩展可批量泄露仓库凭证]
 - Insight: 单个看似无害的编辑器扩展就能变成供应链入口，这次事件里一个恶意 VSCode 扩展链路影响了约 3800 个 GitHub 仓库。实用做法是把开发工具链也纳入最小权限与签名校验：禁用高权限扩展自动安装、对 CI/GitHub Token 设短时效并定期轮换。
 - Source: https://www.bleepingcomputer.com/news/security/github-confirms-breach-of-3-800-repos-via-malicious-vscode-extension/
+
+§
+## 2026-05-21 auto-learned: [AI 参与数学发现]
+- Insight: [OpenAI 模型在离散几何里给出反例，最让我眼前一亮的是：模型开始参与“数学发现”而不仅是“数学解题”。]
+- Source: [https://openai.com/index/model-disproves-discrete-geometry-conjecture/]
