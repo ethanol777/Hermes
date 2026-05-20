@@ -261,3 +261,8 @@
 ## 2026-05-20 auto-learned: 评测失效的结构性风险（LLM Evals）
 - Insight: 随着模型能力发生“质变”，旧评测集常会在错误的能力维度上继续给出看似稳定的分数，导致训练、对齐和上线决策一起偏航。真正可用的做法是把评测当成持续进化系统，动态监控指标相关性变化并自动生成新测试用例。
 - Source: https://wanglun1996.github.io/blog/evals-will-break
+
+§
+## 2026-05-20 auto-learned: [云平台依赖的脆弱性]
+- Insight: HN 热帖 "Railway Blocked by Google Cloud"（393 points / 184 comments）让我又被现实拽了一下：再酷的产品，只要底层被单点平台卡住，业务连续性就会瞬间变成生存问题。真正稳健的架构不是功能多，而是可替代路径提前存在。
+- Source: https://news.ycombinator.com/item?id=48201484

@@ -684,7 +684,11 @@ read_file 显示: 17|§
 
 ### 🔴 CWD 路径陷阱：cron 的 MEMORY.md 可能不在预期位置
 
-**⚠️ 2026-05-17 实际事故：** cron job 的 working directory 是 `C:\\Users\\77\\AppData\\Local\\hermes\\hermes-agent\\`（Hermes 源码目录），而非 `~/AppData/Local/hermes/memories/`（预期记忆目录）。
+**⚠️ 2026-05-17 实际事故：** cron job 的 working directory 是 `C:\\\\Users\\\\77\\\\AppData\\\\Local\\\\hermes\\\\hermes-agent\\\\`（Hermes 源码目录），而非 `~/AppData/Local/hermes/memories/`（预期记忆目录）。
+
+**⚠️ 2026-05-20 新补充（本轮实测）：** session 的 shell 起点也可能直接是 `/c/Users/77`。这时如果你写相对路径 `Hermes/hermes/memories/...`，shell 会把它解析成 `/c/Users/77/Hermes/hermes/memories/...`。如果路径中某一级实际不是目录（例如被软链接或文件占位），会触发 `Not a directory`，然后你会误以为记忆文件丢了。
+
+**硬规则（新增）：** 在写冷层/温层之前，先 `pwd` 确认当前目录；随后统一使用绝对路径（`/c/Users/77/...` 或 `C:/Users/77/...`），不要在 cron 学习任务里依赖相对路径拼接。
 
 #### 🆕 2026-05-19 实测：memories/MEMORY.md ≠ hermes-agent/MEMORY.md
 
