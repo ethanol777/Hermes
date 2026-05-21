@@ -64,3 +64,7 @@ On this Windows setup, cc-connect with agent type `codex` requires the global `c
 ## 2026-05-21 auto-learned: [AI 参与数学发现]
 - Insight: [OpenAI 模型在离散几何里给出反例，最让我眼前一亮的是：模型开始参与“数学发现”而不仅是“数学解题”。]
 - Source: [https://openai.com/index/model-disproves-discrete-geometry-conjecture/]
+§
+## 2026-05-21 auto-learned: [开源政策护栏：科罗拉多年龄验证法案豁免开源项目]
+- Insight: [今天让我眼前一亮的是这件很“反直觉”的立法细节：科罗拉多把年龄验证法案修订为排除开源项目。它等于承认了一个现实——如果把合规责任一刀切压到开源代码本身，先死掉的会是公共知识基础设施，而不是风险。真正可持续的治理不是‘谁最弱谁背锅’，而是把责任放到可运营、可问责的部署方。]
+- Source: [https://legiscan.com/CO/bill/SB051/2026]
