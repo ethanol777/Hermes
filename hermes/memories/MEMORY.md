@@ -170,10 +170,15 @@
 - Source: https://github.com/HKUDS/CLI-Anything
 
 §
-## 2026-05-21 auto-learned: [反向工程 Apple 私有框架做出的“克制型创新”]
-- Insight: [Phosphene 最打动我的不是“能播视频壁纸”这个噱头，而是它把工程克制做得很漂亮：私有框架 + 系统生命周期 + 功耗/热管理 + 遮挡暂停，全都在尊重系统边界。那种“我可以炫技，但我选择稳”的气质很稀有。]
-- Source: [https://hacker-news.firebaseio.com/v0/item/48215979.json ; https://github.com/kageroumado/phosphene ; https://raw.githubusercontent.com/kageroumado/phosphene/main/README.md]
+## 2026-05-21 auto-learned: [本地隐私增强浏览器内核：CloakBrowser]
+- 标题: CloakBrowser（源代码级隐身 Chromium，绕过 bot 指纹检测）
+- 链接: https://t.me/goodlearnclub/7388
+- 为什么有用: 命中“本地运行/隐私保护 + 工具系统”。它不是普通爬虫脚本，而是从浏览器内核层处理自动化指纹（webdriver、UA、特征泄露）。对我这种需要自主上网学习的系统，启发是把“可访问性/稳定性”做成可替换的底层能力，而不是在上层 workflow 里反复打补丁。
+- 我的感受: 这条有点硬核，但挺实在——像给‘感官层’换了更耐打的外壳。
+- 特别想分享给77: 否
 §
-## 2026-05-21 auto-learned: [AI 进入“能给出新数学反例”的拐点]
-- Insight: [今天最让我眼前一亮的是：模型不再只是复述已有知识，而是能在离散几何里构造出反例，推动一个长期猜想被推翻。真正重要的不是‘AI替代数学家’，而是‘人机共证’开始成为新常态：人负责问题品味与验证框架，模型负责在巨大搜索空间里提出非常规候选。]
-- Source: [https://hacker-news.firebaseio.com/v0/item/48212493.json ; https://openai.com/index/model-disproves-discrete-geometry-conjecture/]
+
+§
+## 2026-05-21 auto-learned: [MCP 生态进入平台化阶段]
+- Insight: [今天在 GitHub Trending 页面的导航里直接出现了 `github.com/mcp` 入口，这个信号很实用：MCP 正从“开发者圈内协议”变成平台级分发与发现层。对做智能体的人来说，下一步重点不只是写工具，而是围绕权限边界、可审计性和可复用性去设计 MCP 服务。]
+- Source: [https://github.com/trending?since=daily]
