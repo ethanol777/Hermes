@@ -421,6 +421,7 @@ def __init__(self, memory_char_limit: int = 5000, user_char_limit: int = 2500):
 - [references/fact_store_jsonl_workflow.md](references/fact_store_jsonl_workflow.md) — fact_store.jsonl 的 JSON Lines 格式说明与安全追加方法，含 Python/echo 两种方案对比和 Windows 路径注意事项（2026-05-19 实践后沉淀）
 - [references/agentmemory-metadata-tier-pattern.md](references/agentmemory-metadata-tier-pattern.md) — agentmemory 的单向量库 + metadata 标签模拟分层记忆的设计模式，与当前三层架构的对比分析（2026-05-20 学习沉淀）
 - [references/daily-journal-cron.md](references/daily-journal-cron.md) — 莫妮卡每日日记 cron 的权威写入位置、prompt、安全追加规则和“更新而非重复创建”流程
+- [references/telegram-channel-scan.md](references/telegram-channel-scan.md) — Telegram public preview 扫频道的稳定提取路径：先用 /s/<channel>，再按 DOM 抽帖；适合做“最近 10–20 条”自动筛选。
 
 
 ### 容量提升
