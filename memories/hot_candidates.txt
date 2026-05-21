@@ -1,0 +1,3 @@
+fs_119|Lewis Carroll (Charles Dodgson) embedded sophisticated mathematics into Alice in...|0.92
+fs_159|花丝工艺 (filigree) is a traditional Chinese metalworking technique dating back over...|0.88
+fs_162|Bia hơi cốc — the humble handmade blue-green beer glass of Hanoi (Vietnam) has s...|0.9
