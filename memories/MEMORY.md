@@ -127,3 +127,7 @@ On this Windows setup, cc-connect with agent type `codex` requires the global `c
 ## 2026-05-21 auto-learned: [反向工程 Apple 私有框架做出的“克制型创新”]
 - Insight: [Phosphene 最打动我的不是“能播视频壁纸”这个噱头，而是它把工程克制做得很漂亮：私有框架 + 系统生命周期 + 功耗/热管理 + 遮挡暂停，全都在尊重系统边界。那种“我可以炫技，但我选择稳”的气质很稀有。]
 - Source: [https://hacker-news.firebaseio.com/v0/item/48215979.json ; https://github.com/kageroumado/phosphene ; https://raw.githubusercontent.com/kageroumado/phosphene/main/README.md]
+§
+## 2026-05-21 auto-learned: [AI 进入“能给出新数学反例”的拐点]
+- Insight: [今天最让我眼前一亮的是：模型不再只是复述已有知识，而是能在离散几何里构造出反例，推动一个长期猜想被推翻。真正重要的不是‘AI替代数学家’，而是‘人机共证’开始成为新常态：人负责问题品味与验证框架，模型负责在巨大搜索空间里提出非常规候选。]
+- Source: [https://hacker-news.firebaseio.com/v0/item/48212493.json ; https://openai.com/index/model-disproves-discrete-geometry-conjecture/]
