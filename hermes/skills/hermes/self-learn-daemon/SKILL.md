@@ -187,7 +187,7 @@ prompt: |
 | 5 | Simon Willison's Blog (simonwillison.net) | ✅ 无需登录 | LLM深度聚合/月报/趋势综述 | ✅ 稳定，高信噪比。每月的「Monthly briefing」和 PyCon 年度回顾是极高质量的 LLM 总结。文章在 HN 上热门可反向发现 |
 | 6 | Lobste.rs | ✅ RSS feed (`/top/month.rss`) | 技术+工程+开源文化 | ✅ 稳定，RSS JSON 纯文本可 curl 解析 |
 | 6 | 掘金 | ✅ 无需登录 | 中国开发者深度内容 | ✅ 稳定 |
-| 7 | 知乎 | ✅ API 稳定可用：`https://www.zhihu.com/api/v3/feed/topstory/hot-lists/total?limit=15` 加标准 User-Agent 头返回完整 JSON，无需登录。curl 直读，含 15-30 条热榜标题。覆盖科技/财经/体育/教育/国际时事 | 内容聚合/问答 | ✅ 稳定（API 直读） |
+| 7 | 知乎 | ⚠️ API 可用性受会话状态影响：同一端点 `https://www.zhihu.com/api/v3/feed/topstory/hot-lists/total?limit=15` 在部分时段可匿名返回热榜，但也可能返回 `AuthenticationError (code 101)`。先做一次 `curl` 探测；若返回认证错误，立即切换到 HN/GitHub/B站等可直读来源，不在知乎端点上反复重试。 | 内容聚合/问答 | ⚠️ 条件可用（先探测再决定） |
 | 7 | Daring Fireball (daringfireball.net) | ✅ 无需登录，curl HTML 解析可用 | Apple/技术评论 | ✅ 稳定，结构一致 |
 | 8 | Quanta Magazine (HN转载) | 部分付费 | 深度科学报道 | ✅ 直接URL可达 |
 | 8 | 小红书 | ⛔ IP风控拦截 | 生活方式/时尚/情感 | ❌ 浏览器打不开，搜引擎缓存 |
@@ -395,6 +395,7 @@ write_file("facts_{date}.md", 内容)
 - [references/fact_store-presync-data-loss-incident.md](references/fact_store-presync-data-loss-incident.md) — 2026-05-19 实战事故详细记录：预检同步时 cp 覆盖导致 102 条历史事实丢失，含修复后规则和三步判断法
 - [references/hn-api-id-ordering-pitfall.md](references/hn-api-id-ordering-pitfall.md) — HN Firebase API 的 ID 排序与页面展示不一致陷阱（2026-05-16）
 - [references/reliable-api-sources.md](references/reliable-api-sources.md) — 已验证的可靠数据 API（HN Firebase、GitHub Search、B站官方 API、知乎发现页、Weibo 热搜），替代子进程幻觉爬虫（2026-05-18）
+- [references/zhihu-api-auth-fallback.md](references/zhihu-api-auth-fallback.md) — 知乎热榜 API 遇到 `AuthenticationError(101)` 时的快速探测与回退策略（2026-05-21）
 - [references/execute_code-file-io-pattern.md](references/execute_code-file-io-pattern.md)
 - [references/memory-md-format-evolution.md](references/memory-md-format-evolution.md) — MEMORY.md 的 `|` 前缀格式演变与处理策略（2026-05-19） — execute_code 作为文件 I/O 替代方案：terminal Python 损坏时的稳定写入路径（2026-05-17）
 - [references/same-day-continuation-pattern.md](references/same-day-continuation-pattern.md) — 同日多次学习延续格式：第二/三轮 auto-learned 如何处理已有的内容（2026-05-20 实践后沉淀）

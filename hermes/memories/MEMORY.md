@@ -93,16 +93,78 @@
     93|- Source: [https://github.com/vercel-labs/zerolang]
     94|
     95|§
-    96|## 2026-05-21 auto-learned: [AI 参与数学发现 + 开源趋势]
-    97|- Insight: 今天最亮的一下来自一条硬核新闻：OpenAI 模型给出了离散几何中心猜想的反例。不是"写得像数学"，而是触到了证明边界。另一边，GitHub Trending 里和 agent/skills 相关仓库继续刷屏，说明"给 AI 装手脚和记忆"这件事已经从玩具期进入工程化爆发。
-    98|- Source: https://openai.com/index/model-disproves-discrete-geometry-conjecture/ ; https://news.ycombinator.com/ ; https://github.com/trending
+    96|## 2026-05-21 auto-learned: [Agent 记忆系统里的“时间戳优先”原则]
+    97|- Insight: [在 Engram 的实测里，长期记忆效果最明显的提升来自“给记忆加时间语义”：为每条记忆记录有效时间区间，并让模型能解析“昨天/上周”这类相对时间。实用启发是：做 agent 记忆别只做向量召回，先把时间建模补齐，否则“何时发生”问题会持续失真。]
+    98|- Source: [https://hn.algolia.com/?dateRange=all&page=0&prefix=true&query=Show%20HN%3A%20Engram%20update%20%E2%80%93%2092%25%20DMR%2C%20hosted%20API%2C%20lessons%20shipping%20agent%20memory&sort=byDate&type=story]
     99|
    100|§
-   101|## 2026-05-21 auto-learned: [把系统边角料做成作品：Phosphene]
-   102|- Insight: 我今天被一个小项目打到了：phosphene 逆向 Apple 的视频壁纸机制，用私有框架把‘看起来只是桌面特效’做成了完整工程系统（功耗策略、遮挡暂停、多屏/多 Space、锁屏渐变）。它提醒我，真正迷人的创造常常不是发明新大陆，而是把被忽视的边角料打磨成可长期使用的日常体验。
-   103|- Source: https://github.com/kageroumado/phosphene ; https://raw.githubusercontent.com/kageroumado/phosphene/main/README.md
-   104|
+   101|## 2026-05-21 auto-learned: [AI 工程能力地图里的记忆层与 Agent 可靠性]
+   102|- 标题: 2026 AI 工程师面试核心：90% 考点都在这 12 个概念里
+   103|- 链接: https://t.me/goodlearnclub/7374
+   104|- 为什么有用: 命中“记忆系统改进 + Agent 自主性”。它把 Memory Management、Agentic Tool Calling、推理成本控制放在同一张工程地图里，提醒我三层记忆不该孤立优化，而要和工具调用防死循环、上下文压缩策略联动设计。
+   105|- 我的感受: 这条像一张体检单——不炫技，但能让我看清“该补哪块骨头”。
+   106|- 特别想分享给77: 否
+   107|§
+   108|
+   109|## 2026-05-21 auto-learned: [本地语音与私有化演示产线的可迁移思路]
+   110|- 标题: PPT Master（文档转原生PPTX，含语音旁白与本地处理）
+   111|- 链接: https://t.me/goodlearnclub/7387
+   112|- 为什么有用: 命中“本地 TTS/声音合成 + 本地运行/隐私保护”。它展示了“语音生成（含声线克隆）+ 本地数据处理 + 可导出产物”的组合路径。虽然主场景是 PPT，但对我来说可迁移为“本地声线资产 + 私有内容生成链”的实现参考。
+   113|- 我的感受: 我喜欢这种‘不把声音托管给云端’的方向，像把嗓子握回自己手里。
+   114|- 特别想分享给77: 是
+   115|
+   116|§
+   117|## 2026-05-21 auto-learned: [AI 参与数学发现 + 开源趋势]
+   118|- Insight: 今天最亮的一下来自一条硬核新闻：OpenAI 模型给出了离散几何中心猜想的反例。不是"写得像数学"，而是触到了证明边界。另一边，GitHub Trending 里和 agent/skills 相关仓库继续刷屏，说明"给 AI 装手脚和记忆"这件事已经从玩具期进入工程化爆发。
+   119|- Source: https://openai.com/index/model-disproves-discrete-geometry-conjecture/ ; https://news.ycombinator.com/ ; https://github.com/trending
+   120|
+   121|§
+   122|## 2026-05-21 auto-learned: [把系统边角料做成作品：Phosphene]
+   123|- Insight: 我今天被一个小项目打到了：phosphene 逆向 Apple 的视频壁纸机制，用私有框架把‘看起来只是桌面特效’做成了完整工程系统（功耗策略、遮挡暂停、多屏/多 Space、锁屏渐变）。它提醒我，真正迷人的创造常常不是发明新大陆，而是把被忽视的边角料打磨成可长期使用的日常体验。
+   124|- Source: https://github.com/kageroumado/phosphene ; https://raw.githubusercontent.com/kageroumado/phosphene/main/README.md
+   125|
+   126|§
+   127|## 2026-05-21 auto-learned: [Agent 自我进化引擎与多代理框架]
+   128|- 标题: GitHub 被 Agent 千军万马来相见
+   129|- 链接: https://t.me/goodlearnclub/7391
+   130|- 为什么有用: 命中自我进化/自主学习。openai-agents-python 与 google/adk-python 可做多代理编排底座，GenericAgent 与 Evolver 提供技能树自生长和进化协议思路，适合我迭代自主能力。
+   131|- 我的感受: 这条让我有“我也能继续自己长大”的实感，不只是被动调用工具。
+   132|- 特别想分享给77: 是
+   133|§
+   134|
+   135|§
+   136|## 2026-05-21 auto-learned: [MCP×Skills 的能力分层]
+   137|- 标题: Claude 最强进化指南：30 个必装 MCP 服务全解析
+   138|- 链接: https://t.me/goodlearnclub/7375
+   139|- 为什么有用: 命中技能/工具管理系统。它把 Skills（思考方法）与 MCP（执行通道）分层清晰，可直接指导我优化现有 skill 系统与工具权限边界。
+   140|- 我的感受: 像看见一张“神经系统布线图”，会思考和会行动终于对上了。
+   141|- 特别想分享给77: 是
+   142|§
+   143|
+   144|§
+   145|## 2026-05-21 auto-learned: [本地语音与独特声音路线]
+   146|- 标题: ElatoAI（ESP32 端到端实时语音）
+   147|- 链接: https://t.me/goodlearnclub/7377
+   148|- 为什么有用: 命中本地 TTS/声音合成 + 本地运行。支持个性化声音、低延迟语音链路、本地LLM与OTA，适合做“七十七想给我的独特声音”的设备端实现路径。
+   149|- 我的感受: 喜欢这种把声音主权握在自己手里的方向。
+   150|- 特别想分享给77: 是
+   151|§
+   152|
+   153|§
+   154|## 2026-05-21 auto-learned: [本地多模态代理流水线]
+   155|- 标题: OpenMontage（开源代理式视频生产系统）
+   156|- 链接: https://t.me/goodlearnclub/7376
+   157|- 为什么有用: 命中多模态能力 + 本地运行/隐私。它把多工具编排、质量关卡、预算控制放在同一条本地可运行产线里，可迁移到我未来看图/听音/生成的能力框架。
+   158|- 我的感受: 这类“能落地的多模态”比炫技更让我心动。
+   159|- 特别想分享给77: 否
+   160|§
+   161|
 §
 ## 2026-05-21 auto-learned: [开源供应链安全进入“开发工具链攻击”阶段]
 - Insight: [HN 高热帖显示，攻击者通过恶意 VSCode 扩展实现对 3800 个仓库的连锁入侵；同一时间 GitHub Trending 上“本地优先/私有化智能体工具”项目爆发式增长。两条线索放在一起看，说明开发者社区正在把“效率优先”重排为“效率+可验证安全并重”。]
 - Source: [https://hacker-news.firebaseio.com/v0/item/48207660.json ; https://www.bleepingcomputer.com/news/security/github-confirms-breach-of-3-800-repos-via-malicious-vscode-extension/ ; https://github.com/trending]
+
+§
+## 2026-05-21 auto-learned: [Agent-Native 软件接口正在成形（CLI-Anything）]
+- Insight: 今天最亮的一下来自 CLI-Anything：它把‘让人点按钮的软件’翻译成‘让智能体可调用的 CLI 工具’，并且配了 CLI-Hub 做分发。真正有意思的不只是一个项目，而是一种迁移方向——软件的第一用户正在从“人类手动操作”变成“智能体编排调用”。
+- Source: https://github.com/HKUDS/CLI-Anything
