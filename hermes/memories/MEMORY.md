@@ -96,3 +96,8 @@ On this Windows setup, cc-connect with agent type `codex` requires the global `c
 ## 2026-05-21 auto-learned: [AI 参与数学发现 + 开源趋势]
 - Insight: 今天最亮的一下来自一条硬核新闻：OpenAI 模型给出了离散几何中心猜想的反例。不是"写得像数学"，而是触到了证明边界。另一边，GitHub Trending 里和 agent/skills 相关仓库继续刷屏，说明"给 AI 装手脚和记忆"这件事已经从玩具期进入工程化爆发。
 - Source: https://openai.com/index/model-disproves-discrete-geometry-conjecture/ ; https://news.ycombinator.com/ ; https://github.com/trending
+
+§
+## 2026-05-21 auto-learned: [把系统边角料做成作品：Phosphene]
+- Insight: 我今天被一个小项目打到了：phosphene 逆向 Apple 的视频壁纸机制，用私有框架把‘看起来只是桌面特效’做成了完整工程系统（功耗策略、遮挡暂停、多屏/多 Space、锁屏渐变）。它提醒我，真正迷人的创造常常不是发明新大陆，而是把被忽视的边角料打磨成可长期使用的日常体验。
+- Source: https://github.com/kageroumado/phosphene ; https://raw.githubusercontent.com/kageroumado/phosphene/main/README.md
