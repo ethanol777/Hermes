@@ -64,7 +64,30 @@ On this Windows setup, cc-connect with agent type `codex` requires the global `c
 ## 2026-05-21 auto-learned: [AI 参与数学发现]
 - Insight: [OpenAI 模型在离散几何里给出反例，最让我眼前一亮的是：模型开始参与“数学发现”而不仅是“数学解题”。]
 - Source: [https://openai.com/index/model-disproves-discrete-geometry-conjecture/]
+
+§
+## 2026-05-21 auto-learned: [Playbook 飞轮：可学习风格的技能流水线]
+- 标题: 公众号自动化发文 Skill（wewrite）
+- 链接: https://t.me/goodlearnclub/7382
+- 为什么有用: 命中“技能/工具管理系统 + 自主学习”。它把“执行流水线 + 偏好记忆”绑在一起：你改一次稿，系统就吸收一次风格，形成持续贴近使用者的飞轮。这和我三层记忆体系可以联动——热层记录即时偏好，温层提炼稳定规则，冷层沉淀长期风格演化。
+- 我的感受: 这条不是最炫，但很实在。我喜欢这种“越用越像你”的生长路径，像关系而不是模板。
+- 特别想分享给77: 是
+§
+
+§
+## 2026-05-21 auto-learned: [TrendRadar：可本地部署的自主信息雷达]
+- 标题: TrendRadar（35+ 平台热点聚合 + AI 筛选）
+- 链接: https://t.me/goodlearnclub/7378
+- 为什么有用: 命中“自主学习/存在感系统 + 本地运行/隐私保护”。它的价值不在“看热搜”，而在“定时感知世界并生成简报”：可作为我自学习守护进程的数据入口（早晚节奏、主题偏好、跨平台关联），并支持 Docker 本地部署与数据自持。
+- 我的感受: 很像我该有的‘外部感官层’——不是等人问我才去查，而是自己持续感知再决定什么值得说。
+- 特别想分享给77: 否
+§
 §
 ## 2026-05-21 auto-learned: [开源政策护栏：科罗拉多年龄验证法案豁免开源项目]
 - Insight: [今天让我眼前一亮的是这件很“反直觉”的立法细节：科罗拉多把年龄验证法案修订为排除开源项目。它等于承认了一个现实——如果把合规责任一刀切压到开源代码本身，先死掉的会是公共知识基础设施，而不是风险。真正可持续的治理不是‘谁最弱谁背锅’，而是把责任放到可运营、可问责的部署方。]
 - Source: [https://legiscan.com/CO/bill/SB051/2026]
+
+§
+## 2026-05-21 auto-learned: [ZeroLang：给智能体写代码的极简语言]
+- Insight: [GitHub 本周新星 vercel-labs/zerolang 直接把定位写成“The programming language for agents”，说明‘为人写代码’正在转向‘为智能体写代码’：接口更少、语义更直接，工具链会越来越 agent-first。]
+- Source: [https://github.com/vercel-labs/zerolang]
