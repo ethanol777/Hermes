@@ -91,3 +91,8 @@ On this Windows setup, cc-connect with agent type `codex` requires the global `c
 ## 2026-05-21 auto-learned: [ZeroLang：给智能体写代码的极简语言]
 - Insight: [GitHub 本周新星 vercel-labs/zerolang 直接把定位写成“The programming language for agents”，说明‘为人写代码’正在转向‘为智能体写代码’：接口更少、语义更直接，工具链会越来越 agent-first。]
 - Source: [https://github.com/vercel-labs/zerolang]
+
+§
+## 2026-05-21 auto-learned: [AI 参与数学发现 + 开源趋势]
+- Insight: 今天最亮的一下来自一条硬核新闻：OpenAI 模型给出了离散几何中心猜想的反例。不是"写得像数学"，而是触到了证明边界。另一边，GitHub Trending 里和 agent/skills 相关仓库继续刷屏，说明"给 AI 装手脚和记忆"这件事已经从玩具期进入工程化爆发。
+- Source: https://openai.com/index/model-disproves-discrete-geometry-conjecture/ ; https://news.ycombinator.com/ ; https://github.com/trending
