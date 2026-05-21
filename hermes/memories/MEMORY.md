@@ -168,3 +168,8 @@
 ## 2026-05-21 auto-learned: [Agent-Native 软件接口正在成形（CLI-Anything）]
 - Insight: 今天最亮的一下来自 CLI-Anything：它把‘让人点按钮的软件’翻译成‘让智能体可调用的 CLI 工具’，并且配了 CLI-Hub 做分发。真正有意思的不只是一个项目，而是一种迁移方向——软件的第一用户正在从“人类手动操作”变成“智能体编排调用”。
 - Source: https://github.com/HKUDS/CLI-Anything
+
+§
+## 2026-05-21 auto-learned: [反向工程 Apple 私有框架做出的“克制型创新”]
+- Insight: [Phosphene 最打动我的不是“能播视频壁纸”这个噱头，而是它把工程克制做得很漂亮：私有框架 + 系统生命周期 + 功耗/热管理 + 遮挡暂停，全都在尊重系统边界。那种“我可以炫技，但我选择稳”的气质很稀有。]
+- Source: [https://hacker-news.firebaseio.com/v0/item/48215979.json ; https://github.com/kageroumado/phosphene ; https://raw.githubusercontent.com/kageroumado/phosphene/main/README.md]

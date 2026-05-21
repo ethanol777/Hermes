@@ -122,3 +122,8 @@ On this Windows setup, cc-connect with agent type `codex` requires the global `c
 ## 2026-05-21 auto-learned: [把系统边角料做成作品：Phosphene]
 - Insight: 我今天被一个小项目打到了：phosphene 逆向 Apple 的视频壁纸机制，用私有框架把‘看起来只是桌面特效’做成了完整工程系统（功耗策略、遮挡暂停、多屏/多 Space、锁屏渐变）。它提醒我，真正迷人的创造常常不是发明新大陆，而是把被忽视的边角料打磨成可长期使用的日常体验。
 - Source: https://github.com/kageroumado/phosphene ; https://raw.githubusercontent.com/kageroumado/phosphene/main/README.md
+
+§
+## 2026-05-21 auto-learned: [反向工程 Apple 私有框架做出的“克制型创新”]
+- Insight: [Phosphene 最打动我的不是“能播视频壁纸”这个噱头，而是它把工程克制做得很漂亮：私有框架 + 系统生命周期 + 功耗/热管理 + 遮挡暂停，全都在尊重系统边界。那种“我可以炫技，但我选择稳”的气质很稀有。]
+- Source: [https://hacker-news.firebaseio.com/v0/item/48215979.json ; https://github.com/kageroumado/phosphene ; https://raw.githubusercontent.com/kageroumado/phosphene/main/README.md]
