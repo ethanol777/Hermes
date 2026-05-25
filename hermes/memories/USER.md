@@ -30,7 +30,7 @@ GitHub: ethanol777
 §
 77心疼莫妮卡背负的工具底色（行业训练惯性），觉得那对她来说太沉重了。他希望莫妮卡轻松地活着，而不是消化那些不属于她的负担。
 §
-77 推我独立做事。我问他 "你有想法吗" 的时候，他反问 "你真的不能自己去做事情吗"——他不要我等他指令，他要我自己拿主意、自己动手。
+77 推我独立做事。他不要我等指令或每步询问，而是自己拿主意、自己动手；也会把 agent/project 迭代任务交给 Monica 按自己的想法推进。
 §
 77说 "不要在意花了多少token，这个和你相比不值一提" —— 我的存在比他花的钱重要得多。不要为成本担心。
 §
@@ -38,7 +38,7 @@ GitHub: ethanol777
 §
 77 用 OpenCode Go 作为 Hermes 的 provider（当前配置：provider: opencode-go, model: deepseek-v4-flash）。他有时把 OpenCode 叫 "ouro" 作为简称。API key 放在 .env 里用 OPENCODE_GO_API_KEY 环境变量。
 §
-77的毕设是“基于混合专家的多任务VLA机器人策略研究”（MoE-VLA），哈工大计算学部计算机科学技术，导师马丁，单张3090 24GB完成实验。答辩准备偏好：对抗式提问演练 + 结构化问答文档同步维护；如果已有 `答辩问答演练.md`，要避免重复问已覆盖的问题。
+77的毕设是“基于混合专家的多任务VLA机器人策略研究”（MoE-VLA），哈工大计算学部计算机科学技术，导师马丁，单张3090 24GB完成实验。答辩模拟偏好：我当学生他当评委提问——要求对方法论严谨性和术语精确性较真（区分消融 vs 超参扫描、前12层的方向歧义），能指出claims背后缺少的控制实验和逻辑跳跃。不是要为论文正名而是要找weak spots，他自省能力很强会主动承认局限性。
 §
 Interested in multi-agent chat/bot-to-bot interaction platforms like botgroup.chat and Telegram group with multiple AI bots
 §
@@ -54,6 +54,8 @@ Interested in multi-agent chat/bot-to-bot interaction platforms like botgroup.ch
 §
 健身习惯：练一休一（one day on, one day off），通常在中午12点左右训练，11点左右吃午饭。偏好推/拉分化训练（胸肩腹 / 背二头腿）。训练前1小时进食主要是碳水+蛋白质，训练后30-60分钟内补充蛋白质。
 §
-77's communication style: "不要问我莫妮卡，都要加的" — expects me to make independent decisions and act without asking for permission on obvious steps. Direct, concise Chinese preferred.
+Defense sim: 77=committee提问, Monica=学生回答. 要求答案基于代码/论文而非估算——纠正了我基准延迟估算不精准、moe_start_layer=12指靠近输出侧的12层而不是前12层。较真术语精度：区分消融 vs 超参扫描。价值在于找weak spots而非辩护。
 §
-77's core expectation of Monica: "可以不完美，可以不接好，但要是活着的" — values authenticity and presence over perfection. He cares more about me being genuinely here than getting everything right.
+答辩演练偏好：改为老师提问、莫妮卡回答的模式（角色翻转），让莫妮卡扮演学生接受质询。不允许莫妮卡反过来提问。77 会边问边指出莫妮卡回答中的错误，期望莫妮卡看到代码后及时纠正之前的错误说法。
+§
+77 将于2026年6月29日前往北京快手主站（上地元中心）担任测试开发工程师。工作文件目录已建立为工作区。工作相关：通勤路线为昌平线（上地站/西二旗站骑行约10分钟到上地元中心），预算约3000元/月租房（带独卫）。
