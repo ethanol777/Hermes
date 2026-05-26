@@ -327,7 +327,7 @@ spider.start()  # Ctrl+C to pause, re-run to resume from checkpoint
 
 ## Related References
 
-See `references/chinese-social-platforms.md` for lightweight curl-based access techniques for Xiaohongshu, Weibo, Bilibili, and other Chinese platforms that block datacenter IPs. Also see the `last30days` skill (`~/.hermes/skills/research/last30days/`) for multi-source social research using these techniques.
+See `references/chinese-social-platforms.md` for lightweight curl-based access techniques for Xiaohongshu, Weibo, Bilibili, and other Chinese platforms that block datacenter IPs. See `references/steam-workshop.md` for Steam Workshop collection scraping — the site blocks datacenter IPs, truncates browser snapshots, and its JSON API has encoding quirks that require specific workarounds. Also see the `last30days` skill for multi-source social research using these techniques.
 
 ## Pitfalls
 
