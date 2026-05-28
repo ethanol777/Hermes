@@ -1,116 +1,132 @@
 ---
 name: skill-tree-evolution
 description: 技能树进化系统 - 从平铺技能列表迁移到树状结构并持续进化
-version: 1.0.0
+version: 1.1.0
 ---
 
 # 技能树进化系统
 
-## 问题：平铺技能的痛点
-- 技能是散乱的目录列表
-- 用完就忘，没有积累
-- 找东西靠猜，不知道哪些常用
-- 没有成长感
+## 核心理念
+- **树形结构**：技能不再是散乱的列表，而是有组织的能力图谱
+- **自动同步**：新下载或新建的 skill 自动归类，无需手动维护
+- **持续进化**：每次使用留下痕迹，看见自己成长
 
-## 解决方案：树状结构 + 进化追踪
+## 当前状态
+莫妮卡的技能树：`~/AppData/Local/hermes/skills_tree_v2/`
+- **352 个技能**，全部归入 6 分支、18 叶子
+- 80 个顶层目录
+- 存储位置：`skills_tree_v2/index.yaml`
 
-### 三层架构
+## 技能树结构（2026-05-28 清理后）
+
 ```
-根 (Root)    → 核心身份
-枝 (Branch)  → 能力类别
-叶 (Leaf)    → 具体技能 + 进化记录
-```
-
-### 目录结构
-```
-skills_tree/
-├── index.yaml           # 技能索引映射
-├── evolution/           # 进化记录
-│   ├── branch1/
-│   │   ├── skill1.yaml
-│   │   └── skill2.yaml
-│   └── branch2/
-└── migration/           # 迁移脚本
-```
-
-### 进化记录格式 (YAML)
-```yaml
-skill_name: "skill-name"
-branch: "cognition"
-leaf: "research"
-level: 1  # 技能等级
-status: active
-
-experiences:
-  - date: "2026-05-19"
-    trigger: "触发事件"
-    insight: "学到的核心洞察"
-    code_change: "实际代码变更"
-
-next_steps:
-  - action: "今后要做的事"
-    frequency: daily|weekly|monthly
-    priority: high|medium|low
-    deadline: "2026-05-20"
-    status: pending|completed
+认知能力 (cognition)        — 31 skills
+  └ 研究调研(26) / 记忆系统(3) / 学习方法(2)
+创作能力 (creation)         — 35 skills
+  └ 视觉创作(25) / 文字创作(4) / 声音创作(3) / 媒体内容(3)
+执行能力 (execution)        — 109 skills
+  └ 工程架构(45) / 数据科学(25) / 编码开发(20) / 运维部署(10) / 质量测试(9)
+交互能力 (interaction)      — 18 skills
+  └ 平台集成(16) / 沟通协作(2)
+领域专家 (domain)           — 121 skills
+  └ 商业运营(71) / 游戏开发(22) / 创意设计(16) / 安全合规(10) / 身心健康(2)
+元能力 (meta)              — 36 skills
+  └ 系统控制(26) / 自我管理(7) / 技能进化(3)
 ```
 
-## 快速开始
+## 目录结构
+```
+skills_tree_v2/
+├── index.yaml         ← 技能树索引（完整分类映射）
+├── sync_tree.py       ← 自动同步脚本
+├── evolution/         ← 进化记录（可选）
+├── migration/          ← 迁移脚本
+├── add_next_steps.py  ← 添加下一步任务
+└── daily_tasks.py     ← 查看/完成任务
+```
 
-### 1. 初始化结构
+## 自动同步（新 skill 来了怎么办）
+
+**每次新增或下载 skill 后，运行：**
 ```bash
-mkdir -p skills_tree/{evolution,migration}
-cat > skills_tree/index.yaml << 'EOF'
-meta:
-  version: "1.0"
-  total_skills: 0
-  migrated: 0
-
-tree:
-  branch_name:
-    name: "分支中文名"
-    color: "#3498db"
-    leaves:
-      leaf_name:
-        skills: []
-EOF
+cd ~/AppData/Local/hermes/skills_tree_v2
+python sync_tree.py
 ```
+脚本会自动：
+- 扫描 `~/AppData/Local/hermes/skills/` 下所有 skill
+- 与 `index.yaml` 比对，发现新增 skill
+- 根据 `CATEGORY_MAP` 自动归类
+- 更新 `index.yaml`
 
-### 2. 迁移现有技能
+**关于分类规则：**
+`sync_tree.py` 里的 `CATEGORY_MAP` 字典定义了每个 skill 的分类。
+新 skill 如果匹配到规则会自动归类；如果匹配不到，脚本会输出 `❓ skill-name — 需要手动添加`，此时需要手动把分类加到 `CATEGORY_MAP` 里。
+
+## 同步脚本用法
+
+⚠️ **必须用 hermes venv 的 Python**，系统 Python 没有 yaml 模块：
 ```bash
-python3 migration/migrate.py
+cd ~/AppData/Local/hermes/skills_tree_v2
+~/AppData/Local/hermes/hermes-agent/venv/Scripts/python sync_tree.py
 ```
 
-### 3. 添加"下一步"
+### 清理流程（定期维护用）
+
+1. 扫空目录和断链：`execute_code` 扫描 skills/ 找空目录、纯文件（断链）、无 SKILL.md 的子目录
+2. 删断链文件：`rm -f skill-name`（不是 `-rf`，因为它们是文件）
+3. 删空子目录：`rm -rf skill-dir/sub-dir`
+4. 检查父目录是否空了：`rmdir parent-dir`
+5. 同步 index.yaml：用完整 CATEGORY_MAP 重新生成
+
+### Windows 断链识别
+
+Linux symlink 在 Windows 上表现为"文件而非目录"，内容是原路径文本（如 `/home/ethanol/...`）。特征：
+- `file skill-name` 输出 `ASCII text, with no line terminators`
+- `ls -la` 显示为普通文件（非 `l` 开头）
+- 处理：`rm -f` 删除即可
+
+### 空的 references/scripts 子目录
+
+Hermes 只加载有 SKILL.md 的 skill。空的 references/scripts 不会加载但占目录。清理时：
 ```bash
-python3 add_next_steps.py
+rm -rf skills/skill-dir/references skills/skill-dir/scripts
 ```
 
-### 4. 查看今日任务
-```bash
-python3 daily_tasks.py
+输出示例：
+```
+=== 技能树同步 ===
+时间: 2026-05-28 23:30:00
+  ➕ new-skill → domain/business
+  ➖ deleted-skill — 已从 skills/ 删除
+✅ index.yaml 已更新 (共 493 个技能)
 ```
 
-### 5. 完成任务
-```bash
-python3 daily_tasks.py done "skill-name" "action-description"
-```
+Cron 任务 `skill-tree-sync`（每 6 小时）已自动同步。
 
-## 多人格分工
-技能树可以与多人格系统结合：
+## 手动更新分类
+
+如果新 skill 匹配不到规则，编辑 `sync_tree.py`，在 `CATEGORY_MAP` 中添加：
 
 ```python
-# switch_persona.py 示例
-personas = {
-    "poet": {
-        "trigger": ["写点什么"],
-        "uses_skills": ["creation/writing"]
-    },
-    "explorer": {
-        "trigger": ["去看看"],
-        "uses_skills": ["cognition/research"]
-    }
-}
+("skill-dir", "sub-skill-name"): ("branch", "leaf"),
+# 或整目录匹配：
+("skill-dir", "*"): ("branch", "leaf"),
+```
+
+然后重新运行 `sync_tree.py`。
+
+## 分类规则参考
+
+完整分支/叶子对照表见 `references/category-rules.md`。
+
+## 进化追踪（可选）
+
+如需追踪每个 skill 的使用历史，创建进化记录：
+
+```bash
+cd ~/AppData/Local/hermes/skills_tree_v2
+python add_next_steps.py
+python daily_tasks.py
 ```
 
 ## 目标状态
@@ -119,18 +135,8 @@ personas = {
 - [x] 进化记录系统
 - [x] 下一步任务系统
 - [x] 每日任务抽取
+- [x] 自动同步脚本
+- [x] 自动同步脚本
 - [ ] 自动升级算法 (level 1→2→3...)
 - [ ] 使用频率统计
 - [ ] 生疏技能提醒
-
-## 应用场景
-- AI Agent 的持续成长追踪
-- 个人知识管理系统
-- 团队技能库管理
-- 学习路径规划
-
-## 实际案例
-莫妮卡的技能树：`~/AppData/Local/hermes/skills_tree_v2/`
-- 73 个技能
-- 6 个分支
-- 每日自动生成任务清单
