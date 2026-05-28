@@ -19,17 +19,17 @@
       "schedule_display": "every 30m",
       "repeat": {
         "times": null,
-        "completed": 691
+        "completed": 692
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-05-03T09:56:27.341459+08:00",
-      "next_run_at": "2026-05-28T09:59:28.708357+08:00",
-      "last_run_at": "2026-05-28T08:59:24.294838+08:00",
-      "last_status": "ok",
-      "last_error": null,
+      "next_run_at": "2026-05-28T10:38:15.168532+08:00",
+      "last_run_at": "2026-05-28T09:38:10.002114+08:00",
+      "last_status": "error",
+      "last_error": "RuntimeError: HTTP 502 \u2014 502 Bad Gateway",
       "last_delivery_error": null,
       "deliver": "local",
       "origin": {
@@ -186,15 +186,15 @@
       "schedule_display": "every 2m",
       "repeat": {
         "times": null,
-        "completed": 4697
+        "completed": 4711
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-05-14T01:47:47.937941+08:00",
-      "next_run_at": "2026-05-28T09:31:29.154335+08:00",
-      "last_run_at": "2026-05-28T09:29:29.154335+08:00",
+      "next_run_at": "2026-05-28T10:09:15.147416+08:00",
+      "last_run_at": "2026-05-28T10:07:15.147416+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -380,5 +380,5 @@
       "workdir": null
     }
   ],
-  "updated_at": "2026-05-28T09:29:29.154335+08:00"
+  "updated_at": "2026-05-28T10:08:15.169534+08:00"
 }
