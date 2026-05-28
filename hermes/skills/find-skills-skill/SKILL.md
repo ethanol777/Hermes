@@ -300,6 +300,28 @@ For skill collections like **superpowers-zh** that aren't on ClawHub but are on 
 - `proactive-agent` - Proactive automation
 - `coding-agent` - Code generation
 
+## 搜索优先级规则
+
+找 skill 的正确顺序：
+
+1. **`openclaw skills search <keyword> --limit 10 --json`** — 最快、最准，先用这个
+2. **ClawHub 网站** — `https://clawhub.ai/skills?q=<keyword>`
+3. **GitHub API** — 只有在有明确关键词时才用，不要漫无目的地翻 Trending
+4. **自己写** — 以上全部都搜过、确认没有现成的之后，才自己写
+
+**这条规则适用于所有 skill 类型**（包括命理、工程、创意等），不要默认"这个领域没人做"。
+
+### 命理类 skill 搜索关键词参考
+
+| 类型 | 搜索关键词 |
+|------|-----------|
+| 八字 | `bazi`, `chinese astrology`, `八字`, `四柱` |
+| 奇门 | `qimen`, `奇门` |
+| 紫微斗数 | `ziwei`, `紫微斗数` |
+| 玄学综合 | `fengshui`, `易经`, `命理` |
+
+中文命理类 skill 在主流平台暂未收录，搜索时可能需要多个关键词交叉验证。
+
 ## Troubleshooting
 
 ### Rate Limits
