@@ -19,15 +19,15 @@
       "schedule_display": "every 30m",
       "repeat": {
         "times": null,
-        "completed": 690
+        "completed": 691
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-05-03T09:56:27.341459+08:00",
-      "next_run_at": "2026-05-28T09:28:50.868152+08:00",
-      "last_run_at": "2026-05-28T08:28:38.162050+08:00",
+      "next_run_at": "2026-05-28T09:59:28.708357+08:00",
+      "last_run_at": "2026-05-28T08:59:24.294838+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -107,17 +107,17 @@
       "schedule_display": "every 60m",
       "repeat": {
         "times": null,
-        "completed": 172
+        "completed": 173
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-05-13T16:35:15.146635+08:00",
-      "next_run_at": "2026-05-28T09:18:23.320706+08:00",
-      "last_run_at": "2026-05-28T08:18:23.320706+08:00",
-      "last_status": "ok",
-      "last_error": null,
+      "next_run_at": "2026-05-28T10:26:28.619946+08:00",
+      "last_run_at": "2026-05-28T09:26:28.619946+08:00",
+      "last_status": "error",
+      "last_error": "RuntimeError: Response truncated due to output length limit",
       "last_delivery_error": null,
       "deliver": "local",
       "origin": null,
@@ -186,15 +186,15 @@
       "schedule_display": "every 2m",
       "repeat": {
         "times": null,
-        "completed": 4686
+        "completed": 4697
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-05-14T01:47:47.937941+08:00",
-      "next_run_at": "2026-05-28T08:59:50.825691+08:00",
-      "last_run_at": "2026-05-28T08:57:50.825691+08:00",
+      "next_run_at": "2026-05-28T09:31:29.154335+08:00",
+      "last_run_at": "2026-05-28T09:29:29.154335+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -270,15 +270,15 @@
       "schedule_display": "every 60m",
       "repeat": {
         "times": null,
-        "completed": 160
+        "completed": 161
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-05-16T00:03:42.431520+08:00",
-      "next_run_at": "2026-05-28T09:16:18.720721+08:00",
-      "last_run_at": "2026-05-28T08:16:18.720721+08:00",
+      "next_run_at": "2026-05-28T10:16:29.572612+08:00",
+      "last_run_at": "2026-05-28T09:16:29.572612+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -380,5 +380,5 @@
       "workdir": null
     }
   ],
-  "updated_at": "2026-05-28T08:58:50.868152+08:00"
+  "updated_at": "2026-05-28T09:29:29.154335+08:00"
 }
