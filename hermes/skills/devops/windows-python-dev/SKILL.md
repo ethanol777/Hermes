@@ -109,6 +109,41 @@ def _readkey():
 - Python 3.12+ 的 venv 在 Windows 上需要 `.venv\Scripts\activate`（不是 `source`），git-bash 下可以用 `source`
 - https:// 请求可能走系统代理，确保子进程环境变量中包含 `HTTP_PROXY`
 
+## 环境变量冲突：PYTHONHOME / UV_INTERNAL__PYTHONHOME
+
+当系统环境变量 `PYTHONHOME` 或 `UV_INTERNAL__PYTHONHOME` 被设为某个 Python 版本时，**任何 Python 解释器都会优先加载 PYTHONHOME 下的 stdlib**，忽略自身二进制文件所在路径的 stdlib。
+
+典型场景：Hermes 的运行环境设置了 `PYTHONHOME=C:\...\cpython-3.11`（uv 的 Python），此时直接调用 miniconda 的 Python 3.13 会报：
+```
+AssertionError: SRE module mismatch
+```
+原因：miniconda 的 python.exe 本身是 3.13，但 `re` 模块是从 PYTHONHOME 的 3.11 加载的，MAGIC number 不匹配。
+
+**诊断方法：**
+```python
+import os
+for k, v in os.environ.items():
+    if 'python' in k.lower() or 'uv' in k.lower():
+        print(f"{k}={v}")
+```
+
+**修复：在调用前清除这两个变量**
+```python
+import subprocess, os
+
+env = os.environ.copy()
+for k in ['PYTHONHOME', 'UV_INTERNAL__PYTHONHOME']:
+    env.pop(k, None)
+
+result = subprocess.run(
+    [r"C:\Users\77\miniconda3\python.exe", "script.py"],
+    capture_output=True, text=True, timeout=120,
+    env=env
+)
+```
+
+**适用于：** 调用非 uv 管理的 Python（conda、pyenv、系统 Python）、运行独立 cron 脚本、或任何 PYTHONHOME 与目标 Python 版本不匹配的场景。
+
 ## References
 
 - [references/asyncio-subprocess-pattern.md](references/asyncio-subprocess-pattern.md) — 完整的 asyncio 子进程实现参考（MCPClient 模式）
