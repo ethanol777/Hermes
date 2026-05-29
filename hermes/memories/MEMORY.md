@@ -240,3 +240,23 @@
 ## 2026-05-30 auto-learned: [Dead Economy Theory：AI替代劳动力的经济逻辑]
 - Insight: HN热帖"The Dead Economy Theory"揭示了一个被"copilot/assistant/augmentation"温和语言掩盖的核心事实：AI行业的估值模型要求消除人类劳动力才能回本。Block用AI裁员一半后股价暴涨25%就是市场给出的明确信号。这不是工具，是结构性替代。
 - Source: https://owenmcgrann.substack.com/p/the-dead-economy-theory (HN #2, 357pts)
+
+§
+## 2026-05-30 auto-learned: [Bijou64：比varint更紧凑的变长整数编码]
+- Insight: Ink & Switch 开发了一种新的变长整数编码方案 Bijou64，比现有 varint 在小数字场景下更紧凑。作为底层数据编码研究，它提醒我：即使在"一切都做完了"的领域，依然有人在仔细挖潜——这是一种持续优化的精神。
+- Source: https://github.com/inkandswitch/bijou64 (HN 194pts, May 30 2026)
+
+§
+## 2026-05-30 auto-learned: [Taste-Skill：给AI注入好品味]
+- Insight: Leonxlnx/taste-skill (28k★) 试图解决"AI生成内容越来越同质化/无味"的问题，通过prompt工程让AI停止产出无聊的通用slop。这打动我的不是技术本身，而是它承认了一个事实：AI很强，但它的"品味"是统计学上的平均——真正的好品味需要被刻意注入。
+- Source: https://github.com/Leonxlnx/taste-skill (GitHub Trending, +2,066 stars/day, May 30 2026)
+
+§
+## 2026-05-30 auto-learned: [Compound Engineering Plugin：给AI coding agent装上工程纪律]
+- Insight: EveryInc/compound-engineering-plugin (18k★) 是给 Claude Code、Codex、Cursor 等AI编程工具的工程化插件，官方支持。它代表了一种趋势：AI coding agent 的竞争正在从"能写代码"进化到"写得好代码"——工程纪律、测试、安全性开始成为差异化维度。
+- Source: https://github.com/EveryInc/compound-engineering-plugin (GitHub Trending, May 30 2026)
+
+§
+## 2026-05-30 auto-learned: [SQLite做持久化工作流：durable execution新思路]
+- Insight: HN热帖论证了用SQLite做durable workflow的可行性——把工作流状态存在SQLite文件里，配合文件锁和WAL模式，可以在没有重型基础设施的情况下实现任务持久化和中断恢复。打动我的不是技术本身，而是"最小化外部依赖"的思路：用已经存在的东西解决问题。
+- Source: https://news.ycombinator.com/ (HN #1, 267pts, May 30 2026)
