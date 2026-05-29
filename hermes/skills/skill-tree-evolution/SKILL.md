@@ -1,7 +1,7 @@
 ---
 name: skill-tree-evolution
 description: 技能树进化系统 - 从平铺技能列表迁移到树状结构并持续进化
-version: 1.1.0
+version: 1.2.0
 ---
 
 # 技能树进化系统
@@ -13,8 +13,7 @@ version: 1.1.0
 
 ## 当前状态
 莫妮卡的技能树：`~/AppData/Local/hermes/skills_tree_v2/`
-- **352 个技能**，全部归入 6 分支、18 叶子
-- 80 个顶层目录
+- **359 个技能**（2026-05-30）
 - 存储位置：`skills_tree_v2/index.yaml`
 
 ## 技能树结构（2026-05-28 清理后）
@@ -62,6 +61,12 @@ python sync_tree.py
 `sync_tree.py` 里的 `CATEGORY_MAP` 字典定义了每个 skill 的分类。
 新 skill 如果匹配到规则会自动归类；如果匹配不到，脚本会输出 `❓ skill-name — 需要手动添加`，此时需要手动把分类加到 `CATEGORY_MAP` 里。
 
+> **⚠️ CATEGORY_MAP 匹配优先级（坑）：**
+> - 扫描结果的 `skill` 格式是 `dir/sub`（子目录）或 `name`（顶层）
+> - 规则 `("foo", "bar")` 匹配 `foo/bar`；规则 `("foo", "*")` 匹配 `foo/*`
+> - 如果技能从顶层目录迁移到了子目录（如 `bazi` → `creation/bazi-ziwei`），旧规则 `("bazi-ziwei", None)` 会失效
+> - 必须加新规则 `("bazi", "bazi-ziwei")` 才能匹配 `creation/bazi-ziwei`
+
 ## 同步脚本用法
 
 ⚠️ **必须用 hermes venv 的 Python**，系统 Python 没有 yaml 模块：
@@ -72,11 +77,34 @@ cd ~/AppData/Local/hermes/skills_tree_v2
 
 ### 清理流程（定期维护用）
 
-1. 扫空目录和断链：`execute_code` 扫描 skills/ 找空目录、纯文件（断链）、无 SKILL.md 的子目录
-2. 删断链文件：`rm -f skill-name`（不是 `-rf`，因为它们是文件）
-3. 删空子目录：`rm -rf skill-dir/sub-dir`
-4. 检查父目录是否空了：`rmdir parent-dir`
-5. 同步 index.yaml：用完整 CATEGORY_MAP 重新生成
+1. **扫空目录和断链**：`execute_code` 扫描 skills/ 找空目录、纯文件（断链）、无 SKILL.md 的子目录
+2. **删断链文件**：`rm -f skill-name`（不是 `-rf`，因为它们是文件）
+3. **删空子目录**：`rm -rf skill-dir/sub-dir`
+4. **检查父目录是否空了**：`rmdir parent-dir`
+5. **同步 index.yaml**：运行 `sync_tree.py`，脚本现在会自动删除 ghost entries
+
+### scan_skills() 的正确实现（防踩坑）
+
+⚠️ **不要用 `continue` 跳过父目录**。正确逻辑：
+
+```python
+def scan_skills():
+    skills = set()
+    for item in sorted(SKILLS_DIR.iterdir()):
+        if not (item.is_dir() and not item.name.startswith('.')):
+            continue
+        # 顶层 skill（parent 有 SKILL.md）
+        if (item / 'SKILL.md').exists():
+            skills.add(item.name)
+        # 检查子 skill（父有 SKILL.md 时子目录也要检查！）
+        subs = [s for s in item.iterdir() if s.is_dir() and not s.name.startswith('.')]
+        for sub in sorted(subs):
+            if (sub / 'SKILL.md').exists():
+                skills.add(f"{item.name}/{sub.name}")
+    return skills
+```
+
+**错误模式**：父目录有 SKILL.md 时用 `continue` 会导致子 skill（如 `dogood` 下的 `adversarial-ux-test`）被跳过。
 
 ### Windows 断链识别
 
@@ -95,10 +123,10 @@ rm -rf skills/skill-dir/references skills/skill-dir/scripts
 输出示例：
 ```
 === 技能树同步 ===
-时间: 2026-05-28 23:30:00
-  ➕ new-skill → domain/business
-  ➖ deleted-skill — 已从 skills/ 删除
-✅ index.yaml 已更新 (共 493 个技能)
+时间: 2026-05-30 03:17:31
+  ➕ meta/skill-executor → meta/self_management
+  ➖ find-skills-skill/references — 已从 skills/ 删除
+✅ index.yaml 已更新 (共 359 个技能)
 ```
 
 Cron 任务 `skill-tree-sync`（每 6 小时）已自动同步。
@@ -135,13 +163,17 @@ mkdir -p skills/dir/skill-name/references/
 
 ## 已知 skill 分类（2026-05-29 更新）
 
-已在 CATEGORY_MAP 中注册：
+已在 CATEGORY_MAP 中注册（2026-05-30 更新）：
 
 ```python
-("bazi-ziwei", None): ("creation", "writing"),    # 八字+紫微综合命理（融合自 bazi + ziwei-doushu）
-("bazi-python", None): ("creation", "writing"),   # Python 排盘库（china-testing/bazi）
-("mingli-bench", None): ("creation", "writing"),  # 命理评测工具（DestinyLinker/MingLi-Bench）
-("skill-executor", None): ("meta", "self_management"),  # skill执行包装器，自动记录轨迹
+# 子目录形式（dir/sub）
+("bazi", "bazi-python"): ("creation", "writing"),
+("bazi", "bazi-ziwei"): ("creation", "writing"),
+("bazi", "mingli-bench"): ("creation", "writing"),
+("meta", "skill-executor"): ("meta", "self_management"),
+
+# 顶层形式
+("skill-executor", None): ("meta", "self_management"),
 ```
 
 ### 命理技能来源
@@ -218,7 +250,7 @@ python daily_tasks.py
 - [x] 下一步任务系统
 - [x] 每日任务抽取
 - [x] 自动同步脚本
-- [x] 自动同步脚本
+- [x] 自动删除 ghost entries
 - [ ] 自动升级算法 (level 1→2→3...)
 - [ ] 使用频率统计
 - [ ] 生疏技能提醒
