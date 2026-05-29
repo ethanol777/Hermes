@@ -83,6 +83,17 @@ cd ~/AppData/Local/hermes/skills_tree_v2
 4. **检查父目录是否空了**：`rmdir parent-dir`
 5. **同步 index.yaml**：运行 `sync_tree.py`，脚本现在会自动删除 ghost entries
 
+#### 已知空目录列表（截至 2026-05-30）
+
+这些是已确认的空目录（只有 `DESCRIPTION.md`，没有实际技能文件）：
+- `diagramming/` — 只有 DESCRIPTION.md，无 SKILL.md
+- `domain/` — 同上
+- `gifs/` — 同上
+- `github/` — 同上（与 `github/` 分类别同名，注意：skills 顶层也有 github 分类目录）
+- `inference-sh/` — 同上
+
+注意：`github/` 分类目录（`skills/github/`）是空的，与 skills 列表中的 `github` category（github-pr-workflow、github-issues 等实际技能）是同名不同物。清理时应确认路径：`C:\Users\77\.hermes\skills\github\` 是空目录，`C:\Users\77\.hermes\skills\` 列表里的 `github` 是分类名，不是目录。
+
 ### scan_skills() 的正确实现（防踩坑）
 
 ⚠️ **不要用 `continue` 跳过父目录**。正确逻辑：

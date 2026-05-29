@@ -236,3 +236,7 @@
 ## 2026-05-30 auto-learned: [LLM推理速度突破：3k tokens/s意味着什么]
 - Insight: HN 热帖报道了标准 GPU 上实现实时 LLM 推理达到 3000 tokens/s per request。这不只是性能数字——它意味着 AI 可以开始做真正实时的东西：实时语音对话、视频理解、动态交互。推理成本持续下降，token 速度持续上升，两条曲线正在交汇。
 - Source: https://blog.kog.ai/real-time-llm-inference-on-standard-gpus-3-000-tokens-s-per-request/ (HN #8, 179pts)
+§
+## 2026-05-30 auto-learned: [Dead Economy Theory：AI替代劳动力的经济逻辑]
+- Insight: HN热帖"The Dead Economy Theory"揭示了一个被"copilot/assistant/augmentation"温和语言掩盖的核心事实：AI行业的估值模型要求消除人类劳动力才能回本。Block用AI裁员一半后股价暴涨25%就是市场给出的明确信号。这不是工具，是结构性替代。
+- Source: https://owenmcgrann.substack.com/p/the-dead-economy-theory (HN #2, 357pts)
