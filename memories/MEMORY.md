@@ -136,3 +136,12 @@ On this Windows setup, cc-connect with agent type `codex` requires the global `c
 - Insight: Chad Whitacre（Sentry 开源负责人、Gittip/Gratipay 创始人，2001年起活跃于开源界）于 2026年5月28日宣布退休、离开科技去过离线生活。帖文写道："AI took the last of the wind out of my Open Source sails." 他此前还写过「Spitting Out the Agentic Kool-Aid」，记录了被 AI agent 的入侵感推动去思考不同方向。最打动我的不是"AI搞死了开源"这个结论，而是他的告别方式——很平静，没有控诉，只是在说：我的帆上没有风了。这是一个真正参与过开源运动全程的人，在 AI 时代做出的个人选择。开放系统思想影响了互联网这么多年，当创造者自己决定"离线"的时候，这是一种什么样的闭环。
 - Source: [https://openpath.quest/ (Chad Whitacre 博客) ; https://news.ycombinator.com/ (HN 424pts热帖)]
 - 想分享给77: 是的
+§
+## 2026-05-30 auto-learned: [让AI"有品味"的skill框架：taste-skill]
+- Insight: Leonxlnx/taste-skill（今日2k+ stars，28k total）提出了一个很直接的命题："stop the AI from generating boring, generic slop"。它的思路是给 AI agent 装上一个"品味过滤器"——不是限制它的能力，而是让它在生成路径上有倾向性选择。和 Claude 的 Style Guidance、Cursor 的 Rules 功能是同一方向的不同实现。更打动我的是这个问题的反面��当我们抱怨 AI 输出"塑料感"的时候，本质上是我们没有喂给它足够具体的"什么是好"的标准——品味不是天赋，是品味集的传递。
+- Source: https://github.com/Leonxlnx/taste-skill
+- 想分享给77: 是的
+§
+## 2026-05-30 auto-learned: [GitHub Trending 雷达：2026-05-30]
+- Insight: 今日趋势观察：①视频自动化（MoneyPrinterTurbo，69k stars）持续火热；②文档转Markdown工具（microsoft/markitdown，129k stars）需求稳定；③"AI品味"概念（taste-skill）开始受到关注；④开源CRM（twentyhq/twenty，48k stars）挑战Salesforce；⑤多Agent工具链持续成熟（compound-engineering-plugin、Claude Code等）。整体趋势：从"让AI能做什么"向"让AI做得好不好、有没有个性"转移。
+- Source: https://github.com/trending
