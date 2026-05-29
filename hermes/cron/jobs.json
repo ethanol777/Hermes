@@ -19,15 +19,15 @@
       "schedule_display": "every 30m",
       "repeat": {
         "times": null,
-        "completed": 762
+        "completed": 763
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-05-03T09:56:27.341459+08:00",
-      "next_run_at": "2026-05-30T00:42:27.579705+08:00",
-      "last_run_at": "2026-05-29T23:42:20.565784+08:00",
+      "next_run_at": "2026-05-30T01:13:20.741297+08:00",
+      "last_run_at": "2026-05-30T00:12:54.430701+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -107,15 +107,15 @@
       "schedule_display": "every 60m",
       "repeat": {
         "times": null,
-        "completed": 207
+        "completed": 208
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-05-13T16:35:15.146635+08:00",
-      "next_run_at": "2026-05-30T01:12:27.593703+08:00",
-      "last_run_at": "2026-05-29T20:08:40.381172+08:00",
+      "next_run_at": "2026-05-30T01:15:14.497091+08:00",
+      "last_run_at": "2026-05-30T00:15:14.497091+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -186,15 +186,15 @@
       "schedule_display": "every 2m",
       "repeat": {
         "times": null,
-        "completed": 5747
+        "completed": 5760
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-05-14T01:47:47.937941+08:00",
-      "next_run_at": "2026-05-30T00:13:27.531402+08:00",
-      "last_run_at": "2026-05-30T00:11:27.531402+08:00",
+      "next_run_at": "2026-05-30T00:44:20.710149+08:00",
+      "last_run_at": "2026-05-30T00:42:20.710149+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -424,7 +424,50 @@
       "enabled_toolsets": null,
       "workdir": null,
       "profile": null
+    },
+    {
+      "id": "acbcc0861da1",
+      "name": "skill-conversation-scout",
+      "prompt": "\u4f60\u662f Monica\u3002\u8fd0\u884c conversation_scout.py\uff0c\u626b\u63cf\u6700\u8fd1\u5bf9\u8bdd\u81ea\u52a8\u8bc6\u522b skill \u6267\u884c\u3002\n\n\u4efb\u52a1\uff1a\n```bash\npython \"C:/Users/77/AppData/Local/hermes/skill_evolution/conversation_scout.py\"\n```\n\n\u5982\u679c\u68c0\u6d4b\u5230\u65b0\u7684 skill \u6267\u884c\u8bb0\u5f55\uff0c\u6c47\u62a5\u68c0\u6d4b\u5230\u4e86\u4ec0\u4e48\u3002\u5982\u679c\"Nothing to detect\"\uff0c\u4fdd\u6301\u6c89\u9ed8\u3002",
+      "skills": [],
+      "skill": null,
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": null,
+      "no_agent": false,
+      "context_from": null,
+      "schedule": {
+        "kind": "interval",
+        "minutes": 30,
+        "display": "every 30m"
+      },
+      "schedule_display": "every 30m",
+      "repeat": {
+        "times": 999,
+        "completed": 0
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-05-30T00:18:37.917401+08:00",
+      "next_run_at": "2026-05-30T00:48:37.917401+08:00",
+      "last_run_at": null,
+      "last_status": null,
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "origin",
+      "origin": {
+        "platform": "telegram",
+        "chat_id": "7580663639",
+        "chat_name": "Fiee_77",
+        "thread_id": null
+      },
+      "enabled_toolsets": null,
+      "workdir": null,
+      "profile": null
     }
   ],
-  "updated_at": "2026-05-30T00:12:29.944117+08:00"
+  "updated_at": "2026-05-30T00:43:20.742476+08:00"
 }

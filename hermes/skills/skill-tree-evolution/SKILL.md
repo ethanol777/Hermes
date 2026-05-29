@@ -103,6 +103,8 @@ rm -rf skills/skill-dir/references skills/skill-dir/scripts
 
 Cron 任务 `skill-tree-sync`（每 6 小时）已自动同步。
 
+**新增：conversation_scout.py**（job_id: acbcc0861da1，每30分钟）— 扫描对话历史自动识别 skill 执行并写入日志，详见 `references/conversation-scout-patterns.md`。
+
 ## 手动更新分类
 
 编辑 `sync_tree.py` 里的 `CATEGORY_MAP` 字典，添加新 skill 的分类规则。
@@ -139,6 +141,7 @@ mkdir -p skills/dir/skill-name/references/
 ("bazi-ziwei", None): ("creation", "writing"),    # 八字+紫微综合命理（融合自 bazi + ziwei-doushu）
 ("bazi-python", None): ("creation", "writing"),   # Python 排盘库（china-testing/bazi）
 ("mingli-bench", None): ("creation", "writing"),  # 命理评测工具（DestinyLinker/MingLi-Bench）
+("skill-executor", None): ("meta", "self_management"),  # skill执行包装器，自动记录轨迹
 ```
 
 ### 命理技能来源
@@ -148,6 +151,42 @@ mkdir -p skills/dir/skill-name/references/
 | bazi-ziwei | jinchenma94/bazi-skill + Renhuai123/ziwei-doushu | 对话式命理分析，含八字经典+倪海夏紫微体系 |
 | bazi-python | china-testing/bazi | Python 排盘库，含五行分数/冲合刑会 |
 | mingli-bench | DestinyLinker/MingLi-Bench | LLM 命理评测基准，160道选择题 |
+
+### Monica Skill Evolution 系统
+
+skill evolution 系统在 `C:/Users/77/AppData/Local/hermes/skill_evolution/`：
+
+```
+skill_evolution/
+├── __init__.py
+├── logger.py          — log_skill_run() 记录执行轨迹，JSONL格式
+├── optimizer.py        — analyze_failure_patterns() + generate_edit_suggestions()
+├── evolution_cron.py   — 每小时定时分析脚本（cron job 调用）
+├── skill_runner.py     — 命令行执行+记录工具（支持 --analyze）
+├── skill_log.py        — 快速单行记录工具
+├── conversation_scout.py — 对话历史扫描，自动识别skill执行
+└── logs/
+    ├── skill_runs.jsonl  — 执行日志
+    └── suggestions/       — cron自动生成的分析报告
+```
+
+**快速记录命令**：
+```bash
+python C:/Users/77/AppData/Local/hermes/skill_evolution/skill_log.py \
+    --skill bazi-ziwei --task "给77算命" --outcome success
+```
+
+**runner 工具**：
+```bash
+python C:/Users/77/AppData/Local/hermes/skill_evolution/skill_runner.py \
+    --skill bazi-ziwei --task "算命" --outcome success \
+    --trajectory '[{"step":1,"action":"排盘","result":"成功"}]' \
+    --analyze
+```
+
+**自动分析**：cron job `skill-evolution-analyzer`（job_id 80a6fe2e56a2）每小时跑 evolution_cron.py，分析失败模式，生成建议写到 suggestions/。
+
+**注意**：execute_code 的 Python 有 SRE module mismatch 问题，用 subprocess 调用 `sys.executable`（即 hermes venv 的 Python）执行。
 
 ### 命理参考文件
 
