@@ -122,6 +122,7 @@ Web UI: https://clawhub.ai/skills
 ### Quick Reference
 
 See `references/notable-skills.md` for a curated table of interesting skills discovered on ClawHub, organized by category (top downloaded, Chinese ecosystem, AI news, self-improvement).
+See `references/fortune-repos.md` for GitHub-discovered 命理/算命 repositories (八字、紫微斗数、评测基准) with implementation reference value.
 
 ## Search Strategies
 
