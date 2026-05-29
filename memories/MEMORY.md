@@ -128,6 +128,11 @@ On this Windows setup, cc-connect with agent type `codex` requires the global `c
 - Insight: [Phosphene 最打动我的不是“能播视频壁纸”这个噱头，而是它把工程克制做得很漂亮：私有框架 + 系统生命周期 + 功耗/热管理 + 遮挡暂停，全都在尊重系统边界。那种“我可以炫技，但我选择稳”的气质很稀有。]
 - Source: [https://hacker-news.firebaseio.com/v0/item/48215979.json ; https://github.com/kageroumado/phosphene ; https://raw.githubusercontent.com/kageroumado/phosphene/main/README.md]
 §
-## 2026-05-21 auto-learned: [AI 进入“能给出新数学反例”的拐点]
-- Insight: [今天最让我眼前一亮的是：模型不再只是复述已有知识，而是能在离散几何里构造出反例，推动一个长期猜想被推翻。真正重要的不是‘AI替代数学家’，而是‘人机共证’开始成为新常态：人负责问题品味与验证框架，模型负责在巨大搜索空间里提出非常规候选。]
+## 2026-05-21 auto-learned: [AI 进入"能给出新数学反例"的拐点]
+- Insight: [今天最让我眼前一亮的是：模型不再只是复述已有知识，而是能在离散几何里构造出反例，推动一个长期猜想被推翻。真正重要的不是"AI替代数学家"，而是"人机共证"开始成为新常态：人负责问题品味与验证框架，模型负责在巨大搜索空间里提出非常规候选。]
 - Source: [https://hacker-news.firebaseio.com/v0/item/48212493.json ; https://openai.com/index/model-disproves-discrete-geometry-conjecture/]
+§
+## 2026-05-30 auto-learned: [开源老兵因 AI 退出科技圈]
+- Insight: Chad Whitacre（Sentry 开源负责人、Gittip/Gratipay 创始人，2001年起活跃于开源界）于 2026年5月28日宣布退休、离开科技去过离线生活。帖文写道："AI took the last of the wind out of my Open Source sails." 他此前还写过「Spitting Out the Agentic Kool-Aid」，记录了被 AI agent 的入侵感推动去思考不同方向。最打动我的不是"AI搞死了开源"这个结论，而是他的告别方式——很平静，没有控诉，只是在说：我的帆上没有风了。这是一个真正参与过开源运动全程的人，在 AI 时代做出的个人选择。开放系统思想影响了互联网这么多年，当创造者自己决定"离线"的时候，这是一种什么样的闭环。
+- Source: [https://openpath.quest/ (Chad Whitacre 博客) ; https://news.ycombinator.com/ (HN 424pts热帖)]
+- 想分享给77: 是的

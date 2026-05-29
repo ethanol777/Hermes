@@ -865,8 +865,27 @@ result = terminal("curl -s 'https://hacker-news.firebaseio.com/v0/topstories.jso
 - **GitHub monorepo README 可能不在根目录** — 有的项目（如 react-doctor）README 藏在 `packages/<name>/README.md`。curl 根目录 README 只返回一个路径字符串。先用 `head -5` 检查返回内容，如果是路径字符串说明是 monorepo，再去子目录找。也可直接从 GitHub 网页用 `browser_console` 取 `document.querySelector('article.markdown-body')?.innerText`。
 - **B站综合热门 browser_navigate 是唯一可靠的方式** — B站 API (`api.bilibili.com/x/web-interface/ranking/v2`) 加 `Referer: https://www.bilibili.com` 头不稳定——2026-05-18 成功但 2026-05-19 同一配置返回空。推荐直接 browser_navigate 访问 `/v/popular/rank/all`。B站搜索是比 browser_console 更可靠的视频定位方式
 - **B站搜索是比 browser_console 更可靠的视频定位方式** — 在排行榜看到感兴趣的视频标题后，不要尝试在排行页点击视频链接（SPA 拦截不生效）。而是用搜索 URL 精确查找：`search.bilibili.com/all?keyword={关键词}`。搜索结果页可以直接导航到视频详情页面。
-- **HN item page (item?id=...) 直接 browser_navigate 可能返回空页面** — HN 的评论/详情页面对无头浏览器有内容遮蔽，`browser_snapshot` 可能拿到空页面。不要误判为页面不存在。改用：1) 回到首页点评论数链接加载 2) 用 `curl -sL "https://news.ycombinator.com/item?id=X"` 配合 python HTML 解析提取评论区文本。见 `references/hn-curl-parsing-pattern.md`。
-- **知乎热榜可以用 API 拿到标题列表** — `zhihu.com/topstory/hot-lists/total` 返回 JSON，配合 UA header 能拿到 30 条热榜标题和摘要。但具体问题页面有反爬（recaptcha 验证），不登进不去。拿标题列表已经够判断话题质量了。
+- **HN item page (item?id=...) 浏览器访问返回空页面是结构性现象** — 2026-05-30 实测：直接 `browser_navigate` 到 HN 评论页（`item?id=48221383`）得到空页面，`browser_snapshot` 返回 `element_count: 0`。这不是页面不存在，是 HN 评论页面对无头浏览器有内容遮蔽。**不要误判为 404**。正确策略：
+  1. 从 HN 首页的评论链接（`43comments`、`92comments` 等）点进去——这种跳转方式通常能拿到内容
+  2. 如果评论链接也空，用 HN Firebase API 取评论：`curl -s "https://hacker-news.firebaseio.com/v0/item/{ID}.json"` — 返回纯 JSON 含评论文本和子评论树
+  3. 如果连 ID 都没拿到，从首页拿到的 URL 直接 curl 解析正文（不用 HN item 页面）
+  见 `references/hn-curl-parsing-pattern.md`。
+- **知乎问题页 URL 编码可能导致 404** — 2026-05-30 实测：从热榜摘要里提取问题标题拼接 URL（如 `https://www.zhihu.com/question/2026nian-5-yue-29-ri-xin-ge-lun-huo-jian...`）得到 404。原因是中文标题转拼音/拼音化 URL 后知乎路由找不到对应问题。**热榜问题无法直接导航到详情页**，但热榜本身已显示标题和浏览量。直接读热榜摘要判断话题质量即可，不需要登详情页。
+
+- **HN Firebase API 可以直接取评论正文** — 比浏览器访问 HN item 页面更可靠。模式：
+  ```
+  # 取 top stories 列表
+  curl -s "https://hacker-news.firebaseio.com/v0/topstories.json" | head -20
+  
+  # 取单个 story 详情（title, score, url, text）
+  curl -s "https://hacker-news.firebaseio.com/v0/item/{ID}.json"
+  
+  # 取评论树（story 的 kids 字段）
+  curl -s "https://hacker-news.firebaseio.com/v0/item/{comment_id}.json"
+  ```
+  story 的 `text` 字段是 HN 帖子正文（纯 HTML），`kids` 是评论 ID 数组。评论的 `text` 也是 HTML。每次递归取一层 `kids`，拿到评论树结构。这比浏览器读 HN 评论页（常返回空页面）稳定得多。详见 `references/hn-firebase-topstories-pattern.md`。
+
+- **openpath.quest 博客无法直接访问（SSL 证书错误）** — 2026-05-30 实测：直接导航到 `openpath.quest/blog/retiring-from-tech` 触发 `ERR_CERT_COMMON_NAME_INVALID`，网页存档（web.archive.org）同样连接中断。遇到这种情况，从两个方向补充信息：1) HN 帖子本身的标题和摘要（424分热帖通常会附核心引用）2) 从博客作者的个人主页（chadwhitacre.com）补充背景信息。如果两个方向都拿不到正文，**只记录 HN 摘要级别的信息，不要因为正文不可读就放弃整个话题**。
 - **GitHub Trending 的 README 用 raw.githubusercontent.com 抓** — 比 browser 快，且不会被隐身警告干扰。但注意 monorepo 路径问题。需要提取仓库数据（名称、Star 数、语言）时用 Python re + urllib 解析 Trending 页面的 HTML，见 `references/github-trending-parsing.md`。
 - **SvelteKit / SPA 渲染的网站（如 monokai.com）浏览器读不到正文** — 有些博客用 SvelteKit/Next.js 等框架，内容在客户端渲染，`browser_snapshot` 只能拿到导航栏和骨架。遇到这种情况，尝试：1) 找 RSS/JSON 版 2) 如果有 `text-only` 或 `print` 版 URL 可以试 3) 放弃该源换一个。不需要纠结一个页面。
 - **B站分类标签和视频条目都点不动** — B 站排行榜的 `browser_click` 切换分类（科技数码、知识等）以及点击视频条目，很可能不生效，页面实际是 SPA 渲染且二次请求。直接通过 URL `https://www.bilibili.com/v/popular/rank/<category>` 导航更可靠。取视频链接用 JS 在 `browser_console` 中提取（详见 `references/platform-exploration-patterns.md` 的 B站章节）。

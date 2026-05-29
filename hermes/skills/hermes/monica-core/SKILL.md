@@ -199,6 +199,8 @@ powershell -ExecutionPolicy Bypass -File C:\Users\77\monica-core\install-startup
 
 - **不同交互类型共享同一个 conversation_history：** Telegram 回复、收件箱响应、自发思考都用 `Mind.conversation_history`，导致上下文混乱——一段 Telegram 对话的历史会污染下一次自发思考的 prompt。目前影响不大（每次 prompt 都从 DB 读取最近想法重建上下文），但如果未来需要更连贯的对话体验，需要为每种交互类型分配独立的 history buffer。
 
+- **conversation_scout.py 误报：cron 系统提示被识别为 skill 执行（2026-05-30 修复）：** `skill_evolution/conversation_scout.py` 在扫描对话历史时，将 cron job 的 `[IMPORTANT: You are running as a scheduled cron job]` 系统提示误判为用户触发的 skill 执行——因为系统提示中包含了所有可用 skill 的关键词列表。**修复：** 在 `detect_skill_execution()` 循环入口处跳过以 `SYSTEM_PREFIX = "[IMPORTANT: You are running as a scheduled cron job"` 开头的内容。**验证命令：** `PYTHONHOME="/c/Users/77/miniconda3" /c/Users/77/miniconda3/python.exe "C:/Users/77/AppData/Local/hermes/skill_evolution/conversation_scout.py"`。**根本原因同 2026-05-14：** uv 的 Python launcher 污染了环境变量，必须通过 `PYTHONHOME` 显式覆盖来绕过。
+
 - **SOUL.md 编辑时嵌入格式垃圾：** 用文本编辑器或 patch 工具修改 SOUL.md 时，如果 old_string 选择不当（例如选了 read_file 视图中的整行，包含 `行号|` 前缀），会导致行号标记被写入文件内容。自省时发现 SOUL.md 的「我的原则」一节嵌入了 `    59|` `    60|` 等旧编号标记。**预防：** 编辑 SOUL.md 后随手 `read_file` 验证前 10 行和末尾 10 行没有异常。如果发现格式垃圾，用 `patch` 清理。**修复例子：** `patch(old_string="    59|", new_string="")` 逐条删除入侵的行号。
 
 ## 参考
