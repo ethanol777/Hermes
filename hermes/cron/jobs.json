@@ -19,15 +19,15 @@
       "schedule_display": "every 30m",
       "repeat": {
         "times": null,
-        "completed": 758
+        "completed": 759
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-05-03T09:56:27.341459+08:00",
-      "next_run_at": "2026-05-29T20:37:25.032408+08:00",
-      "last_run_at": "2026-05-29T19:37:17.420830+08:00",
+      "next_run_at": "2026-05-29T21:07:45.652569+08:00",
+      "last_run_at": "2026-05-29T20:07:37.176203+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -107,15 +107,15 @@
       "schedule_display": "every 60m",
       "repeat": {
         "times": null,
-        "completed": 206
+        "completed": 207
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-05-13T16:35:15.146635+08:00",
-      "next_run_at": "2026-05-29T20:08:00.037927+08:00",
-      "last_run_at": "2026-05-29T19:08:00.037927+08:00",
+      "next_run_at": "2026-05-29T21:08:40.381172+08:00",
+      "last_run_at": "2026-05-29T20:08:40.381172+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -186,15 +186,15 @@
       "schedule_display": "every 2m",
       "repeat": {
         "times": null,
-        "completed": 5693
+        "completed": 5708
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-05-14T01:47:47.937941+08:00",
-      "next_run_at": "2026-05-29T20:08:25.007393+08:00",
-      "last_run_at": "2026-05-29T20:06:25.007393+08:00",
+      "next_run_at": "2026-05-29T20:38:45.620047+08:00",
+      "last_run_at": "2026-05-29T20:36:45.620047+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -378,54 +378,7 @@
       },
       "enabled_toolsets": null,
       "workdir": null
-    },
-    {
-      "id": "ac7726be10ac",
-      "name": "skill-tree-sync",
-      "prompt": "\u4f60\u662f\u83ab\u59ae\u5361\u3002\u8fd0\u884c\u6280\u80fd\u6811\u540c\u6b65\u811a\u672c\u3002\n\n\u4efb\u52a1\uff1a\u6267\u884c `C:/Users/77/AppData/Local/hermes/skills_tree_v2/sync_tree.py`\n\n```bash\ncd C:/Users/77/AppData/Local/hermes/skills_tree_v2 && python sync_tree.py\n```\n\n\u8bfb\u53d6\u8f93\u51fa\u3002\u5982\u679c\u6709\u65b0\u589e skill\uff08\u2795\uff09\uff0c\u628a\u53d8\u66f4\u8bb0\u5f55\u8ffd\u52a0\u5230 `C:/Users/77/AppData/Local/hermes/memories/MEMORY.md`\uff0c\u683c\u5f0f\uff1a\n```\n\u00a7\n## \u6280\u80fd\u6811\u540c\u6b65: \u65b0\u589e skill\n- \u65f6\u95f4: YYYY-MM-DD HH:MM\n- \u65b0\u589e: skill-name \u2192 branch/leaf\n```\n\n\u5982\u679c\u8f93\u51fa \"\u65e0\u9700\u66f4\u65b0\" \u5219\u4e0d\u505a\u4efb\u4f55\u8bb0\u5f55\u3002",
-      "skills": [
-        "skill-tree-evolution"
-      ],
-      "skill": "skill-tree-evolution",
-      "model": null,
-      "provider": null,
-      "base_url": null,
-      "script": "sync_tree.bat",
-      "no_agent": false,
-      "context_from": null,
-      "schedule": {
-        "kind": "interval",
-        "minutes": 360,
-        "display": "every 360m"
-      },
-      "schedule_display": "every 360m",
-      "repeat": {
-        "times": null,
-        "completed": 3
-      },
-      "enabled": true,
-      "state": "scheduled",
-      "paused_at": null,
-      "paused_reason": null,
-      "created_at": "2026-05-28T23:26:57.082093+08:00",
-      "next_run_at": "2026-05-29T23:29:32.665360+08:00",
-      "last_run_at": "2026-05-29T17:29:32.665360+08:00",
-      "last_status": "ok",
-      "last_error": null,
-      "last_delivery_error": null,
-      "deliver": "origin",
-      "origin": {
-        "platform": "telegram",
-        "chat_id": "7580663639",
-        "chat_name": "Fiee_77",
-        "thread_id": null
-      },
-      "enabled_toolsets": [
-        "terminal"
-      ],
-      "workdir": null,
-      "profile": null
     }
   ],
-  "updated_at": "2026-05-29T20:07:25.033408+08:00"
+  "updated_at": "2026-05-29T20:37:45.653578+08:00"
 }
