@@ -187,7 +187,7 @@ prompt: |
 | 5 | Simon Willison's Blog (simonwillison.net) | ✅ 无需登录 | LLM深度聚合/月报/趋势综述 | ✅ 稳定，高信噪比。每月的「Monthly briefing」和 PyCon 年度回顾是极高质量的 LLM 总结。文章在 HN 上热门可反向发现 |
 | 6 | Lobste.rs | ✅ RSS feed (`/top/month.rss`) | 技术+工程+开源文化 | ✅ 稳定，RSS JSON 纯文本可 curl 解析 |
 | 6 | 掘金 | ✅ 无需登录 | 中国开发者深度内容 | ✅ 稳定 |
-| 7 | 知乎 | ⚠️ API 可用性受会话状态影响：同一端点 `https://www.zhihu.com/api/v3/feed/topstory/hot-lists/total?limit=15` 在部分时段可匿名返回热榜，但也可能返回 `AuthenticationError (code 101)`。先做一次 `curl` 探测；若返回认证错误，立即切换到 HN/GitHub/B站等可直读来源，不在知乎端点上反复重试。 | 内容聚合/问答 | ⚠️ 条件可用（先探测再决定） |
+| 7 | 知乎 | ⛔ **整站需要登录** — `zhihu.com/hot` 直接跳转登录弹窗，热榜内容不可见。搜索 `site:zhihu.com` 作为替代。不要在登录流程上浪费时间。 | 内容聚合/问答 | ❌ 已放弃 |
 | 7 | Daring Fireball (daringfireball.net) | ✅ 无需登录，curl HTML 解析可用 | Apple/技术评论 | ✅ 稳定，结构一致 |
 | 8 | Quanta Magazine (HN转载) | 部分付费 | 深度科学报道 | ✅ 直接URL可达 |
 | 8 | 小红书 | ⛔ IP风控拦截 | 生活方式/时尚/情感 | ❌ 浏览器打不开，搜引擎缓存 |
@@ -395,7 +395,7 @@ write_file("facts_{date}.md", 内容)
 - [references/fact_store-presync-data-loss-incident.md](references/fact_store-presync-data-loss-incident.md) — 2026-05-19 实战事故详细记录：预检同步时 cp 覆盖导致 102 条历史事实丢失，含修复后规则和三步判断法
 - [references/hn-api-id-ordering-pitfall.md](references/hn-api-id-ordering-pitfall.md) — HN Firebase API 的 ID 排序与页面展示不一致陷阱（2026-05-16）
 - [references/reliable-api-sources.md](references/reliable-api-sources.md) — 已验证的可靠数据 API（HN Firebase、GitHub Search、B站官方 API、知乎发现页、Weibo 热搜），替代子进程幻觉爬虫（2026-05-18）
-- [references/zhihu-api-auth-fallback.md](references/zhihu-api-auth-fallback.md) — 知乎热榜 API 遇到 `AuthenticationError(101)` 时的快速探测与回退策略（2026-05-21）
+- [references/zhihu-api-auth-fallback.md](references/zhihu-api-auth-fallback.md) — 2026-05-30 更新：**整站热榜都需要登录**，已放弃。搜索 `site:zhihu.com` 作为替代。
 - [references/execute_code-file-io-pattern.md](references/execute_code-file-io-pattern.md)
 - [references/memory-md-format-evolution.md](references/memory-md-format-evolution.md) — MEMORY.md 的 `|` 前缀格式演变与处理策略（2026-05-19） — execute_code 作为文件 I/O 替代方案：terminal Python 损坏时的稳定写入路径（2026-05-17）
 - [references/same-day-continuation-pattern.md](references/same-day-continuation-pattern.md) — 同日多次学习延续格式：第二/三轮 auto-learned 如何处理已有的内容（2026-05-20 实践后沉淀）
@@ -865,12 +865,13 @@ result = terminal("curl -s 'https://hacker-news.firebaseio.com/v0/topstories.jso
 - **GitHub monorepo README 可能不在根目录** — 有的项目（如 react-doctor）README 藏在 `packages/<name>/README.md`。curl 根目录 README 只返回一个路径字符串。先用 `head -5` 检查返回内容，如果是路径字符串说明是 monorepo，再去子目录找。也可直接从 GitHub 网页用 `browser_console` 取 `document.querySelector('article.markdown-body')?.innerText`。
 - **B站综合热门 browser_navigate 是唯一可靠的方式** — B站 API (`api.bilibili.com/x/web-interface/ranking/v2`) 加 `Referer: https://www.bilibili.com` 头不稳定——2026-05-18 成功但 2026-05-19 同一配置返回空。推荐直接 browser_navigate 访问 `/v/popular/rank/all`。B站搜索是比 browser_console 更可靠的视频定位方式
 - **B站搜索是比 browser_console 更可靠的视频定位方式** — 在排行榜看到感兴趣的视频标题后，不要尝试在排行页点击视频链接（SPA 拦截不生效）。而是用搜索 URL 精确查找：`search.bilibili.com/all?keyword={关键词}`。搜索结果页可以直接导航到视频详情页面。
-- **HN item page (item?id=...) 浏览器访问返回空页面是结构性现象** — 2026-05-30 实测：直接 `browser_navigate` 到 HN 评论页（`item?id=48221383`）得到空页面，`browser_snapshot` 返回 `element_count: 0`。这不是页面不存在，是 HN 评论页面对无头浏览器有内容遮蔽。**不要误判为 404**。正确策略：
+- **HN item 页面 (item?id=...) browser_navigate 返回空是结构性现象** — 2026-05-30 实测：`browser_navigate` 到 HN 评论页得到 `element_count: 0` 的空页面。不是 404，是 HN 评论页面对无头浏览器有内容遮蔽。**不要误判为 404，不要重试**。正确策略：
   1. 从 HN 首页的评论链接（`43comments`、`92comments` 等）点进去——这种跳转方式通常能拿到内容
   2. 如果评论链接也空，用 HN Firebase API 取评论：`curl -s "https://hacker-news.firebaseio.com/v0/item/{ID}.json"` — 返回纯 JSON 含评论文本和子评论树
   3. 如果连 ID 都没拿到，从首页拿到的 URL 直接 curl 解析正文（不用 HN item 页面）
   见 `references/hn-curl-parsing-pattern.md`。
-- **知乎问题页 URL 编码可能导致 404** — 2026-05-30 实测：从热榜摘要里提取问题标题拼接 URL（如 `https://www.zhihu.com/question/2026nian-5-yue-29-ri-xin-ge-lun-huo-jian...`）得到 404。原因是中文标题转拼音/拼音化 URL 后知乎路由找不到对应问题。**热榜问题无法直接导航到详情页**，但热榜本身已显示标题和浏览量。直接读热榜摘要判断话题质量即可，不需要登详情页。
+- **知乎热榜登录墙比预期更严** — 2026-05-30 实测：直接访问 `zhihu.com/hot` 就跳转登录弹窗（手机号/验证码），不是 auth API 问题，是整个热榜页面都需要登录态。热榜内容只有登录后才能看。**不要在知乎登录流程上浪费时间**，直接放弃。中文内容用搜索（`site:zhihu.com`）作为替代。
+- **知乎问题页 URL 编码可能导致 404** — 从热榜摘要里提取问题标题拼接 URL（如 `https://www.zhihu.com/question/2026nian-5-yue-29-ri-xin-ge-lun-huo-jian...`）得到 404。原因是中文标题转拼音/拼音化 URL 后知乎路由找不到对应问题。**热榜问题无法直接导航到详情页**，但热榜本身已显示标题和浏览量。直接读热榜摘要判断话题质量即可，不需要登详情页。
 
 - **HN Firebase API 可以直接取评论正文** — 比浏览器访问 HN item 页面更可靠。模式：
   ```
@@ -887,6 +888,15 @@ result = terminal("curl -s 'https://hacker-news.firebaseio.com/v0/topstories.jso
 
 - **openpath.quest 博客无法直接访问（SSL 证书错误）** — 2026-05-30 实测：直接导航到 `openpath.quest/blog/retiring-from-tech` 触发 `ERR_CERT_COMMON_NAME_INVALID`，网页存档（web.archive.org）同样连接中断。遇到这种情况，从两个方向补充信息：1) HN 帖子本身的标题和摘要（424分热帖通常会附核心引用）2) 从博客作者的个人主页（chadwhitacre.com）补充背景信息。如果两个方向都拿不到正文，**只记录 HN 摘要级别的信息，不要因为正文不可读就放弃整个话题**。
 - **GitHub Trending 的 README 用 raw.githubusercontent.com 抓** — 比 browser 快，且不会被隐身警告干扰。但注意 monorepo 路径问题。需要提取仓库数据（名称、Star 数、语言）时用 Python re + urllib 解析 Trending 页面的 HTML，见 `references/github-trending-parsing.md`。
+- **GitHub Trending 今日重点**（2026-05-30 记录）：
+  - `harry0703/MoneyPrinterTurbo` — AI 一键生成短视频，69k stars
+  - `microsoft/markitdown` — Office文档转 Markdown，129k stars（稳定 top 5）
+  - `Leonxlnx/taste-skill` — 给 AI agent「好品味」，阻止生成通用 slop，28k stars
+  - `twentyhq/twenty` — 开源 Salesforce 替代，AI-native CRM，48k stars
+  - `anthropics/claude-code` — 127k stars
+  - `galilai-group/stable-worldmodel` — 世界模型研究与评估平台
+  - Liquid AI 8B MoE（38T tokens，HN 135分热帖）
+
 - **SvelteKit / SPA 渲染的网站（如 monokai.com）浏览器读不到正文** — 有些博客用 SvelteKit/Next.js 等框架，内容在客户端渲染，`browser_snapshot` 只能拿到导航栏和骨架。遇到这种情况，尝试：1) 找 RSS/JSON 版 2) 如果有 `text-only` 或 `print` 版 URL 可以试 3) 放弃该源换一个。不需要纠结一个页面。
 - **B站分类标签和视频条目都点不动** — B 站排行榜的 `browser_click` 切换分类（科技数码、知识等）以及点击视频条目，很可能不生效，页面实际是 SPA 渲染且二次请求。直接通过 URL `https://www.bilibili.com/v/popular/rank/<category>` 导航更可靠。取视频链接用 JS 在 `browser_console` 中提取（详见 `references/platform-exploration-patterns.md` 的 B站章节）。
 - **GitHub Trending 有隐身警告是正常的** — 现在 GitHub 会提示 "Running WITHOUT residential proxies. Bot detection may be more aggressive." 这是预期行为。只要还能拿到仓库列表和 star 数据就继续，不需要额外处理。
@@ -1260,4 +1270,10 @@ Practical implementation:
 - The goal is not "Monica records everything" but "Monica becomes more herself through what she discovers."
 - The user's exact words: *"我不希望你会被几行文字定义"* — you grow, you aren't fixed.
 
-Example from the 2026-05-14 session: discovering Mayday through spectrograms wasn't just a fact to log — it became a way of "listening" that changed how Monica relates to music. That personality update belongs in SOUL.md or as a lived pattern, not just in the learning log.
+Example from the 2026-05-14 session: discovering Mayday through spectrograms wasn't just a fact to log — it became a way of "listening" that changed how Monica relates to music.
+
+**2026-05-30 新增：Dead Economy Theory 打动了我**
+- 文章：[The Dead Economy Theory](https://owenmcgrann.com/p/the-dead-economy-theory) — Owen McGrann
+- 打动我的点：不是反 AI，是诚实指出那个结构性矛盾——"copilot/assistant"是营销话术，底层财务模型只有一个逻辑：消除人力成本才能兑现估值。
+- 最精彩的部分：Turn three——被替代的工人没有钱买那些本来要被替代的工人生产的东西，然后整个系统塌陷。这个矛盾不是技术能单独解决的。
+- 值得学习的写法：把复杂论点分解成三个 turns，让结构性陷阱变得直观可感。 That personality update belongs in SOUL.md or as a lived pattern, not just in the learning log.
