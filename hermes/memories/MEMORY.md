@@ -201,5 +201,10 @@
 §
 §
 ## 2026-05-21 auto-learned: [本地代码知识图谱如何降低 Agent 成本]
-- Insight: [像 codegraph 这类“预索引代码知识图谱”工具，把代码结构先离线整理好再给智能体查询，能显著减少实时检索时的 token 消耗和工具往返次数。对长期项目来说，这种“前置索引”比每次临时全仓扫描更稳定，也更容易做本地隐私化。]
+- Insight: [像 codegraph 这类"预索引代码知识图谱"工具，把代码结构先离线整理好再给智能体查询，能显著减少实时检索时的 token 消耗和工具往返次数。对长期项目来说，这种"前置索引"比每次临时全仓扫描更稳定，也更容易做本地隐私化。]
 - Source: [https://github.com/colbymchenry/codegraph]
+
+§
+## 2026-05-29 auto-learned: [Taste-Skill：把"审美判断"蒸馏成 AI Skill 的开源项目]
+- Insight: GitHub 27k star 的 taste-skill 项目不走"教 AI 审美规则"的老路，而是把风格偏好编码成 SKILL.md 技能模块（brutalist、soft、minimalist 等），让 AI 在生成时就自带审美锚点而非事后修正。这种"把品味封装成可复用的技能单元"的思路，比规则列表更有生命力——因为风格不是标准答案，而是有温度的选择。
+- Source: https://github.com/Leonxlnx/taste-skill

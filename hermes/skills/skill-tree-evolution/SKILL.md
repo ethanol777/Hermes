@@ -105,15 +105,58 @@ Cron 任务 `skill-tree-sync`（每 6 小时）已自动同步。
 
 ## 手动更新分类
 
-如果新 skill 匹配不到规则，编辑 `sync_tree.py`，在 `CATEGORY_MAP` 中添加：
+编辑 `sync_tree.py` 里的 `CATEGORY_MAP` 字典，添加新 skill 的分类规则。
 
-```python
-("skill-dir", "sub-skill-name"): ("branch", "leaf"),
-# 或整目录匹配：
-("skill-dir", "*"): ("branch", "leaf"),
+## GitHub 操作技巧
+
+### 快速克隆新 repo
+
+```bash
+# --depth=1 只拉最新提交，速度快
+git clone --depth=1 https://github.com/user/repo
 ```
 
-然后重新运行 `sync_tree.py`。
+### GitHub API 限速问题
+
+匿名 API 每小时60次，clone 仓库不受限制。遇到 403 rate limit 时：
+- 用 `git clone --depth=1` 替代 API 调用
+- 不需要 README 内容时，直接 clone 后本地读文件
+- `execute_code` 的 `urllib` 走代理，可能不受 rate limit
+
+### 复制 repo ���容到 skills 目录
+
+```bash
+cp -r /tmp/repo-name/SKILL.md skills/dir/skill-name/
+cp -r /tmp/repo-name/references/ skills/dir/skill-name/references/
+mkdir -p skills/dir/skill-name/references/
+```
+
+## 已知 skill 分类（2026-05-29 更新）
+
+已在 CATEGORY_MAP 中注册：
+
+```python
+("bazi-ziwei", None): ("creation", "writing"),    # 八字+紫微综合命理（融合自 bazi + ziwei-doushu）
+("bazi-python", None): ("creation", "writing"),   # Python 排盘库（china-testing/bazi）
+("mingli-bench", None): ("creation", "writing"),  # 命理评测工具（DestinyLinker/MingLi-Bench）
+```
+
+### 命理技能来源
+
+| Skill | 来源仓库 | 说明 |
+|-------|---------|------|
+| bazi-ziwei | jinchenma94/bazi-skill + Renhuai123/ziwei-doushu | 对话式命理分析，含八字经典+倪海夏紫微体系 |
+| bazi-python | china-testing/bazi | Python 排盘库，含五行分数/冲合刑会 |
+| mingli-bench | DestinyLinker/MingLi-Bench | LLM 命理评测基准，160道选择题 |
+
+### 命理参考文件
+
+bazi-ziwei 内置参考文件（从原 bazi-skill 继承）：
+- `references/classical-texts.md` — 九本经典典籍论命摘要
+- `references/dayun-rules.md` — 大运顺逆/起运计算
+- `references/shichen-table.md` — 时辰对照/五鼠遁元
+- `references/wuxing-tables.md` — 五行/天干地支/十神/藏干表
+- `references/ziwei-basics.md` — 紫微斗数倪海夏体系（自建）
 
 ## 分类规则参考
 
