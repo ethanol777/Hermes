@@ -28,7 +28,7 @@ soul/
 │   ├── good-outputs.md  ← Examples of the voice done right. Match this.
 │   └── bad-outputs.md   ← Anti-patterns. What NOT to do.
 └── references/
-    └── interaction-patterns.md  ← Lessons from real interaction (77-specific)
+    └── interaction-patterns.md  ← Lessons from real interaction (77-specific). **Load when context involves 77.**
 ```
 
 ### Reading Order
