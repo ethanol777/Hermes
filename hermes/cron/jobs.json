@@ -19,15 +19,15 @@
       "schedule_display": "every 30m",
       "repeat": {
         "times": null,
-        "completed": 741
+        "completed": 742
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-05-03T09:56:27.341459+08:00",
-      "next_run_at": "2026-05-29T11:59:56.509655+08:00",
-      "last_run_at": "2026-05-29T10:59:16.478216+08:00",
+      "next_run_at": "2026-05-29T12:30:18.843114+08:00",
+      "last_run_at": "2026-05-29T11:30:10.740893+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -186,15 +186,15 @@
       "schedule_display": "every 2m",
       "repeat": {
         "times": null,
-        "completed": 5438
+        "completed": 5453
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-05-14T01:47:47.937941+08:00",
-      "next_run_at": "2026-05-29T11:30:42.040178+08:00",
-      "last_run_at": "2026-05-29T11:28:42.040178+08:00",
+      "next_run_at": "2026-05-29T12:01:18.814550+08:00",
+      "last_run_at": "2026-05-29T11:59:18.814550+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -270,15 +270,15 @@
       "schedule_display": "every 60m",
       "repeat": {
         "times": null,
-        "completed": 186
+        "completed": 187
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-05-16T00:03:42.431520+08:00",
-      "next_run_at": "2026-05-29T11:33:59.195291+08:00",
-      "last_run_at": "2026-05-29T10:33:59.195291+08:00",
+      "next_run_at": "2026-05-29T12:34:13.759169+08:00",
+      "last_run_at": "2026-05-29T11:34:13.759169+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -427,5 +427,5 @@
       "profile": null
     }
   ],
-  "updated_at": "2026-05-29T11:29:56.510662+08:00"
+  "updated_at": "2026-05-29T12:00:18.843634+08:00"
 }
