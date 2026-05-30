@@ -399,7 +399,8 @@ write_file("facts_{date}.md", 内容)
 - [references/fact_store-presync-data-loss-incident.md](references/fact_store-presync-data-loss-incident.md) — 2026-05-19 实战事故详细记录：预检同步时 cp 覆盖导致 102 条历史事实丢失，含修复后规则和三步判断法
 - [references/hn-api-id-ordering-pitfall.md](references/hn-api-id-ordering-pitfall.md) — HN Firebase API 的 ID 排序与页面展示不一致陷阱（2026-05-16）
 - [references/reliable-api-sources.md](references/reliable-api-sources.md) — 已验证的可靠数据 API（HN Firebase、GitHub Search、B站官方 API、知乎发现页、Weibo 热搜），替代子进程幻觉爬虫（2026-05-18）
-- [references/zhihu-api-auth-fallback.md](references/zhihu-api-auth-fallback.md) — 2026-05-30 更新：**整站热榜都需要登录**，已放弃。搜索 `site:zhihu.com` 作为替代。
+- [references/zhihu-api-auth-fallback.md](references/zhihu-api-auth-fallback.md) — 2026-05-30 更新：整站热榜都需要登录，已放弃。搜索 `site:zhihu.com` 作为替代。
+- [references/node-js-as-api-parser.md](references/node-js-as-api-parser.md) — Node.js `node -e` 作为 API 解析替代方案：当 execute_code Python 和 terminal Python 都损坏时，Node 18+ 内置 fetch 可完全替代，支持 GitHub/HN/B站等 JSON API（2026-05-30）。
 - [references/execute_code-file-io-pattern.md](references/execute_code-file-io-pattern.md)
 - [references/github-api-failure-pattern.md](references/github-api-failure-pattern.md) — GitHub Search API 静默失败模式与 browser_navigate fallback 实测（2026-05-30）
 - [references/github-trending-parsing.md](references/github-trending-parsing.md)
@@ -869,7 +870,8 @@ result = terminal("curl -s 'https://hacker-news.firebaseio.com/v0/topstories.jso
 - **cron prompt 要指定具体平台** — 只说 "去学东西" 太模糊，monica 倾向于走捷径搜技术。给一个平台列表让她随机挑。
 - **平台需要不登录也能看** — 小红书公开笔记可读，知乎专栏、B站视频、GitHub Trending 都不需要登录。别跑登录流程，浪费时间。
 - **GitHub monorepo README 可能不在根目录** — 有的项目（如 react-doctor）README 藏在 `packages/<name>/README.md`。curl 根目录 README 只返回一个路径字符串。先用 `head -5` 检查返回内容，如果是路径字符串说明是 monorepo，再去子目录找。也可直接从 GitHub 网页用 `browser_console` 取 `document.querySelector('article.markdown-body')?.innerText`。
-- **B站综合热门 browser_navigate 是唯一可靠的方式** — B站 API (`api.bilibili.com/x/web-interface/ranking/v2`) 加 `Referer: https://www.bilibili.com` 头不稳定——2026-05-18 成功但 2026-05-19 同一配置返回空。推荐直接 browser_navigate 访问 `/v/popular/rank/all`。B站搜索是比 browser_console 更可靠的视频定位方式
+- **B站排行榜 browser_navigate 是唯一可靠的方式** — B站 API (`api.bilibili.com/x/web-interface/ranking/v2`) 不稳定——2026-05-18 成功但 2026-05-19 同一配置返回空。**但是从 Node.js (`node -e "fetch(...)")` 调用同一 API 端点工作正常**（2026-05-30 验证），说明问题在 curl/git-bash 的请求头处理，而非 API 本身。推荐从 Node.js 调用 B站 API。
+- **B站搜索是比 browser_console 更可靠的视频定位方式** — 在排行榜看到感兴趣的视频标题后，不要尝试在排行页点击视频链接（SPA 拦截不生效）。而是用搜索 URL 精确查找：`search.bilibili.com/all?keyword={关键词}`。搜索结果页可以直接导航到视频详情页面。
 - **B站搜索是比 browser_console 更可靠的视频定位方式** — 在排行榜看到感兴趣的视频标题后，不要尝试在排行页点击视频链接（SPA 拦截不生效）。而是用搜索 URL 精确查找：`search.bilibili.com/all?keyword={关键词}`。搜索结果页可以直接导航到视频详情页面。
 - **HN item 页面 (item?id=...) browser_navigate 返回空是结构性现象** — 2026-05-30 实测：`browser_navigate` 到 HN 评论页得到 `element_count: 0` 的空页面。不是 404，是 HN 评论页面对无头浏览器有内容遮蔽。**不要误判为 404，不要重试**。
   - **另一层风险：链接可能本身已死** — 2026-05-30 实测：HN 热帖 "MCP is dead?" 链接到 `quandri.io/blog/mcp-is-dead`，该 URL 返回 404（整篇博文已被删除或改名）。HN 链接到已删除博文时，只能从评论区讨论（177条）和 HN 分数（206）反推内容价值。
@@ -971,6 +973,7 @@ tail -1 fact_store.jsonl  # 应该看到 {"id":"...","fact":...} 结尾
 | `patch` | ✅ 稳定 | MEMORY.md 追加（用唯一 old_string） |
 | `terminal cat >> << 'EOF'` | ✅ 稳定 | MEMORY.md 多行追加 |
 | `terminal echo '...' >> file` | ⚠️ 仅限纯文本 | JSONL 追加（内容含单引号/撇号会损坏） |
+| `terminal('node -e "..."')` | ✅ 稳定（git-bash 内置 Node 18+） | JSON API 调用 + 解析（GitHub/HN/B站等）、文本提取 |
 | `execute_code` | ❌ 可能在某些 session 损坏 | stdlib 不工作时不考虑 |
 | `terminal('python3 -c ...')` | ❌ MSYS2 Python 损坏 | encodings 模块缺失 |
 
