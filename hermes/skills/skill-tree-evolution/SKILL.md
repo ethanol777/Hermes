@@ -254,7 +254,7 @@ python C:/Users/77/AppData/Local/hermes/skill_evolution/skill_runner.py \
 
 **注意**：execute_code 的 Python 有 SRE module mismatch 问题，用 subprocess 调用 `sys.executable`（即 hermes venv 的 Python）执行。
 
-### conversation_scout.py 执行环境（重要坑）
+### evolution_cron.py / conversation_scout.py 执行环境（重要坑）
 
 ⚠️ **cron job 里的 `python` 命令会失败**：PATH 里的 `python` 解析到 Hermes uv Python（3.11），该环境存在 SRE module mismatch，import re/json 时会炸：
 
@@ -262,20 +262,27 @@ python C:/Users/77/AppData/Local/hermes/skill_evolution/skill_runner.py \
 AssertionError: SRE module mismatch
 ```
 
-**正确执行方式**：使用 miniconda Python + 干净环境：
-```bash
-env -i PATH="/c/Users/77/miniconda3:/c/Windows/system32:/c/Windows" \
-    /c/Users/77/miniconda3/python.exe \
-    C:/Users/77/AppData/Local/hermes/skill_evolution/conversation_scout.py
-```
+**正确执行方式（按推荐顺序）**：
 
-**注意**：不要 `which python` 来查路径——它返回的是 Hermes uv Python（已损坏），不是 miniconda 的。miniconda Python 的正确路径是 `/c/Users/77/miniconda3/python.exe`。
+1. **`.local/bin/python3.12.exe`（推荐，最简单）**：
+   ```bash
+   "C:/Users/77/.local/bin/python3.12.exe" \
+       C:/Users/77/AppData/Local/hermes/skill_evolution/evolution_cron.py
+   ```
+   这是 Hermes 自带的干净 Python，能 import json/re 不报错。
+
+2. **miniconda Python + 干净环境**：
+   ```bash
+   env -i PATH="/c/Users/77/miniconda3:/c/Windows/system32:/c/Windows" \
+       /c/Users/77/miniconda3/python.exe \
+       C:/Users/77/AppData/Local/hermes/skill_evolution/conversation_scout.py
+   ```
 
 **验证是否走对 Python**：
 ```bash
-env -i PATH="/c/Users/77/miniconda3:/c/Windows/system32:/c/Windows" \
-    /c/Users/77/miniconda3/python.exe -c "import json, re; print('ok')"
+python3.12.exe -c "import json, re; print('ok')"
 ```
+如果输出 `ok` 就是对的；如果 `AssertionError` 就是走了 Hermes uv Python。
 
 **已知误检测（2026-05-30）**：`detect_skill_execution()` 的"skill short name"模糊匹配逻辑会把顶级目录名（`github`、`creative` 等）误报为 skill。这些目录是分类文件夹而非实际 skill，导致误写入 `skill_runs.jsonl`。需要修复方向：
 1. 严格匹配：在扫描 skills 目录时，排除顶级目录本身（只看有 SKILL.md 的真实 skill）
