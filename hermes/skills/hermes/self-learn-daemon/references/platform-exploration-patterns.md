@@ -81,7 +81,7 @@ curl -s "https://api.github.com/search/repositories?q=created:>2026-05-10&sort=s
 - 有隐身警告是正常的，页面内容完整可用
 - 用 `browser_snapshot` 获取仓库列表（标题、描述、星数、今日/本周新增星数）
 
-**方式 B: raw.githubusercontent.com 读 README（推荐）**
+**方式 B: raw.githubusercontent.com 读 README（英文文件推荐）**
 ```bash
 # 快速读根目录 README，用 head -5 先检查是否 monorepo
 curl -sL "https://raw.githubusercontent.com/{owner}/{repo}/main/README.md" | head -5
@@ -93,6 +93,8 @@ curl -sL "https://raw.githubusercontent.com/{owner}/{repo}/main/packages/<name>/
 # 读完整内容
 curl -sL "https://raw.githubusercontent.com/{owner}/{repo}/main/README.md" | head -200
 ```
+
+**⚠️ 中文 README（如 README_zh.md）走 raw.githubusercontent.com 大概率返回空。** 2026-05-31 实测：VoxCPM 的 `README_zh.md` raw URL 返回 0 字节。中文项目改用 `browser_navigate('https://github.com/{owner}/{repo}/blob/main/README_zh.md')` 读 blob 页面。
 
 **方式 C: 浏览器取 README 正文**
 ```

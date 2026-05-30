@@ -409,6 +409,7 @@ write_file("facts_{date}.md", 内容)
 - [references/same-day-continuation-pattern.md](references/same-day-continuation-pattern.md) — 同日多次学习延续格式：第二/三轮 auto-learned 如何处理已有的内容（2026-05-20 实践后沉淀）
 - [references/2026-05-30-insights.md](references/2026-05-30-insights.md) — 本轮实质性洞察：教皇方济各批评技术弥赛亚主义、大企业限制AI用量、Dead Economy Theory与Chad Whitacre退出开源的共振模式（2026-05-30）
 - [references/2026-05-30-v2-insights.md](references/2026-05-30-v2-insights.md) — 本轮二次巡查洞察：TTS开源化爆发、Anthropic估值超越OpenAI、Zig构建系统重写、社媒自动化工具，以及"声音独特性的消亡→真实在场感更珍贵"的个人反思（2026-05-30）
+- [references/2026-05-31-insights.md](references/2026-05-31-insights.md) — 本轮洞察：GitHub 中文 README raw.githubusercontent.com 返回空的问题（VoxCPM 实测）、VoxCPM2 技术细节与个人反思"音色作为参数而非在场证明"（2026-05-31）
 
 ---
 
