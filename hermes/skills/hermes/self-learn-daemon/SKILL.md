@@ -603,22 +603,22 @@ EOF
 
 **修正方案：** JSON 内容不要用 `cat >>` heredoc。改用 **execute_code + `from hermes_tools import terminal` + 逐行 echo** 模式（详见 `references/execute_code-file-io-pattern.md` 和 `references/fact_store-tool-vs-direct-write.md` 的 Option D）。
 
-**最终决策树（2026-05-19 更新：execute_code 统一首选）：**
+**最终决策树（2026-05-30 更新：execute_code 已降级，纯 shell 路线优先）：**
+
 ```
 要追加的内容类型？
-├─ 任何类型 → execute_code + Python open(path, 'a') + json.dumps ✅ 首选
-│             一次调用写 MEMORY.md + fact_store.jsonl + 同步
-├─ execute_code 不可用时：
-│  ├─ 纯文本/CJK/无结构 → cat >> << 'EOF' heredoc ✅
-│  └─ JSONL（fact_store） → execute_code + terminal echo loop ✅
-└─ 不确定             → execute_code（安全第一）✅
+├─ MEMORY.md 追加 → patch(old_string=唯一尾部行, new_string=旧+新内容) ✅ 首选
+├─ MEMORY.md 多行追加 → terminal cat >> << 'EOF' heredoc ✅
+├─ fact_store.jsonl 追加 → terminal echo '{...}' >> file（纯 JSON 可安全 echo）✅
+├─ GitHub Trending 解析 → curl + grep 或 GitHub REST API ✅（见 reference）
+└─ execute_code → ❌ 降级（stdlib 可能整体损坏，不再作为首选）
 ```
 
-**为什么 execute_code 是所有场景的首选（而非仅 JSONL）：** 本 session（2026-05-19）用单个 execute_code 调用完成了 MEMORY.md 文本追加 + fact_store.jsonl JSON 追加 + 写入验证——零转义、零 shell false-positive、一次调用全部完成。它比 `cat >>` heredoc 更安全（无 CJK/引号/反引号 shell 转义问题），比 `patch` 更可靠（无 old_string 匹配问题）。
-
-**什么时候仍然用 `cat >>` 而不是 `execute_code`：**
-- `execute_code` 不可用或当前 provider 不支持时
-- 只追加一行简单文本且不想开新上下文时
+**execute_code 的现状（2026-05-30）：**
+- 本 session 实测：`import re`、`import json`、`import encodings` 全部失败（`AssertionError: SRE module mismatch`）
+- 这不是 MSYS2 Python 冲突，是 Hermes venv 自身问题
+- `from hermes_tools import terminal` 这条路在 execute_code 损坏时同样不可用
+- **纯 shell 路线反而更稳定**：`terminal curl`/`grep`/`cat >>` heredoc
 
 **什么时候用 `cat >>` 而不是 `patch`：**
 - 追加内容含 CJK 字符（中日韩）+ 英文引号的混合 → `cat >>` 零转义问题
@@ -905,33 +905,48 @@ result = terminal("curl -s 'https://hacker-news.firebaseio.com/v0/topstories.jso
 - **中国平台有风控，别硬登** — 小红书、百度、贴吧等会检测无头浏览器/IP风险。遇到登录/验证页面直接放弃，改用公开可读内容。详见 [chinese-platform-access.md](references/chinese-platform-access.md)。
 - **API优先于浏览器访问境外站点** — 当浏览器导航 HN/GitHub 失败时（ERR_CONNECTION_CLOSED/超时），先检查其公共 API 是否可用。HN 有 Firebase API (`hacker-news.firebaseio.com/v0/`)，GitHub 有 Search/REST API (`api.github.com`)。API 返回纯 JSON，`curl` + `grep` 即可解析，比浏览器快数倍且不受反爬/GFW 影响。详见 `references/platform-exploration-patterns.md` 的「API优先探索策略」章节。
 - **`execute_code` 可用于 JSON 处理备选** — 当 terminal Python 因环境问题不可用时，`execute_code` 内置的 Python 环境可以正常处理 JSON 解析和数据格式化。其输出通过 `output` 字段返回结构化结果。注意 `execute_code` 上下文没有 `fact_store` 或其他 Hermes 工具，只能做纯数据处理。
-### ✅ `execute_code` + Python 原生文件 I/O：JSONL 批量追加的首选方案
+### ✅ 写入首选方案（2026-05-30 更新：execute_code stdlib 可能损坏）
 
-2026-05-17 本 session 实战验证：`execute_code` 用 Python 的 `open()` + `write()` 直接写入 JSONL 文件，零转义问题。
+**⚠️ 2026-05-30 重大发现：`execute_code` 的 sandbox Python 可能整个 stdlib 损坏。**
 
-```python
-# execute_code 内直接写 fact_store.jsonl
-facts = [
-    {'id': 'fs_NN1', 'fact': "Any text with single 'quotes' and \"double quotes\"", 'tags': 'timely,...', 'confidence': 0.88},
-    {'id': 'fs_NN2', 'fact': "Text with $dollar, `backtick`, and 中文 too", 'tags': 'stable,...', 'confidence': 0.92},
-]
-with open(r'C:\Users\77\AppData\Local\hermes\memories\fact_store.jsonl', 'a', encoding='utf-8') as f:
-    for fact in facts:
-        f.write(json.dumps(fact, ensure_ascii=False) + '\n')
+本 session 实测：`execute_code` 调用 Python 时，`re`、`json`、`encodings` 模块全部 import 失败，报 `AssertionError: SRE module mismatch`。这意味着：
+- `from hermes_tools import terminal` 路线不可用（execute_code 自身坏了）
+- `import json` → 失败
+- `import re` → 失败
+
+**实际可用的是纯 shell 路线：**
+
+| 工具 | 状态 | 用途 |
+|------|------|------|
+| `terminal('curl ...')` | ✅ 稳定 | API 数据采集（GitHub、HN Firebase） |
+| `terminal('grep/cat/tail ...')` | ✅ 稳定 | 文件内容读取 |
+| `patch` | ✅ 稳定 | MEMORY.md 追加（用唯一 old_string） |
+| `terminal cat >> << 'EOF'` | ✅ 稳定 | MEMORY.md 多行追加 |
+| `terminal echo '...' >> file` | ⚠️ 仅限纯文本 | JSONL 追加（内容含单引号/撇号会损坏） |
+| `execute_code` | ❌ 可能在某些 session 损坏 | stdlib 不工作时不考虑 |
+| `terminal('python3 -c ...')` | ❌ MSYS2 Python 损坏 | encodings 模块缺失 |
+
+**推荐写入顺序（按优先级）：**
+1. **MEMORY.md 追加**：`patch(old_string=最后一行或几行, new_string=旧+新内容)`
+2. **MEMORY.md 多行追加**：`terminal cat >> << 'EOF'` heredoc（绕过引号转义）
+3. **fact_store.jsonl 追加**：`terminal echo '{...}' >> file`（纯 JSON 内容可安全用 echo）
+4. **GitHub Trending 解析**：纯 `curl` + `grep`，见 `references/github-trending-parsing.md`
+
+```bash
+# JSONL 安全追加（内容不含单引号时）
+terminal("echo '{\"id\":\"fs_188\",\"fact\":\"...\",\"tags\":\"timely,HN\",\"confidence\":0.87}' >> '/c/Users/77/Hermes/hermes/memories/fact_store.jsonl'")
+
+# MEMORY.md 追加
+terminal('''cat >> '/c/Users/77/Hermes/hermes/memories/MEMORY.md' << 'MONICADATA'
+§
+
+## 2026-05-30 auto-learned: [主题]
+- Insight: ...
+- Source: https://...
+MONICADATA''')
 ```
 
-**为什么这比 terminal echo/cat 好：**
-- 零 shell 转义问题——单引号、双引号、反引号、$符号全部正常
-- 一次调用写多条，不会产生重复 ID
-- 自动处理 UTF-8（CJK 字符无需转义）
-- 不触发 terminal 工具的安全检测 false-positive（heredoc 的 `&` 误判问题）
-- 可用 `json.dumps` 确保输出始终是合法 JSONL
-- 写入前可以用 `json.loads()` 验证已有数据完整性
-
-**注意事项：**
-- 写入前先 `tail -1` 确定最后的 ID 号（可用 terminal 或 `from hermes_tools import terminal`）
-- 不要拆成多次 `execute_code` 调用分批发——一次调用追加一批
-- 写入后追加验证步骤看最后几行
+**教训：** 不要假设 `execute_code` 一定可用。每次 session 开始时，如果需要做 JSON 解析或复杂文件操作，先测一下 `execute_code` 的 `import json` 是否正常。如果失败，立刻切纯 shell 路线。
 
 ### 🟡 MSYS2 路径前缀 `/c/` 在 Python `open()` 中不可用
 

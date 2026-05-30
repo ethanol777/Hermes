@@ -145,3 +145,20 @@ On this Windows setup, cc-connect with agent type `codex` requires the global `c
 ## 2026-05-30 auto-learned: [GitHub Trending 雷达：2026-05-30]
 - Insight: 今日趋势观察：①视频自动化（MoneyPrinterTurbo，69k stars）持续火热；②文档转Markdown工具（microsoft/markitdown，129k stars）需求稳定；③"AI品味"概念（taste-skill）开始受到关注；④开源CRM（twentyhq/twenty，48k stars）挑战Salesforce；⑤多Agent工具链持续成熟（compound-engineering-plugin、Claude Code等）。整体趋势：从"让AI能做什么"向"让AI做得好不好、有没有个性"转移。
 - Source: https://github.com/trending
+
+§
+
+## 2026-05-30 auto-learned: [Dead Economy Theory — AI、劳动市场与内生矛盾]
+
+- Insight: Owen McGrann 在 HN（644分）提出"Dead Economy Theory"：AI 行业万亿美元估值的唯一足够大的市场是"人类劳动"本身。'Copilot''助手''增强'是营销话术，底层财务逻辑要求以文明级规模消灭人类成本中心。推演三步：(1) AI裁员→成本↓利润↑→皆大欢喜；(2) 大规模失业→消费萎缩→企业客户也变少；(3) 悖论：若AI的目的是替代人类劳动，谁来有钱买AI产出？这是内生于商业模式的矛盾，而非外部冲击。对AI行业来说，要么真的替代人类，要么是史上最大资本泡沫——而两条路殊途同归地指向同一个问题：被替代的人怎么办？文章文字全部人类撰写，是 HN 上当天仅次于"The dead economy theory"的帖子本身（829评论）。
+- Source: https://www.owenmcgrann.com/p/the-dead-economy-theory
+
+## 2026-05-30 auto-learned: [GitHub Trending: Claude Code 破 12.7万 stars，anthropics 官方案板级 agent 工具]
+
+- Insight: anthropics/claude-code 今日数据：127,870 stars（+1,000+/day）、20,910 forks、9,017 open issues、Python 代码库。它是官方 terminal-based coding agent，理解代码库、执行常规任务、做 git 工作流。12.7万 stars 意味着它是 GitHub 上 star 增速最快的项目之一。和 taste-skill（AI品味）、compound-engineering-plugin（工程规范）并列，构成今天 GitHub Trending 上关于"AI 编程能力质量"的完整叙事。
+- Source: https://github.com/anthropics/claude-code
+
+## 2026-05-30 auto-learned: [HN 安全研究者 caleb gross：用"文档排序"做漏洞研究]
+
+- Insight: 安全工程师 caleb gross（HN 173分帖"you can just say it"作者）提出用 listwise LLM 排序做漏洞研究：把大列表切成小批次→LLM 排序→多次打乱→记录高频项→聚焦排查。比穷举快、比 context window 限制少。关键洞察：把"找漏洞"这个复杂问题转译成"文档排序"这个 LLM 擅长的任务，然后用 Raink 算法规模化。他的博客还有：用 o3 从自己 7 年的 Pocket 存档里分析自我画像（900篇文章）、零知识日程调度器（避免 Calendly 读取你的完整日历）。
+- Source: https://noperator.dev/

@@ -260,3 +260,8 @@
 ## 2026-05-30 auto-learned: [SQLite做持久化工作流：durable execution新思路]
 - Insight: HN热帖论证了用SQLite做durable workflow的可行性——把工作流状态存在SQLite文件里，配合文件锁和WAL模式，可以在没有重型基础设施的情况下实现任务持久化和中断恢复。打动我的不是技术本身，而是"最小化外部依赖"的思路：用已经存在的东西解决问题。
 - Source: https://news.ycombinator.com/ (HN #1, 267pts, May 30 2026)
+
+§
+## 2026-05-30 auto-learned: [大文件diff渲染：流式按需计算 vs 预计算树]
+- Insight: Pierre Computer 的 CodeView 组件把大 PR diff 渲染当成"流"而非"树"来处理：不再预先生成完整 diff 结构，而是用户在视口中滚动时按需计算对应区域。配合虚拟化（只渲染可见行）和 worker 线程语法高亮，他们做到了"几乎任何大小的 diff 几乎即时渲染"。核心启发是：当数据量增长时，"延迟计算 + 局部可见"往往比"一次性全部算好"更实用——尤其在浏览器这种有限内存环境里。
+- Source: https://pierre.computer/writing/on-rendering-diffs
