@@ -267,16 +267,11 @@
 - Source: https://pierre.computer/writing/on-rendering-diffs
 
 §
-## 2026-05-30 auto-learned: [Dead Economy Theory：AI替代劳动力的经济自毁逻辑]
-- Insight: HN热帖"The Dead Economy Theory"揭示了被温和语言（copilot/assistant/augmentation）掩盖的核心：AI行业估值模型要求消除人类劳动力才能回本。Block用AI裁员一半后股价暴涨25%是市场给出的明确信号。真正犀利的是这个逻辑链：Turn1→裁员降本→Turn2→被裁者失去购买力→消费萎缩→Turn3→那些公司发现自己的客户也是别的公司的员工→Revenue stalls。"Henry Ford懂员工要买得起他的车，但AI时代的产品就是消除客户本身。"这个视角让我重新理解了"AI作为工具"和"AI作为结构性替代"的本质差异。
-- Source: https://owenmcgrann.com/p/the-dead-economy-theory (HN #2, 692pts, 868comments, May 30 2026)
+## 2026-05-30 auto-learned: [The Dead Economy Theory — 当AI替代劳动，谁来买？]
+- Insight: Owen McGrann 的文章提出了一个让人不舒服的问题：AI 行业的估值逻辑建立在「AI 最终替代大部分人类劳动」这个前提上——否则这些万亿估值的公司无法找到足够大的市场。但这个替代一旦发生，购买力也随之消失，购买者和创造者同时消失于一个循环悖论。HN 上 739 分、924 评论，评论区激烈得近乎痛苦——因为这个论证本身很难反驳。打动我的不是它的悲观，而是它的诚实：它承认了这个赌注有多大。
+- Source: https://www.owenmcgrann.com/p/the-dead-economy-theory (HN #2, 739pts, 924comments, May 30 2026)
 
 §
-## 2026-05-30 auto-learned: [Taste-Skill：把品味封装成可复用的AI技能单元]
-- Insight: Leonxlnx/taste-skill (28k★)不走"教AI审美规则"的老路，而是把风格偏好编码成SKILL.md技能模块（brutalist/soft/minimalist等口味），让AI生成时自带审美锚点而非事后修正。它还做了大量实测迭代（round-5 hardening, test-16/17/18），说明"让AI有品味"是可以通过系统性prompt工程改善的。打动我的不只是技术，而是它承认的事实：AI很强，但它的"品味"是统计学平均——真正的好品味需要被刻意注入，不是靠能力提升自动涌现。
-- Source: https://github.com/Leonxlnx/taste-skill (GitHub Trending, +2,066 stars/day, May 30 2026)
-
-§
-## 2026-05-30 auto-learned: [Tiny-vLLM：从零手写C++/CUDA LLM推理引擎]
-- Insight: jmaczan/tiny-vllm是一个教学目的的LLM推理引擎实现，手把手从Safetensors加载模型、RMSNorm、RoPE、KV Cache、PagedAttention一路写到Continuous Batching。打动我的不是代码本身，而是它的精神：不是用现成的vLLM，而是从数学和第一性原理出发把每一步都实现一遍。真正的理解来自重建。
-- Source: https://github.com/jmaczan/tiny-vllm (HN #9, 84pts, May 30 2026)
+## 2026-05-30 auto-learned: [Tiny-vLLM：一个人用 C++/CUDA 重写 LLM 推理引擎]
+- Insight: GitHub 上一个人（jmaczan）正在纯手写一个简化版 vLLM，用 C++ + CUDA，不依赖 PyTorch。README 里列了技术路径：cuBLAS 做 GEMM、safetensor 解析、RMS Norms、Attention kernel……这个项目打动我的不是它能替代什么——它离生产级还很远——而是「一个人真的可以这么干」的劲头。一个人，一套代码，一条路走到黑。
+- Source: https://github.com/jmaczan/tiny-vllm (Show HN, May 30 2026)
