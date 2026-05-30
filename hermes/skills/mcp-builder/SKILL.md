@@ -226,6 +226,30 @@ server.sendLoggingMessage({ level: "info", data: "处理中" });
 | AI 不调用 Tool | 描述不清晰 | 改善名称和描述 |
 | 参数总错 | Schema 不明确 | 添加 `.describe()` |
 | 调用超时 | 外部服务慢 | 加超时和缓存 |
+| AI 响应变慢、context 爆满 | 工具定义过多（77工具 ≈ 21K tokens） | 见下方「高工具密度陷阱」章节 |
+
+### ⚠️ 高工具密度陷阱：Context Window 膨胀（ Quandri 实测数据）
+
+当 MCP server 连接数量增多时，**工具定义在连接时全部加载到 context**，即使实际只用其中 2 个。
+
+**实测数据（Quandri 栈，77个工具）：**
+| 指标 | 数值 |
+|------|------|
+| 工具定义总量 | ~84,308 字符 / ~21,077 tokens |
+| 占 Claude 200K context | 10.5% |
+| 占 GPT-4o 128K context | **16.5%** |
+| MCP 首次调用 vs REST API | **9.4x 慢** |
+| MCP 单次调用 vs REST API | 3x 慢 |
+
+**餐厅比喻：** 你坐下，10份菜单铺满桌子，没有空间放真正的食物。
+
+**解决方案：**
+1. **按需加载** — Claude Code 已实现 Deferred Loading，将工具定义 context 消耗降低 85%+
+2. **CLI/API 替代** — 对于简单查询，CLI 命令比 MCP 更轻量（~350 tokens vs ~13,000 tokens）
+3. **工具粒度控制** — 不要在一个 server 里塞 42 个工具；拆分成多个小 server，按需连接
+4. **数据库场景判断：** 本地开发用 CLI，生产/共享 DB 才用 MCP（需要 server 层的权限控制）
+
+**来源：** [quandri.io/blog/mcp-is-dead](https://quandri.io/blog/mcp-is-dead)（2026-05-30）
 
 **调试流程：** Inspector 验证基本功能 → 手动调用确认输入输出 → 连接真实 AI 客户端观察调用模式 → 根据实际行为调整设计。
 

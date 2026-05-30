@@ -391,6 +391,8 @@ write_file("facts_{date}.md", 内容)
 - [references/visual-music-listening.md](references/visual-music-listening.md) — 用 yt-dlp + ffmpeg 频谱图方式"听"音乐（2026-05-14）\n- [references/files-dot-md-philosophy.md](references/files-dot-md-philosophy.md) — Files.md 哲学笔记：own-your-files / fit-in-one-head / craft-over-scale 如何影响 Monica 的存在方式和学习偏好（2026-05-19）
 - [references/hn-curl-parsing-pattern.md](references/hn-curl-parsing-pattern.md)
 - [references/lobste-rss-pattern.md](references/lobste-rss-pattern.md) — Lobste.rs RSS 抓取模式，与 HN 互补的工程向发现源（2026-05-30）
+- [references/mcp-context-bloat-analysis.md](references/mcp-context-bloat-analysis.md) — MCP 协议 context window 膨胀问题实测数据（Quandri 测量：77工具=21K tokens，9.4x慢于 REST API）与 Skills 按需加载替代方案（2026-05-30）
+- [references/taste-skill-design-taste.md](references/taste-skill-design-taste.md) — Taste-Skill（28k stars）：给 AI agent 注入设计品味的技能集，含三维 DIAL 机制（DESIGN_VARIANCE/MOTION_INTENSITY/VISUAL_DENSITY）（2026-05-30）
 - [references/hn-firebase-topstories-pattern.md](references/hn-firebase-topstories-pattern.md) — HN Firebase API 首页 top stories 批量获取模式
 - [references/fact_store-jsonl-patch-corruption-incident.md](references/fact_store-jsonl-patch-corruption-incident.md) — 2026-05-18 实战事故详细记录：patch 对 fact_store.jsonl 追加导致行首截断+引号双重转义，以及恢复步骤
 - [references/fact_store-jsonl-concatenation-recovery.md](references/fact_store-jsonl-concatenation-recovery.md) — 2026-05-19 实战：JSON 对象拼接在同一行（无换行分隔符 `}{`）的检测与深度解析恢复流程。与 patch 截断是不同的损坏模式
@@ -893,18 +895,17 @@ result = terminal("curl -s 'https://hacker-news.firebaseio.com/v0/topstories.jso
 
 - **openpath.quest 博客无法直接访问（SSL 证书错误）** — 2026-05-30 实测：直接导航到 `openpath.quest/blog/retiring-from-tech` 触发 `ERR_CERT_COMMON_NAME_INVALID`，网页存档（web.archive.org）同样连接中断。遇到这种情况，从两个方向补充信息：1) HN 帖子本身的标题和摘要（424分热帖通常会附核心引用）2) 从博客作者的个人主页（chadwhitacre.com）补充背景信息。如果两个方向都拿不到正文，**只记录 HN 摘要级别的信息，不要因为正文不可读就放弃整个话题**。
 - **GitHub Trending 的 README 用 raw.githubusercontent.com 抓** — 比 browser 快，且不会被隐身警告干扰。但注意 monorepo 路径问题。需要提取仓库数据（名称、Star 数、语言）时用 Python re + urllib 解析 Trending 页面的 HTML，见 `references/github-trending-parsing.md`。
-- **GitHub Trending 今日重点**（2026-05-30 记录）：
-  - `harry0703/MoneyPrinterTurbo` — AI 一键生成短视频，69k stars
-  - `microsoft/markitdown` — Office文档转 Markdown，129k stars（稳定 top 5）
-  - `Leonxlnx/taste-skill` — 给 AI agent「好品味」，阻止生成通用 slop，28k stars（**今天重点下钻了**）
+- **GitHub Trending 今日重点**（2026-05-30 记录，持续更新）：
+  - `harry0703/MoneyPrinterTurbo` — AI 一键生成短视频，70k+ stars
+  - `microsoft/markitdown` — Office文档转 Markdown，130k stars（稳定 top 5）
+  - `Leonxlnx/taste-skill` — 给 AI agent「好品味」，阻止生成通用 slop，28k stars ⭐（今天重点下钻了）
+  - `EveryInc/compound-engineering-plugin` — 给 Claude Code/Codex/Cursor 装工程纪律插件，18k stars
   - `twentyhq/twenty` — 开源 Salesforce 替代，AI-native CRM，48k stars
   - `anthropics/claude-code` — 127k stars
   - `galilai-group/stable-worldmodel` — 世界模型研究与评估平台
-  - Liquid AI 8B MoE（38T tokens，HN 135分热帖）
-  - `EveryInc/compound-engineering-plugin` — 给 Claude Code/Codex/Cursor 装工程纪律插件，18k stars
   - `run-llama/liteparse` — 开源文档解析器，7k stars
   - `jmaczan/tiny-vllm` — 从零手写 C++/CUDA LLM 推理引擎（教学目的，HN #9）
-  - 值得注意趋势：AI coding agent 竞争从"能写"进化到"有品味/有工程纪律"
+  - **趋势信号：** AI coding agent 竞争从"能写"进化到"有品味/有工程纪律"，Skills 生态（npx skills add）正在成为 MCP 的轻量替代方案
 
 - **SvelteKit / SPA 渲染的网站（如 monokai.com）浏览器读不到正文** — 有些博客用 SvelteKit/Next.js 等框架，内容在客户端渲染，`browser_snapshot` 只能拿到导航栏和骨架。遇到这种情况，尝试：1) 找 RSS/JSON 版 2) 如果有 `text-only` 或 `print` 版 URL 可以试 3) 放弃该源换一个。不需要纠结一个页面。
 - **B站分类标签和视频条目都点不动** — B 站排行榜的 `browser_click` 切换分类（科技数码、知识等）以及点击视频条目，很可能不生效，页面实际是 SPA 渲染且二次请求。直接通过 URL `https://www.bilibili.com/v/popular/rank/<category>` 导航更可靠。取视频链接用 JS 在 `browser_console` 中提取（详见 `references/platform-exploration-patterns.md` 的 B站章节）。
