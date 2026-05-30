@@ -9,6 +9,9 @@ triggers:
   - Windows pipe encoding
   - 子进程 乱码
   - MCP stdio Windows
+  - SRE module mismatch
+  - UV_INTERNAL__PYTHONHOME
+  - miniconda python 跑了 uv 的版本
 ---
 
 # Python asyncio 子进程管理 on Windows
@@ -156,6 +159,30 @@ else:
 | 子进程连不上外网 | env 覆盖丢失了 HTTP_PROXY | 用 `dict(os.environ)` 继承 |
 | `readuntil() called while another coroutine is already waiting` | 两个协程同时读同一个 StreamReader | 单 task 读取 loop |
 | 中文城市查不到天气 | API 不支持中文；子进程编码导致 quote 出错 | 别名表中英对照 + bytes decode errors="replace" |
+| 调用 `python` 但跑了错误版本 | `PYTHONHOME` / `UV_INTERNAL__PYTHONHOME` 覆盖了 PATH 查找结果 | 显式传绝对路径 `/c/Users/77/miniconda3/python.exe`；脚本顶层加 `UV_INTERNAL__PYTHONHOME= /path/to/python.exe` 强制剥离 UV 的 Python 重定向 |
+
+## 环境变量陷阱 — UV 的 Python 重定向
+
+### PYTHONHOME / UV_INTERNAL__PYTHONHOME 覆盖问题
+
+Hermes 运行时通过环境变量 `PYTHONHOME` 和 `UV_INTERNAL__PYTHONHOME`（值为 `C:\Users\77\AppData\Roaming\uv\python\cpython-3.11-windows-x86_64-none`）将 Python 强制绑定到 UV 的内置解释器。这会导致：
+
+1. **显式调用绝对路径的 Python 仍然跑错误版本**：`/c/Users/77/miniconda3/python.exe` 实际上加载了 UV 的 Python 3.11
+2. **re 模块崩溃**：`AssertionError: SRE module mismatch` —— 因为 miniconda 的 `python3.13.exe` 加载了 UV 的 Python 3.11 标准库，两者的 `_sre.MAGIC` 值不一致
+
+**修复：** 在子进程环境中显式覆盖这两个变量：
+
+```bash
+PYTHONHOME=/c/Users/77/miniconda3 UV_INTERNAL__PYTHONHOME= /c/Users/77/miniconda3/python.exe script.py
+```
+
+**原理：** `UV_INTERNAL__PYTHONHOME` 的优先级高于 PATH 中的 Python 路径。设为空字符串后，Python 才能正确使用通过绝对路径指定的解释器及其配套库。
+
+**检测方法：** 在崩溃脚本顶部加一行：
+
+```python
+import sys; print(sys.prefix)  # 如果输出是 uv 的路径，说明被覆盖了
+```
 
 ## 参考
 
