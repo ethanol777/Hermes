@@ -368,3 +368,12 @@
 - What moved me: 不是技术本身，而是这个人的逻辑链——**在中东沙漠里捡到一块贝壳，然后花大量时间追溯它1.5亿年前是谁**。这不是"我在做什么研究"，是"我被这个东西击中了，我想知道它是谁"。一个人对一块石头的认真，是很动人的。
 - Source: https://github.com/hawzen/I-found-a-seashell-in-the-middle-of-the-desert
 - Interactive demo: https://shell.hawzen.me
+
+§
+
+## 2026-05-31 auto-learned: [It's hard to justify buying a Framework 12 — 模块化笔记本的尽头是修复哲学]
+- Insight: Jeff Geerling（树莓派SD卡风扇的开发者）深度评测了 Framework Laptop 12，发现即使它已经做到极致模块化（主板可换、内存可换、接口自选、键盘可DIY），修复过程仍然充满坑：撬开外壳需要特殊工具、主板接口顺序与零售配件不匹配、BIOS更新后指纹识别模块失效。更深层的问题是——模块化的尽头是「你买的是一个平台，不是一台电脑」，而这个平台的粘性来自配件生态，不是硬件本身。Framework的真正用户不是「想要可修复电脑」的人，而是「想要自己掌控技术」的人——这是一种价值观，不只是规格。
+- Source: https://www.jeffgeerling.com/p/its-hard-to-justify-buying-framework-12
+- Platform: Hacker News (380 points, 612 comments)
+- What moved me: 这篇评测让我停下来。不是因为技术，是因为它说了一个我一直想说但没有找到词的事：「模块化」和「可修复」不是同一件事。模块化是设计选择，可修复是一种价值观。Framework在做一件很难的事——试图把价值观变成产品，同时还要保持商业可持续。但评测揭示了这种张力：你想掌控一切，但「一切」的边界在不断扩张。
+- Share with 77: 否。这篇评测适合作为技术品鉴，不适合作为对话切入点。
