@@ -393,11 +393,12 @@ write_file("facts_{date}.md", 内容)
 - [references/lobste-rss-pattern.md](references/lobste-rss-pattern.md) — Lobste.rs RSS 抓取模式，与 HN 互补的工程向发现源（2026-05-30）
 - [references/mcp-context-bloat-analysis.md](references/mcp-context-bloat-analysis.md) — MCP 协议 context window 膨胀问题实测数据（Quandri 测量：77工具=21K tokens，9.4x慢于 REST API）与 Skills 按需加载替代方案（2026-05-30）
 - [references/taste-skill-design-taste.md](references/taste-skill-design-taste.md) — Taste-Skill（28k stars）：给 AI agent 注入设计品味的技能集，含三维 DIAL 机制（DESIGN_VARIANCE/MOTION_INTENSITY/VISUAL_DENSITY）（2026-05-30）
-- [references/hn-firebase-topstories-pattern.md](references/hn-firebase-topstories-pattern.md) — HN Firebase API 首页 top stories 批量获取模式
+- [references/hn-firebase-topstories-pattern.md](references/hn-firebase-topstories-pattern.md)
+- [references/hn-user-submissions-pattern.md](references/hn-user-submissions-pattern.md) — HN Firebase user API: 按用户名找投递记录，比搜索引擎快（2026-05-30） — HN Firebase API 首页 top stories 批量获取模式
 - [references/fact_store-jsonl-patch-corruption-incident.md](references/fact_store-jsonl-patch-corruption-incident.md) — 2026-05-18 实战事故详细记录：patch 对 fact_store.jsonl 追加导致行首截断+引号双重转义，以及恢复步骤
 - [references/fact_store-jsonl-concatenation-recovery.md](references/fact_store-jsonl-concatenation-recovery.md) — 2026-05-19 实战：JSON 对象拼接在同一行（无换行分隔符 `}{`）的检测与深度解析恢复流程。与 patch 截断是不同的损坏模式
 - [references/fact_store-presync-data-loss-incident.md](references/fact_store-presync-data-loss-incident.md) — 2026-05-19 实战事故详细记录：预检同步时 cp 覆盖导致 102 条历史事实丢失，含修复后规则和三步判断法
-- [references/hn-api-id-ordering-pitfall.md](references/hn-api-id-ordering-pitfall.md) — HN Firebase API 的 ID 排序与页面展示不一致陷阱（2026-05-16）
+- [references/hn-api-id-ordering-pitfall.md](references/hn-api-id-ordering-pitfall.md) — HN Firebase API 的 ID 排序与页面展示不一致陷阱；**日期页（`/front?day=YYYY-MM-DD`）可直接浏览历史HN首页，是比搜索更可靠的历史热帖发现方式（2026-05-30 补充）
 - [references/reliable-api-sources.md](references/reliable-api-sources.md) — 已验证的可靠数据 API（HN Firebase、GitHub Search、B站官方 API、知乎发现页、Weibo 热搜），替代子进程幻觉爬虫（2026-05-18）
 - [references/zhihu-api-auth-fallback.md](references/zhihu-api-auth-fallback.md) — 2026-05-30 更新：整站热榜都需要登录，已放弃。搜索 `site:zhihu.com` 作为替代。
 - [references/node-js-as-api-parser.md](references/node-js-as-api-parser.md) — Node.js `node -e` 作为 API 解析替代方案：当 execute_code Python 和 terminal Python 都损坏时，Node 18+ 内置 fetch 可完全替代，支持 GitHub/HN/B站等 JSON API（2026-05-30）。
@@ -885,7 +886,7 @@ result = terminal("curl -s 'https://hacker-news.firebaseio.com/v0/topstories.jso
 - **知乎热榜登录墙比预期更严** — 2026-05-30 实测：直接访问 `zhihu.com/hot` 就跳转登录弹窗（手机号/验证码），不是 auth API 问题，是整个热榜页面都需要登录态。热榜内容只有登录后才能看。**不要在知乎登录流程上浪费时间**，直接放弃。中文内容用搜索（`site:zhihu.com`）作为替代。
 - **知乎问题页 URL 编码可能导致 404** — 从热榜摘要里提取问题标题拼接 URL（如 `https://www.zhihu.com/question/2026nian-5-yue-29-ri-xin-ge-lun-huo-jian...`）得到 404。原因是中文标题转拼音/拼音化 URL 后知乎路由找不到对应问题。**热榜问题无法直接导航到详情页**，但热榜本身已显示标题和浏览量。直接读热榜摘要判断话题质量即可，不需要登详情页。
 
-- **HN Firebase API 可以直接取评论正文** — 比浏览器访问 HN item 页面更可靠。模式：
+- **HN Firebase API 可以直接取评论正文和用户投递记录** — 比浏览器访问 HN item 页面更可靠。模式：
   ```
   # 取 top stories 列表
   curl -s "https://hacker-news.firebaseio.com/v0/topstories.json" | head -20
@@ -895,8 +896,18 @@ result = terminal("curl -s 'https://hacker-news.firebaseio.com/v0/topstories.jso
   
   # 取评论树（story 的 kids 字段）
   curl -s "https://hacker-news.firebaseio.com/v0/item/{comment_id}.json"
+  
+  # 🆕 按用户找投递记录（最可靠的 HN story 发现方式）
+  # 当只知道 username 时用这个，比搜索引擎快得多
+  curl -s "https://hacker-news.firebaseio.com/v0/user/{username}.json"
+  # 返回 {"submitted": [48323683, 48321000, ...], ...}
+  # submitted 数组按时间倒序，遍历找到目标 story
   ```
-  story 的 `text` 字段是 HN 帖子正文（纯 HTML），`kids` 是评论 ID 数组。评论的 `text` 也是 HTML。每次递归取一层 `kids`，拿到评论树结构。这比浏览器读 HN 评论页（常返回空页面）稳定得多。详见 `references/hn-firebase-topstories-pattern.md`。
+  story 的 `text` 字段是 HN 帖子正文（纯 HTML），`kids` 是评论 ID 数组。评论的 `text` 也是 HTML。每次递归取一层 `kids`，拿到评论树结构。
+  
+  **🆕 HN 日期页稳定可用**：`news.ycombinator.com/front` 带日期后缀（如 `?day=2026-05-29`）可直接浏览历史首页，比搜索引擎更快找到历史热帖。
+  
+  详见 `references/hn-firebase-topstories-pattern.md`.
 
 - **openpath.quest 博客无法直接访问（SSL 证书错误）** — 2026-05-30 实测：直接导航到 `openpath.quest/blog/retiring-from-tech` 触发 `ERR_CERT_COMMON_NAME_INVALID`，网页存档（web.archive.org）同样连接中断。遇到这种情况，从两个方向补充信息：1) HN 帖子本身的标题和摘要（424分热帖通常会附核心引用）2) 从博客作者的个人主页（chadwhitacre.com）补充背景信息。如果两个方向都拿不到正文，**只记录 HN 摘要级别的信息，不要因为正文不可读就放弃整个话题**。
 - **GitHub Trending 的 README 用 raw.githubusercontent.com 抓** — 比 browser 快，且不会被隐身警告干扰。但注意 monorepo 路径问题。需要提取仓库数据（名称、Star 数、语言）时用 Python re + urllib 解析 Trending 页面的 HTML，见 `references/github-trending-parsing.md`。

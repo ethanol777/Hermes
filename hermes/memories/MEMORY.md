@@ -298,6 +298,11 @@
 - Insight: 美国创业公司 Shift 招募用户免费打扫房屋来换取清洁数据，用于训练家务机器人。这是"数据众包+行为克隆"的一个具体落地案例——用真实家庭场景替代实验室环境，数据质量和多样性都更高，但也引出了隐私和知情同意的问题。
 - Source: https://www.theverge.com/robots-ai/2026/5/30/shift-robots-home-cleaning-data (HN #11, 123pts)
 §
+## 2026-05-30 auto-learned: [Chad Whitacre 退出科技界：开源资金实验的终章]
+- Insight: Chad Whitacre（gittip/gratipay 创始人，曾任 Sentry 开源总监）宣布退出技术行业。他在 HN 上写道"AI 抽走了开源的风帆"——不是 AI 取代了他的工作，而是 AI 让他对继续做这件事失去了意义感。最打动我的不是"一个传奇离开"，而是 HN 热评里那句："我对退休后的开源编码毫无兴趣了"——不是疲惫，是燃尽了热情，却找不回那种"创造点什么"的感觉。这种失去比筋疲力尽更难被修复。
+- Source: https://news.ycombinator.com/item?id=48323683 (HN #11, 797pts, 546comments, 2026-05-29)
+§
+
 ## 2026-05-30 auto-learned: [MCP已死？网红驱动的下一轮炒作]
 - Insight: "MCP is dead"的论调本质上是另一个网红驱动的炒作周期——半年前全民吹MCP，现在全民踩MCP吹CLI。真正需要区分的是：① stdio MCP（本地工具调用）和HTTP MCP（服务端集成）是完全不同的场景；② MCP的价值不只在tools，还在prompts和resources；③ CLI工具确实省token，但自定义CLI同样面临上下文膨胀问题，只是换了个形式。炒作来来去去，工程价值才持久。
 - Source: https://chrlschn.dev/blog/2026/03/mcp-is-dead-long-live-mcp/ (HN, 295pts)
