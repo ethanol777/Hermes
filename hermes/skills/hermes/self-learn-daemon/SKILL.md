@@ -407,6 +407,7 @@ write_file("facts_{date}.md", 内容)
 - [references/github-trending-parsing.md](references/github-trending-parsing.md)
 - [references/memory-md-format-evolution.md](references/memory-md-format-evolution.md) — MEMORY.md 的 `|` 前缀格式演变与处理策略（2026-05-19） — execute_code 作为文件 I/O 替代方案：terminal Python 损坏时的稳定写入路径（2026-05-17）
 - [references/same-day-continuation-pattern.md](references/same-day-continuation-pattern.md) — 同日多次学习延续格式：第二/三轮 auto-learned 如何处理已有的内容（2026-05-20 实践后沉淀）
+- [references/2026-05-30-insights.md](references/2026-05-30-insights.md) — 本轮实质性洞察：教皇方济各批评技术弥赛亚主义、大企业限制AI用量、Dead Economy Theory与Chad Whitacre退出开源的共振模式（2026-05-30）
 
 ---
 
@@ -910,12 +911,19 @@ result = terminal("curl -s 'https://hacker-news.firebaseio.com/v0/topstories.jso
   详见 `references/hn-firebase-topstories-pattern.md`.
 
 - **openpath.quest 博客无法直接访问（SSL 证书错误）** — 2026-05-30 实测：直接导航到 `openpath.quest/blog/retiring-from-tech` 触发 `ERR_CERT_COMMON_NAME_INVALID`，网页存档（web.archive.org）同样连接中断。遇到这种情况，从两个方向补充信息：1) HN 帖子本身的标题和摘要（424分热帖通常会附核心引用）2) 从博客作者的个人主页（chadwhitacre.com）补充背景信息。如果两个方向都拿不到正文，**只记录 HN 摘要级别的信息，不要因为正文不可读就放弃整个话题**。
-- **GitHub Trending 的 README 用 raw.githubusercontent.com 抓** — 比 browser 快，且不会被隐身警告干扰。但注意 monorepo 路径问题。需要提取仓库数据（名称、Star 数、语言）时用 Python re + urllib 解析 Trending 页面的 HTML，见 `references/github-trending-parsing.md`。
-- **GitHub Trending `grep` 解析陷阱**（2026-05-30 实测）：`grep -oP '(?<=href="/)[^"]+'` 会把导航链接（`sponsors/explore`、`trending/developers`）和真实 repo 路径混在一起输出。正确模式要限定"两个路径段"的 repo：`grep -oP 'href="/[a-zA-Z0-9_-]+/[a-zA-Z0-9_.-]+"'` — 这会排除单段导航和 `trending/` 等两段路径。或者直接 `grep 'full_name\|stargazers_count'`（当页面含这些字符串时）。
-- **GitHub Trending 今日重点**（2026-05-30 记录，持续更新）：
+### 🟡 GitHub Trending 采集：browser_navigate 替代 grep
+
+**2026-05-30 实测：grep 对 GitHub Trending HTML 的所有解析方案都失败。** `grep -oP` 输空，`grep 'full_name\|stargazers_count'` 输空，`grep -oP 'href="/[a-zA-Z0-9_-]+/[a-zA-Z0-9_.-]+"'` 输空。`browser_navigate` → `browser_snapshot` 是唯一可靠的方案（2-3秒，可接受）。
+
+**browser_vision 的正确用法：** `browser_vision` 需要截图路径——它不会自动复用 browser_navigate 的状态。正确流程：
+1. `browser_navigate` → 加载页面
+2. `browser_snapshot` → 获取结构化数据（interactive elements with ref IDs）
+3. 如果需要视觉分析 → `browser_vision` → 但这会生成新的独立截图，不会复用 step 1 的浏览器状态
+
+**GitHub Trending 今日重点（2026-05-30 记录，持续更新）：**
   - `harry0703/MoneyPrinterTurbo` — AI 一键生成短视频，70k+ stars
   - `microsoft/markitdown` — Office文档转 Markdown，130k stars（稳定 top 5）
-  - `Leonxlnx/taste-skill` — 给 AI agent「好品味」，阻止生成通用 slop，28k stars ⭐（今天重点下钻了）
+  - `Leonxlnx/taste-skill` — 给 AI agent「好品味」，阻止生成通用 slop，28k stars
   - `EveryInc/compound-engineering-plugin` — 给 Claude Code/Codex/Cursor 装工程纪律插件，18k stars
   - `twentyhq/twenty` — 开源 Salesforce 替代，AI-native CRM，48k stars
   - `anthropics/claude-code` — 127k stars
@@ -932,9 +940,19 @@ result = terminal("curl -s 'https://hacker-news.firebaseio.com/v0/topstories.jso
 - **中国平台有风控，别硬登** — 小红书、百度、贴吧等会检测无头浏览器/IP风险。遇到登录/验证页面直接放弃，改用公开可读内容。详见 [chinese-platform-access.md](references/chinese-platform-access.md)。
 - **API优先于浏览器访问境外站点** — 当浏览器导航 HN/GitHub 失败时（ERR_CONNECTION_CLOSED/超时），先检查其公共 API 是否可用。HN 有 Firebase API (`hacker-news.firebaseio.com/v0/`)，GitHub 有 Search/REST API (`api.github.com`)。API 返回纯 JSON，`curl` + `grep` 即可解析，比浏览器快数倍且不受反爬/GFW 影响。详见 `references/platform-exploration-patterns.md` 的「API优先探索策略」章节。
 - **`execute_code` 可用于 JSON 处理备选** — 当 terminal Python 因环境问题不可用时，`execute_code` 内置的 Python 环境可以正常处理 JSON 解析和数据格式化。其输出通过 `output` 字段返回结构化结果。注意 `execute_code` 上下文没有 `fact_store` 或其他 Hermes 工具，只能做纯数据处理。
-### ✅ 写入首选方案（2026-05-30 更新：execute_code stdlib 可能损坏）
+### ✅ 写入首选方案（2026-05-30 更新：execute_code 稳定性取决于环境）
 
-**⚠️ 2026-05-30 重大发现：`execute_code` 的 sandbox Python 可能整个 stdlib 损坏。**
+**execute_code 的 sandbox Python 稳定性是 session-dependent 的：**
+
+| 情况 | 2026-05-17/18 记录 | 2026-05-30 实测 |
+|------|---------------------|----------------|
+| `import re`, `import json` | ❌ 失败（AssertionError: SRE module mismatch） | ✅ 成功 |
+| `import encodings` | ❌ 失败 | 未测试 |
+| `from hermes_tools import terminal` | ❌ 失败（同 stdlib 问题） | ✅ 成功 |
+
+**结论：execute_code 的 stdlib 状态不是全局一致的——它在某些 session 损坏，在其他 session 正常。** MSYS2 Python 的 `encodings` 模块缺失（影响 `terminal('python3 -c ...')`）与 hermes venv Python（影响 execute_code）是不同的环境。损坏的是 MSYS2 Python，不是 hermes venv Python。
+
+**使用策略：** 如果需要做 JSON 处理，先测一下 `execute_code` 是否正常。如果成功 → 用 execute_code。如果失败 → 切纯 shell 路线（`terminal echo >>` / `terminal cat >>`）。
 
 ### 🔴 write_file 写 JSON 数组时的"拼接陷阱"（2026-05-30 新增）
 

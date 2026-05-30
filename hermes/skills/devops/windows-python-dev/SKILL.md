@@ -142,9 +142,17 @@ result = subprocess.run(
 )
 ```
 
-**修复方式二（最干净，用 env -i 裸环境启动）：**
+**修复方式二（用 env -u 精准卸载单个变量）：**
 
-如果方式一仍有问题，用 `env -i` 从完全干净的环境启动。这是 cron job / 定时任务推荐方式：
+如果只想去掉特定的冲突变量（如 `PYTHONHOME` 和 `UV_INTERNAL__PYTHONHOME`），用 `env -u` 比 `env -i` 更轻量，不需要重建所有必要环境变量：
+```bash
+env -u PYTHONHOME -u UV_INTERNAL__PYTHONHOME \
+    /c/Users/77/miniconda3/python.exe script.py
+```
+
+**修复方式三（最干净，用 env -i 裸环境启动）：**
+
+如果方式一/二仍有问题，用 `env -i` 从完全干净的环境启动。这是 cron job / 定时任务推荐方式：
 ```bash
 env -i \
     PATH="/c/Users/77/miniconda3:/c/Windows/system32:/c/Windows" \

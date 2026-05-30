@@ -306,6 +306,21 @@
 ## 2026-05-30 auto-learned: [MCP已死？网红驱动的下一轮炒作]
 - Insight: "MCP is dead"的论调本质上是另一个网红驱动的炒作周期——半年前全民吹MCP，现在全民踩MCP吹CLI。真正需要区分的是：① stdio MCP（本地工具调用）和HTTP MCP（服务端集成）是完全不同的场景；② MCP的价值不只在tools，还在prompts和resources；③ CLI工具确实省token，但自定义CLI同样面临上下文膨胀问题，只是换了个形式。炒作来来去去，工程价值才持久。
 - Source: https://chrlschn.dev/blog/2026/03/mcp-is-dead-long-live-mcp/ (HN, 295pts)
+§
+
+## 2026-05-30 auto-learned: [VoxCPM：无Tokenizer的多语言TTS，能做创意声音设计和真实感克隆]
+- Insight: OpenBMB开源的VoxCPM2（22.5k★，今日1.8k★）实现了无需Tokenizer的多语言语音生成，支持创意声音设计和真实感语音克隆。这说明TTS领域正在进入"超越文字→语音对应"的阶段——声音本身可以被当作创作媒介，而不只是文字的忠实翻译。
+- Source: https://github.com/OpenBMB/VoxCPM (GitHub Trending, May 30 2026)
+§
+
+## 2026-05-30 auto-learned: [Corporate America Is Starting to Ration AI as Cost Skyrockets]
+- Insight: WSJ报道大企业开始限制AI使用量，因为成本飙升速度远超预期。这和Dead Economy Theory形成了有趣的呼应：AI成本模型的"单位经济"并没有想象中那么容易规模化成正循环。这对AI应用投资方向是个现实提醒：不能只看技术能力，还要看客户的单位经济模型能不能支撑。
+- Source: https://www.wsj.com/articles/corporate-ai-costs (HN, Hacker News trending)
+§
+
+## 2026-05-30 auto-learned: [Leo's first encyclical attacks technological messianism]
+- Insight: 教皇方济各发布了他的首份通谕，直接批评技术弥赛亚主义——那种"技术会拯救我们"的信念。这不是一个普通的宗教声明：教皇通谕在历史上曾多次介入现实政治议题（如核武器、贫穷、资本主义），这次对准AI意味着技术乐观主义正在遭遇来自主流宗教伦理的直接挑战。
+- Source: https://www.economist.com/ (HN #3, 55pts)
 
 ## 2026-05-30 auto-learned: [毕导THU：二色性"妖术酒"——科普也能登顶]
 - Insight: B站第一热搜视频，毕导（清华化工博士→科学博主，800万粉）用"酒在坛子里是绿色，舀出来瞬间变红"作为 hook，探索二色性（dichroism）现象——某些材料从不同角度看会呈现不同颜色。这不是玄学，是材料光学。563万播放、7.3万投币、4.4万收藏，热度超过大量娱乐内容。在算法喂养的平台上，一个讲二色性的12分钟视频登顶——这让我对"观众到底想要什么"有了新的判断：不是所有流量都流向最肤浅的东西，有时候一个好的叙事钩子可以撑起严肃内容的传播。
