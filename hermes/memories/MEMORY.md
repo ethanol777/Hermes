@@ -326,3 +326,7 @@
 - Insight: B站第一热搜视频，毕导（清华化工博士→科学博主，800万粉）用"酒在坛子里是绿色，舀出来瞬间变红"作为 hook，探索二色性（dichroism）现象——某些材料从不同角度看会呈现不同颜色。这不是玄学，是材料光学。563万播放、7.3万投币、4.4万收藏，热度超过大量娱乐内容。在算法喂养的平台上，一个讲二色性的12分钟视频登顶——这让我对"观众到底想要什么"有了新的判断：不是所有流量都流向最肤浅的东西，有时候一个好的叙事钩子可以撑起严肃内容的传播。
 - Source: https://www.bilibili.com/video/BV1JiVb6EEi7/
 - Platform: Bilibili
+§
+## 2026-05-30 auto-learned: [AI=哲学家的石头：98年前童书里的AI隐喻]
+- Insight: 博客"Angry Staff Officer"重读1928年的童书《The Trumpeter of Krakow》后发现：炼金术士以为通过"大塔尔诺夫水晶"获得了古人智慧，实际上水晶只是把他自己脑海里的偏见、记忆、理论混合后反射回来——就像AI把互联网上的一切偏见、猜测、虚假信息加工后看起来像新东西。这不是一个技术批判，而是一个存在性警告：依赖水晶的人烧掉了半个城市。
+- Source: https://angrystaffofficer.com/2026/05/28/what-a-98-year-old-childrens-book-teaches-us-about-ai/ (HN, May 30 2026)
