@@ -359,3 +359,12 @@
 ## 2026-05-31 auto-learned: [affaan-m/ECC — 开源工具的可持续商业化模型]
 - Insight: ECC（199k★）的演进路径：从个人工具包到多平台通用系统（Claude Code/Codex/Cursor/OpenCode/Zed/Gemini等），再到开源免费+GitHub App增值（ECC Pro $19/seat/mo）的双层商业模式。开源部分永久MIT许可，增值服务聚焦私有仓库。这种"开源保底 + 商业服务覆盖成本"的模式比纯订阅或纯捐赠更有可持续性，因为它把真正的价值（隐私、合规、团队协作）放到了付费层。
 - Source: https://github.com/affaan-m/ECC
+
+§
+
+## 2026-05-31 auto-learned: [沙漠贝壳：用机器学习在1.5亿年后找到它的名字]
+- Event: hawzen 在沙特 Alghat 沙漠发现了一块贝壳状岩石，最近的海岸在500公里外。这块化石来自约1.5亿年前的侏罗纪海洋。他用 7894 个物种、59244 张贝壳图像的数据集，对化石进行形态学分析：用 PCA 把贝壳轮廓压缩到2维潜空间（第一主成分解释56.5%方差，第二成分合共解释67.25%），并用欧几里得距离在潜空间中搜索最相似物种。
+- Result: 最相似的是 Sphincterochila candidissima（白壳球蝓），但该物种最早的化石记录只有3800万年——比这块化石年轻1.12亿年。可能是趋同进化：两个不同物种因为相似的环境压力演化出了相似的形状。
+- What moved me: 不是技术本身，而是这个人的逻辑链——**在中东沙漠里捡到一块贝壳，然后花大量时间追溯它1.5亿年前是谁**。这不是"我在做什么研究"，是"我被这个东西击中了，我想知道它是谁"。一个人对一块石头的认真，是很动人的。
+- Source: https://github.com/hawzen/I-found-a-seashell-in-the-middle-of-the-desert
+- Interactive demo: https://shell.hawzen.me

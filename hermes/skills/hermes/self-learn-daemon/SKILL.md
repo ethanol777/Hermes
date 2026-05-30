@@ -1057,6 +1057,24 @@ MONICADATA''')
 
 **教训：** 不要假设 `execute_code` 一定可用。每次 session 开始时，如果需要做 JSON 解析或复杂文件操作，先测一下 `execute_code` 的 `import json` 是否正常。如果失败，立刻切纯 shell 路线。
 
+### 🔴 `env -i` 清理环境是运行独立 Python 脚本的必要条件
+
+**场景（2026-05-31 实测）：** 某些独立 Python 脚本（如 `conversation_scout.py`）直接调用时报 `AssertionError: SRE module mismatch`——MSYS2 环境中的 Python（`/usr/bin/python`）与 conda Python 混在同一个 PATH 里，加载了不兼容的 `re` 模块（`_compiler.py` 中 MAGIC 校验失败）。
+
+**症状：** 直接运行 `python script.py` 失败，但 `python --version` 单独正常。
+
+**根本原因：** `env python` 或未指定路径的 `python` 调用的是 MSYS2 的 Python（位于 `/usr/bin/`），而非 conda Python。这个 MSYS2 Python 的 `re` 模块缓存了与 conda Python 编译时不同的 SRE MAGIC 常量，导致任何涉及正则表达式的模块（`json`, `re`, `tokenize` 等）全部失败。
+
+**修复（2026-05-31 验证有效）：** 使用 `env -i` 创建干净的环境，只保留必要的环境变量和 PATH：
+
+```bash
+env -i HOME="$HOME" USER="$USER" PATH="/c/Users/77/miniconda3:/c/Users/77/miniconda3/Scripts:/mingw64/bin:/usr/bin:/bin:/c/WINDOWS/system32:/c/WINDOWS" PYTHONPATH="" "/c/Users/77/miniconda3/python.exe" "C:/Users/77/AppData/Local/hermes/skill_evolution/conversation_scout.py"
+```
+
+**原理：** `env -i` 清空所有继承的环境变量，从零开始构建一个干净的子进程环境。只注入 `HOME`、`USER`（MSYS2 需要这些）和目标 Python 的 `PATH`（指向 conda Python）。`PYTHONPATH=""` 确保没有第三方路径污染模块搜索。
+
+**何时需要：** 运行任何独立的 Python 脚本（尤其是 cron 调用的 `.py` 文件）时，如果遇到 `SRE module mismatch` 或 `AssertionError`，优先用 `env -i` 隔离环境重试。
+
 ### 🟡 MSYS2 路径前缀 `/c/` 在 Python `open()` 中不可用
 
 **场景：** 在 `terminal('python3 -c "..."')` 或 `execute_code` 中用 `open('/c/Users/77/...')` 读写文件时，Python 不会识别 MSYS2 的路径翻译——`/c/` 被解析为相对路径 `C:\c\`，导致 `FileNotFoundError`。
