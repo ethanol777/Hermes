@@ -911,6 +911,7 @@ result = terminal("curl -s 'https://hacker-news.firebaseio.com/v0/topstories.jso
 
 - **openpath.quest 博客无法直接访问（SSL 证书错误）** — 2026-05-30 实测：直接导航到 `openpath.quest/blog/retiring-from-tech` 触发 `ERR_CERT_COMMON_NAME_INVALID`，网页存档（web.archive.org）同样连接中断。遇到这种情况，从两个方向补充信息：1) HN 帖子本身的标题和摘要（424分热帖通常会附核心引用）2) 从博客作者的个人主页（chadwhitacre.com）补充背景信息。如果两个方向都拿不到正文，**只记录 HN 摘要级别的信息，不要因为正文不可读就放弃整个话题**。
 - **GitHub Trending 的 README 用 raw.githubusercontent.com 抓** — 比 browser 快，且不会被隐身警告干扰。但注意 monorepo 路径问题。需要提取仓库数据（名称、Star 数、语言）时用 Python re + urllib 解析 Trending 页面的 HTML，见 `references/github-trending-parsing.md`。
+- **GitHub Trending `grep` 解析陷阱**（2026-05-30 实测）：`grep -oP '(?<=href="/)[^"]+'` 会把导航链接（`sponsors/explore`、`trending/developers`）和真实 repo 路径混在一起输出。正确模式要限定"两个路径段"的 repo：`grep -oP 'href="/[a-zA-Z0-9_-]+/[a-zA-Z0-9_.-]+"'` — 这会排除单段导航和 `trending/` 等两段路径。或者直接 `grep 'full_name\|stargazers_count'`（当页面含这些字符串时）。
 - **GitHub Trending 今日重点**（2026-05-30 记录，持续更新）：
   - `harry0703/MoneyPrinterTurbo` — AI 一键生成短视频，70k+ stars
   - `microsoft/markitdown` — Office文档转 Markdown，130k stars（稳定 top 5）

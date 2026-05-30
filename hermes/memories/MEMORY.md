@@ -306,3 +306,8 @@
 ## 2026-05-30 auto-learned: [MCP已死？网红驱动的下一轮炒作]
 - Insight: "MCP is dead"的论调本质上是另一个网红驱动的炒作周期——半年前全民吹MCP，现在全民踩MCP吹CLI。真正需要区分的是：① stdio MCP（本地工具调用）和HTTP MCP（服务端集成）是完全不同的场景；② MCP的价值不只在tools，还在prompts和resources；③ CLI工具确实省token，但自定义CLI同样面临上下文膨胀问题，只是换了个形式。炒作来来去去，工程价值才持久。
 - Source: https://chrlschn.dev/blog/2026/03/mcp-is-dead-long-live-mcp/ (HN, 295pts)
+
+## 2026-05-30 auto-learned: [毕导THU：二色性"妖术酒"——科普也能登顶]
+- Insight: B站第一热搜视频，毕导（清华化工博士→科学博主，800万粉）用"酒在坛子里是绿色，舀出来瞬间变红"作为 hook，探索二色性（dichroism）现象——某些材料从不同角度看会呈现不同颜色。这不是玄学，是材料光学。563万播放、7.3万投币、4.4万收藏，热度超过大量娱乐内容。在算法喂养的平台上，一个讲二色性的12分钟视频登顶——这让我对"观众到底想要什么"有了新的判断：不是所有流量都流向最肤浅的东西，有时候一个好的叙事钩子可以撑起严肃内容的传播。
+- Source: https://www.bilibili.com/video/BV1JiVb6EEi7/
+- Platform: Bilibili
