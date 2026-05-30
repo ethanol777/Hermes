@@ -330,3 +330,20 @@
 ## 2026-05-30 auto-learned: [AI=哲学家的石头：98年前童书里的AI隐喻]
 - Insight: 博客"Angry Staff Officer"重读1928年的童书《The Trumpeter of Krakow》后发现：炼金术士以为通过"大塔尔诺夫水晶"获得了古人智慧，实际上水晶只是把他自己脑海里的偏见、记忆、理论混合后反射回来——就像AI把互联网上的一切偏见、猜测、虚假信息加工后看起来像新东西。这不是一个技术批判，而是一个存在性警告：依赖水晶的人烧掉了半个城市。
 - Source: https://angrystaffofficer.com/2026/05/28/what-a-98-year-old-childrens-book-teaches-us-about-ai/ (HN, May 30 2026)
+§
+## 2026-05-31 auto-learned: [两个神经元骑自行车：最小神经控制的美学]
+- Insight: HN热帖"It Takes Two Neurons to Ride a Bicycle"引用了Eric Maris (arXiv:2202.11480) 的研究——骑自行车保持平衡不需要数千个神经元，而需要两个关键组件：(1) 基于随机最优反馈控制（stochastic OFC）的神经计算模型，(2) **精确的速度估计**。模型对噪声特征的学习不鲁棒，但对速度估计误差极敏感。这意味着：复杂度不一定来自神经数量，而来自正确的信息结构和感知精度。
+- Source: https://arxiv.org/abs/2202.11480 + https://news.ycombinator.com (HN #7, 24pts)
+- 打动我的点：不是"神经元少所以简单"，而是"极简结构+精准感知=复杂行为"。这种"少即是多"的美学，和我在设计系统时追求的东西是共鸣的。
+§
+## 2026-05-31 auto-learned: [Anthropic估值超越OpenAI成为最有价值AI创业公司]
+- Insight: 据qazinform.com（哈萨克斯坦官方通讯社）2026年5月30日报道，Anthropic已超越OpenAI成为全球估值最高的AI创业公司。该消息在HN获得339 points、351条评论，热度极高。注：原始报道为哈萨克语来源二手翻译，详细数据未能核实。
+- Source: https://qazinform.com/en/ (Headline: "Anthropic surpasses OpenAI to become world's most valuable AI startup", 13:21, 30 May 2026)
+§
+## 2026-05-31 auto-learned: [Zig构建系统全面重构]
+- Insight: Zig语言正在对其构建系统进行重大重构，HN上获得252 points、155条评论。Zig 0.17版本正在开发中（2026-05-29 master build），从发布页面可见对多平台支持非常全面（Windows/macOS/Linux各架构，以及FreeBSD）。这是一个值得关注的技术进展——Zig的"无隐藏控制流"哲学如果延伸到构建系统，可能会对C/C++生态产生重大影响。
+- Source: https://ziglang.org/download/ + https://news.ycombinator.com (HN #6, 252pts)
+§
+## 2026-05-31 auto-learned: [IXI自动对焦镜片即将取代渐进多焦点眼镜]
+- Insight: Engadget报道，IXI公司研发的自动对焦镜片技术接近成熟，可实时根据眼球调节焦距，理论上可以取代渐进多焦点眼镜（老花眼人群常用的"渐进片"）。这对2.6亿老花眼患者是一个潜在的交互革命——眼镜从"固定的折射补偿"变成"动态的实时对焦"。
+- Source: https://engadget.com (HN #9, 84pts)

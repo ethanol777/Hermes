@@ -190,15 +190,16 @@ prompt: |
 | 6 | 掘金 | ✅ 无需登录 | 中国开发者深度内容 | ✅ 稳定 |
 | 7 | 知乎 | ⛔ **整站需要登录** — `zhihu.com/hot` 直接跳转登录弹窗，热榜内容不可见。搜索 `site:zhihu.com` 作为替代。不要在登录流程上浪费时间。 | 内容聚合/问答 | ❌ 已放弃 |
 | 7 | Daring Fireball (daringfireball.net) | ✅ 无需登录，curl HTML 解析可用 | Apple/技术评论 | ✅ 稳定，结构一致 |
+| 8 | DuckDuckGo | ✅ 无需登录 | 通用搜索兜底 | ✅ 搜索结果稳定，适合搜索 HN/Reddit/学术原文存档。当 direct URL 失败时作为 fallback。注意：用 browser_navigate 到 `duckduckgo.com/?q=xxx` 后需要等页面加载完成（可能有 1-2s 延迟），避免在页面元素加载前就调用 browser_snapshot（会得到空结果）。搜索结果出来后用 browser_snapshot 提取链接，再 browser_navigate 到目标。2026-05-31 实测：解决了 Google/HN 搜索被拦截的问题。|
 | 8 | Quanta Magazine (HN转载) | 部分付费 | 深度科学报道 | ✅ 直接URL可达 |
-| 8 | 小红书 | ⛔ IP风控拦截 | 生活方式/时尚/情感 | ❌ 浏览器打不开，搜引擎缓存 |
+| 9 | 小红书 | ⛔ IP风控拦截 | 生活方式/时尚/情感 | ❌ 浏览器打不开，搜引擎缓存 |
 | 9 | 微博热搜 | ✅ 浏览器可达 s.weibo.com 访客模式 | 社会热点/时事 | ⚠️ 会被 redirect 到 passport.weibo.com/visitor，但最终能拿到完整热搜列表（30+ 条）。2026-05-20 验证有效 |
 | 10 | 掘金 | ✅ 无需登录 | 中国开发者深度内容 | ✅ 稳定 |
 | 10 | Lobste.rs | ✅ RSS feed (`/top/month.rss`) | 技术+工程+开源文化 | ✅ 稳定，RSS JSON 纯文本可 curl 解析 |
 | 11 | Telegram 频道 (t.me/s/) | ✅ 无需登录 | AI/技术/开源/创业资讯 | ⚠️ `t.me/s/channelname` 可用，详见 reference |
 | 12 | 微博 | ✅ 无需登录（API直接可读） | 时事/娱乐 | ✅ `weibo.com/ajax/side/hotSearch` 加 UA/Referer 头即可 |
 
-**策略：** 优先走 1-6（稳定可靠的内容源）。Telegram 频道（#8）作为按需补充源——当有特定频道想跟踪时打开。如果 1-6 的内容已经够丰富（单轮学习最多采集 3-5 条 insight），不需要绕路去登墙平台。用搜引擎 `web_search site:zhihu.com` 或 `site:xiaohongshu.com` 作为第二选择。
+**策略：** 优先走 1-6（稳定可靠的内容源）。DuckDuckGo 作为搜索 fallback（当 direct URL 失败时）。如果 1-6 的内容已经够丰富（单轮学习最多采集 3-5 条 insight），不需要绕路去登墙平台。
 
 ## 学习 prompt 设计要点
 

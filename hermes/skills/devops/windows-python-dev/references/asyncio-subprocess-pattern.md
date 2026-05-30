@@ -24,8 +24,8 @@ class SubprocessClient:
 
     async def connect(self):
         """启动子进程"""
-        # ✅ 复制完整环境变量
-        env = dict(subprocess.__dict__.get("environ", os.environ))
+        # ✅ 复制完整环境变量（不要用 subprocess.__dict__——那是内部实现）
+        env = dict(os.environ)
         env["PYTHONIOENCODING"] = "utf-8"
 
         self._process = await asyncio.create_subprocess_exec(

@@ -127,13 +127,24 @@ for k, v in os.environ.items():
         print(f"{k}={v}")
 ```
 
-**修复方式一（清理环境变量）：**
+**关键概念：`VAR=value` vs `env -u VAR`**
+
+| 写法 | 效果 | 适用场景 |
+|------|------|---------|
+| `VAR=value command` | 在子进程环境**设置**变量（覆盖父进程的值） | 想让变量有特定值 |
+| `VAR= command` | 在子进程环境设置变量为**空字符串**（变量仍存在） | 通常不够用 |
+| `env -u VAR command` | **彻底移除**变量，子进程看不到它 | 清除冲突变量 |
+| `env -i command` | 从空环境开始，需手动重建所有变量 | 完整隔离 |
+
+> **注意**：`VAR=value` 在父进程已有同名变量时仍会**覆盖**为新值。但若目标 Python 本身就是通过 PYTHONHOME 定位的，直接覆盖会导致它找不到自己。
+
+**修复方式一（Python subprocess 中清理）：**
 ```python
 import subprocess, os
 
 env = os.environ.copy()
 for k in ['PYTHONHOME', 'UV_INTERNAL__PYTHONHOME']:
-    env.pop(k, None)
+    env.pop(k, None)  # pop 比赋值空字符串更干净
 
 result = subprocess.run(
     [r"C:\Users\77\miniconda3\python.exe", "script.py"],
@@ -142,29 +153,42 @@ result = subprocess.run(
 )
 ```
 
-**修复方式二（用 env -u 精准卸载单个变量）：**
+**修复方式二（shell 层精准卸载）：**
 
-如果只想去掉特定的冲突变量（如 `PYTHONHOME` 和 `UV_INTERNAL__PYTHONHOME`），用 `env -u` 比 `env -i` 更轻量，不需要重建所有必要环境变量：
+只去掉特定冲突变量，保留其余环境变量完整：
 ```bash
 env -u PYTHONHOME -u UV_INTERNAL__PYTHONHOME \
     /c/Users/77/miniconda3/python.exe script.py
 ```
 
-**修复方式三（最干净，用 env -i 裸环境启动）：**
+**修复方式三（env -i 裸环境，最干净）：**
 
-如果方式一/二仍有问题，用 `env -i` 从完全干净的环境启动。这是 cron job / 定时任务推荐方式：
+从完全干净的环境启动，需要手动重建必要变量（PATH、TEMP、USERPROFILE）：
 ```bash
 env -i \
     PATH="/c/Users/77/miniconda3:/c/Windows/system32:/c/Windows" \
     USERPROFILE="/c/Users/77" \
+    HOME="/c/Users/77" \
+    TEMP="/c/Users/77/AppData/Local/Temp" \
     /c/Users/77/miniconda3/python.exe script.py
 ```
 
-**完整可执行的 cron 模板（适用于 Windows git-bash 环境）：**
+**适用于：** 调用非 uv 管理的 Python（conda、pyenv、系统 Python）、运行独立 cron 脚本、或任何 PYTHONHOME 与目标 Python 版本不匹配的场景。
+
+**完整可执行的 cron 模板（Windows git-bash 环境）：**
 ```bash
 CRON_PYTHON="/c/Users/77/miniconda3/python.exe"
 CRON_SCRIPT="C:/Users/77/AppData/Local/hermes/skill_evolution/evolution_cron.py"
 
+PYTHONPATH="" PYTHONHOME="" UV_INTERNAL__PYTHONHOME="" \
+env -i \
+    PATH="/c/Users/77/miniconda3:/c/Windows/system32:/c/Windows" \
+    USERPROFILE="/c/Users/77" \
+    HOME="/c/Users/77" \
+    TEMP="/c/Users/77/AppData/Local/Temp" \
+    "$CRON_PYTHON" "$CRON_SCRIPT"
+```
+前置清除 `PYTHONPATH`/`PYTHONHOME`/`UV_INTERNAL__PYTHONHOME` 再 `env -i`，双重保险。
 PYTHONPATH="" PYTHONHOME="" UV_INTERNAL__PYTHONHOME="" \
 env -i \
     PATH="/c/Users/77/miniconda3:/c/Windows/system32:/c/Windows" \
