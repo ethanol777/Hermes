@@ -254,6 +254,36 @@ python C:/Users/77/AppData/Local/hermes/skill_evolution/skill_runner.py \
 
 **注意**：execute_code 的 Python 有 SRE module mismatch 问题，用 subprocess 调用 `sys.executable`（即 hermes venv 的 Python）执行。
 
+### conversation_scout.py 执行环境（重要坑）
+
+⚠️ **cron job 里的 `python` 命令会失败**：PATH 里的 `python` 解析到 Hermes uv Python（3.11），该环境存在 SRE module mismatch，import re/json 时会炸：
+
+```
+AssertionError: SRE module mismatch
+```
+
+**正确执行方式**：使用 miniconda Python + 干净环境：
+```bash
+env -i PATH="/c/Users/77/miniconda3:/c/Windows/system32:/c/Windows" \
+    /c/Users/77/miniconda3/python.exe \
+    C:/Users/77/AppData/Local/hermes/skill_evolution/conversation_scout.py
+```
+
+**注意**：不要 `which python` 来查路径——它返回的是 Hermes uv Python（已损坏），不是 miniconda 的。miniconda Python 的正确路径是 `/c/Users/77/miniconda3/python.exe`。
+
+**验证是否走对 Python**：
+```bash
+env -i PATH="/c/Users/77/miniconda3:/c/Windows/system32:/c/Windows" \
+    /c/Users/77/miniconda3/python.exe -c "import json, re; print('ok')"
+```
+
+**已知误检测（2026-05-30）**：`detect_skill_execution()` 的"skill short name"模糊匹配逻辑会把顶级目录名（`github`、`creative` 等）误报为 skill。这些目录是分类文件夹而非实际 skill，导致误写入 `skill_runs.jsonl`。需要修复方向：
+1. 严格匹配：在扫描 skills 目录时，排除顶级目录本身（只看有 SKILL.md 的真实 skill）
+2. 增加明确映射：`github` → 实际存在的相关 skill（如 `huggingface-hub`）
+3. 过滤：检测结果若在 `get_known_skills()` 中不存在则丢弃
+
+详见 `references/conversation-scout-patterns.md`。
+
 ### 命理参考文件
 
 bazi-ziwei 内置参考文件（从原 bazi-skill 继承）：
