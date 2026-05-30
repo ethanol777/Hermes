@@ -172,6 +172,40 @@ env -i \
 
 **适用于：** 调用非 uv 管理的 Python（conda、pyenv、系统 Python）、运行独立 cron 脚本、或任何 PYTHONHOME 与目标 Python 版本不匹配的场景。
 
+## `py -3` 启动器在 Hermes 环境下不可靠
+
+在 Hermes cron/sandbox 环境中，`py -3` 会继承父进程的 `PYTHONHOME`，导致加载错误的 stdlib。症状是 `AssertionError: SRE module mismatch`（uv 的 3.11 stdlib 被强加给另一个 Python 版本）。
+
+**两种可靠方案：**
+
+### 方案 A：用 execute_code 的 subprocess（最简洁）
+```python
+import subprocess, os
+
+env = os.environ.copy()
+env.pop('PYTHONHOME', None)
+env.pop('UV_INTERNAL__PYTHONHOME', None)
+
+result = subprocess.run(
+    ['C:/Users/77/AppData/Roaming/uv/python/cpython-3.12.13-windows-x86_64-none/python.exe',
+     'C:/Users/77/AppData/Local/hermes/skill_evolution/conversation_scout.py'],
+    capture_output=True, text=True, errors='replace',
+    env=env
+)
+```
+适用于脚本需要调用其他 Python 解释器的场景（对话自动扫描、skill 执行检测等）。
+
+### 方案 B：env -i 裸环境（最彻底）
+```bash
+PYTHONPATH="" PYTHONHOME="" UV_INTERNAL__PYTHONHOME="" \
+env -i \
+    PATH="/c/Users/77/miniconda3:/c/Windows/system32:/c/Windows" \
+    USERPROFILE="/c/Users/77" HOME="/c/Users/77" \
+    TEMP="/c/Users/77/AppData/Local/Temp" \
+    "$PYTHON_EXE" script.py
+```
+适用于 shell 层调用，特别是 crontab 和 Windows 任务计划程序。
+
 ## References
 
 - [references/asyncio-subprocess-pattern.md](references/asyncio-subprocess-pattern.md) — 完整的 asyncio 子进程实现参考（MCPClient 模式）
