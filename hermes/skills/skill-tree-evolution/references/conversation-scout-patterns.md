@@ -76,3 +76,16 @@ def get_known_skills():
 ## Cron Job
 
 `skill-conversation-scout`（job_id: acbcc0861da1）每30分钟运行一次，检测到新执行后自动写入 `skill_runs.jsonl`。
+
+## 执行环境（重要）
+
+⚠️ **不能用 `python` 直接调用**：cron job 的 PATH 里 `python` 解析到 Hermes uv Python（3.11），存在 SRE module mismatch，import re/json 会炸。
+
+**正确方式**：
+```bash
+env -i PATH="/c/Users/77/miniconda3:/c/Windows/system32:/c/Windows" \
+    /c/Users/77/miniconda3/python.exe \
+    C:/Users/77/AppData/Local/hermes/skill_evolution/conversation_scout.py
+```
+
+miniconda Python 路径：`/c/Users/77/miniconda3/python.exe`（不要用 `which python` 查，它会返回损坏的 uv Python）。

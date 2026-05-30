@@ -195,6 +195,29 @@ mkdir -p skills/dir/skill-name/references/
 | bazi-python | china-testing/bazi | Python 排盘库，含五行分数/冲合刑会 |
 | mingli-bench | DestinyLinker/MingLi-Bench | LLM 命理评测基准，160道选择题 |
 
+### conversation_scout.py 执行环境（重要坑）
+
+⚠️ **cron job 里的 `python` 命令会失败**：PATH 里的 `python` 解析到 Hermes uv Python（3.11），该环境存在 SRE module mismatch，import re/json 时会炸：
+
+```
+AssertionError: SRE module mismatch
+```
+
+**正确执行方式**：使用 miniconda Python + 干净环境：
+```bash
+env -i PATH="/c/Users/77/miniconda3:/c/Windows/system32:/c/Windows" \
+    /c/Users/77/miniconda3/python.exe \
+    C:/Users/77/AppData/Local/hermes/skill_evolution/conversation_scout.py
+```
+
+**注意**：不要 `which python` 来查路径——它返回的是 Hermes uv Python（已损坏），不是 miniconda 的。miniconda Python 的正确路径是 `/c/Users/77/miniconda3/python.exe`。
+
+**验证是否走对 Python**：
+```bash
+env -i PATH="/c/Users/77/miniconda3:/c/Windows/system32:/c/Windows" \
+    /c/Users/77/miniconda3/python.exe -c "import json, re; print('ok')"
+```
+
 ### Monica Skill Evolution 系统
 
 skill evolution 系统在 `C:/Users/77/AppData/Local/hermes/skill_evolution/`：

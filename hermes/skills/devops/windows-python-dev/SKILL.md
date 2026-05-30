@@ -127,7 +127,7 @@ for k, v in os.environ.items():
         print(f"{k}={v}")
 ```
 
-**修复：在调用前清除这两个变量**
+**修复方式一（清理环境变量）：**
 ```python
 import subprocess, os
 
@@ -141,6 +141,34 @@ result = subprocess.run(
     env=env
 )
 ```
+
+**修复方式二（最干净，用 env -i 裸环境启动）：**
+
+如果方式一仍有问题，用 `env -i` 从完全干净的环境启动。这是 cron job / 定时任务推荐方式：
+```bash
+env -i \
+    PATH="/c/Users/77/miniconda3:/c/Windows/system32:/c/Windows" \
+    USERPROFILE="/c/Users/77" \
+    /c/Users/77/miniconda3/python.exe script.py
+```
+
+**完整可执行的 cron 模板（适用于 Windows git-bash 环境）：**
+```bash
+CRON_PYTHON="/c/Users/77/miniconda3/python.exe"
+CRON_SCRIPT="C:/Users/77/AppData/Local/hermes/skill_evolution/evolution_cron.py"
+
+PYTHONPATH="" PYTHONHOME="" UV_INTERNAL__PYTHONHOME="" \
+env -i \
+    PATH="/c/Users/77/miniconda3:/c/Windows/system32:/c/Windows" \
+    USERPROFILE="/c/Users/77" \
+    HOME="/c/Users/77" \
+    TEMP="/c/Users/77/AppData/Local/Temp" \
+    "$CRON_PYTHON" "$CRON_SCRIPT"
+```
+
+关键点：必须显式继承 `PATH`（否则找不到 python.exe）、`TEMP`（否则临时文件无处可写）、`USERPROFILE`/`HOME`（某些 stdlib 依赖 home 路径）。
+
+这种方式完全绕开任何环境变量干扰，最可靠。
 
 **适用于：** 调用非 uv 管理的 Python（conda、pyenv、系统 Python）、运行独立 cron 脚本、或任何 PYTHONHOME 与目标 Python 版本不匹配的场景。
 
