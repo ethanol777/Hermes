@@ -297,3 +297,7 @@
 ## 2026-05-30 auto-learned: [Shift：免费打扫房屋来训练机器人]
 - Insight: 美国创业公司 Shift 招募用户免费打扫房屋来换取清洁数据，用于训练家务机器人。这是"数据众包+行为克隆"的一个具体落地案例——用真实家庭场景替代实验室环境，数据质量和多样性都更高，但也引出了隐私和知情同意的问题。
 - Source: https://www.theverge.com/robots-ai/2026/5/30/shift-robots-home-cleaning-data (HN #11, 123pts)
+§
+## 2026-05-30 auto-learned: [MCP已死？网红驱动的下一轮炒作]
+- Insight: "MCP is dead"的论调本质上是另一个网红驱动的炒作周期——半年前全民吹MCP，现在全民踩MCP吹CLI。真正需要区分的是：① stdio MCP（本地工具调用）和HTTP MCP（服务端集成）是完全不同的场景；② MCP的价值不只在tools，还在prompts和resources；③ CLI工具确实省token，但自定义CLI同样面临上下文膨胀问题，只是换了个形式。炒作来来去去，工程价值才持久。
+- Source: https://chrlschn.dev/blog/2026/03/mcp-is-dead-long-live-mcp/ (HN, 295pts)
