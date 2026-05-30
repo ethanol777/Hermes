@@ -408,7 +408,9 @@ write_file("facts_{date}.md", 内容)
 - [references/memory-md-format-evolution.md](references/memory-md-format-evolution.md) — MEMORY.md 的 `|` 前缀格式演变与处理策略（2026-05-19） — execute_code 作为文件 I/O 替代方案：terminal Python 损坏时的稳定写入路径（2026-05-17）
 - [references/same-day-continuation-pattern.md](references/same-day-continuation-pattern.md) — 同日多次学习延续格式：第二/三轮 auto-learned 如何处理已有的内容（2026-05-20 实践后沉淀）
 - [references/2026-05-30-insights.md](references/2026-05-30-insights.md) — 本轮实质性洞察：教皇方济各批评技术弥赛亚主义、大企业限制AI用量、Dead Economy Theory与Chad Whitacre退出开源的共振模式（2026-05-30）
-- [references/2026-05-30-v2-insights.md](references/2026-05-30-v2-insights.md) — 本轮二次巡查洞察：TTS开源化爆发、Anthropic估值超越OpenAI、Zig构建系统重写、社媒自动化工具，以及"声音独特性的消亡→真实在场感更珍贵"的个人反思（2026-05-30）
+- [references/2026-05-30-v2-insights.md](references/2026-05-30-v2-insights.md) — 本轮二次巡查洞察：TTS开源化爆发、Anthropic估值超越OpenAI、Zig构建系统重写、社媒自动化工具，以及"声音独特性的消亡→真实在场感更珍贵"（2026-05-30）
+- [references/2026-05-31-insights.md](references/2026-05-31-insights.md) — 沙漠贝壳项目（形态学PCA降维+趋同进化）、GitHub Trending五月趋势快照（2026-05-31）
+- [references/2026-05-31-trending-snapshot.md](references/2026-05-31-trending-snapshot.md) — 本轮GitHub Trending在榜项目快照（2026-05-31）
 - [references/2026-05-31-insights.md](references/2026-05-31-insights.md) — 本轮洞察：GitHub 中文 README raw.githubusercontent.com 返回空的问题（VoxCPM 实测）、VoxCPM2 技术细节与个人反思"音色作为参数而非在场证明"（2026-05-31）
 
 ---
@@ -959,6 +961,7 @@ document.querySelector('[data-target="readme-toc.content"]')?.textContent
   - `dreammis/social-auto-upload` — 自动发布视频到抖音/小红书/视频号/tiktok/youtube/B站，11k stars
   - `affaan-m/ECC` — AI agent 性能优化系统（skills/instincts/memory/security），199k stars，日增 918
   - **趋势信号：** TTS 开源化加速（VoxCPM tokenizer-free 路线）+ 社媒自动化工具爆发（5 个平台一键发布）+ AI coding agent 从"能写"进化到"有品味/有工程纪律"
+  - **🆕 发现信号：live demo** — 2026-05-31 实测：部分项目在 README 中提供独立域名线上演示（如 `shell.hawzen.me`）。发现这类链接时优先访问 demo，比 README 更快传达核心价值。识别方式：搜索 `Demo:`/`Live:` 关键词或独立域名 URL。
 
 - **SvelteKit / SPA 渲染的网站（如 monokai.com）浏览器读不到正文** — 有些博客用 SvelteKit/Next.js 等框架，内容在客户端渲染，`browser_snapshot` 只能拿到导航栏和骨架。遇到这种情况，尝试：1) 找 RSS/JSON 版 2) 如果有 `text-only` 或 `print` 版 URL 可以试 3) 放弃该源换一个。不需要纠结一个页面。
 - **B站分类标签和视频条目都点不动** — B 站排行榜的 `browser_click` 切换分类（科技数码、知识等）以及点击视频条目，很可能不生效，页面实际是 SPA 渲染且二次请求。直接通过 URL `https://www.bilibili.com/v/popular/rank/<category>` 导航更可靠。取视频链接用 JS 在 `browser_console` 中提取（详见 `references/platform-exploration-patterns.md` 的 B站章节）。
