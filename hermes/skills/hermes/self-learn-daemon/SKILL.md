@@ -182,7 +182,6 @@ prompt: |
 |--------|------|--------|---------|--------|
 | 1 | GitHub Trending | ✅ 无需登录 | 开源项目/技术趋势 | ✅ 稳定 |
 | 2 | Hacker News | ✅ 无需登录 | 技术+科学+商业+文化 | ✅ 稳定（HN item 页面 browser_navigate 返回空，改用 Firebase API） |
-| 2 | Lobste.rs | ✅ RSS (`https://lobste.rs/rss`) | 技术+工程+开源文化 | ✅ 稳定，内容偏工程向，curl 纯文本解析无障碍 |
 | 3 | B站排行榜 | ✅ 无需登录 | 综合（科技/知识/娱乐/生活） | ⚠️ browser_navigate 可靠，API 不可靠。B站 API `api.bilibili.com/x/web-interface/ranking/v2` 加 Referer 头曾在 2026-05-18 成功，但 2026-05-19 同一配置失效（返回空），说明 API 端不稳定。推荐直接 browser_navigate 访问 `/v/popular/rank/all`，不依赖 API。另：搜索框联想词也可作为被动内容发现渠道 |
 | 4 | 36氪 | ✅ 无需登录 | 中国商业科技新闻 | ✅ 稳定，快讯流可读 |
 | 5 | Simon Willison's Blog (simonwillison.net) | ✅ 无需登录 | LLM深度聚合/月报/趋势综述 | ✅ 稳定，高信噪比。每月的「Monthly briefing」和 PyCon 年度回顾是极高质量的 LLM 总结。文章在 HN 上热门可反向发现。2026-05-30 实测：他写的 SQLite AGENTS.md 分析（"SQLite does not accept agentic code"）是本轮最高质量发现之一。|
@@ -195,7 +194,7 @@ prompt: |
 | 9 | 小红书 | ⛔ IP风控拦截 | 生活方式/时尚/情感 | ❌ 浏览器打不开，搜引擎缓存 |
 | 9 | 微博热搜 | ✅ 浏览器可达 s.weibo.com 访客模式 | 社会热点/时事 | ⚠️ 会被 redirect 到 passport.weibo.com/visitor，但最终能拿到完整热搜列表（30+ 条）。2026-05-20 验证有效 |
 | 10 | 掘金 | ✅ 无需登录 | 中国开发者深度内容 | ✅ 稳定 |
-| 10 | Lobste.rs | ✅ RSS feed (`/top/month.rss`) | 技术+工程+开源文化 | ✅ 稳定，RSS JSON 纯文本可 curl 解析 |
+| 10 | Lobste.rs | ✅ RSS feed (`/top/month.rss`) | 技术+工程+开源文化 | ✅ 稳定，RSS 纯文本可 curl 解析 |
 | 11 | Telegram 频道 (t.me/s/) | ✅ 无需登录 | AI/技术/开源/创业资讯 | ⚠️ `t.me/s/channelname` 可用，详见 reference |
 | 12 | 微博 | ✅ 无需登录（API直接可读） | 时事/娱乐 | ✅ `weibo.com/ajax/side/hotSearch` 加 UA/Referer 头即可 |
 
@@ -925,6 +924,7 @@ result = terminal("curl -s 'https://hacker-news.firebaseio.com/v0/topstories.jso
   
   详见 `references/hn-firebase-topstories-pattern.md`.
 
+- **DuckDuckGo 搜索结果页需要等待加载** — `browser_navigate` 到 `duckduckgo.com/?q=xxx` 后，需要等待 1-2 秒让搜索结果完全加载。如果在页面加载完成前就调用 `browser_snapshot`，会得到空结果（只有导航栏和搜索框）。**正确的顺序是：** `browser_navigate` → 等 2 秒 → `browser_snapshot` → 提取链接 → `browser_navigate` 目标。2026-05-31 实测：搜索结果页面有明显的"加载中"状态，不等待会拿到空页面。
 - **openpath.quest 博客无法直接访问（SSL 证书错误）** — 2026-05-30 实测：直接导航到 `openpath.quest/blog/retiring-from-tech` 触发 `ERR_CERT_COMMON_NAME_INVALID`，网页存档（web.archive.org）同样连接中断。遇到这种情况，从两个方向补充信息：1) HN 帖子本身的标题和摘要（424分热帖通常会附核心引用）2) 从博客作者的个人主页（chadwhitacre.com）补充背景信息。如果两个方向都拿不到正文，**只记录 HN 摘要级别的信息，不要因为正文不可读就放弃整个话题**。
 ### 🟡 GitHub Trending 采集：browser_navigate 替代 grep
 

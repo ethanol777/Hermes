@@ -97,26 +97,21 @@ miniconda Python 路径：`/c/Users/77/miniconda3/python.exe`（不要用 `which
 在 `execute_code` 里调用时，不能用 subprocess 直接运行（会走损坏的 hermes venv Python）。正确方式是：
 
 ```python
-import subprocess, os
+import subprocess, sys
 
-env = os.environ.copy()
-for key in list(env.keys()):
-    if 'PYTHON' in key.upper() or key in ('PYTHONHOME', 'PYTHONPATH', 'VIRTUAL_ENV'):
-        del env[key]
-
-# 用 shell 重定向到文件绕过编码问题
-temp_output = "C:/Users/77/AppData/Local/hermes/skill_evolution/_scout_last_run.txt"
-miniconda_py = "C:/Users/77/miniconda3/python.exe"
+local_python = "C:/Users/77/.local/bin/python3.12.exe"
 scout_py = "C:/Users/77/AppData/Local/hermes/skill_evolution/conversation_scout.py"
-subprocess.run(
-    f'"{miniconda_py}" "{scout_py}" > "{temp_output}" 2>&1',
-    shell=True, env=env
+result = subprocess.run(
+    [local_python, scout_py],
+    capture_output=True, text=True,
+    timeout=60
 )
-with open(temp_output, encoding="gbk") as f:
-    print(f.read())
+print(result.stdout)
+if result.returncode != 0:
+    print("STDERR:", result.stderr)
 ```
 
-**注意**：subprocess 的 `text=True` 模式下 `stdout` 可能返回 `None`，但命令实际成功执行（returncode=0）。用 shell 重定向到文件 + `encoding="gbk"` 读取可绕过编码问题。
+**注意**：确保 `PYTHONHOME` / `PYTHONPATH` 环境变量被清理干净，否则 subprocess 仍会继承损坏的 uv Python 环境。
 
 ## Cron Job
 

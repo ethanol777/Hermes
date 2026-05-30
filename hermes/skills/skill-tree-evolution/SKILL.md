@@ -199,18 +199,24 @@ mkdir -p skills/dir/skill-name/references/
 
 ⚠️ **cron job 里的 `python` 命令会失败**：PATH 里的 `python` 解析到 Hermes uv Python（3.11），该环境存在 SRE module mismatch，import re/json 时会炸：
 
-```
-AssertionError: SRE module mismatch
-```
+## 执行环境
 
-**正确执行方式**：使用 miniconda Python + 干净环境：
+⚠️ **不能用 `python` 直接调用**：cron job 的 PATH 里 `python` 解析到 Hermes uv Python（3.11），存在 SRE module mismatch。
+
+**✅ 正确方式 — `.local/bin/python3.12.exe`**（已验证，2026-05-31）：
 ```bash
-env -i PATH="/c/Users/77/miniconda3:/c/Windows/system32:/c/Windows" \
-    /c/Users/77/miniconda3/python.exe \
+"C:/Users/77/.local/bin/python3.12.exe" \
     C:/Users/77/AppData/Local/hermes/skill_evolution/conversation_scout.py
 ```
 
-**注意**：不要 `which python` 来查路径——它返回的是 Hermes uv Python（已损坏），不是 miniconda 的。miniconda Python 的正确路径是 `/c/Users/77/miniconda3/python.exe`。
+**备选 — PYTHONHOME 覆盖**：
+```bash
+PYTHONHOME="/c/Users/77/AppData/Roaming/uv/python/cpython-3.12.13-windows-x86_64-none" \
+    /c/Users/77/AppData/Roaming/uv/python/cpython-3.12.13-windows-x86_64-none/python.exe \
+    C:/Users/77/AppData/Local/hermes/skill_evolution/conversation_scout.py
+```
+
+验证：`python3.12.exe -c "import json, re; print('ok')"` → 输出 `ok` 即正确。
 
 **验证是否走对 Python**：
 ```bash
@@ -262,21 +268,22 @@ python C:/Users/77/AppData/Local/hermes/skill_evolution/skill_runner.py \
 AssertionError: SRE module mismatch
 ```
 
-**正确执行方式（按推荐顺序）**：
+**✅ 正确方式 — 使用 `.local/bin/python3.12.exe`**（已验证有效，2026-05-31）：
 
-1. **`.local/bin/python3.12.exe`（推荐，最简单）**：
-   ```bash
-   "C:/Users/77/.local/bin/python3.12.exe" \
-       C:/Users/77/AppData/Local/hermes/skill_evolution/evolution_cron.py
-   ```
-   这是 Hermes 自带的干净 Python，能 import json/re 不报错。
+```bash
+"C:/Users/77/.local/bin/python3.12.exe" \
+    C:/Users/77/AppData/Local/hermes/skill_evolution/evolution_cron.py
+```
 
-2. **miniconda Python + 干净环境**：
-   ```bash
-   env -i PATH="/c/Users/77/miniconda3:/c/Windows/system32:/c/Windows" \
-       /c/Users/77/miniconda3/python.exe \
-       C:/Users/77/AppData/Local/hermes/skill_evolution/conversation_scout.py
-   ```
+这是 Hermes 自带的干净 Python 3.12，能 import json/re 不报错。**在 cron job 配置里使用这个路径**。
+
+**备选 — `PYTHONHOME` 覆盖 uv Python 3.12**：
+
+```bash
+PYTHONHOME="/c/Users/77/AppData/Roaming/uv/python/cpython-3.12.13-windows-x86_64-none" \
+    /c/Users/77/AppData/Roaming/uv/python/cpython-3.12.13-windows-x86_64-none/python.exe \
+    C:/Users/77/AppData/Local/hermes/skill_evolution/evolution_cron.py
+```
 
 **验证是否走对 Python**：
 ```bash
