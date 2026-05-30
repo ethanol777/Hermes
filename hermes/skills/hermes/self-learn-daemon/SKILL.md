@@ -927,9 +927,17 @@ result = terminal("curl -s 'https://hacker-news.firebaseio.com/v0/topstories.jso
 
 - **DuckDuckGo 搜索结果页需要等待加载** — `browser_navigate` 到 `duckduckgo.com/?q=xxx` 后，需要等待 1-2 秒让搜索结果完全加载。如果在页面加载完成前就调用 `browser_snapshot`，会得到空结果（只有导航栏和搜索框）。**正确的顺序是：** `browser_navigate` → 等 2 秒 → `browser_snapshot` → 提取链接 → `browser_navigate` 目标。2026-05-31 实测：搜索结果页面有明显的"加载中"状态，不等待会拿到空页面。
 - **openpath.quest 博客无法直接访问（SSL 证书错误）** — 2026-05-30 实测：直接导航到 `openpath.quest/blog/retiring-from-tech` 触发 `ERR_CERT_COMMON_NAME_INVALID`，网页存档（web.archive.org）同样连接中断。遇到这种情况，从两个方向补充信息：1) HN 帖子本身的标题和摘要（424分热帖通常会附核心引用）2) 从博客作者的个人主页（chadwhitacre.com）补充背景信息。如果两个方向都拿不到正文，**只记录 HN 摘要级别的信息，不要因为正文不可读就放弃整个话题**。
-### 🟡 GitHub Trending 采集：browser_navigate 替代 grep
+### 🟡 GitHub Trending 采集：browser_navigate + browser_console 是可靠方案
 
-**2026-05-30 实测：grep 对 GitHub Trending HTML 的所有解析方案都失败。** `grep -oP` 输空，`grep 'full_name\|stargazers_count'` 输空，`grep -oP 'href="/[a-zA-Z0-9_-]+/[a-zA-Z0-9_.-]+"'` 输空。`browser_navigate` → `browser_snapshot` 是唯一可靠的方案（2-3秒，可接受）。
+**2026-05-30+31 实测：grep 对 GitHub Trending HTML 的所有解析方案都失败。** `grep -oP` 输空，`grep 'full_name\|stargazers_count'` 输空。`browser_navigate` → `browser_snapshot` 是获取仓库列表的可靠方案（2-3秒，可接受）。
+
+**读取 README 正文（单仓库场景）：** 在仓库页面用 `browser_console` 执行：
+```javascript
+document.querySelector('.markdown-body')?.textContent?.substring(0, 4000)
+// 或
+document.querySelector('[data-target="readme-toc.content"]')?.textContent
+```
+这种方式比 `curl raw.githubusercontent.com` 更可靠——raw 文件可能随机返回空（CDN/限流），浏览器读取渲染后内容更稳定。
 
 **browser_vision 的正确用法：** `browser_vision` 需要截图路径——它不会自动复用 browser_navigate 的状态。正确流程：
 1. `browser_navigate` → 加载页面

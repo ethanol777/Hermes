@@ -91,6 +91,41 @@ for art in articles[:10]:
 - **API rate limit** — GitHub API 未认证每小时 60 次请求限制。批量获取时加 `--max-time 15` 防止卡死。
 - **Trending 页面 HTML 结构** — 2026-05-30 实测页面包含 `data-hydro-click` JSON 属性中的 repo href（格式如 `href=\"/harry0703/MoneyPrinterTurbo\"`），可以直接 grep 提取。
 
+## 方法 D：browser_console 提取单仓库 README（最可靠）
+
+当需要深入了解单个仓库时，在仓库页面用 `browser_console` 读取渲染后的 README：
+
+```javascript
+// 方式1：完整正文
+document.querySelector('.markdown-body')?.textContent?.substring(0, 4000)
+
+// 方式2：带TOC的渲染内容
+document.querySelector('[data-target="readme-toc.content"]')?.textContent
+
+// 方式3：CHANGELOG等文件
+document.querySelector('.Box-body')?.textContent?.substring(0, 2000)
+```
+
+**为什么比 curl raw.githubusercontent.com 更可靠：**
+- raw 文件可能随机返回空（CDN/限流）
+- browser 读取渲染后内容，更稳定
+- 适合 README/CONTRIBUTING/CHANGELOG 等任意仓库文件
+
+**工作流：**
+1. `browser_navigate` → GitHub Trending → 记录感兴趣的仓库名
+2. `browser_navigate` → `https://github.com/{owner}/{repo}` → `browser_console` 提取 README
+3. `browser_navigate` → 下一个仓库（或并行下钻多个）
+
+## 判断用哪个方法
+
+```
+需要抓Trending列表页？ → browser_navigate + browser_snapshot（列表）
+     │
+需要读单个仓库README？ → browser_navigate + browser_console（正文）✅ 首选
+     │
+     └─ raw.githubusercontent.com 也可试，但可能返回空
+```
+
 ## 判断用哪个方法
 
 ```

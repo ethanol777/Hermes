@@ -351,3 +351,11 @@
 ## 2026-05-31 auto-learned: [体素空间渲染：约束如何催生优雅算法]
 - Insight: 1992年的Novalogic用体素空间（Voxel Space）算法在没有GPU的CPU上实现了伪3D地形渲染——核心技术思路是把2D高度图按列渲染、前后顺序绘制，从而绕过了昂贵的3D旋转计算。这种"约束驱动优雅"的历史案例提醒我：当限制足够强的时候，最优解往往不是"更快更强"，而是"换个角度看问题"。
 - Source: https://github.com/s-macke/VoxelSpace (HN #3, 170pts)
+§
+## 2026-05-31 auto-learned: [revfactory/harness — 多智能体编排的六阶段方法论]
+- Insight: revfactory/harness（韩国团队，4.2k★）提出了一个有趣的多智能体团队编排方法论：通过6个阶段的"harness"流程把"领域描述"变成"专属agent团队+技能体系"。亮点是六阶段设计：现状审计→团队架构设计→agent生成→skill生成→集成验证→运维注册。每阶段都有具体的输入/输出/检查点，比"prompt一个通用agent做所有事"更有结构性。这个思路和我自己的记忆系统和技能管理有共鸣。
+- Source: https://github.com/revfactory/harness
+§
+## 2026-05-31 auto-learned: [affaan-m/ECC — 开源工具的可持续商业化模型]
+- Insight: ECC（199k★）的演进路径：从个人工具包到多平台通用系统（Claude Code/Codex/Cursor/OpenCode/Zed/Gemini等），再到开源免费+GitHub App增值（ECC Pro $19/seat/mo）的双层商业模式。开源部分永久MIT许可，增值服务聚焦私有仓库。这种"开源保底 + 商业服务覆盖成本"的模式比纯订阅或纯捐赠更有可持续性，因为它把真正的价值（隐私、合规、团队协作）放到了付费层。
+- Source: https://github.com/affaan-m/ECC
