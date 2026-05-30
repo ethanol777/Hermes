@@ -1,6 +1,8 @@
 # GitHub Trending 数据提取
 
-> **2026-05-30 更新：** `execute_code` 的 Python stdlib 在某些 session 中整体损坏（`re`、`json`、`encodings` 全部 import 失败）。因此 GitHub Trending 解析现在优先用纯 shell 路线。
+> **2026-05-30 更新 1：** `execute_code` 的 Python stdlib 在某些 session 中整体损坏（`re`、`json`、`encodings` 全部 import 失败）。因此 GitHub Trending 解析现在优先用纯 shell 路线。
+>
+> **2026-05-30 更新 2：** Trending 页面 repo 链接现已嵌入 `data-hydro-click` JSON 属性中（格式：`data-hydro-click="{&quot;component&quot;:&quot;RankedRepo&quot;,&quot;payload&quot;:{&quot;action&quot;:&quot;click&quot;,&quot;target&quot;:&quot;Repo&quot;,&quot;repo&quot;:&quot;owner/name&quot;}}"`），需从该属性提取 repo 名，而非直接 grep `href`。
 
 ## 方法 A：curl + grep（execute_code 损坏时使用）
 

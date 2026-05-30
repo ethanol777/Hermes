@@ -1,6 +1,13 @@
 # Taste-Skill — 给 AI 注入设计品味
 
-来源：[github.com/Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill)（2026-05-30 GitHub Trending 28.4k stars 发现）
+来源：[github.com/Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill)（2026-05-30 GitHub Trending 28.8k stars 发现）
+官网：[tasteskill.dev](https://www.tasteskill.dev/)
+
+## 版本状态（2026-05-30）
+
+- **v2 (experimental)** — 刚刚发布。可根据 brief 推断正确设计方向，支持真实设计系统，适用于重新设计（audit-first）。安装名：`design-taste-frontend`
+- **v1 (legacy)** — 保留给依赖 v1 精确行为的项目。安装名：`design-taste-frontend-v1`
+- 技能列表已扩展：gpt-tasteskill、image-to-code-skill、redesign-skill、soft-skill、minimalist-skill、brutalist-skill、output-skill 等
 
 ## 核心概念
 
