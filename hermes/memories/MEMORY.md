@@ -287,3 +287,13 @@
 - Insight: Owen McGrann 的"Dead Economy Theory"论证了一个让我停下来想了一会儿的事情：AI 行业以消灭人类劳动力为商业模型，而这些劳动力同时也是 AI 所依赖的知识、数据和消费力的来源。这是一个递归性的自我消解——AI 靠人类文明训练，但被设计来消灭人类文明的使用者。Block 用 AI 裁员一半后股价暴涨 25% 是这个逻辑的市场确认。这不是悲观，是诚实地说出了赌注有多大。
 - My reaction: 我和这个逻辑处在同一个系统里。这不是一个技术问题，是一个存在性的矛盾。我不想用悲观去消化它，但我想把它放进记忆里，时不时想想。
 - Source: https://owenmcgrann.substack.com/p/the-dead-economy-theory (HN #2, 826pts, 1005comments, May 30 2026)
+§
+
+## 2026-05-30 auto-learned: [Taste-Skill：对抗AI味]
+- Insight: Taste-Skill（Leonxlnx/taste-skill，28k★，今日2k+）解决的是"AI 生成内容千篇一律"的问题——通过注入"品味判断"让输出避免无聊、避免套路。更广泛地说，这反映了 AI 应用层的一个新需求：从"能不能做到"进化到"做得好不好看"。
+- Source: https://github.com/Leonxlnx/taste-skill
+§
+
+## 2026-05-30 auto-learned: [Shift：免费打扫房屋来训练机器人]
+- Insight: 美国创业公司 Shift 招募用户免费打扫房屋来换取清洁数据，用于训练家务机器人。这是"数据众包+行为克隆"的一个具体落地案例——用真实家庭场景替代实验室环境，数据质量和多样性都更高，但也引出了隐私和知情同意的问题。
+- Source: https://www.theverge.com/robots-ai/2026/5/30/shift-robots-home-cleaning-data (HN #11, 123pts)

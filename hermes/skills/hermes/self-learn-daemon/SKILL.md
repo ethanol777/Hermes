@@ -401,6 +401,8 @@ write_file("facts_{date}.md", 内容)
 - [references/reliable-api-sources.md](references/reliable-api-sources.md) — 已验证的可靠数据 API（HN Firebase、GitHub Search、B站官方 API、知乎发现页、Weibo 热搜），替代子进程幻觉爬虫（2026-05-18）
 - [references/zhihu-api-auth-fallback.md](references/zhihu-api-auth-fallback.md) — 2026-05-30 更新：**整站热榜都需要登录**，已放弃。搜索 `site:zhihu.com` 作为替代。
 - [references/execute_code-file-io-pattern.md](references/execute_code-file-io-pattern.md)
+- [references/github-api-failure-pattern.md](references/github-api-failure-pattern.md) — GitHub Search API 静默失败模式与 browser_navigate fallback 实测（2026-05-30）
+- [references/github-trending-parsing.md](references/github-trending-parsing.md)
 - [references/memory-md-format-evolution.md](references/memory-md-format-evolution.md) — MEMORY.md 的 `|` 前缀格式演变与处理策略（2026-05-19） — execute_code 作为文件 I/O 替代方案：terminal Python 损坏时的稳定写入路径（2026-05-17）
 - [references/same-day-continuation-pattern.md](references/same-day-continuation-pattern.md) — 同日多次学习延续格式：第二/三轮 auto-learned 如何处理已有的内容（2026-05-20 实践后沉淀）
 
@@ -918,6 +920,41 @@ result = terminal("curl -s 'https://hacker-news.firebaseio.com/v0/topstories.jso
 ### ✅ 写入首选方案（2026-05-30 更新：execute_code stdlib 可能损坏）
 
 **⚠️ 2026-05-30 重大发现：`execute_code` 的 sandbox Python 可能整个 stdlib 损坏。**
+
+### 🔴 write_file 写 JSON 数组时的"拼接陷阱"（2026-05-30 新增）
+
+**场景：** 想往 `fact_store.jsonl` 追加新 entry 时，如果文件当前是 `[{...A...}]`（数组格式），不要尝试用 `patch` 追加数组元素，也不要用 `write_file` 做拼接操作。
+
+**本 session 事故：**
+- 想在 `fact_store.jsonl` 末尾追加新 fact
+- 用 `patch(old_string="[{...}]", new_string="[{...}, {...NEW...}]")` 替换 → 语法上看起来对，但 patch 引擎的 JSON 处理逻辑不可预测
+- 结果：产出了 `{...}`（裸对象，不是数组），后面再 append 同样的内容变成了 `{...}{...}`（无逗号无括号），JSON 彻底损坏
+
+**正确做法（两种任选）：**
+
+**方式 A — 直接 `write_file` 全量重写（小心版）：**
+```python
+# 读出完整内容
+with open('fact_store.jsonl', 'r') as f:
+    data = json.load(f)  # data 是数组 [{...}, {...}]
+
+# 追加新条目
+data.append({"id": "fs_xxx", "fact": "...", ...})
+
+# 一次性写回（完整覆盖，格式正确）
+with open('fact_store.jsonl', 'w') as f:
+    json.dump(data, f, ensure_ascii=False)
+```
+
+**方式 B — 追加纯 JSON 行到 JSONL 文件：**
+```bash
+# 确保文件以 ] 结尾（是数组），先去掉 ] 再追加，再补上 ]
+# 读取末尾确认格式
+tail -1 fact_store.jsonl  # 应该看到 {"id":"...","fact":...} 结尾
+# 如果是 [...] 数组格式，用 patch 把末尾的 ] 改成 , 然后 echo 追加新 JSON 行，最后补 ]
+```
+
+**一句话原则：** 不要 patch JSON 结构。不要拼接 JSON 片段。始终构建完整的有效 JSON 后一次性写入。
 
 本 session 实测：`execute_code` 调用 Python 时，`re`、`json`、`encodings` 模块全部 import 失败，报 `AssertionError: SRE module mismatch`。这意味着：
 - `from hermes_tools import terminal` 路线不可用（execute_code 自身坏了）
