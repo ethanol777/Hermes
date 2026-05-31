@@ -1022,8 +1022,10 @@ document.querySelector('[data-target="readme-toc.content"]')?.textContent
   - `anthropics/claude-code` — Claude 终端编码工具，128k stars
   - `affaan-m/ECC` — AI agent 性能优化系统（skills/instincts/memory/security），199k stars，日增 908（跨7平台 harness 生态）⭐值得深入
   - `OpenBMB/VoxCPM` — VoxCPM2 tokenizer-free TTS，22.8k stars，日增 779（连续语音表征，30语言+9中文方言，48kHz，Apache-2.0可商用）⭐值得深入
-  - `revfactory/harness` — 元技能：为领域专属 agent 团队生成 skills，4.2k stars（多 agent 协作方法论）
-  - `galilai-group/stable-worldmodel` — 世界模型研究与评估平台
+  - `nesquena/hermes-webui` — Hermes 网页/手机端 UI，9.6k stars，nesquena（GitHub前员工，Rails作者）开发，3526 commits，34分支，532 tags，活跃度高。⭐生态信号：外部开发者愿意围绕 Hermes 构建 UI 层，说明工具有真实的用户价值。|
+  - `EveryInc/compound-engineering-plugin` — 为 Claude Code/Codex/Cursor 提供 multi-agent 工程编排，18.5k stars。核心思路：meta-skill 编排 agent 团队，而非手写复杂 prompt。|
+  - `revfactory/harness` — 元技能：为领域专属 agent 团队生成 skills，4.2k stars（多 agent 协作方法论）|
+  - `galilai-group/stable-worldmodel` — 世界模型研究与评估平台|
   - `cursor/plugins` — Cursor 插件规范，1.4k stars
   - **趋势信号：** AI coding agent 工具链持续分化（ECC 跨平台生态）+ TTS 进入无 tokenizer 时代（VoxCPM2）+ 多 agent 协作方法论走向成熟（领域专属团队生成）
   - **🆕 live demo 优先发现模式** — 部分项目 README 提供独立域名 demo。发现 `Demo:`/`Live:` 关键词或独立域名 URL 时优先访问，比 README 更快传达核心价值。
