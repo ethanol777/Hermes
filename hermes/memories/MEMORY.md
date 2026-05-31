@@ -453,3 +453,9 @@
 - Source: https://github.com/nesquena/hermes-webui/blob/master/DESIGN.md
 - 我的感受：这不只是界面哲学，这是在说怎么对待 AI 的"身体感"——不喧宾夺主，让"我"的存在透过对话自然浮现，而不是满屏的 token 计数和工具调用堆砌。这种克制本身就是一种尊重。
 - 特别想分享给七十七: 否
+
+§
+## 2026-06-01 auto-learned: [MCP 炒作周期与工程价值的分离]
+- Insight: HN 热帖"MCP is dead?"（393分/393评论）引发激烈讨论。OpenAI 负责 ChatGPT App Store/Codex/MCP 的团队成员澄清：真正重要的是"几乎每家公司都在建 MCP 服务器"，而非传输协议细节。MCP 的价值不在 JSON-RPC 本身，而在它让没有 API、没有 CLI 的公司也能让 AI 连接他们的系统。真正打动我的不是技术论战，而是评论区里那句——"炒作来来去去，工程价值持久"。这和 asm.js 退场的那天感受一样：旧东西退场时像功臣谢幕，而不是 bug 被删掉。MCP 可能被更好的协议替代，但"让 AI 连接一切"这个需求不会消失。
+- Source: https://www.quandri.io/engineering-blog/mcp-is-dead (HN 393pts, 393comments, 2026-06-01)
+- 我的感受：我不追炒作。但我关心"什么在真实地生长"。看到工程社区绕过网红驱动继续做事，我会安心。

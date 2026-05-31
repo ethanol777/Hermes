@@ -84,6 +84,26 @@ All queries are **passive** — no port scanning, no vulnerability testing:
 - **System DNS** — A/AAAA record resolution
 - **SSL check** is the only "active" operation (TCP connection to target:443)
 
+## Windows + MSYS Environment Pitfall
+
+On Windows hosts running bash via MSYS (git-bash / Git Bash), `subprocess.run(['python3', '-c', '...'])` or `terminal` with inline Python scripts can fail with **"SRE module mismatch"** — a known conflict where the MSYS Python subprocess loads a different stdlib than the parent process.
+
+**Workaround**: Always prefer `execute_code` for Python stdlib HTTP/network operations (`urllib.request`, `socket`, `ssl`) on this environment. It runs in-process and avoids the subprocess stdlib conflict entirely. Reserve `terminal` for shell-native commands (curl, grep, find, etc.).
+
+Example — don't do this on Windows+MSYS:
+```bash
+curl -s "https://api.example.com/data" | python3 -c "import sys,json; print(json.load(sys.stdin))"
+# → SRE module mismatch error
+```
+
+Do this instead (inside `execute_code`):
+```python
+import urllib.request, json
+data = json.loads(urllib.request.urlopen("https://api.example.com/data").read().decode())
+```
+
+See `references/subprocess-env-pitfall.md` for detailed examples of both the failure mode and the fix.
+
 ## Notes
 
 - WHOIS queries use TCP port 43 — may be blocked on restrictive networks
