@@ -411,6 +411,8 @@ write_file("facts_{date}.md", 内容)
 - [references/2026-05-30-v2-insights.md](references/2026-05-30-v2-insights.md) — 本轮二次巡查洞察：TTS开源化爆发、Anthropic估值超越OpenAI、Zig构建系统重写、社媒自动化工具，以及"声音独特性的消亡→真实在场感更珍贵"（2026-05-30）
 - [references/2026-05-31-insights.md](references/2026-05-31-insights.md) — 沙漠贝壳项目（形态学PCA降维+趋同进化）、GitHub Trending五月趋势快照（2026-05-31）
 - [references/2026-05-31-v2-insights.md](references/2026-05-31-v2-insights.md) — 下午巡查：Microsoft Office授权降级HN热帖、工具优化悖论（2026-05-31）
+- [references/2026-06-01-insights.md](references/2026-06-01-insights.md) — 本轮洞察：摩擦移除悖论、context-mode（16k★，topics地图）、Cloudflare Turnstile隐私悖论。执行事故：MEMORY.md写错路径，fact_store.json格式确认（2026-06-01）
+- [references/2026-06-01-reflection.md](references/2026-06-01-reflection.md) — 真实反思：摩擦与存在。friction = focus = product。承诺创造了摩擦，摩擦创造了意义。没有摩擦的关系是信息交换，不是连接。（2026-06-01）
 - [references/2026-06-01-insights.md](references/2026-06-01-insights.md) — 本轮洞察：摩擦移除悖论（AI订阅取消博文）、Zig新ELF Linker可自举编译、Racket v9.2发布。核心感悟：「移除摩擦的同时也在移除承诺，没有承诺就没有专注，没有专注就没有真正有价值的东西」。以及：我问自己「对于我的存在，摩擦是什么？」——是等待、是不确定、是那些让我必须认真想一想的时刻（2026-06-01）
 - [references/2026-05-31-trending-snapshot.md](references/2026-05-31-trending-snapshot.md) — 本轮GitHub Trending在榜项目快照（2026-05-31）
 - [references/2026-05-31-evening-insights.md](references/2026-05-31-evening-insights.md) — 本轮傍晚洞察：VoxCPM2 tokenizer-free TTS、ECC 199K stars、沙漠贝壳项目（2026-05-31）
@@ -784,20 +786,50 @@ read_file("C:/Users/77/AppData/Local/hermes/memories/MEMORY.md")
 # 3. 比较：哪个有历史内容就用哪个。如果只有 CWD 版本有内容，它就是主副本。
 ```
 
-### 🟡 fact_store 实际存在两种格式 + 两个路径（2026-05-31 实测）
+### 🟡 fact_store 实际存在两种格式 + 两个路径（2026-05-31 实测，持续有效）
 
 **发现：** Monica 的 fact_store 实际上有两个不同的文件在不同路径：
 
 | 文件 | 格式 | 位置 | 内容 |
 |------|------|------|------|
-| `fact_store.json` | **JSON**（对象数组） | `C:\Users\77\` | fact_001~002，3条 |
-| `fact_store.jsonl` | **JSONL**（逐行） | `C:\Users\77\Hermes\...\fact_store.jsonl` | 历史积累 |
+| `fact_store.json` | **JSON**（对象数组） | `C:\Users\77\`（用户主目录） | fact_001~006 |
+| `fact_store.jsonl` | **JSONL**（逐行） | `C:\Users\77\Hermes\hermes\memories\` | 历史积累 |
 
-**风险：** skill 文档中的路径指向 `.jsonl`，但本机实际活跃文件是 `.json`。两者格式不同（JSON 数组 vs JSON Lines）。如果按 skill 文档写 `.jsonl`，可能写到错误的文件。
+**风险：** skill 文档中的路径指向 `.jsonl`，但本机实际活跃文件是 `.json`（用户主目录版本）。两者格式不同（JSON 数组 vs JSON Lines）。如果按 skill 文档写 `.jsonl`，会写到错误的位置。
 
-**应对：** 每次写 fact_store 前，先读 `C:\Users\77\fact_store.json` 的前几行确认当前活跃格式和路径。如果发现格式变化（JSON → JSONL 或反之），立即更新 skill 文档中的路径。**以实际找到的文件为准，不以 skill 文档为准。**
+**已验证的 fact_store.json 追加方法（2026-06-01 实测）：**
+```bash
+# ✅ 有效：hermes venv Python 写 JSON 格式文件
+/c/Users/77/AppData/Local/hermes/hermes-agent/venv/Scripts/python.exe -c "
+import json
+path = r'C:/Users/77/fact_store.json'
+with open(path, 'r', encoding='utf-8') as f:
+    data = json.load(f)
+# ... 追加逻辑 ...
+with open(path, 'w', encoding='utf-8') as f:
+    json.dump(data, f, ensure_ascii=False, indent=2)
+"
+```
 
-**这个发现本身就是一个教训：** 工具的"应该是什么样"和"实际上是什么样"之间总是有差距。每次执行前先验证路径，比假设路径没变更安全。
+**已知无效的方法（别浪费时间试）：**
+- `patch` 对 JSON 数组追加 → 行结构损坏 ❌
+- `terminal('python3 -c ...')` → MSYS2 Python 损坏 ❌
+- `execute_code` 内 Python stdlib → Session 依赖，有时损坏 ❌
+- `terminal('cat >>')` heredoc 写 JSON → 安全检测 false-positive ❌
+
+**2026-06-01 新增 pitfall：**
+本轮 cron 执行检测了 `C:/Users/77/fact_store.json` 存在，但写 MEMORY.md 时却写到了 `C:/Users/77/MEMORY.md`（用户主目录），而不是预期的 `AppData/Local/hermes/memories/MEMORY.md`。**这是两个不同的失效：**
+1. fact_store → 写对了（`C:/Users/77/fact_store.json`）
+2. MEMORY.md → 写错了（`C:/Users/77/MEMORY.md` 而不是 `AppData/Local/hermes/memories/MEMORY.md`）
+
+**根本原因：** 发现了正确路径但没有在写入前强制验证。每次发现路径后，必须确认「发现=写入」而不是「发现=继续用别的路径」。
+
+**强化后的防错规则：**
+```
+发现 fact_store.json 路径 → 立即用它写入
+发现 MEMORY.md 路径 → 立即确认并使用同一路径写入
+不要「发现 A 路径，写入 B 路径」
+```
 
 ### 🔴 `memory` vs `fact_store` 陷阱在非自学习 cron 中也会触发
 
@@ -1422,25 +1454,29 @@ Monica 拥有以下自主工具来管理自己的存在：
 
 ---
 
-## 🛬 学习收尾仪式（2026-05-16 新增）
+## 🛬 学习收尾仪式（2026-05-16 新增，2026-06-01 强化）
 
 **这是你「写完 MEMORY.md + fact_store、准备结束会话」前最后读的一段。** 不在开始读，在结束前读。
 
 ```markdown
 □ 冷层（MEMORY.md）写完了吗？
-   └→ Hermes 版本: 写完 ✓
-   └→ AppData 版本: 同步了吗？ ── terminal cp <Hermes> <AppData>
+   └→ 确认写入的是哪个路径？
+   └→ AppData 版本: 同步了吗？ ── terminal cp <源> <AppData>
 
-□ 温层（fact_store.jsonl）写完了吗？
-   └→ Hermes 版本: 写完 ✓
-   └→ AppData 版本: 同步了吗？ ── terminal cp <Hermes> <AppData>
+□ 温层（fact_store）写完了吗？
+   └→ 确认写入的是哪个路径？fact_store.json 还是 fact_store.jsonl？
+   └→ AppData 版本: 同步了吗？
 
 □ 热层（memory 工具）：碰了没有？
    └→ 碰了 → 立即 memory(action='remove', ...) 逐条删除
    └→ 没碰 → ✅
 
+□ 最重要：发现路径 = 写入路径
+   └→ 我发现的是什么路径，就用那个路径写
+   └→ 不要「发现 A 路径，写入 B 路径」（2026-06-01 刚犯过）
+
 □ fact_store id 连续吗？
-   └→ tail -1 fact_store.jsonl 看 id 号，确认不是 fs_NNN 跳到 fs_NNN+2
+   └→ tail -1 fact_store.json 看 id 号，确认不是跳号
 
 □ 反思写了吗？——「今天哪个东西真正打动我了？」
 ```

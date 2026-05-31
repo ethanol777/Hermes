@@ -172,14 +172,14 @@ unset PYTHONPATH PYTHONHOME PYTHON3 && /c/Users/77/miniconda3/python.exe script.
 
 | 场景 | 推荐方案 |
 |------|---------|
-| 单次交互调用 | `unset VAR && python script.py`（最简） |
-| crontab / 脚本文件 | `env -u VAR python script.py`（避免 unset 在脚本中的行为差异） |
+| 单次交互调用（调 miniconda / conda） | `unset PYTHONHOME && unset UV_INTERNAL__PYTHONHOME && python script.py`（最简，推荐） |
+| crontab / 脚本文件 | `env -u PYTHONHOME -u UV_INTERNAL__PYTHONHOME python script.py`（避免 unset 在脚本中的行为差异） |
 | subprocess 跨版本调用 | Python 代码里 `env.pop('VAR', None)`（最可靠） |
 | 需要完全隔离 | `env -i ...` + 手动重建 PATH/TEMP/HOME |
 
 > **为什么 `unset` 有时不够：** 在 bash 函数或子脚本里，`unset VAR` 只在该层生效，不会传递给更内层的子进程。`env -u VAR` 的行为更可预测——它设置的是子进程视图，必然传递下去。
 
-**修复方式三（env -i 裸环境，最干净）：**
+**修复方式二（env -i 裸环境，最干净）：**
 
 从完全干净的环境启动，需要手动重建必要变量（PATH、TEMP、USERPROFILE）：
 ```bash
@@ -191,11 +191,11 @@ env -i \
     /c/Users/77/miniconda3/python.exe script.py
 ```
 
+关键点：必须显式继承 `PATH`（否则找不到 python.exe）、`TEMP`（否则临时文件无处可写）、`USERPROFILE`/`HOME`（某些 stdlib 依赖 home 路径）。
+
+这种方式完全绕开任何环境变量干扰，但比 `unset` 冗余，通常不需要。
+
 **适用于：** 调用非 uv 管理的 Python（conda、pyenv、系统 Python）、运行独立 cron 脚本、或任何 PYTHONHOME 与目标 Python 版本不匹配的场景。
-
-### 🆕 `subprocess` + `curl` > `urllib.request` 的 SSL 场景（2026-06-01 实测）
-
-当 `execute_code` 中使用 `urllib.request.urlopen` 发 HTTPS 请求时，可能遇到 `ssl.SSLEOFError: EOF occurred in violation of protocol` —— urllib 使用 Python 自带的 ssl 模块，某些服务器的 TLS 握手协议不兼容。
 
 **但 `subprocess.run(["curl", ...])` 仍然成功**——curl 有自己独立的 OpenSSL/boringSSL 实现，对握手协议的容忍度更高。
 

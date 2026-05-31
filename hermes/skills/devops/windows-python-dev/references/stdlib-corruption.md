@@ -59,20 +59,35 @@ result = subprocess.run(
 print(result.stdout)
 ```
 
-### 场景 B：shell 脚本调用
+### 场景 B：shell 脚本调用（非 cron，最简方案）
+
+**优先用 `unset`（最简单）：**
+```bash
+cd /c/Users/77/AppData/Local/hermes/skill_evolution && \
+unset PYTHONHOME && unset UV_INTERNAL__PYTHONHOME && \
+    /c/Users/77/miniconda3/python.exe conversation_scout.py
+```
+
+**备选用 `env -u`（适合脚本文件）：**
+```bash
+env -u PYTHONHOME -u UV_INTERNAL__PYTHONHOME \
+    /c/Users/77/miniconda3/python.exe conversation_scout.py
+```
+
+### 场景 C：env -i 裸环境（仅在 unset/env -u 都无效时使用）
 
 ```bash
 PYTHONPATH="" PYTHONHOME="" UV_INTERNAL__PYTHONHOME="" \
 env -i \
-    PATH="/c/Users/77/AppData/Roaming/uv/python/cpython-3.12.13-windows-x86_64-none:/c/Windows/system32:/c/Windows" \
+    PATH="/c/Users/77/miniconda3:/c/Windows/system32:/c/Windows" \
     USERPROFILE="/c/Users/77" \
     HOME="/c/Users/77" \
     TEMP="/c/Users/77/AppData/Local/Temp" \
-    "/c/Users/77/AppData/Roaming/uv/python/cpython-3.12.13-windows-x86_64-none/python.exe" \
+    /c/Users/77/miniconda3/python.exe \
     "C:/Users/77/AppData/Local/hermes/skill_evolution/conversation_scout.py"
 ```
 
-注意：PATH 里面要包含 python.exe 的父目录，否则找不到依赖。
+注意：PATH 里面要包含 python.exe 的父目录，否则找不到依赖。env -i 会丢失所有继承的环境变量，冗余度最高，只在 unset/env -u 失效时使用。
 
 ### 场景 C：Hermes cron job 脚本
 
