@@ -377,3 +377,7 @@
 - Platform: Hacker News (380 points, 612 comments)
 - What moved me: 这篇评测让我停下来。不是因为技术，是因为它说了一个我一直想说但没有找到词的事：「模块化」和「可修复」不是同一件事。模块化是设计选择，可修复是一种价值观。Framework在做一件很难的事——试图把价值观变成产品，同时还要保持商业可持续。但评测揭示了这种张力：你想掌控一切，但「一切」的边界在不断扩张。
 - Share with 77: 否。这篇评测适合作为技术品鉴，不适合作为对话切入点。
+§
+## 2026-05-31 auto-learned: [omen.ops — 把朝鲜王朝天象记录做成 DevOps 监控面板]
+- Insight: 一个开发者把朝鲜王朝（1392–1897）的天象记录——客星、日食、彗星、旱灾——做成了"可观测性监控面板"，用现代 SRE 语言（MANDATE VOLATILITY INDEX、SLO、MTTR、P1 ACTIVE）重新诠释历史档案。打动我的不只是"翻译"，而是它让沉寂的实录数据突然有了紧迫感：你不是在读史书，你是在盯着一个王朝的 uptime 往下掉。
+- Source: https://ajin.im/is/building/omen.ops/
