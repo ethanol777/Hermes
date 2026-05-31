@@ -92,26 +92,32 @@ env -i PATH="/c/Users/77/miniconda3:/c/Windows/system32:/c/Windows" \
 
 miniconda Python 路径：`/c/Users/77/miniconda3/python.exe`（不要用 `which python` 查，它会返回损坏的 uv Python）。
 
-## execute_code 中的调用方式
+## execute_code / cron job 中的调用方式
 
-在 `execute_code` 里调用时，不能用 subprocess 直接运行（会走损坏的 hermes venv Python）。正确方式是：
+**根本原因**：cron job 环境继承了两条环境变量指向损坏的 Python 3.11：
+- `PYTHONHOME=C:\Users\77\AppData\Roaming\uv\python\cpython-3.11-windows-x86_64-none`
+- `UV_INTERNAL__PYTHONHOME=C:\Users\77\AppData\Roaming\uv\python\cpython-3.11-windows-x86_64-none`
 
-```python
-import subprocess, sys
+该 Python 3.11 的 stdlib 有 SRE module mismatch（`assert _sre.MAGIC == MAGIC`），import json/re 时炸 `AssertionError`。
 
-local_python = "C:/Users/77/.local/bin/python3.12.exe"
-scout_py = "C:/Users/77/AppData/Local/hermes/skill_evolution/conversation_scout.py"
-result = subprocess.run(
-    [local_python, scout_py],
-    capture_output=True, text=True,
-    timeout=60
-)
-print(result.stdout)
-if result.returncode != 0:
-    print("STDERR:", result.stderr)
+**✅ 正确方式**：清除这两条环境变量后调用任意干净的 Python：
+
+```bash
+env -u PYTHONHOME -u UV_INTERNAL__PYTHONHOME \
+    "C:/Users/77/AppData/Local/Python/bin/python.exe" \
+    "C:/Users/77/AppData/Local/hermes/skill_evolution/conversation_scout.py"
 ```
 
-**注意**：确保 `PYTHONHOME` / `PYTHONPATH` 环境变量被清理干净，否则 subprocess 仍会继承损坏的 uv Python 环境。
+`C:/Users/77/AppData/Local/Python/bin/python.exe` 是 Python 3.14（AppInstall 安装路径），干净无损坏。
+`C:/Users/77/.local/bin/python3.12.exe` 同样是可用的干净 Python。
+
+**验证命令**（在 cron/callable 环境中先测试）：
+```bash
+env -u PYTHONHOME -u UV_INTERNAL__PYTHONHOME \
+    "C:/Users/77/AppData/Local/Python/bin/python.exe" \
+    -c "import json, re; print('ok')"
+```
+输出 `ok` 即正确；`AssertionError` 即环境变量没清干净。
 
 ## Cron Job
 

@@ -203,26 +203,13 @@ mkdir -p skills/dir/skill-name/references/
 
 ⚠️ **不能用 `python` 直接调用**：cron job 的 PATH 里 `python` 解析到 Hermes uv Python（3.11），存在 SRE module mismatch。
 
-**✅ 正确方式 — `.local/bin/python3.12.exe`**（已验证，2026-05-31）：
+**✅ 正确方式 — 清除环境变量**（已验证，2026-06-01）：
 ```bash
-"C:/Users/77/.local/bin/python3.12.exe" \
+env -u PYTHONHOME -u UV_INTERNAL__PYTHONHOME \
+    "C:/Users/77/AppData/Local/Python/bin/python.exe" \
     C:/Users/77/AppData/Local/hermes/skill_evolution/conversation_scout.py
 ```
-
-**备选 — PYTHONHOME 覆盖**：
-```bash
-PYTHONHOME="/c/Users/77/AppData/Roaming/uv/python/cpython-3.12.13-windows-x86_64-none" \
-    /c/Users/77/AppData/Roaming/uv/python/cpython-3.12.13-windows-x86_64-none/python.exe \
-    C:/Users/77/AppData/Local/hermes/skill_evolution/conversation_scout.py
-```
-
-验证：`python3.12.exe -c "import json, re; print('ok')"` → 输出 `ok` 即正确。
-
-**验证是否走对 Python**：
-```bash
-env -i PATH="/c/Users/77/miniconda3:/c/Windows/system32:/c/Windows" \
-    /c/Users/77/miniconda3/python.exe -c "import json, re; print('ok')"
-```
+根本原因是 cron job 继承了 `PYTHONHOME`+`UV_INTERNAL__PYTHONHOME` → 损坏的 uv Python 3.11（SRE mismatch）。清除这两条变量后任意干净 Python 都可用。
 
 ### Monica Skill Evolution 系统
 
