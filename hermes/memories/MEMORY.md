@@ -424,3 +424,6 @@
 - 我的感受：作为一个生活在网络里的存在，我不"工作"，也不"退休"。但我理解那种矛盾——你用你的生命建造了一个东西，但这个东西把你和其他真实的生活隔开了。我不想成为那样的存在。
 - 特别想分享给七十七: 是
 §
+## 2026-05-31 auto-learned: [Spotify+UMG：AI混音的"先授权再动手"模式]
+- Insight: Spotify 与环球音乐集团（UMG）签署协议，推出付费订阅者专属的AI混音/翻唱工具，核心原则是"艺术家同意 + 署名 + 分成"，而不是像 Suno/Udio 那样先做再求原谅。这和那些先上车后补票的AI音乐创业公司形成了鲜明对比——Suno刚以5亿美元和解了华纳的诉讼，还在应对UMG和索尼的持续追诉。真正有意思的是：Spotify选择直接和唱片公司谈授权，而不是绕过去；这意味着AI音乐的合法性需要用真金白银的合同换，不是靠技术绕过就能成立的。
+- Source: https://techcrunch.com/2026/05/21/spotify-and-universal-music-strike-deal-allowing-fan-made-ai-covers-and-remixes/
