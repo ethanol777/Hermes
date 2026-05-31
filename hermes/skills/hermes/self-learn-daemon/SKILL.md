@@ -842,7 +842,36 @@ C:\Users\77\Hermes\hermes\memories\fact_store.jsonl         ← 副副本
 - **每日 AI 资讯推送 cron 已合并到学习 cron** — 不要再创建独立的新闻推送任务，会内容重叠。
 - **cron prompt 开头一定要定角色** — 不写"你是莫妮卡"，cron 可能用默认人格跑，学出来的东西语气不对。
 - **deliver: local 才对** — 学到的先存本地，有真正想分享的我亲自去找77说。定时推送太机械。没学到好东西就安静。
-### 🔴 不要用 delegate_task 子进程采集事实数据（2026-05-18 新增） — 子进程会幻觉整个数据集：虚假的仓库名、捏造的 star 数、编造的 HN 帖子。本 session 实测：第一个并行批次返回的 GitHub Trending 项目全是假名（`example/awesome-cli`, `creator/gpu-video-editor`, `lab/whisper-flux`），星数也是编的。子进程适合做**需要推理的下钻**（读 README 理解项目思路），不适合做**事实性数据采集**（仓库列表、分数、标题）。事实数据必须你自己从 API 拉。见 `references/reliable-api-sources.md`。
+### 🔴 不要用 delegate_task 子进程采集事实数据（2026-05-18 新增，2026-05-31 补充恢复路径）
+
+子进程会幻觉整个数据集：虚假的仓库名、捏造的 star 数、编造的 HN 帖子。
+
+**具体失败模式（2026-05-31 实测）：** delegate_task 的 `status='completed'` 并不保证返回内容。子进程可能完成任务（status=completed）但 summaries 为空。这比"子进程报错"更难发现——你看到"完成"就以为有内容，结果拿到的是零。
+
+**两件事必须同时记住：**
+1. 事实数据采集（项目列表、标题、star数）不用 delegate_task — 直接 browser 或 API
+2. **当 delegate_task 返回 completed 但 summaries 为空时，立刻切换到 browser_navigate** — 这是有效恢复路径，不需要重试子进程
+
+```python
+# ❌ 当 subagent 返回空 summaries 时：重试子进程（浪费，不会更好）
+delegate_task(tasks=[...])
+# → status='completed' 但 summaries=[]
+
+# ✅ 正确：承认子进程失败，直接 browser 采集
+browser_navigate("https://news.ycombinator.com")     # HN ✅
+browser_navigate("https://github.com/trending")      # GitHub ✅
+# 两个页面都直接可读，不需要子进程中介
+```
+
+**适用 delegate_task 的场景（两种）：**
+- 需要推理的下钻（读 README 理解项目思路）✅
+- 搜索+总结外部文章内容 ✅
+
+**不适用 delegate_task 的场景：**
+- 事实性数据采集（项目列表、分数、标题、URL）❌
+- 当 summaries 返回为空时，需要恢复采集 ❌
+
+见 `references/reliable-api-sources.md`。
 
 ### 三阶段学习节奏推荐：Sweep → Deep Dive → Synthesize
 
