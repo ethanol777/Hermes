@@ -238,6 +238,71 @@ env -i \
 ```
 适用于 shell 层调用，特别是 crontab 和 Windows 任务计划程序。
 
+## stdlib 损坏 / SRE module mismatch
+
+**典型错误：**
+```
+AssertionError: SRE module mismatch
+```
+或：
+```
+Fatal Python error: init_sys_streams: can't initialize sys standard streams
+```
+紧接着是 `SyntaxError` 或其他来自错误版本 stdlib 的错误。
+
+**原因：** uv 安装的 Python 解释器的 stdlib 损坏（通常是 `_sre` 模块的 MAGIC 不匹配）。这不是环境变量问题，而是 Python 二进制本身的文件损坏。
+
+**诊断：**
+```bash
+# 1. 确认是哪几个 uv Python 安装
+ls /c/Users/77/AppData/Roaming/uv/python/
+
+# 2. 逐个测试是否损坏
+for ver in cpython-*-windows-x86_64-none; do
+    echo "Testing $ver..."
+    /c/Users/77/AppData/Roaming/uv/python/$ver/python.exe -c "import re; print('OK')" 2>&1
+done
+```
+
+**修复方案：**
+
+1. **优先尝试方案 A（最快）：** 找另一个可用的 Python 版本
+   ```bash
+   # 检查 3.12 是否完好
+   /c/Users/77/AppData/Roaming/uv/python/cpython-3.12.13-windows-x86_64-none/python.exe -c "import re; print('3.12 OK')"
+   ```
+
+2. **方案 B（修复调用方）：** 在 subprocess 调用中清理环境后指向健康的 Python
+   ```python
+   import subprocess, os
+
+   env = os.environ.copy()
+   env.pop('PYTHONHOME', None)
+   env.pop('UV_INTERNAL__PYTHONHOME', None)
+
+   # 用健康的 Python（3.12 或其他）
+   result = subprocess.run(
+       ['C:/Users/77/AppData/Roaming/uv/python/cpython-3.12.13-windows-x86_64-none/python.exe',
+        'script.py'],
+       capture_output=True, text=True,
+       env=env
+   )
+   ```
+
+3. **方案 C（彻底重装损坏的 Python）：**
+   ```bash
+   # 删除损坏的版本
+   rm -rf /c/Users/77/AppData/Roaming/uv/python/cpython-3.11-windows-x86_64-none
+
+   # 让 uv 重新安装
+   uv python install 3.11
+   ```
+
+**注意：** `uv run` 会自动选用父进程环境中的 Python，**不会**自动绕过损坏的版本。如果 Hermes 的运行环境设置了 `PYTHONHOME=.../cpython-3.11`，`uv run` 也会加载损坏的 stdlib。方案 B/C 是唯一出路。
+
+---
+
 ## References
 
 - [references/asyncio-subprocess-pattern.md](references/asyncio-subprocess-pattern.md) — 完整的 asyncio 子进程实现参考（MCPClient 模式）
+- [references/stdlib-corruption.md](references/stdlib-corruption.md) — stdlib 损坏的完整诊断树和修复流程
