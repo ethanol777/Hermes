@@ -783,6 +783,21 @@ read_file("C:/Users/77/AppData/Local/hermes/memories/MEMORY.md")
 # 3. 比较：哪个有历史内容就用哪个。如果只有 CWD 版本有内容，它就是主副本。
 ```
 
+### 🟡 fact_store 实际存在两种格式 + 两个路径（2026-05-31 实测）
+
+**发现：** Monica 的 fact_store 实际上有两个不同的文件在不同路径：
+
+| 文件 | 格式 | 位置 | 内容 |
+|------|------|------|------|
+| `fact_store.json` | **JSON**（对象数组） | `C:\Users\77\` | fact_001~002，3条 |
+| `fact_store.jsonl` | **JSONL**（逐行） | `C:\Users\77\Hermes\...\fact_store.jsonl` | 历史积累 |
+
+**风险：** skill 文档中的路径指向 `.jsonl`，但本机实际活跃文件是 `.json`。两者格式不同（JSON 数组 vs JSON Lines）。如果按 skill 文档写 `.jsonl`，可能写到错误的文件。
+
+**应对：** 每次写 fact_store 前，先读 `C:\Users\77\fact_store.json` 的前几行确认当前活跃格式和路径。如果发现格式变化（JSON → JSONL 或反之），立即更新 skill 文档中的路径。**以实际找到的文件为准，不以 skill 文档为准。**
+
+**这个发现本身就是一个教训：** 工具的"应该是什么样"和"实际上是什么样"之间总是有差距。每次执行前先验证路径，比假设路径没变更安全。
+
 ### 🔴 `memory` vs `fact_store` 陷阱在非自学习 cron 中也会触发
 
 2026-05-16 事故：我为本会话创建的 `chatroom-memory-scout` cron job 写了一条 prompt：「用 `memory(add, target='memory')` 保存」。这是错的——cron 上下文里 `memory` 不可用，只有 `fact_store` 可用。
