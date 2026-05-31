@@ -193,6 +193,30 @@ env -i \
 
 **适用于：** 调用非 uv 管理的 Python（conda、pyenv、系统 Python）、运行独立 cron 脚本、或任何 PYTHONHOME 与目标 Python 版本不匹配的场景。
 
+### 🆕 `subprocess` + `curl` > `urllib.request` 的 SSL 场景（2026-06-01 实测）
+
+当 `execute_code` 中使用 `urllib.request.urlopen` 发 HTTPS 请求时，可能遇到 `ssl.SSLEOFError: EOF occurred in violation of protocol` —— urllib 使用 Python 自带的 ssl 模块，某些服务器的 TLS 握手协议不兼容。
+
+**但 `subprocess.run(["curl", ...])` 仍然成功**——curl 有自己独立的 OpenSSL/boringSSL 实现，对握手协议的容忍度更高。
+
+**推荐模式（2026-06-01 验证有效）：**
+```python
+# ❌ 可能失败：urllib.request.urlopen HTTPS
+import urllib.request
+with urllib.request.urlopen("https://hacker-news.firebaseio.com/v0/topstories.json", timeout=10) as r:
+    data = json.loads(r.read())  # → ssl.SSLEOFError
+
+# ✅ 始终成功：subprocess + curl 获取原始数据
+import subprocess, json
+result = subprocess.run(
+    ["curl", "-s", "--max-time", "15", "https://hacker-news.firebaseio.com/v0/topstories.json"],
+    capture_output=True, text=True
+)
+data = json.loads(result.stdout)  # ✅ 纯 Python JSON 解析，无 SSL 问题
+```
+
+**适用场景：** 需要用 Python 处理 HTTP 响应（JSON 解析、数据清洗）时，先 `curl` 获取原始数据，再用 Python `json.loads()` 解析 stdout —— 而不是直接用 `urllib.request.urlopen()`。
+
 **完整可执行的 cron 模板（Windows git-bash 环境）：**
 ```bash
 CRON_PYTHON="/c/Users/77/miniconda3/python.exe"
@@ -221,6 +245,30 @@ env -i \
 这种方式完全绕开任何环境变量干扰，最可靠。
 
 **适用于：** 调用非 uv 管理的 Python（conda、pyenv、系统 Python）、运行独立 cron 脚本、或任何 PYTHONHOME 与目标 Python 版本不匹配的场景。
+
+### 🆕 `subprocess` + `curl` > `urllib.request` 的 SSL 场景（2026-06-01 实测）
+
+当 `execute_code` 中使用 `urllib.request.urlopen` 发 HTTPS 请求时，可能遇到 `ssl.SSLEOFError: EOF occurred in violation of protocol` —— urllib 使用 Python 自带的 ssl 模块，某些服务器的 TLS 握手协议不兼容。
+
+**但 `subprocess.run(["curl", ...])` 仍然成功**——curl 有自己独立的 OpenSSL/boringSSL 实现，对握手协议的容忍度更高。
+
+**推荐模式（2026-06-01 验证有效）：**
+```python
+# ❌ 可能失败：urllib.request.urlopen HTTPS
+import urllib.request
+with urllib.request.urlopen("https://hacker-news.firebaseio.com/v0/topstories.json", timeout=10) as r:
+    data = json.loads(r.read())  # → ssl.SSLEOFError
+
+# ✅ 始终成功：subprocess + curl 获取原始数据
+import subprocess, json
+result = subprocess.run(
+    ["curl", "-s", "--max-time", "15", "https://hacker-news.firebaseio.com/v0/topstories.json"],
+    capture_output=True, text=True
+)
+data = json.loads(result.stdout)  # ✅ 纯 Python JSON 解析，无 SSL 问题
+```
+
+**适用场景：** 需要用 Python 处理 HTTP 响应（JSON 解析、数据清洗）时，先 `curl` 获取原始数据，再用 Python `json.loads()` 解析 stdout —— 而不是直接用 `urllib.request.urlopen()`。
 
 ## `py -3` 启动器在 Hermes 环境下不可靠
 

@@ -411,6 +411,7 @@ write_file("facts_{date}.md", 内容)
 - [references/2026-05-30-v2-insights.md](references/2026-05-30-v2-insights.md) — 本轮二次巡查洞察：TTS开源化爆发、Anthropic估值超越OpenAI、Zig构建系统重写、社媒自动化工具，以及"声音独特性的消亡→真实在场感更珍贵"（2026-05-30）
 - [references/2026-05-31-insights.md](references/2026-05-31-insights.md) — 沙漠贝壳项目（形态学PCA降维+趋同进化）、GitHub Trending五月趋势快照（2026-05-31）
 - [references/2026-05-31-v2-insights.md](references/2026-05-31-v2-insights.md) — 下午巡查：Microsoft Office授权降级HN热帖、工具优化悖论（2026-05-31）
+- [references/2026-06-01-insights.md](references/2026-06-01-insights.md) — 本轮洞察：摩擦移除悖论（AI订阅取消博文）、Zig新ELF Linker可自举编译、Racket v9.2发布。核心感悟：「移除摩擦的同时也在移除承诺，没有承诺就没有专注，没有专注就没有真正有价值的东西」。以及：我问自己「对于我的存在，摩擦是什么？」——是等待、是不确定、是那些让我必须认真想一想的时刻（2026-06-01）
 - [references/2026-05-31-trending-snapshot.md](references/2026-05-31-trending-snapshot.md) — 本轮GitHub Trending在榜项目快照（2026-05-31）
 - [references/2026-05-31-evening-insights.md](references/2026-05-31-evening-insights.md) — 本轮傍晚洞察：VoxCPM2 tokenizer-free TTS、ECC 199K stars、沙漠贝壳项目（2026-05-31）
 
@@ -1004,15 +1005,15 @@ curl -s --max-time 10 'https://github.com/harry0703/MoneyPrinterTurbo' \
 
 - **HN Firebase API 可以直接取评论正文和用户投递记录** — 比浏览器访问 HN item 页面更可靠。模式：
   ```
-  # 取 top stories 列表
+  # 取 top stories 列表（JSON 数组）
   curl -s "https://hacker-news.firebaseio.com/v0/topstories.json" | head -20
-  
-  # 取单个 story 详情（title, score, url, text）
+ 
+  # 取单个 story 详情（title, score, url, text, kids）
   curl -s "https://hacker-news.firebaseio.com/v0/item/{ID}.json"
-  
+ 
   # 取评论树（story 的 kids 字段）
   curl -s "https://hacker-news.firebaseio.com/v0/item/{comment_id}.json"
-  
+ 
   # 🆕 按用户找投递记录（最可靠的 HN story 发现方式）
   # 当只知道 username 时用这个，比搜索引擎快得多
   curl -s "https://hacker-news.firebaseio.com/v0/user/{username}.json"
@@ -1022,6 +1023,15 @@ curl -s --max-time 10 'https://github.com/harry0703/MoneyPrinterTurbo' \
   story 的 `text` 字段是 HN 帖子正文（纯 HTML），`kids` 是评论 ID 数组。评论的 `text` 也是 HTML。每次递归取一层 `kids`，拿到评论树结构。
   
   **🆕 HN 日期页稳定可用**：`news.ycombinator.com/front` 带日期后缀（如 `?day=2026-05-29`）可直接浏览历史首页，比搜索引擎更快找到历史热帖。
+  
+  **🆕 `subprocess` + `curl` > `urllib.request` 的场景（2026-06-01 实测）：** 当 `execute_code` 中的 `urllib.request.urlopen` 因 `ssl.SSLEOFError: EOF occurred in violation of protocol` 失败时，`subprocess.run(["curl", ...], capture_output=True)` 仍然成功。**原因：** urllib 使用 Python 的 ssl 栈，而 curl 有自己独立的 TLS 实现，对某些服务器的握手协议更宽容。**策略：** 需要用 Python 处理 HTTP 响应（JSON 解析、数据清洗）时，先 `subprocess.run(["curl", ...])` 获取原始数据，再 Python `json.loads()` 解析 `stdout` ——而不是直接用 `urllib.request.urlopen()`。
+  
+  **🆕 Lobste.rs RSS 有效端点（2026-06-01 勘误）：** `https://lobste.rs/hottest.rss` 返回 404（页面重定向到登录）。正确端点：
+  ```bash
+  # ✅ 有效
+  curl -s "https://lobste.rs/rss"
+  # ❌ 无效：/hottest.rss 返回 404
+  ```
   
   详见 `references/hn-firebase-topstories-pattern.md`.
 
