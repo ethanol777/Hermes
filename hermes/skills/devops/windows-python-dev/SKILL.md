@@ -161,6 +161,24 @@ env -u PYTHONHOME -u UV_INTERNAL__PYTHONHOME \
     /c/Users/77/miniconda3/python.exe script.py
 ```
 
+**修复方式二选一（Bash 内联 unset，最简）：**
+
+git-bash / MSYS2 下，在调用 Python **之前**用 `unset` 内联清除冲突变量：
+```bash
+unset PYTHONPATH PYTHONHOME PYTHON3 && /c/Users/77/miniconda3/python.exe script.py
+```
+
+**何时用哪种：**
+
+| 场景 | 推荐方案 |
+|------|---------|
+| 单次交互调用 | `unset VAR && python script.py`（最简） |
+| crontab / 脚本文件 | `env -u VAR python script.py`（避免 unset 在脚本中的行为差异） |
+| subprocess 跨版本调用 | Python 代码里 `env.pop('VAR', None)`（最可靠） |
+| 需要完全隔离 | `env -i ...` + 手动重建 PATH/TEMP/HOME |
+
+> **为什么 `unset` 有时不够：** 在 bash 函数或子脚本里，`unset VAR` 只在该层生效，不会传递给更内层的子进程。`env -u VAR` 的行为更可预测——它设置的是子进程视图，必然传递下去。
+
 **修复方式三（env -i 裸环境，最干净）：**
 
 从完全干净的环境启动，需要手动重建必要变量（PATH、TEMP、USERPROFILE）：

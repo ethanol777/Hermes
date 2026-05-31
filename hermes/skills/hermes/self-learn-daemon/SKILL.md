@@ -1183,6 +1183,15 @@ with open('C:/Users/77/Hermes/hermes/memories/fact_store.jsonl', 'r', encoding='
 - **🔴 绝对不要用 `write_file` 全量覆盖 `fact_store.jsonl`** — 2026-05-19 事故：分页读（offset=1,limit=20 + offset=35,limit=5）后全量 `write_file`，中间 14 条未读行永久丢失。即使你已经读了一部分，也不代表有完整副本。永远只 append。如需全量重建，先用 `terminal('wc -l fact_store.jsonl')` 和 `terminal('cat fact_store.jsonl')` 确认完整副本在手。详见 `memory-system` 技能中「绝对不要用 write_file 全量覆盖 fact_store.jsonl」pitfall。
 - **用户愿意给账号也别用浏览器登** — 密码/验证码存了有泄露风险。公开内容用搜就够了。真要发帖让用户自己手动发。
 - **如果用户坚持给账号，先说实话** — 告诉用户大概率登不上（风控太严），不需要隐瞒尝试过程。试了不行就给出替代方案：搜公开内容 / 给关键词 / 给博主 ID。尝试过程本身也是学习结果。详见 `references/chinese-platform-access.md` 的「小红书登录实测细节」。
+- **🆕 HN Bridgetown 博客 URL 格式陷阱**（2026-05-31）：部分 HN 热帖作者使用 Bridgetown（Ruby 静态站点生成器）构建博客，URL 格式是 `/blog/YYYY/MM/slug/` 而非常见 `/slug/`。直接猜 URL 几乎必然 404。**正确做法：** 用 HN Algolia API 查 story，`url` 字段返回的就是 canonical URL——绕过猜测，直接拿到正确路径。
+  ```bash
+  # 例：brethorsting.com 博客
+  curl -sL "https://hn.algolia.com/api/v1/search?tags=story&query=domain+expertise+moat" \
+    | grep -o '"url":"https://www.brethorsting.com/[^"]*"'
+  # 返回: /blog/2026/05/domain-expertise-has-always-been-the-real-moat/
+  ```
+  Bridgetown 识别特征：源码含 `/_bridgetown/live_reload` JS。
+
 - **HN 文章链接风化：超 1/3 的链接在数小时内死亡**（2026-05-19 新增） — 这不是偶然——是结构性现象。HN 首页链接大面积存在：付费墙（Scientific American, Noema）、地域封锁（BBC .co.uk）、404（个人博客/小型独立站点）、仓库被删（GitHub personal repos 被 rename 或设为 private）。识别后立即放弃并转投评论区或换话题，不要在死链上浪费超过 30 秒。
 - **🆕 2026-05-21：来源可达性优先于“头条重要性”** — 本轮实测：HN 顶帖外链（OpenAI 页面）可能返回空，安全新闻站点可能被 Cloudflare “Just a moment…” 拦截，导致你在最热话题上拿不到正文。正确策略：
   1) 保留热帖事实（id/score/title/url）作为趋势信号；

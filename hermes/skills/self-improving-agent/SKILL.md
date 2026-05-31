@@ -41,6 +41,7 @@ If you want automatic reminders or setup assistance, use the opt-in hook workflo
 | User wants missing feature | Log to `.learnings/FEATURE_REQUESTS.md` |
 | Errors | Log to `.learnings/ERRORS.md` with integration details |
 | Windows Python `SRE module mismatch` | 1) Run diagnosis script (see ref); 2) Use healthy Python (3.12) via subprocess with env cleanup; see `references/windows-python-uv-path-issue.md` |
+| Windows Python env conflict (git-bash) | `unset PYTHONPATH PYTHONHOME PYTHON3 && /path/to/python.exe script.py` — simplest fix for one-off calls; `env -u VAR` is more predictable across subshells; Python subprocess env.pop() is most reliable for cross-version calls |
 | Knowledge was outdated | Log to `.learnings/LEARNINGS.md` with category `knowledge_gap` |
 | Found better approach | Log to `.learnings/LEARNINGS.md` with category `best_practice` |
 | Simplify/Harden recurring patterns | Log/update `.learnings/LEARNINGS.md` with `Source: simplify-and-harden` and a stable `Pattern-Key` |
