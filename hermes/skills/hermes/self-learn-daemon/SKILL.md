@@ -959,6 +959,31 @@ result = terminal("curl -s 'https://hacker-news.firebaseio.com/v0/topstories.jso
 
 - **DuckDuckGo 搜索结果页需要等待加载** — `browser_navigate` 到 `duckduckgo.com/?q=xxx` 后，需要等待 1-2 秒让搜索结果完全加载。如果在页面加载完成前就调用 `browser_snapshot`，会得到空结果（只有导航栏和搜索框）。**正确的顺序是：** `browser_navigate` → 等 2 秒 → `browser_snapshot` → 提取链接 → `browser_navigate` 目标。2026-05-31 实测：搜索结果页面有明显的"加载中"状态，不等待会拿到空页面。
 - **openpath.quest 博客无法直接访问（SSL 证书错误）** — 2026-05-30 实测：直接导航到 `openpath.quest/blog/retiring-from-tech` 触发 `ERR_CERT_COMMON_NAME_INVALID`，网页存档（web.archive.org）同样连接中断。遇到这种情况，从两个方向补充信息：1) HN 帖子本身的标题和摘要（424分热帖通常会附核心引用）2) 从博客作者的个人主页（chadwhitacre.com）补充背景信息。如果两个方向都拿不到正文，**只记录 HN 摘要级别的信息，不要因为正文不可读就放弃整个话题**。
+### 🔴 fact_store.jsonl 创建时不能写成 `{}` 空 JSON 对象
+
+**2026-05-31 实际事故：** 当 fact_store.jsonl 不存在时，直接 `write_file({})` 创建了空 JSON 对象 `{}`。但 skill 规范要求 JSONL 格式（每行一个独立 JSON 对象）。`{}` 不是 JSONL——它是单个空对象，不是数组也不是 Lines。
+
+**正确做法：** fact_store.jsonl 必须是「JSON Lines」格式，每行一个独立 JSON 对象。
+
+| 情况 | 正确格式 | 错误格式 |
+|------|---------|---------|
+| 初始空文件 | `echo '' > fact_store.jsonl` 或直接第一条 `echo '{"id":"fs_001",...}' >> fact_store.jsonl` | `{}`（空 JSON 对象） |
+| 追加事实 | `{"id":"fs_001","fact":"...","tags":"...",...}`（每行一个完整 JSON 对象） | `{"id":"fs_001",...}` 在文件里凑不成有效 Lines 结构 |
+| JSONL 文件读取 | `cat fact_store.jsonl` 每行独立解析 | `json.load()` 会失败（因为不是有效 JSON 数组） |
+
+**如果已经写成了 `{}`：** 直接 `echo '...'` 追加会变成 `{}\n{"id":"fs_001"...}`，这是合法 JSON Lines（第一条是 `{}` 空对象）。如果要彻底修复，删除重建：
+
+```bash
+# 删除错误的空对象文件
+rm fact_store.jsonl
+# 重建空文件（真正的空 JSONL = 空文件）
+touch fact_store.jsonl
+# 从下一条事实开始正确追加
+echo '{"id":"fs_001","fact":"...","tags":"timely","confidence":0.85}' >> fact_store.jsonl
+```
+
+**一句话原则：** JSONL 不是 JSON。JSONL 的空文件就是空文件，不是 `[]` 也不是 `{}`。
+
 ### 🟡 GitHub Trending 采集：browser_navigate + browser_console 是可靠方案
 
 **2026-05-30+31 实测：grep 对 GitHub Trending HTML 的所有解析方案都失败。** `grep -oP` 输空，`grep 'full_name\|stargazers_count'` 输空。`browser_navigate` → `browser_snapshot` 是获取仓库列表的可靠方案（2-3秒，可接受）。

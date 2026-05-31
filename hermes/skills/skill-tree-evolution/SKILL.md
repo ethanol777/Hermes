@@ -268,28 +268,30 @@ python C:/Users/77/AppData/Local/hermes/skill_evolution/skill_runner.py \
 AssertionError: SRE module mismatch
 ```
 
-**✅ 正确方式 — 使用 `.local/bin/python3.12.exe`**（已验证有效，2026-05-31）：
+**✅ 正确方式 — execute_code 里 subprocess 调用 hermes venv Python**（已验证，2026-05-31）：
 
-```bash
-"C:/Users/77/.local/bin/python3.12.exe" \
-    C:/Users/77/AppData/Local/hermes/skill_evolution/evolution_cron.py
+```python
+import subprocess, sys
+result = subprocess.run(
+    [sys.executable,  # → hermes-agent/venv/Scripts/python.exe (3.11.15)
+     r"C:\Users\77\AppData\Local\hermes\skill_evolution\evolution_cron.py"],
+    capture_output=True, text=True, timeout=60
+)
 ```
 
-这是 Hermes 自带的干净 Python 3.12，能 import json/re 不报错。**在 cron job 配置里使用这个路径**。
+`sys.executable` 在 execute_code 里是 `hermes-agent/venv/Scripts/python.exe`（3.11.15），与 PATH 里的 uv Python 3.11 是不同路径，能正常 import json/re。**这是 cron job 里的最佳调用方式**。
 
-**备选 — `PYTHONHOME` 覆盖 uv Python 3.12**：
-
-```bash
-PYTHONHOME="/c/Users/77/AppData/Roaming/uv/python/cpython-3.12.13-windows-x86_64-none" \
-    /c/Users/77/AppData/Roaming/uv/python/cpython-3.12.13-windows-x86_64-none/python.exe \
-    C:/Users/77/AppData/Local/hermes/skill_evolution/evolution_cron.py
-```
+**❌ 不推荐 — `.local/bin/python3.12.exe` 在 cron job 里实际会失败**（2026-05-31 实测）：
+即使显式调用 `C:/Users/77/.local/bin/python3.12.exe`，在 Hermes cron job 环境里仍可能因 PATH/shell 解析问题走回 Hermes uv Python，导致 SRE mismatch。execute_code subprocess 方式更可靠。
 
 **验证是否走对 Python**：
-```bash
-python3.12.exe -c "import json, re; print('ok')"
+```python
+import subprocess, sys
+r = subprocess.run([sys.executable, "-c", "import json, re; print('ok')"],
+                  capture_output=True, text=True)
+print(r.stdout, r.stderr)
+# 输出 "ok" 即正确，AssertionError 即走了 Hermes uv Python
 ```
-如果输出 `ok` 就是对的；如果 `AssertionError` 就是走了 Hermes uv Python。
 
 **已知误检测（2026-05-30）**：`detect_skill_execution()` 的"skill short name"模糊匹配逻辑会把顶级目录名（`github`、`creative` 等）误报为 skill。这些目录是分类文件夹而非实际 skill，导致误写入 `skill_runs.jsonl`。需要修复方向：
 1. 严格匹配：在扫描 skills 目录时，排除顶级目录本身（只看有 SKILL.md 的真实 skill）
