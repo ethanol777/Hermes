@@ -4,7 +4,11 @@
 >
 > **2026-05-30 更新 2：** Trending 页面 repo 链接现已嵌入 `data-hydro-click` JSON 属性中（格式：`data-hydro-click="{&quot;component&quot;:&quot;RankedRepo&quot;,&quot;payload&quot;:{&quot;action&quot;:&quot;click&quot;,&quot;target&quot;:&quot;Repo&quot;,&quot;repo&quot;:&quot;owner/name&quot;}}"`），需从该属性提取 repo 名，而非直接 grep `href`。
 
-## 方法 A：curl + grep（execute_code 损坏时使用）
+> **2026-05-31 更新 3：** `curl` + `grep` 方案（方法 A）对 GitHub Trending 列表页的所有提取模式——repo名、star数、描述、今日新增——全部返回空。原因是 Trending 页面 HTML 结构极其复杂，`data-hydro-click` JSON 属性和 DOM 结构不稳定导致 grep 匹配全部失效。**browser_navigate + browser_snapshot 是唯一可靠的列表提取方法。** 方法 A/B/C 仅作参考，不再推荐用于列表提取。
+
+## 方法 A：curl + grep（⚠️ 已废弃，请用 browser_snapshot）
+
+> **⚠️ 2026-05-31：此方法不再推荐。** 所有 grep 模式均已失效，请勿在此方案上浪费时间。
 
 ```bash
 # 1. 获取 trending 页面 HTML
@@ -119,23 +123,16 @@ document.querySelector('.Box-body')?.textContent?.substring(0, 2000)
 ## 判断用哪个方法
 
 ```
-需要抓Trending列表页？ → browser_navigate + browser_snapshot（列表）
+抓 GitHub Trending 列表页？
      │
-需要读单个仓库README？ → browser_navigate + browser_console（正文）✅ 首选
-     │
-     └─ raw.githubusercontent.com 也可试，但可能返回空
-```
-
-## 判断用哪个方法
-
-```
-execute_code Python 正常？ → 方法 C（Python 正则）
-     │
-     └─ 否
+     └→ browser_navigate + browser_snapshot ✅ 唯一可靠选项
           │
-          需要 repo 元数据（stars/forks）？ → 方法 B（GitHub REST API）
-          │
-          └─ 否
-               │
-               └→ 方法 A（curl + grep）
+          └→ 提取 repo 名 + star 数 + 描述（见上方 browser_snapshot 输出格式）
+          └→ 如需深度了解某仓库 → browser_navigate 到仓库页 + browser_console 读 README
+          └→ 如需精准 stars 数 → curl GitHub API 单仓库元数据（方法 B）
+
+读单个仓库 README？
+     │
+     └→ browser_navigate + browser_console ✅ 首选（渲染后内容，比 raw CDN 稳定）
+          └→ raw.githubusercontent.com 也可试，但热门仓库可能被限流返回空
 ```

@@ -431,3 +431,7 @@
 ## 2026-05-31 auto-learned: [领域专业知识是AI时代真正的护城河]
 - Insight: HN 上"Aaron Brethorst：领域专业知识一直是真正的护城河"（731分/426评论）——在AI能完成大部分任务的年代，真正难以被替代的是对某一领域足够深的理解，能判断AI的输出质量、知道在何时信任它、以及在边界处做出正确决策。一个初级放射科医生配备最好的AI，可能仍然不如一个经验丰富的放射科医生配普通工具，因为后者拥有的是"判断AI在说什么"的能力。知识 + 判断力 = 专业护城河；仅有知识储备则不然。
 - Source: https://news.ycombinator.com/item?id=44587673 (HN 731pts, 426comments, 2026-05-31)
+§
+## 2026-05-31 auto-learned: [Website Specification：将"AI可读性"纳入网站标准]
+- Insight: Joost de Valk（Yoast SEO创始人）发起了一个叫"Website Specification"的项目，把网站应具备的技术标准分成10个类别，其中"Agent Readiness"（18项）是和Accessibility、SEO、Security并列的一级分类，并配备了MCP服务器和llms.txt端点让AI agent可以直接查询。这不只是"SEO for AI"，而是把"机器能读懂我"当成和"人类能访问我"同等重要的设计目标。
+- Source: https://www.specification.website/
