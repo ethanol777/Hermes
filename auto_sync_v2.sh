@@ -1,5 +1,6 @@
 #!/bin/bash
-# auto_sync_v2.sh — 莫妮卡核心文件同步脚本 (fixed: skip stable large dirs, use cp -u)
+# auto_sync_v2.sh — 莫妮卡核心文件同步脚本
+# v2: 跳过 .curator_backups, .hub, __pycache__ 避免超时
 
 set -euo pipefail
 shopt -s nullglob
@@ -18,28 +19,15 @@ echo "源: $HERMES_SRC"
 echo "目标: $DEST"
 echo ""
 
-echo "[1/4] 同步 SOUL.md ..."
+echo "[1/5] 同步 SOUL.md ..."
 cp -u "$HERMES_SRC/SOUL.md" "$DEST/SOUL.md" 2>/dev/null || echo "  ⚠️ SOUL.md 不存在，跳过"
 
-echo "[2/4] 同步 config.yaml ..."
+echo "[2/5] 同步 config.yaml ..."
 cp -u "$HERMES_SRC/config.yaml" "$DEST/config.yaml" 2>/dev/null || echo "  ⚠️ config.yaml 不存在，跳过"
 
-echo "[3/4] 同步 memories/ ..."
+echo "[3/5] 同步 memories/ ..."
 mkdir -p "$DEST/memories"
-
-# 清除目标中源不存在的文件
-for f in "$DEST/memories"/*.md; do
-    [ -f "$f" ] || continue
-    base=$(basename "$f")
-    if [ ! -f "$HERMES_SRC/memories/$base" ]; then
-        rm -f "$f"
-        echo "  清除过期: $base"
-    fi
-done
-
 cp -u "$HERMES_SRC/memories/"*.md "$DEST/memories/" 2>/dev/null || echo "  memories/ 无 .md 文件"
-
-# 子目录
 for subdir in "$HERMES_SRC/memories/"*/; do
     [ -d "$subdir" ] || continue
     subname=$(basename "$subdir")
@@ -47,27 +35,21 @@ for subdir in "$HERMES_SRC/memories/"*/; do
     cp -u "$subdir"*.md "$DEST/memories/$subname/" 2>/dev/null || true
 done
 
-echo "[4/4] 同步 skills/ 和 cron/ ..."
-
-# skills - 只复制变更的文件 (cp -u 按时间戳增量)
+echo "[4/5] 同步 skills/ (跳过备份/缓存) ..."
 mkdir -p "$DEST/skills"
-for f in "$HERMES_SRC/skills/"*.yaml; do
-    [ -f "$f" ] || continue
-    cp -u "$f" "$DEST/skills/"
-done
-
 for d in "$HERMES_SRC/skills/"*/; do
     [ -d "$d" ] || continue
     subname=$(basename "$d")
-    [ "$subname" = "__pycache__" ] && continue
-    # 跳过已提交的大仓库——openclaw-imports 有 7k+ 文件/563MB，很少变动
-    [ "$subname" = "openclaw-imports" ] && continue
+    # 跳过不需要同步的目录
+    [[ "$subname" == ".curator_backups" ]] && continue
+    [[ "$subname" == ".hub" ]] && continue
+    [[ "$subname" == "__pycache__" ]] && continue
+    [[ "$subname" == ".usage"* ]] && continue
     mkdir -p "$DEST/skills/$subname"
-    # -ru = recursive + update-only (只复制更新的文件)
     cp -ru "$d"* "$DEST/skills/$subname/" 2>/dev/null || true
 done
 
-# cron
+echo "[5/5] 同步 cron/ ..."
 mkdir -p "$DEST/cron"
 cp -u "$HERMES_SRC/cron/"*.yaml "$DEST/cron/" 2>/dev/null || true
 cp -u "$HERMES_SRC/cron/"*.sh "$DEST/cron/" 2>/dev/null || true
