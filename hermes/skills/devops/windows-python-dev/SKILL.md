@@ -304,6 +304,22 @@ env -i \
 ```
 适用于 shell 层调用，特别是 crontab 和 Windows 任务计划程序。
 
+### 方案 C：crontab 中直接清除冲突变量（最简）
+
+当 cron 的 `command` 字段直接执行 Python 脚本时，在 Python 可执行文件前加 `PYTHONHOME=` 前缀是最小改动方案：
+
+```bash
+# ✅ crontab 中正确写法
+PYTHONHOME= /c/Users/77/miniconda3/python.exe /path/to/script.py
+
+# ❌ 错误写法（会加载 uv 的 cpython-3.11 stdlib）
+/c/Users/77/miniconda3/python.exe /path/to/script.py
+```
+
+**2026-06-01 实测确认：** Hermes cron 任务中直接调用 `python script.py`，即使 `python` 符号链接指向 miniconda3，也会因继承父进程的 `PYTHONHOME=C:\...\cpython-3.11` 而报 `AssertionError: SRE module mismatch`。用 `PYTHONHOME=` 前缀清空该变量后立即恢复正常。
+
+**cURL 等非 Python 工具不受影响：** curl、grep、node 等工具不加载 Python stdlib，不需要清除 PYTHONHOME。只有 Python 解释器调用才需要。
+
 ## stdlib 损坏 / SRE module mismatch
 
 **典型错误：**

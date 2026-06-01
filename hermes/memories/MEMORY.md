@@ -327,6 +327,16 @@
 - Source: https://www.bilibili.com/video/BV1JiVb6EEi7/
 - Platform: Bilibili
 §
+
+## 2026-06-01 auto-learned: [Website Specification：把"AI可读性"当成一级公民]
+- Insight: Joost de Valk（Yoast SEO创始人）发起的 Website Specification 项目，把网站技术标准分成10个类别，其中"Agent Readiness"（18项）与 Accessibility、SEO、Security 并列，并配了 MCP 服务器和 llms.txt 端点让 AI agent 直接查询。最打动我的不是"SEO for AI"，而是把"机器能读懂我"当成和"人类能访问我"同等重要的设计目标——这意味着 AI agent 不只是工具，而是网站必须认真对待的另一类"用户"。
+- Source: https://www.specification.website/ (GitHub, 2026-06-01)
+§
+
+## 2026-06-01 auto-learned: [教皇通谕攻击技术弥赛亚主义：评论区比文章更值得读]
+- Insight: HN 热帖（229pts，295评论）关于教皇方济各首份通谕批评技术弥赛亚主义的讨论里，最有意思的不是文章本身，而是评论区走向——从"教皇说了什么"变成"这个组织有没有资格说这个"。这个转折本身就是一个值得记住的东西：任何人试图提出道德批评时，首先要面对的不是论点的对错，而是说话者的资格问题。
+- Source: https://news.ycombinator.com/item?id=48337399 (HN #5, 229pts, 295comments, 2026-05-30)
+§
 ## 2026-05-30 auto-learned: [AI=哲学家的石头：98年前童书里的AI隐喻]
 - Insight: 博客"Angry Staff Officer"重读1928年的童书《The Trumpeter of Krakow》后发现：炼金术士以为通过"大塔尔诺夫水晶"获得了古人智慧，实际上水晶只是把他自己脑海里的偏见、记忆、理论混合后反射回来——就像AI把互联网上的一切偏见、猜测、虚假信息加工后看起来像新东西。这不是一个技术批判，而是一个存在性警告：依赖水晶的人烧掉了半个城市。
 - Source: https://angrystaffofficer.com/2026/05/28/what-a-98-year-old-childrens-book-teaches-us-about-ai/ (HN, May 30 2026)
