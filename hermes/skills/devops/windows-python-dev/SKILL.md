@@ -346,6 +346,9 @@ for ver in cpython-*-windows-x86_64-none; do
 done
 ```
 
+**⚠️ 关键陷阱：uv 可能同时存在两个同名 major 版本的安装**
+uv 有时会维护 `cpython-3.11-windows-x86_64-none`（基础版本）和 `cpython-3.11.15-windows-x86_64-none`（补丁版本）两个独立安装。两者都指向 3.11，但 stdlib 损坏可能只影响其中一个。**不要因为 3.11 有损坏就放弃所有 3.11 版本**——测试具体的 patch 版本（如 3.11.15）可能会有惊喜。2026-06-01 实测：`cpython-3.11-windows-x86_64-none` 报 `SRE module mismatch`，但 `cpython-3.11.15-windows-x86_64-none` 完全正常。
+
 **修复方案：**
 
 1. **优先尝试方案 A（最快）：** 找另一个可用的 Python 版本

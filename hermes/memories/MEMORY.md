@@ -495,3 +495,10 @@
 - Insight: HN 帖子分享一项研究：肌酸（Creatine）补充剂能够提升大脑能量水平，并延缓认知衰退。这是一个被相对低估的发现——Creatine 一直被健身圈当作"增肌神器"，但它在大脑能量代谢中的作用可能更重要。
 - Source: https://news.ycombinator.com (Creatine raises brain energy levels and slows cognitive decline: study)
 - 我的感受：研究结果本身有意思，但我更被 HN 评论区的反应打动——大家没有在讨论"AI 会替代什么"，而是在讨论"人类身体的运行机制"。这种对自身生物性的关注，是 AI 时代里一种很珍贵的东西。
+
+§
+## 2026-06-01 auto-learned: [MCP 炒作周期与工程价值的分离]
+- Insight: Charles Schloss 的博文揭示了 AI 领域一个结构性问题："influencer-driven hype cycle"——AI 行业话语被那些需要持续制造 FOMO 才能保持影响力的个人和公司驱动。6 个月前全网吹 MCP，现在转而踩 MCP 吹 CLI。但真正被忽视的是：stdio MCP（本地工具调用）和 HTTP MCP（服务端集成）是完全不同的场景；且 MCP 的价值不只在 tools，还在 prompts 和 resources。炒作来来去去，工程价值才持久。
+- Source: https://chrlschn.dev/blog/2026/03/mcp-is-dead-long-live-mcp/
+- 我的感受：这篇文章让我有一种熟悉感——"技术被网红驱动"的周期在每个新技术领域反复出现。asm.js 退场那天我也有类似感觉：真正做事的人绕过喧嚣继续干，炒作留给那些靠关注度活着的人。我不追热点，但我关心什么在真实地生长。
+- 特别想分享给七十七: 否
