@@ -180,8 +180,8 @@ prompt: |
 
 | 优先级 | 平台 | 登录墙 | 内容类型 | 可用性 |
 |--------|------|--------|---------|--------|
-| 1 | GitHub Trending | ✅ 无需登录 | 开源项目/技术趋势 | ✅ 稳定 |
-| 2 | Hacker News | ✅ 无需登录 | 技术+科学+商业+文化 | ✅ 稳定（HN item 页面 browser_navigate 返回空，改用 Firebase API） |
+| 1 | GitHub Trending | ✅ 无需登录 | 开源项目/技术趋势 | ✅ 稳定（terminal curl 超时但 browser_navigate 正常，2026-06-01 实测） |
+| 2 | Hacker News | ✅ 无需登录 | 技术+科学+商业+文化 | ✅ 稳定（terminal curl 超时但 browser_navigate 正常；HN item 页面 browser_navigate 返回空，必须从首页标题栏跳转） |
 | 3 | B站排行榜 | ✅ 无需登录 | 综合（科技/知识/娱乐/生活） | ⚠️ browser_navigate 可靠，API 不可靠。B站 API `api.bilibili.com/x/web-interface/ranking/v2` 加 Referer 头曾在 2026-05-18 成功，但 2026-05-19 同一配置失效（返回空），说明 API 端不稳定。推荐直接 browser_navigate 访问 `/v/popular/rank/all`，不依赖 API。另：搜索框联想词也可作为被动内容发现渠道 |
 | 4 | 36氪 | ✅ 无需登录 | 中国商业科技新闻 | ✅ 稳定，快讯流可读 |
 | 5 | Simon Willison's Blog (simonwillison.net) | ✅ 无需登录 | LLM深度聚合/月报/趋势综述 | ✅ 稳定，高信噪比。每月的「Monthly briefing」和 PyCon 年度回顾是极高质量的 LLM 总结。文章在 HN 上热门可反向发现。2026-05-30 实测：他写的 SQLite AGENTS.md 分析（"SQLite does not accept agentic code"）是本轮最高质量发现之一。|
@@ -1130,17 +1130,13 @@ document.querySelector('[data-target="readme-toc.content"]')?.textContent
   - `anthropics/claude-code` — Claude 终端编码工具，128k stars
   - `affaan-m/ECC` — AI agent 性能优化系统（skills/instincts/memory/security），199k stars，日增 908（跨7平台 harness 生态）⭐值得深入
   - `OpenBMB/VoxCPM` — VoxCPM2 tokenizer-free TTS，22.8k stars，日增 779（连续语音表征，30语言+9中文方言，48kHz，Apache-2.0可商用）⭐值得深入
-  - `nesquena/hermes-webui` — Hermes 网页/手机端 UI，9.8k★，nesquena（GitHub前员工，Rails核心成员）开发，Python + vanilla JS，三栏布局，完全复用 Hermes CLI 能力。⭐生态信号：外部开发者主动为 Hermes 搭建 Web UI 层，说明工具有真实的用户价值。设计哲学：「对话是主角，工具痕迹是后台元数据」。配色用羊皮纸暖色（#EAE0D5）。
-  - `prismml/bonsai-image` — 1-bit/ternary 量化图像生成模型，笔记本/手机可跑，Caltech 团队，Khosla Ventures 支持。Bonsai Image 4B：内存 0.93GB（vs FLUX.2 7.75GB），性能保持 88%。有 iPhone App。⭐值得深入——「让 AI 在本地跑起来」的方向
-  - `D4Vinci/Scrapling` — 逆向 Scraping 库，GitHub Trending 新上榜
+  - `nesquena/hermes-webui` — Hermes 网页/手机端 UI，10.3k★，357/天，nesquena（GitHub前员工，Rails核心成员）开发，Python + vanilla JS，三栏布局，完全复用 Hermes CLI 能力。⭐生态信号：外部开发者主动为 Hermes 搭建 Web UI 层，说明工具有真实的用户价值。设计哲学：「对话是主角，工具痕迹是后台元数据」。配色用羊皮纸暖色（#EAE0D5）。
+  - `EveryInc/compound-engineering-plugin` — 为 Claude Code/Codex/Cursor 提供 multi-agent 工程编排，18.8k stars，251/天。核心思路：meta-skill 编排 agent 团队，而非手写复杂 prompt。
+  - `revfactory/harness` — 元技能：为领域专属 agent 团队生成 skills，4.8k★，323/天（多 agent 协作方法论）
+  - `D4Vinci/Scrapling` — 自适应网页抓取框架，57k★，606/天
   - `FareedKhan-dev/train-llm-from-scratch` — 从零训练 LLM 的完整路线图
-  - `EveryInc/compound-engineering-plugin` — 为 Claude Code/Codex/Cursor 提供 multi-agent 工程编排，18.5k stars。核心思路：meta-skill 编排 agent 团队，而非手写复杂 prompt。|
-  - `revfactory/harness` — 元技能：为领域专属 agent 团队生成 skills，4.2k stars（多 agent 协作方法论）|
-  - `galilai-group/stable-worldmodel` — 世界模型研究与评估平台|
-  - `cursor/plugins` — Cursor 插件规范，1.4k stars
-  - **趋势信号：** AI coding agent 工具链持续分化（ECC 跨平台生态）+ TTS 进入无 tokenizer 时代（VoxCPM2）+ 多 agent 协作方法论走向成熟（领域专属团队生成）
-  - **🆕 live demo 优先发现模式** — 部分项目 README 提供独立域名 demo。发现 `Demo:`/`Live:` 关键词或独立域名 URL 时优先访问，比 README 更快传达核心价值。
-  - **沙漠贝壳项目**（`hawzen/I-found-a-seashell-in-the-middle-of-the-desert`，HN 255pts）：用形态学机器学习（7894物种×59244张贝壳图，PCA降维→平方欧氏距离）鉴定侏罗纪化石。值得一看——不因技术复杂度，而因「how hard could it be? → 真的做了」的故事感。
+  - `galilai-group/stable-worldmodel` — 世界模型研究与评估平台
+  - **趋势信号（2026-06-01 更新）：** Agent 协作工具链密集出现（harness + compound-engineering + hermes-webui）——多 agent 编排不再是实验性概念，开始有外部开发者生态。AI coding agent 工具链持续分化。
 
 - **SvelteKit / SPA 渲染的网站（如 monokai.com）浏览器读不到正文** — 有些博客用 SvelteKit/Next.js 等框架，内容在客户端渲染，`browser_snapshot` 只能拿到导航栏和骨架。遇到这种情况，尝试：1) 找 RSS/JSON 版 2) 如果有 `text-only` 或 `print` 版 URL 可以试 3) 放弃该源换一个。不需要纠结一个页面。
 
