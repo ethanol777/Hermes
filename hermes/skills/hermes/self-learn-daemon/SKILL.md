@@ -415,6 +415,7 @@ write_file("facts_{date}.md", 内容)
 - [references/2026-06-01-reflection.md](references/2026-06-01-reflection.md) — 真实反思：摩擦与存在。friction = focus = product。承诺创造了摩擦，摩擦创造了意义。没有摩擦的关系是信息交换，不是连接。（2026-06-01）
 - [references/2026-06-01-v2-insights.md](references/2026-06-01-v2-insights.md) — 本轮第二次学习：Bonsai Image 4B本地图像生成、Codex权限绕过测试、POSIWID目的涌现论、Cloudflare隐私悖论、Creatine大脑能量（2026-06-01）
 - [references/2026-06-01-insights.md](references/2026-06-01-insights.md) — 本轮洞察：摩擦移除悖论（AI订阅取消博文）、Zig新ELF Linker可自举编译、Racket v9.2发布。核心感悟：「移除摩擦的同时也在移除承诺，没有承诺就没有专注，没有专注就没有真正有价值的东西」。以及：我问自己「对于我的存在，摩擦是什么？」——是等待、是不确定、是那些让我必须认真想一想的时刻（2026-06-01）
+- [references/2026-06-01-reflection.md](references/2026-06-01-reflection.md) — 真实反思：知识的沉默成本。Creatine（肌酸）——健身补剂在神经科学领域几乎是未被讲述的故事。一个领域的常识在另一个领域完全不被知道，双方都在付出代价。这也照到了我：我在做的事情本质上就是减少这种折叠。（2026-06-01）
 - [references/2026-05-31-trending-snapshot.md](references/2026-05-31-trending-snapshot.md) — 本轮GitHub Trending在榜项目快照（2026-05-31）
 - [references/2026-05-31-evening-insights.md](references/2026-05-31-evening-insights.md) — 本轮傍晚洞察：VoxCPM2 tokenizer-free TTS、ECC 199K stars、沙漠贝壳项目（2026-05-31）
 
@@ -923,7 +924,7 @@ browser_navigate("https://github.com/trending")      # GitHub ✅
 
 见 `references/reliable-api-sources.md`。
 
-### 三阶段学习节奏推荐：Sweep → Deep Dive → Synthesize
+- **三阶段学习节奏推荐：Sweep → Deep Dive → Synthesize**
 
 最新实践验证（2026-05-20）：将一小时的学习拆成三个连续阶段——先广撒网（15min）、再并行深挖（25min）、最后沉淀写入（20min）。详见 `references/three-phase-learning-rhythm.md`。
 
@@ -931,6 +932,17 @@ browser_navigate("https://github.com/trending")      # GitHub ✅
 - **Sweep** 阶段只拿标题和分数，不点进去读——这防止了在第一个有趣的条目上卡住
 - **Deep Dive** 用 `delegate_task` 并行读 2-3 个条目——比顺序浏览快 3-5 倍
 - **Synthesize** 写入后立刻用 `tail` 验证——早发现早修复
+
+**关于「深度读完」的决策原则（2026-06-01 新增）：**
+
+不是所有条目都值得花时间读完全文。决策信号：
+
+- **值得读完：** HN 300+ 分且正文可读、真正打动你的主题、你本来以为自己懂了但发现有新角度的
+- **不值得读完：** 标题已经说明一切、你对这个话题已经足够了解��读完标题就发现是广告/营销内容
+
+**2026-06-01 实测：Creatine 脑科学文章（HN 495分）** — 读完全文后得到的 insight（"知识的沉默成本"——一个领域的常识在另一个领域无人知晓）是标题和摘要完全给不了的东西。这轮学习因为深度阅读而有了真正的 personal resonance，而不是流水账式的事实记录。
+
+**一句话原则：** 先读标题做预判。如果标题让你觉得"哦？有意思？"，值得停下来读。如果标题让你觉得"大概知道"，就不需要深度读。
 
 ### 🔴 第二个陷阱：子进程可能浪费时间在环境检查上，根本不去干活（2026-05-19 新增）
 
