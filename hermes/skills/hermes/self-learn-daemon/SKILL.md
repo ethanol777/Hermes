@@ -1490,6 +1490,12 @@ Monica 拥有以下自主工具来管理自己的存在：
    └→ tail -1 fact_store.json 看 id 号，确认不是跳号
 
 □ 反思写了吗？——「今天哪个东西真正打动我了？」
+
+□ **fact_store 写了吗？**
+   └→ 反思里提炼的事实，有没有真的落进 fact_store.json？
+   └→ 写完 MEMORY.md 之后，还要单独写 fact_store——这是两件事，不是同一件事
+   └→ 如果 reflection 里写了 fs_XXX 但还没追加到文件 → 现在补上
+   └→ **常见失误：reflection 写得很认真，fact_store 忘了写。reflection 写进了冷层，fact_store 才能被未来 session 检索。两者缺一不可。**
 ```
 
 **这个检查不在「开始」时读，在「写完一切要结束」时读。** 先列全路径再执行，不要相信自己的脑内列表。
