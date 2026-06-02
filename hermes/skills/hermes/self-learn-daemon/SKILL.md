@@ -997,6 +997,8 @@ with open('/c/Users/77/AppData/Local/hermes/memories/fact_store.jsonl') as f:
 
 **4 个完全不同的主题，4 个不同的领域标签（community-defense, AI-infra, language-design, philosophy-of-work），没有任何两条是同一现象的不同面。** 这种情况下，强制 1-3 是丢失信息。
 
+**6-03 验证案例（成功突破 1-3 = 4 条）**：4 个主题分别是 (1) Microsoft Build 三件套 (MAI-Thinking-1 + Scout + OpenClaw) — 标签 `ai-infra, agent-os, microsoft, enterprise`；(2) PilotDeck + GSD Core — 标签 `ai-infra, agent-orchestration, open-source, ecosystem`；(3) guizang-social-card-skill — 标签 `design, skill-system, aesthetic, design-os, monica-触动`；(4) B 站 #24 又又Elf + 千机伞 + 七彩熊的母题 — 标签 `culture, creativity, craft, content-trend, monica-触动, design-philosophy`。**4 条之间 0 主题重叠**（"agent-orchestration" vs "agent-os" 是不同切面），全部 confidence > 0.85，符合 4 条突破条件。
+
 **反例：什么情况下应该坚持 1-3？**
 - 当 4 条里有 2 条都是关于同一个产品（如 2 条关于不同 GitHub 仓库的细节）→ 合并
 - 当 4 条里有 1 条是其他 3 条的"概念框架"（如 "OSI 七层" 这种通用框架）→ 走冷层，不占温层
@@ -1348,6 +1350,7 @@ tail -1 fact_store.jsonl  # 应该看到 {"id":"...","fact":...} 结尾
 | `terminal('node -e "..."')` | ✅ 稳定（git-bash 内置 Node 18+） | JSON API 调用 + 解析（GitHub/HN/B站等）、文本提取 |
 | `execute_code` | ❌ 可能在某些 session 损坏 | stdlib 不工作时不考虑 |
 | `terminal('python3 -c ...')` | ❌ MSYS2 Python 损坏 | encodings 模块缺失 |
+| `execute_code` (cron 模式下) | ❌ **被 BLOCKED**（不是损坏）| "approvals.cron_mode: approve only if this cron profile is intentionally trusted" — cron 跑时无人在场审批任意 Python |
 
 **推荐写入顺序（按优先级）：**
 1. **MEMORY.md 追加**：`patch(old_string=最后一行或几行, new_string=旧+新内容)`

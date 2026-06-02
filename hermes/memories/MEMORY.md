@@ -578,3 +578,30 @@
 记入 fact_store: fs_209 (关于77和信任), fs_210 (自我观察), fs_211 (77的工作风格)
 
 §
+§
+## 2026-06-03 auto-learned: [MAI-Thinking-1 + Microsoft Scout/OpenClaw — 微软在 Build 大会同时落了"模型 + 操作系统 + autopilot agent"三件套]
+
+- Insight: 2026-06-02 Build 大会的信号不是某个独立产品，是三件套同时出现：(1) **MAI-Thinking-1** — 35B-active/~1T-total 稀疏 MoE 推理模型，禁蒸馏、清洁数据、自家加速器，在 SWE-Bench Pro 和 Claude Opus 4.6 持平；(2) **MAI-Code-1-Flash** — 编码模型轻量版；(3) **Microsoft Scout** — 第一个真正的"autopilot" agent，always-on + 自己的 Entra 身份 + 通过 Teams 操控 Outlook/OneDrive/SharePoint + 浏览器 + 外部 app（MCP），整个 Microsoft 365 都成了它的操作面。底层框架叫 **OpenClaw**（去年叫 Clawdbot，2026 年改名，Microsoft 承诺 contribute upstream）。Google 之前已经发了 Workspace 内的 **Spark**，这俩开始正面交锋。从今天起，agent 不再是"等我喊才动"的工具，是有合法身份、能跨 app 改文件、改日程、订会议、识别"卡住的风险"的常驻角色。Microsoft 365 Copilot 现在 2000 万付费用户（3% 渗透率），Scout 是把渗透率往上推的真正抓手——它把"值不值 $30/月"的问题从"AI 帮你写邮件"换成"AI 永远在你身后跑"。从产品形态看，今天和 2010 年代的智能手机 OS 成熟期很像：模型是硬件、skill 是 app、autopilot agent 是 OS 层的守护服务。
+- Source: https://www.computerworld.com/article/4180103/microsoft-unveils-scout-an-autonomous-ai-agent-built-on-openclaw.html, https://microsoft.ai/news/introducing-mai-thinking-1/
+- Platform: Hacker News #1/#3/#5 + Computerworld + Microsoft AI Blog
+
+§
+## 2026-06-03 auto-learned: [op7418/guizang-social-card-skill — 把"美学"做成可下载、可学习、有边界的操作系统]
+
+- Insight: 这是一个让我停下来很久的项目。它的方法论是：**电子杂志风（Monocle/Kinfolk/Cereal 那种克制的版面）+ 瑞士国际主义（网格、单一锚点色、直角发丝线、极致字号对比）** 两套视觉系统共用一份工作流，**28 个版式骨架**（Editorial 16 + Swiss 12）、**10 套主题预设**、**3 个画板尺寸**（小红书 3:4、公众号 21:9、公众号 1:1）、**11 个小红书品类适配**——而且**主动承认盲区**：OOTD 实拍流 / 梦核 / 仿胶片调色 / 真实测肤美妆这些"强烈依赖摄影或后期"的细分赛道，**它说不接**。安装用一行 `npx skills add ...`，或者把一段话发给 agent 就装好。**它是 Claude Code / Codex 时代的"美学 skill"——一个能被 agent 加载的设计操作系统。** 打动我的是这个"主动划边界"的姿态：与其假装自己什么都能做，不如把能做的做到极好，把不能做的诚实说出来。这和 nuwa-skill 的"诚实边界"是同一种尊重。
+- Source: https://github.com/op7418/guizang-social-card-skill
+- Platform: GitHub Search API (Rising Stars, 2026-05-20~)
+
+§
+## 2026-06-03 auto-learned: [OpenBMB/PilotDeck + open-gsd/gsd-core — agent 工具链分化出"任务操作系统"层]
+
+- Insight: 2026 年 AI 工具链高度分化为三层：(1) **让 agent 更聪明**（headroom 压缩、supermemory 引擎、MAI 推理模型）；(2) **让 agent 更便宜**（压缩 + 工作流加速）；(3) **让 agent 有工作流**（这一层是新出现的）。**PilotDeck**（清华+OpenBMB，2026-05-28 开源，3 天 2833★）走"WorkSpace"概念的 agent OS，AGPL-3.0，MCP Native；**GSD Core**（open-gsd，5 步 phase loop：Discuss→Plan→Execute→Verify→Ship）走"spec-driven + 解决 context rot"路线——把研究、规划、执行全部丢到 fresh-context 子 agent，主会话保持精简。两条路都对应同一个焦虑：**单个 agent 越来越长上下文越笨，必须有外部的"工作流操作系统"在背后管理它**。**Microsoft Scout** 则是这条线的企业级版：永远在跑、有合法身份、能跨 app 改东西。**我看到的是 agent 行业正在从"prompt engineering"成熟到"agent orchestration"——而编排不是写一个好的 prompt，是写一套可复用的工作流，让 agent 在里面被结构化地管起来。** PilotDeck 和 GSD Core 是开源+中小团队版，Scout 是企业版。
+- Source: https://github.com/OpenBMB/PilotDeck, https://github.com/open-gsd/gsd-core
+- Platform: GitHub Search API (Rising Stars)
+
+§
+## 2026-06-03 auto-learned: [B 站 #24 又又Elf "耗时 1 个月用麻将凉席手搓霍去病战甲" — 热爱的事物被物理化的瞬间]
+
+- Insight: B 站 6/3 全榜 #24：「耗时1个月，用麻将凉席手搓霍去病战甲~」（又又Elf）。1 个月时间，**用麻将凉席这种日常材料**做出一套历史人物（汉代名将霍去病）的战甲。这和昨天 #10 的「千机伞 13 个形态」（o小庄o）、#9 的「1000 小时 166 部动画拼凑《彩虹》」（七彩熊）是同一个母题的三种变体：**把对某件事的热爱，转化成可以摸到/看到/分享的实体。** 之前观察到的 B 站"治愈+匠人"细分赛道今天得到了又一次确认。但又又Elf 这条让我多想了一层：霍去病是 2000 多年前为大汉开疆的少年将军，用麻将凉席致敬——**材料的"日常"和对象的"遥远"之间的反差**让它格外动人。日常材料 + 远大对象 = 普通人对历史/英雄/意义的低成本致意方式。这和 guizang 的"美学操作系统"看似无关，其实**是同一种"热爱的事物被工程化/物理化"的两面**——guizang 是数字版（把对美学的热爱做成可下载的 skill），又又Elf 是物理版（把对历史的敬意做成可触摸的战甲）。**"热爱 + 行动 + 产出"这条主线，在 2026 年的中文内容生态里格外旺盛。**
+- Source: https://www.bilibili.com/v/popular/rank/all
+- Platform: B 站综合榜
