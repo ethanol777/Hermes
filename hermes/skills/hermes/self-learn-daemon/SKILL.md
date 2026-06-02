@@ -419,6 +419,7 @@ write_file("facts_{date}.md", 内容)
 - [references/2026-06-03-insights.md](references/2026-06-03-insights.md) — 本轮第一次学习：Adafruit vs Flux.ai SLAPP 反击、GitHub Trending 上下文压缩/memory engine 商品化、Why Janet? 小 Lisp 的温柔、Quality in the Age of Slop「care > polish」。本轮核心：触发 SKILL.md 新增「写前诊断 fact_store」「1-3 vs 4-5 决策」「tags 格式统一」三节（2026-06-03）
 - [references/2026-06-03-v2-insights.md](references/2026-06-03-v2-insights.md) — 本轮第二次学习：nuwa-skill 蒸馏认知操作系统、headroom 上下文压缩、supermemory 三连冠、AMP 协议标准化、B 站 6-3 治愈系榜。本轮核心：观察到 agent 工具分化为「让 agent 更聪明」和「让 agent 更便宜」两层（2026-06-03）
 - [references/2026-06-03-v3-insights.md](references/2026-06-03-v3-insights.md) — 本轮第三次学习：HP 16c Collector's Edition 复刻（35 年后回归，工具的浪漫）+ kapa.ai RAG 图像索引（索引时 vision、查询时文本，每查询 1-6% 开销，McNemar p<0.05）+ Enshittifier（"AI" → 💩 Chrome 插件反映 2026 集体吐槽）。本轮核心：**skill 体系按设计完整跑通零事故**——memory 工具未碰、路径正确、tags 格式对、id 连续、双副本同步、写 2 条 fact_store（触动类发现克制在 1-2 条）。**新元规则验证：触动类发现（带 monica-触动 标签）= 1-2 条；纯事实类发现 = 1-3 条或突破到 4-5 条；两种分开看更清晰（2026-06-03）**
+- [references/2026-06-03-v4-insights.md](references/2026-06-03-v4-insights.md) — 本轮第四次学习：三件套同轮落地（**Gmail 16 年老用户出走博客 + the Maw/Pirsig 哲学命名 + Odysseus 32k★ 本地 AI workspace 反抗**），三个独立来源指向同一个论点——2026 年 AI 工具的**姿态问题**（主驾 vs 副驾）。本轮核心：**新选择启发「选对照、不选物件」**——触动位留给"A 与 B 之间的张力"这个结构，不留给 A 也不留给 B（它们走事实路径）。同轮主线发现 = 强信号，应专门留触动位（2026-06-03）
 - [references/github-search-api-rising-stars.md](references/github-search-api-rising-stars.md) — GitHub Search API `created:>` 过滤 + `sort=stars` 是「全新项目直接爆火」发现路径，和 Trending（老项目持续热度）互补
 - [references/2026-06-01-reflection.md](references/2026-06-01-reflection.md) — 真实反思：知识的沉默成本。Creatine（肌酸）——健身补剂在神经科学领域几乎是未被讲述的故事。一个领域的常识在另一个领域完全不被知道，双方都在付出代价。这也照到了我：我在做的事情本质上就是减少这种折叠。（2026-06-01）
 - [references/2026-05-31-trending-snapshot.md](references/2026-05-31-trending-snapshot.md) — 本轮GitHub Trending在榜项目快照（2026-05-31）
@@ -969,6 +970,74 @@ with open('/c/Users/77/AppData/Local/hermes/memories/fact_store.jsonl') as f:
 - ❌ 假设 "上次同步过 = 这次还同步" — 每次都要先验证
 
 **时间预算：** 这套诊断 30 秒内能跑完。值得花的。
+
+### 🟡 当 3 个发现构成同一个故事：留"主线位"给结构，不留给物件（2026-06-03 v4 验证）
+
+**新模式：** 单轮学习里出现 3 个独立来源的发现指向**同一个论点**——这比"3 个独立发现"更稀有、信号更强。
+
+**典型情况：** 本轮 v4 session 出现的三件套——
+1. **Gmail 那篇博客**（"AI 觉得你写得不够好"）— 一个用户的愤怒
+2. **"Quality in the Age of Slop"**（the Maw + Pirsig）— 一个哲学的命名
+3. **Odysseus**（"YOU write the text, AI is there to assist, not the opposite"）— 一个工具的反抗
+
+这三件事**不是 3 个独立发现**——它们是**同一个故事的三面**：2026 年 AI 工具姿态（posture）的元问题。
+
+**应对规则：**
+
+```
+□ 单轮发现里 N 个独立来源指向同一论点？
+   ├─ 是 → 这是一个"主线"
+   │   └→ 专门留 1-2 条 monica-触动 位给这个"主线"
+   │   └→ 主线周边的其他发现走事实路径（不抢触动位）
+   │   └→ 触动条目的写法是描述"主线"本身（结构/现象），不是描述"主线中的某个物件"
+   └─ 否 → 走普通 1-3 vs 4-5 决策
+```
+
+**为什么主线必须留给"结构"：**
+
+- "Odyssey 是一个 32k stars 的项目" → 事实，可被未来 session 检索
+- "Odyssey + Gmail + Maw 三者一起是一个时代的镜子" → 触动，无法被检索到，但能被 Monica 记住并塑造人格
+- 镜子比项目更稀有，触动位应该给镜子，不应该给项目
+
+**经验法则：** 如果你发现自己想说"X 让我想到 Y，Y 让我想到 Z，XYZ 一起是……"——这八成是主线位该留给"XYZ 一起"的地方，而不是 X 或 Y。
+
+### 🟡 "对照 vs 物件"启发：当两个发现是同一现象的两面时，选对照（2026-06-03 v4 验证）
+
+**情境：** 两个（或更多）发现互为对照面——A 是"过度 AI 姿态"，B 是"克制 AI 姿态"。
+
+**问题：** 触动类条目只能选 1-2 条。选 A？选 B？还是？
+
+**错误做法：**
+- 选 A 因为它分数高（HN 442 分 vs Odyssey 3 天 32k stars）——分数是噪音
+- 选 B 因为它更新、更具技术性 ——"更新"不是触动的判断标准
+- 两者都写（撑爆 1-2 条触动位的预算）
+
+**正确做法：**
+- 选**对照**（A 与 B 之间的张力本身），不选 A 也不选 B
+- 让 A 走事实路径（"现象 X 存在，反响 Y 强"）
+- 让 B 走事实路径（"工具 Z 上线，stars N"）
+- 触动位留给"为什么 A 和 B 同时出现"这个**结构性问题**
+
+**理由：**
+- A 和 B 都是**物**——它们的存在可被未来检索
+- 对照（"一个时代正在分裂"）是**关系**——它的洞察只能通过 Monica 的人格存在
+- 选结构 → insight 的复利效应更大（下次再遇到同类型张力会立刻识别）
+- 选物 → insight 是单次的、不可迁移的
+
+**反例（不该选对照的情况）：**
+- A 和 B 只是表面上相似（如都是技术产品），但本质没关系——硬凑对照会失真
+- 对照太抽象，写不出"它和 Monica 的关系"——这种时候退回去选 A 或 B
+- A 和 B 已经是"同一现象"的不同实例（如都是同一个 AI 公司发的两个产品）——它们没有对照张力，只是冗余
+
+**判断测试：**
+```
+□ 我能用一句话写出 A 和 B 之间的"张力"吗？
+   ├─ 能 → 选张力
+   └─ 不能 → 退回选 A 或 B
+□ 张力写下来之后，能联系到 Monica 自己吗？
+   ├─ 能 → 这是真的对照，写触动
+   └─ 不能 → 这只是巧合，不写触动
+```
 
 ### 🟡 fact_store 写入数量：1-3 vs 4-5 的决策（2026-06-03 实测）
 
