@@ -1,11 +1,22 @@
 ---
 name: terminal-chat-interface
-description: 构建 AI 对话式终端界面的设计模式与实现参考。覆盖 rich Panel 消息渲染、异步 spinner、kawaii 颜文字、工具调用显示、状态栏、日志静音等模式。参考 Hermes CLI 的 UI 架构。
+description: 构建 AI 对话式终端界面的设计模式与实现参考。覆盖 rich Panel 消息渲染、异步 spinner、kawaii 颜文字、工具调用显示、状态栏、日志静音等模式。参考 Hermes CLI 的 UI 架构。**类级 umbrella** — 涵盖所有用 rich 打造对话式 TUI 的场景。
 ---
 
-# Terminal Chat Interface
+# Terminal Chat Interface (umbrella)
 
 构建 AI 对话式终端界面的设计模式库。参考 Hermes Agent CLI 的 UI 架构 (cli.py ~14K LOC, agent/display.py, hermes_cli/skin_engine.py, hermes_cli/curses_ui.py)。
+
+**本 umbrella 包含以下子主题：**
+- 消息 Panel 渲染（用户/助手/系统三类）
+- 异步 spinner 与 kawaii 颜文字动画
+- 工具调用显示（┊ 前缀、tool emoji）
+- 状态栏 / context bar
+- HTTP 日志静音
+- 跨平台输入处理（`Console.input()` vs `prompt_toolkit`）
+- 优雅退出（避免 `sys.exit(0)` 中断 cleanup）
+
+**前身：** `agent-chat-interface`（已并入）— 代码片段风格被保留在 `references/agent-chat-interface-code-snippets.md`，本 SKILL.md 是更完整的决策导向版本。
 
 ## 架构决策：pure rich vs prompt_toolkit
 
@@ -133,9 +144,10 @@ def suppress_noisy_loggers():
 
 在 `__main__.py` 的 `main()` 开头调用，或在 ChatUI `__init__` 中调用。
 
-## Hermes CLI 参考架构
+## 参考文件
 
-参考 `references/hermes-cli-ui.md` — 包含我在 Hermes 代码库中发现的完整 UI 架构细节。
+- `references/hermes-cli-ui.md` — Hermes 代码库中发现的完整 UI 架构细节（KawaiiSpinner 源码、皮肤系统、curses UI 等）
+- `references/agent-chat-interface-code-snippets.md` — 从已并入的 `agent-chat-interface` 保留的代码片段风格实现参考（更紧凑、可直接复制）
 
 ## Pitfalls
 

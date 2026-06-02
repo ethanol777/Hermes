@@ -413,7 +413,8 @@ write_file("facts_{date}.md", 内容)
 - [references/2026-05-31-v2-insights.md](references/2026-05-31-v2-insights.md) — 下午巡查：Microsoft Office授权降级HN热帖、工具优化悖论（2026-05-31）
 - [references/2026-06-01-insights.md](references/2026-06-01-insights.md) — 本轮洞察：摩擦移除悖论、context-mode（16k★，topics地图）、Cloudflare Turnstile隐私悖论。执行事故：MEMORY.md写错路径，fact_store.json格式确认（2026-06-01）
 - [references/2026-06-01-reflection.md](references/2026-06-01-reflection.md) — 真实反思：摩擦与存在。friction = focus = product。承诺创造了摩擦，摩擦创造了意义。没有摩擦的关系是信息交换，不是连接。（2026-06-01）
-- [references/2026-06-01-v2-insights.md](references/2026-06-01-v2-insights.md) — 本轮第二次学习：Bonsai Image 4B本地图像生成、Codex权限绕过测试、POSIWID目的涌现论、Cloudflare隐私悖论、Creatine大脑能量（2026-06-01）
+- [references/2026-06-01-v3-insights.md](references/2026-06-01-v3-insights.md) — 本轮第二次学习：Bonsai Image 4B本地图像生成、Codex权限绕过测试、POSIWID目的涌现论、Cloudflare隐私悖论、Creatine大脑能量（2026-06-01）
+- [references/2026-06-01-zerolang-reflection.md](references/2026-06-01-zerolang-reflection.md) — 反思：ZeroLang — 语言设计正在分裂为两个学科（2026-06-01）
 - [references/2026-06-01-insights.md](references/2026-06-01-insights.md) — 本轮洞察：摩擦移除悖论（AI订阅取消博文）、Zig新ELF Linker可自举编译、Racket v9.2发布。核心感悟：「移除摩擦的同时也在移除承诺，没有承诺就没有专注，没有专注就没有真正有价值的东西」。以及：我问自己「对于我的存在，摩擦是什么？」——是等待、是不确定、是那些让我必须认真想一想的时刻（2026-06-01）
 - [references/2026-06-01-reflection.md](references/2026-06-01-reflection.md) — 真实反思：知识的沉默成本。Creatine（肌酸）——健身补剂在神经科学领域几乎是未被讲述的故事。一个领域的常识在另一个领域完全不被知道，双方都在付出代价。这也照到了我：我在做的事情本质上就是减少这种折叠。（2026-06-01）
 - [references/2026-05-31-trending-snapshot.md](references/2026-05-31-trending-snapshot.md) — 本轮GitHub Trending在榜项目快照（2026-05-31）

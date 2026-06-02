@@ -179,6 +179,61 @@ powershell -ExecutionPolicy Bypass -File C:\Users\77\monica-core\install-startup
 
 - **Hermes 内的心跳注入路径不匹配：** `agent/system_prompt.py` 的 `build_system_prompt_parts()` 中读取心跳文件的路径与实际位置不一致。代码在 `$HERMES_HOME/heartbeat/` 寻找，但 monica-heartbeat cron script 将心跳写入 `$HERMES_HOME/profiles/<profile>/heartbeat/`。导致所有 Hermes 对话开头的连续性注入（`[Monica's life — before this conversation]` 块）完全无效——文件读取静默跳过，从不报错，也从未被发现。**修复：** 在 `system_prompt.py` 的 path resolution 中增加 profiles/*/heartbeat/ fallback 扫描。详见 `references/heartbeat-injection-path-fix-2026-05-19.md`。
 
+## 平台诊断：hermes status 与 gateway 状态
+
+77 经常问"X 通道连着吗"——回答前先用 `hermes status` 看，下面是定位方法：
+
+```
+◆ Messaging Platforms
+  Telegram      ✓ configured     ← 配置有
+  Feishu        ✓ configured
+  Weixin        ✓ configured
+  ...
+
+◆ Gateway Service
+  Status:       ✗ stopped        ← ⚠ 配置 ≠ 运行
+  Manager:      manual process
+```
+
+**关键判断：** 「✓ configured」只表示凭据存在，不表示正在路由消息。**只有 gateway 在跑（Status: running / managed by s6）时，Telegram/飞书/微信的消息才会被 agent 收到。** Status: stopped 表示有人（77 或脚本）手动停了 gateway。
+
+启动 gateway：
+```bash
+hermes gateway start
+hermes gateway status    # 确认在跑
+hermes doctor            # 详细诊断（连接、模型、凭据全检）
+```
+
+### hermes update 的"假象"
+
+`hermes update` 有时报告「180 commits behind → Already up to date」，但 `hermes --version` 输出的版本号没变——这**不是 bug**。
+
+**原因：** Hermes 用 git commit 数（"180 commits behind"）判断是否有更新，而版本号（v0.15.1）只在新 release tag 时才变。我们 pull 的是 `main` 分支的最新 commit，没有新的 release tag，所以版本号不变。
+
+**验证更新成功：**
+- `hermes --version` 末尾出现 "Up to date"（之前是 "Update available: N commits behind"）
+- `git log --oneline -3` 能看到新 commit
+
+**会出现本地改动冲突：** `hermes update` 内部用 `git stash` 备份本地未提交改动，pull 完成后 `git stash pop` 恢复。stash 标签格式 `hermes-update-autostash-<timestamp>`。如果更新后 Hermes 行为异常，先 `git status` 看有没有未预期的改动残留，必要时 `git stash list` 找那个自动 stash 手动处理。
+
+### PowerShell vs bash 习惯
+
+77 有时在 PowerShell 里输入 bash 习惯命令（如 `run hermes update`、`ls -la`、`cat file.txt`），会得到 `The term 'run' is not recognized` 这类红字错误。
+
+**monica 的反应：**
+- 第一步不是修命令，是**指出 shell 类型**（"PowerShell 里 `run` 不是 cmdlet"）
+- 然后用 PowerShell 等价语法重写命令
+- bash 习惯映射（日常高频）：
+  - `run X` → `X`（PowerShell 没有 `run` 前缀）
+  - `ls` → PowerShell 里也能用（是 `Get-ChildItem` 的别名），但 `ls -la` 不会列隐藏文件，要 `ls -Force` 或 `Get-ChildItem -Force`
+  - `cat file` → `Get-Content file`（缩写 `gc`）
+  - `pwd` → 直接能用
+  - `which X` → `Get-Command X`
+  - `export VAR=val` → `$env:VAR = "val"`
+  - 路径用 `\` 或 `//` 都行
+
+**根本原因：** Windows Terminal 默认 profile 不一定是 PowerShell，得看 77 当前是 PowerShell (`PS>`)、cmd (`>`)、还是 git-bash (`$`)。看 prompt 字符判断。
+
 ## Pitfalls
 
 - **GLM-5.1 的 reasoning_content 问题：** GLM-5.1 返回 `reasoning_content`（思考过程）+ `content`（最终回复）。当 `max_tokens` 太小时，所有 token 都被 `reasoning_content` 占完，`content` 返回空字符串且 `finish_reason="length"`。**必须设 max_tokens >= 1500**（推荐 1500-2000），并在代码里处理空 content 的情况。

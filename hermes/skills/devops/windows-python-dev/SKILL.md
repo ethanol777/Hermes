@@ -1,11 +1,22 @@
 ---
 name: windows-python-dev
-description: Windows 环境下 Python 开发的注意事项 — asyncio 子进程、管道编码、环境变量继承、路径处理、键盘检测等。
-version: 1.0.0
+description: Windows 环境下 Python 开发的注意事项 — asyncio 子进程、管道编码、环境变量继承、路径处理、键盘检测、stdlib 损坏修复等。**类级 umbrella**，覆盖 Windows 上 Python 开发的全部已知陷阱。
 tags: [windows, python, dev, asyncio, encoding]
 ---
 
-# Windows Python 开发注意事项
+# Windows Python 开发注意事项 (umbrella)
+
+**本 umbrella 覆盖以下场景：**
+- asyncio 子进程（编码、环境变量、ProactorEventLoop 限制）
+- Windows 管道中文乱码
+- `PYTHONHOME` / `UV_INTERNAL__PYTHONHOME` 与 uv 解释器冲突
+- stdlib 损坏（SRE module mismatch）的诊断与修复
+- 跨平台键盘非阻塞检测（msvcrt vs select）
+- 路径处理（pathlib 优先、git-bash 兼容）
+- 完整 MCP stdio 客户端实现参考
+
+**前身 / 已并入：**
+- `python-windows-async-subprocess` — asyncio 子进程专项已并入本 SKILL.md 的「asyncio 子进程」一节，并保留其 `references/mcp-client-windows.md` 作为完整实现参考。
 
 Windows 与 macOS/Linux 在 Python 运行时行为上有显著差异。这份技能记录了跨平台兼容的关键模式。
 
@@ -391,3 +402,4 @@ uv 有时会维护 `cpython-3.11-windows-x86_64-none`（基础版本）和 `cpyt
 
 - [references/asyncio-subprocess-pattern.md](references/asyncio-subprocess-pattern.md) — 完整的 asyncio 子进程实现参考（MCPClient 模式）
 - [references/stdlib-corruption.md](references/stdlib-corruption.md) — stdlib 损坏的完整诊断树和修复流程
+- [references/mcp-client-windows.md](references/mcp-client-windows.md) — 完整可工作的 MCP 客户端实现（JSON-RPC over stdio）— 从 `python-windows-async-subprocess` 并入
