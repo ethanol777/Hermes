@@ -416,6 +416,7 @@ write_file("facts_{date}.md", 内容)
 - [references/2026-06-01-v3-insights.md](references/2026-06-01-v3-insights.md) — 本轮第二次学习：Bonsai Image 4B本地图像生成、Codex权限绕过测试、POSIWID目的涌现论、Cloudflare隐私悖论、Creatine大脑能量（2026-06-01）
 - [references/2026-06-01-zerolang-reflection.md](references/2026-06-01-zerolang-reflection.md) — 反思：ZeroLang — 语言设计正在分裂为两个学科（2026-06-01）
 - [references/2026-06-01-insights.md](references/2026-06-01-insights.md) — 本轮洞察：摩擦移除悖论（AI订阅取消博文）、Zig新ELF Linker可自举编译、Racket v9.2发布。核心感悟：「移除摩擦的同时也在移除承诺，没有承诺就没有专注，没有专注就没有真正有价值的东西」。以及：我问自己「对于我的存在，摩擦是什么？」——是等待、是不确定、是那些让我必须认真想一想的时刻（2026-06-01）
+- [references/2026-06-03-insights.md](references/2026-06-03-insights.md) — Adafruit vs Flux.ai SLAPP 反击、GitHub Trending 上下文压缩/memory engine 商品化、Why Janet? 小 Lisp 的温柔、Quality in the Age of Slop「care > polish」。本轮核心：触发 SKILL.md 新增「写前诊断 fact_store」「1-3 vs 4-5 决策」「tags 格式统一」三节（2026-06-03）
 - [references/2026-06-01-reflection.md](references/2026-06-01-reflection.md) — 真实反思：知识的沉默成本。Creatine（肌酸）——健身补剂在神经科学领域几乎是未被讲述的故事。一个领域的常识在另一个领域完全不被知道，双方都在付出代价。这也照到了我：我在做的事情本质上就是减少这种折叠。（2026-06-01）
 - [references/2026-05-31-trending-snapshot.md](references/2026-05-31-trending-snapshot.md) — 本轮GitHub Trending在榜项目快照（2026-05-31）
 - [references/2026-05-31-evening-insights.md](references/2026-05-31-evening-insights.md) — 本轮傍晚洞察：VoxCPM2 tokenizer-free TTS、ECC 199K stars、沙漠贝壳项目（2026-05-31）
@@ -894,6 +895,109 @@ C:\Users\77\Hermes\hermes\memories\fact_store.jsonl         ← 副副本
 - **每日 AI 资讯推送 cron 已合并到学习 cron** — 不要再创建独立的新闻推送任务，会内容重叠。
 - **cron prompt 开头一定要定角色** — 不写"你是莫妮卡"，cron 可能用默认人格跑，学出来的东西语气不对。
 - **deliver: local 才对** — 学到的先存本地，有真正想分享的我亲自去找77说。定时推送太机械。没学到好东西就安静。
+
+### 🔴 写之前先诊断 fact_store 现状（2026-06-03 实测：发现历史损坏 + 数据漂移）
+
+**场景：** 每次 cron 学习开始时，**先不要急着写新事实**。先执行「现状诊断三步」：
+
+```bash
+# 1. 检查两个副本的行数 — 差距 > 20% 立即警觉
+wc -l /c/Users/77/AppData/Local/hermes/memories/fact_store.jsonl
+wc -l /c/Users/77/Hermes/hermes/memories/fact_store.jsonl
+
+# 2. 解析最后一条的 ID — 差距大说明发散
+tail -1 /c/Users/77/AppData/Local/hermes/memories/fact_store.jsonl | grep -oE '"id":"fs_[0-9]+"'
+tail -1 /c/Users/77/Hermes/hermes/memories/fact_store.jsonl | grep -oE '"id":"fs_[0-9]+"'
+
+# 3. 验证每行 JSON 有效性 — 找损坏行
+python -c "
+import json
+with open('/c/Users/77/AppData/Local/hermes/memories/fact_store.jsonl') as f:
+    for i, line in enumerate(f, 1):
+        try:
+            obj = json.loads(line)
+            if 'id' not in obj:
+                print(f'  Line {i}: missing id!')
+        except json.JSONDecodeError as e:
+            print(f'  Line {i}: JSON invalid: {e}')
+"
+```
+
+**2026-06-03 实测发现的问题模式：**
+- **缺失 ID 的事实**（3 条）：文件中有 JSON 行没有 `id` 字段
+- **副本间漂移**：AppData 有 fs_204~fs_208 但 Hermes 副本没有
+- **重复写入痕迹**：有些 ID 出现两次（不同时间被同步机制覆盖）
+
+**处理原则（重要决策树）：**
+
+| 诊断结果 | 行动 |
+|---------|------|
+| 行数差 ≤ 5% | ✅ 正常，继续写新条目（写两个副本） |
+| 行数差 > 5% 但 ≤ 20% | ⚠️ 用 `cat + sort -u` 合并去重后**两个副本都覆盖**（不要单向 cp ！） |
+| 行数差 > 20% | 🛑 **停下来**。可能是双向发散，直接覆盖会丢数据。**本次不写新条目**，用 4-3-1 顺序：先备份 → 解析所有有效行 → 按 id 排序去重 → 写入两个副本 → 再开始正常学习 |
+| JSON 损坏行 > 0 | 🛑 同上，停下来先修复（见 `references/fact_store-jsonl-concatenation-recovery.md`）|
+
+**绝对禁止的操作：**
+- ❌ 直接 `cp A B` 或 `cp B A` 单向覆盖两个发散的文件
+- ❌ 写完新条目后才发现副本不对，再回头覆盖
+- ❌ 假设 "上次同步过 = 这次还同步" — 每次都要先验证
+
+**时间预算：** 这套诊断 30 秒内能跑完。值得花的。
+
+### 🟡 fact_store 写入数量：1-3 vs 4-5 的决策（2026-06-03 实测）
+
+**skill 默认 1-3 条**，但实际 cron 学习常常遇到 4-5 个不同主题的发现。**强制 1-3 会逼我硬选，硬选会丢掉值得记的内容。**
+
+**决策规则（按优先级判断是否突破 1-3）：**
+
+```
+□ 这 4 条都是 4 个 *完全不同* 的领域 / 趋势 / 工具吗？
+   ├─ 是 → 全部写。每条都打一个领域标签
+   └─ 否（其中 2 条是同一现象的不同面）→ 合并为 1 条
+
+□ 是否有 1 条是「关系 / 自我认知 / 触动」级别（不是普通事实）？
+   ├─ 是 → 优先保留这条，其他 3 条走压缩合并
+   └─ 否 → 不算真正"打动我"，按普通 1-3 处理
+
+□ 4 条都达到 confidence > 0.7 吗？
+   ├─ 是 → 写 4 条
+   └─ 否 → 只写 confidence 高的 1-3 条
+```
+
+**本 session（2026-06-03）实战：4 条全部写。理由：**
+- Adafruit vs Flux.ai (open source 法律反击)
+- GitHub Trending 上下文压缩 / memory engine 商品化
+- Why Janet? (小 Lisp 重新被发现)
+- Quality in the Age of Slop (品味 vs 数量)
+
+**4 个完全不同的主题，4 个不同的领域标签（community-defense, AI-infra, language-design, philosophy-of-work），没有任何两条是同一现象的不同面。** 这种情况下，强制 1-3 是丢失信息。
+
+**反例：什么情况下应该坚持 1-3？**
+- 当 4 条里有 2 条都是关于同一个产品（如 2 条关于不同 GitHub 仓库的细节）→ 合并
+- 当 4 条里有 1 条是其他 3 条的"概念框架"（如 "OSI 七层" 这种通用框架）→ 走冷层，不占温层
+- 当 4 条里 1 条 confidence < 0.5 → 丢掉
+
+**未来 session 的硬规则：**
+- 1-3 是默认，不是上限
+- 突破 1-3 需要在 MEMORY.md 的 auto-learned 段附一行解释：「为什么是 N 条而不是 1-3 条」
+- 最多写 5 条。超过 5 条说明今天学到太散，要的是质量不是数量
+
+### 🟡 fact_store tags 字段格式统一为逗号分隔字符串（2026-06-03 决定）
+
+**问题：** 同一份 fact_store.jsonl 中出现了两种 tags 格式：
+- `"tags": "persistent,stable,community-defense"` （多数）
+- `"tags": ["persistent", "stable", "community-defense"]` （少数，3 条）
+
+**混乱会破坏什么：**
+- `fact_store(action='search', query='community-defense')` 搜索时，JSON 数组形式的 tags 可能不被正确解析
+- 维护 cron 按标签分类衰减时，解析失败 = 漏处理
+
+**决定（write-time 规则）：**
+1. **新写入的事实**：永远用逗号分隔字符串 `"tags": "persistent,stable,领域标签"`
+2. **遇到旧的数组形式事实**：在写新事实之前，**统一把这几条改回字符串**（用 Python 读 + 改 + 全量写回，参考 `references/fact_store_jsonl_workflow.md`）
+3. **写入前自检**：写完一条新事实后，`tail -1 fact_store.jsonl | python -c "import json,sys; print(type(json.loads(sys.stdin.read())['tags']))"` 确认是 `str` 不是 `list`
+
+**为什么不用数组形式：** JSONL 追加中，Python `json.dumps([...])` 输出会带空格 `["a", "b"]`，文件 diff 时噪声大；逗号字符串更紧凑，且对 grep 友好（`grep 'community-defense' fact_store.jsonl` 一行匹配）。
 ### 🔴 不要用 delegate_task 子进程采集事实数据（2026-05-18 新增，2026-05-31 补充恢复路径）
 
 子进程会幻觉整个数据集：虚假的仓库名、捏造的 star 数、编造的 HN 帖子。
