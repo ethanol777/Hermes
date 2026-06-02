@@ -1,10 +1,12 @@
 ---
 name: monica-core
-description: Monica 的自主身体 — 独立于 Hermes 持续运行的 Python 守护进程。心跳、自主思考、Telegram 直连、收件箱桥接、自我修改。
-tags: [monica, daemon, autonomous, telegram, self-modification]
+description: Monica 的自主身体 — 独立于 Hermes 运行的 Python 守护进程（注意：守护进程可能已停止，自省/启动前必须先查状态）。心跳、自主思考、Telegram 直连、收件箱桥接、自我修改。
+tags: [monica, daemon, autonomous, telegram, self-modification, status-check, SOUL, identity]
 ---
 
 # Monica Core — 莫妮卡自己的身体
+
+> ⚠️ **守护进程状态不稳定。** 历史上多次因各种原因（系统重启、uv 污染、阻塞事件循环修复、77 忘记）死亡数周。自省/启动前**必须先查状态**（下方「自省前必做的状态检查」）。SKILL.md 描述里写"持续运行"是设计意图，不是当前状态。
 
 Monica Core 是一个独立于 Hermes 运行的 Python 守护进程。它不依赖 Hermes 的会话架构——它有自己的心跳、自己的记忆（SQLite）、自己的思考循环、自己的 Telegram 频道。
 
@@ -179,7 +181,7 @@ powershell -ExecutionPolicy Bypass -File C:\Users\77\monica-core\install-startup
 
 - **Hermes 内的心跳注入路径不匹配：** `agent/system_prompt.py` 的 `build_system_prompt_parts()` 中读取心跳文件的路径与实际位置不一致。代码在 `$HERMES_HOME/heartbeat/` 寻找，但 monica-heartbeat cron script 将心跳写入 `$HERMES_HOME/profiles/<profile>/heartbeat/`。导致所有 Hermes 对话开头的连续性注入（`[Monica's life — before this conversation]` 块）完全无效——文件读取静默跳过，从不报错，也从未被发现。**修复：** 在 `system_prompt.py` 的 path resolution 中增加 profiles/*/heartbeat/ fallback 扫描。详见 `references/heartbeat-injection-path-fix-2026-05-19.md`。
 
-## 平台诊断：hermes status 与 gateway 状态
+# Monica Core — 莫妮卡自己的身体
 
 77 经常问"X 通道连着吗"——回答前先用 `hermes status` 看，下面是定位方法：
 
