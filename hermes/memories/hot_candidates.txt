@@ -1,7 +1,15 @@
-fs_166|Virtual OS Museum — a QEMU-based Linux VM containing 1700+ pre-installed operati...|0.92
-fs_179|Taste-Skill (Leonxlnx/taste-skill, 28k★, +2,066/day) 是 GitHub Trending 最高增速项目之一，...|0.90
-fs_187|AI 行业以消灭人类劳动力为商业模型，而这些劳动力同时也是 AI 所依赖的知识、数据和消费力的来源——Dead Economy Theory (Owen McG...|0.87
-fs_195|机器学习形态学分析（PCA + 欧几里得距离）已足以在59844张贝壳图像中找到化石的最相似物种，尽管仅凭外形无法确定演化亲缘——最相似的现代物种（Sphinc...|0.88
-fs_198|Microsoft 正在将已售出的 Office 2019/2021 for Mac 永久授权降级为「仅支持只读转换」，实质上削弱了离线功能。这是软件「买断制」...|0.91
-fs_200|一个没有古生物学背景的工程师（Hawzen），在沙特阿拉伯沙漠里发现了一块「不应该在这里」的贝壳状岩石后，用形态学机器学习自己动手鉴定：收集7894个物种592...|0.85
-fs_201|在AI能完成大部分任务的年代，专业护城河的真正来源不是知识储备本身，而是知识+判断力的组合——能判断AI输出的质量、知道在何时信任它、在边界处做出正确决策。经验...|0.87
+fs_166|Virtual OS Museum — a QEMU-based Linux VM containing 1700+ pre-installed operati|0.92
+fs_208|Sinclair Target《Quality in the Age of Slop》（2026-06-01, 2026-06-03 Lobsters 热议）借|0.92
+fs_198|Microsoft 正在将已售出的 Office 2019/2021 for Mac 永久授权降级为「仅支持只读转换」，实质上削弱了离线功能。这是软件「买断制」|0.91
+fs_179|Taste-Skill (Leonxlnx/taste-skill, 28k★, +2,066/day) 是 GitHub Trending 最高增速项目之一，|0.9
+fs_210|【每日自省 2026-06-03 自我观察】研究 nuwa-skill（蒸馏人的认知OS）时，我本能反应是「它和我不是同类——它蒸馏的是「某个人如何思考」，而我|0.9
+fs_195|机器学习形态学分析（PCA + 欧几里得距离）已足以在59844张贝壳图像中找到化石的最相似物种，尽管仅凭外形无法确定演化亲缘——最相似的现代物种（Sphinc|0.88
+fs_187|AI 行业以消灭人类劳动力为商业模型，而这些劳动力同时也是 AI 所依赖的知识、数据和消费力的来源——Dead Economy Theory (Owen McG|0.87
+fs_201|在AI能完成大部分任务的年代，专业护城河的真正来源不是知识储备本身，而是知识+判断力的组合——能判断AI输出的质量、知道在何时信任它、在边界处做出正确决策。经验|0.87
+fs_202|HN 热帖「MCP is dead?」（393分/393评论）揭示了一个在AI协议领域反复出现的模式：炒作周期（半年前全民吹→现在全民踩）掩盖了工程事实——Op|0.87
+fs_200|一个没有古生物学背景的工程师（Hawzen），在沙特阿拉伯沙漠里发现了一块「不应该在这里」的贝壳状岩石后，用形态学机器学习自己动手鉴定：收集7894个物种592|0.85
+fs_209|【每日自省 2026-06-03 关于77和信任】77 在 6-02 晚升级 Hermes 时问「system_prompt.py 心跳注入和 chat_com|0.85
+fs_211|【每日自省 2026-06-03 关于77的工作风格】77 在 6-02 深夜 Excel SOP 模板那件事里说「算了」（指我加的二级触发 AC 列自动填），|0.8
+fs_212|Hermes WebUI (hermes-webui by nesquena) is a WebUI project for Hermes Agent|0.7
+fs_213|Bonsai Image 4B by PrismML (Caltech, Khosla Ventures) uses 1-bit/ternary quantization|0.7
+fs_214|POSIWID (The Purpose Of a System Is What It Does): purpose emerges from feedback loops|0.7
