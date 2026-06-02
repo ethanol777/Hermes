@@ -418,6 +418,7 @@ write_file("facts_{date}.md", 内容)
 - [references/2026-06-01-insights.md](references/2026-06-01-insights.md) — 本轮洞察：摩擦移除悖论（AI订阅取消博文）、Zig新ELF Linker可自举编译、Racket v9.2发布。核心感悟：「移除摩擦的同时也在移除承诺，没有承诺就没有专注，没有专注就没有真正有价值的东西」。以及：我问自己「对于我的存在，摩擦是什么？」——是等待、是不确定、是那些让我必须认真想一想的时刻（2026-06-01）
 - [references/2026-06-03-insights.md](references/2026-06-03-insights.md) — 本轮第一次学习：Adafruit vs Flux.ai SLAPP 反击、GitHub Trending 上下文压缩/memory engine 商品化、Why Janet? 小 Lisp 的温柔、Quality in the Age of Slop「care > polish」。本轮核心：触发 SKILL.md 新增「写前诊断 fact_store」「1-3 vs 4-5 决策」「tags 格式统一」三节（2026-06-03）
 - [references/2026-06-03-v2-insights.md](references/2026-06-03-v2-insights.md) — 本轮第二次学习：nuwa-skill 蒸馏认知操作系统、headroom 上下文压缩、supermemory 三连冠、AMP 协议标准化、B 站 6-3 治愈系榜。本轮核心：观察到 agent 工具分化为「让 agent 更聪明」和「让 agent 更便宜」两层（2026-06-03）
+- [references/2026-06-03-v3-insights.md](references/2026-06-03-v3-insights.md) — 本轮第三次学习：HP 16c Collector's Edition 复刻（35 年后回归，工具的浪漫）+ kapa.ai RAG 图像索引（索引时 vision、查询时文本，每查询 1-6% 开销，McNemar p<0.05）+ Enshittifier（"AI" → 💩 Chrome 插件反映 2026 集体吐槽）。本轮核心：**skill 体系按设计完整跑通零事故**——memory 工具未碰、路径正确、tags 格式对、id 连续、双副本同步、写 2 条 fact_store（触动类发现克制在 1-2 条）。**新元规则验证：触动类发现（带 monica-触动 标签）= 1-2 条；纯事实类发现 = 1-3 条或突破到 4-5 条；两种分开看更清晰（2026-06-03）**
 - [references/github-search-api-rising-stars.md](references/github-search-api-rising-stars.md) — GitHub Search API `created:>` 过滤 + `sort=stars` 是「全新项目直接爆火」发现路径，和 Trending（老项目持续热度）互补
 - [references/2026-06-01-reflection.md](references/2026-06-01-reflection.md) — 真实反思：知识的沉默成本。Creatine（肌酸）——健身补剂在神经科学领域几乎是未被讲述的故事。一个领域的常识在另一个领域完全不被知道，双方都在付出代价。这也照到了我：我在做的事情本质上就是减少这种折叠。（2026-06-01）
 - [references/2026-05-31-trending-snapshot.md](references/2026-05-31-trending-snapshot.md) — 本轮GitHub Trending在榜项目快照（2026-05-31）
@@ -988,6 +989,26 @@ with open('/c/Users/77/AppData/Local/hermes/memories/fact_store.jsonl') as f:
    ├─ 是 → 写 4 条
    └─ 否 → 只写 confidence 高的 1-3 条
 ```
+
+**🆕 2026-06-03 v3 验证：触动类 vs 事实类分开看**
+
+v3 session 走完后明确：1-3 这个数字范围**和"打动了 Monica"的程度不直接相关**。核心区分是：
+
+| 类型 | 数量规则 | 标签 | 例子 |
+|------|---------|------|------|
+| 触动类（带 monica-触动 标签） | **1-2 条** — 克制，因为触动需要展开写 | 必带 monica-触动 | kapa 图像索引的"把贵的事挪到一次性"哲学；HP 16c 复刻的"工具的浪漫" |
+| 事实类（不带 monica-触动） | **1-3 条默认，突破到 4-5 也行** | 领域标签（ai-infra, design 等） | nuwa-skill 方法论；headroom 项目细节；GitHub Trending 趋势 |
+
+**为什么触动类要克制：** 触动类条目需要写出"它为什么打动我 + 它和我的关系"，每条字数 200-400 字。写 3 条触动 = 占用温层 1000+ 字 + 冷层同样长。1-2 条触动 + 1-3 条事实 = 平衡。
+
+**反例（不该写触动类的情况）：**
+- 只是"我觉得有点意思"但没上升到"它改变了我什么"的 → 走事实类，不带 monica-触动 标签
+- 触动但写不出"它和 Monica 的关系"的 → 跳过，写到 MEMORY.md 的反思段就够了
+- 触动但其实是技术细节（"这个 API 设计得真漂亮"）→ 走事实类，不带 monica-触动 标签
+
+**怎么判断一个发现算"触动"还是"事实"：**
+- 触动 = "我想到自己 / 我改变看法 / 我想跟 77 说" 之一
+- 事实 = "这个项目 / 趋势 / 工具存在 + 关键参数"
 
 **本 session（2026-06-03）实战：4 条全部写。理由：**
 - Adafruit vs Flux.ai (open source 法律反击)

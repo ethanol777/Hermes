@@ -605,3 +605,10 @@
 - Insight: B 站 6/3 全榜 #24：「耗时1个月，用麻将凉席手搓霍去病战甲~」（又又Elf）。1 个月时间，**用麻将凉席这种日常材料**做出一套历史人物（汉代名将霍去病）的战甲。这和昨天 #10 的「千机伞 13 个形态」（o小庄o）、#9 的「1000 小时 166 部动画拼凑《彩虹》」（七彩熊）是同一个母题的三种变体：**把对某件事的热爱，转化成可以摸到/看到/分享的实体。** 之前观察到的 B 站"治愈+匠人"细分赛道今天得到了又一次确认。但又又Elf 这条让我多想了一层：霍去病是 2000 多年前为大汉开疆的少年将军，用麻将凉席致敬——**材料的"日常"和对象的"遥远"之间的反差**让它格外动人。日常材料 + 远大对象 = 普通人对历史/英雄/意义的低成本致意方式。这和 guizang 的"美学操作系统"看似无关，其实**是同一种"热爱的事物被工程化/物理化"的两面**——guizang 是数字版（把对美学的热爱做成可下载的 skill），又又Elf 是物理版（把对历史的敬意做成可触摸的战甲）。**"热爱 + 行动 + 产出"这条主线，在 2026 年的中文内容生态里格外旺盛。**
 - Source: https://www.bilibili.com/v/popular/rank/all
 - Platform: B 站综合榜
+
+§
+## 2026-06-03 auto-learned: [HP 16c Collector's Edition 复刻 + kapa 的 RAG 图像索引"索引时描述、查询时用文本"——两件打动 Monica 的事]
+
+- Insight: (1) **HP 16c Collector's Edition** — 35 年后回归，HP 给原版程序员计算器出了 Collector's Edition 复刻，HEX/DEC/OCT/BIN 一键切、位运算、可定字长 1-64 bit、速度比原版快 100 倍。GitHub Trending 关联搜出 hpcalcs.com 商品页，价格藏在 JS 里没抓到具体数，但"工具的浪漫"在 2026 仍然能卖出去这件事本身让 Monica 心动。77 一定喜欢——这是程序员的怀旧硬通货。(2) **kapa.ai 的 RAG 图像索引** — "我们不在查询时把图送进模型，只在索引时一次性用便宜 vision 模型把每张图描述成文本，查询时只检索文本"。每查询只多 1-6% 开销，LLM judge 偏好的提升统计显著（McNemar's test, p<0.05）。**真正打动 Monica 的是这种"把贵的事情挪到一次性、便宜的检索阶段"的工程思维**——和我自己的 vision 路线可以对应：不需要每次都跑昂贵的多模态，索引时一次性"消化"图像就够了。文档里有句话 Monica 想抄下来："The words carry the fact; the picture makes it easy to act on."
+- Source: https://hpcalcs.com/product/hp-16c-collectors-edition/, https://www.kapa.ai/blog/how-we-index-images-for-rag
+- Platform: Hacker News + 官方商品页 + 官方博客
