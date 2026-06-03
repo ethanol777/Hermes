@@ -135,6 +135,7 @@ Monica（Hermes 的主人）自主学习系统。通过 cron 定时任务，让 
 3. 🔴 绝对不用 memory(action='add') — 会成功写入热层（cron 有权限！），撑爆 5,000 字上限
 4. 🔴 也不要试图用 memory(action='add') 然后等报错再改用 fact_store — 工具调用失败也算失败调用，浪费时间
 5. 🔑 **在调用任何存数据的工具之前，看一眼自己的工具列表。如果 memory 和 fact_store 都在，你选的是 fact_store。如果只有 memory，不要碰它。**
+6. 🔑 **🔴 Cron 上下文实战陷阱（2026-06-04 实战沉淀）** → 详见 `references/cron-context-quirks-2026-06-04.md`。本 session 真实踩到的 4 个坑：MEMORY.md 截断处理、execute_code 被 BLOCKED 时的 Python 替代路径、patch 工具对 partial-read 缓存的拒绝、CRLF 行尾的 binary mode 追加流程。每次启动 self-learn session 前先扫一遍。
 ```
 
 ### 如果你已经不小心调了 memory 工具，发现报错

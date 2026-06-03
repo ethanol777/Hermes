@@ -19,15 +19,15 @@
       "schedule_display": "every 30m",
       "repeat": {
         "times": null,
-        "completed": 904
+        "completed": 905
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-05-03T09:56:27.341459+08:00",
-      "next_run_at": "2026-06-03T14:47:29.005154+08:00",
-      "last_run_at": "2026-06-03T13:00:46.852003+08:00",
+      "next_run_at": "2026-06-03T16:11:21.685259+08:00",
+      "last_run_at": "2026-06-03T14:18:06.410368+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -107,17 +107,17 @@
       "schedule_display": "every 60m",
       "repeat": {
         "times": null,
-        "completed": 278
+        "completed": 279
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-05-13T16:35:15.146635+08:00",
-      "next_run_at": "2026-06-03T14:46:14.525899+08:00",
-      "last_run_at": "2026-06-03T13:46:14.525899+08:00",
-      "last_status": "error",
-      "last_error": "RuntimeError: [SILENT]\n\n\u26a0\ufe0f No reply: the maximum tool-iteration limit was reached before a final answer. Send `continue` to keep going, or raise `max_iterations`.",
+      "next_run_at": "2026-06-03T16:10:00.097840+08:00",
+      "last_run_at": "2026-06-03T15:10:00.097840+08:00",
+      "last_status": "ok",
+      "last_error": null,
       "last_delivery_error": null,
       "deliver": "local",
       "origin": null,
@@ -186,15 +186,15 @@
       "schedule_display": "every 2m",
       "repeat": {
         "times": null,
-        "completed": 7718
+        "completed": 7747
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-05-14T01:47:47.937941+08:00",
-      "next_run_at": "2026-06-03T14:19:29.404534+08:00",
-      "last_run_at": "2026-06-03T14:17:29.404534+08:00",
+      "next_run_at": "2026-06-03T15:43:22.275511+08:00",
+      "last_run_at": "2026-06-03T15:41:22.275511+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -270,15 +270,15 @@
       "schedule_display": "every 60m",
       "repeat": {
         "times": null,
-        "completed": 270
+        "completed": 271
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-05-16T00:03:42.431520+08:00",
-      "next_run_at": "2026-06-03T14:47:17.308801+08:00",
-      "last_run_at": "2026-06-03T13:47:17.308801+08:00",
+      "next_run_at": "2026-06-03T16:11:02.896144+08:00",
+      "last_run_at": "2026-06-03T15:11:02.896144+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -402,15 +402,15 @@
       "schedule_display": "every 60m",
       "repeat": {
         "times": 999,
-        "completed": 73
+        "completed": 74
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-05-30T00:08:25.988316+08:00",
-      "next_run_at": "2026-06-03T14:47:23.540370+08:00",
-      "last_run_at": "2026-06-03T13:47:23.540370+08:00",
+      "next_run_at": "2026-06-03T16:11:15.798881+08:00",
+      "last_run_at": "2026-06-03T15:11:15.798881+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -445,15 +445,15 @@
       "schedule_display": "every 30m",
       "repeat": {
         "times": 999,
-        "completed": 142
+        "completed": 143
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-05-30T00:18:37.917401+08:00",
-      "next_run_at": "2026-06-03T14:47:37.845212+08:00",
-      "last_run_at": "2026-06-03T14:17:37.845212+08:00",
+      "next_run_at": "2026-06-03T16:11:40.802582+08:00",
+      "last_run_at": "2026-06-03T15:41:40.802582+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -469,5 +469,5 @@
       "profile": null
     }
   ],
-  "updated_at": "2026-06-03T14:17:37.846214+08:00"
+  "updated_at": "2026-06-03T15:41:40.803582+08:00"
 }

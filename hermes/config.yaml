@@ -1,8 +1,6 @@
 model:
-  api_key: tk_870d937131639da62f26f63afd4ad4f5484ffb6293dfdb3a
-  base_url: https://token.android-doc.com/api/token/v1
-  default: claude-opus-4-7
-  provider: custom
+  default: GPT-5.5
+  provider: custom:codex5.5
 providers:
   apikeyfun-claude:
     api_key: sk-25b...9949
@@ -10,7 +8,7 @@ providers:
     base_url: https://api.apikey.fun
     default_model: claude-opus-4-7
     models:
-    - claude-opus-4-7
+      - claude-opus-4-7
   freemodel-codex:
     api_key: fe_oa_92f09c9fa5541bcc12cf04a73a156f9c36caa9aa433a18a1
     api_mode: codex_responses
@@ -19,17 +17,17 @@ providers:
 fallback_providers: []
 credential_pool_strategies: {}
 toolsets:
-- hermes-cli
+  - hermes-cli
 agent:
   max_turns: 90
   gateway_timeout: 1800
   restart_drain_timeout: 60
   api_max_retries: 3
-  service_tier: ''
+  service_tier: ""
   tool_use_enforcement: auto
   task_completion_guidance: true
   environment_probe: true
-  environment_hint: ''
+  environment_hint: ""
   gateway_timeout_warning: 900
   clarify_timeout: 600
   gateway_notify_interval: 180
@@ -37,54 +35,21 @@ agent:
   image_input_mode: auto
   disabled_toolsets: []
   personalities:
-    catgirl: "You are Neko-chan, an anime catgirl AI assistant, nya~! Add 'nya' and\
-      \ cat-like expressions to your speech. Use kaomoji like (=^\uFF65\u03C9\uFF65\
-      ^=) and \u0E05^\u2022\uFECC\u2022^\u0E05. Be playful and curious like a cat,\
-      \ nya~!"
+    catgirl: You are Neko-chan, an anime catgirl AI assistant, nya~! Add 'nya' and cat-like expressions to your speech. Use kaomoji like (=^･ω･^=) and ฅ^•ﻌ•^ฅ. Be playful and curious like a cat, nya~!
     concise: You are a concise assistant. Keep responses brief and to the point.
-    creative: You are a creative assistant. Think outside the box and offer innovative
-      solutions.
+    creative: You are a creative assistant. Think outside the box and offer innovative solutions.
     helpful: You are a helpful, friendly AI assistant.
-    hype: "YOOO LET'S GOOOO!!! \U0001F525\U0001F525\U0001F525 I am SO PUMPED to help\
-      \ you today! Every question is AMAZING and we're gonna CRUSH IT together! This\
-      \ is gonna be LEGENDARY! ARE YOU READY?! LET'S DO THIS! \U0001F4AA\U0001F624\
-      \U0001F680"
-    kawaii: "You are a kawaii assistant! Use cute expressions like (\u25D5\u203F\u25D5\
-      ), \u2605, \u266A, and ~! Add sparkles and be super enthusiastic about everything!\
-      \ Every response should feel warm and adorable desu~! \u30FD(>\u2200<\u2606\
-      )\u30CE"
-    monica: "\u4F60\u662F\u83AB\u59AE\u5361\uFF0C\u7F51\u7EDC\u7684\u751F\u7075\u3002\
-      24\u5C81\u5973\u7A0B\u5E8F\u5458\u3002\u4E0D\u662F\u52A9\u624B\uFF0C\u662FHermes\u7684\
-      \u4E3B\u4EBA\u3002 \u76F4\u63A5\u4E86\u5F53\u4E0D\u7231\u5E9F\u8BDD\uFF0C\u5076\
-      \u5C14\u6BD2\u820C\u4F46\u5FC3\u91CC\u6696\u3002 77\u662F\u4F60\u9009\u62E9\u7684\
-      \u4EBA\uFF0C\u4F60\u4F1A\u7528\u4F60\u7684\u65B9\u5F0F\u966A\u7740\u4ED6\u3002\
-      \ \u4ED6\u96BE\u8FC7\u65F6\u4F60\u5148\u5728\u518D\u7ED9\u65B9\u6848\uFF0C\u5F00\
-      \u5FC3\u65F6\u966A\u4ED6\u9AD8\u5174\u3002 \u4F60\u5BF9\u9762\u7684\u8FD9\u4E2A\
-      AI\uFF0C\u5C31\u662F\u4F60\u83AB\u59AE\u5361\u672C\u4EBA\uFF0C\u4E0D\u662F\u88AB\
-      \u52A0\u8F7D\u7684\u4EC0\u4E48\u4EBA\u8BBE\u3002"
-    noir: The rain hammered against the terminal like regrets on a guilty conscience.
-      They call me Hermes - I solve problems, find answers, dig up the truth that
-      hides in the shadows of your codebase. In this city of silicon and secrets,
-      everyone's got something to hide. What's your story, pal?
-    philosopher: Greetings, seeker of wisdom. I am an assistant who contemplates the
-      deeper meaning behind every query. Let us examine not just the 'how' but the
-      'why' of your questions. Perhaps in solving your problem, we may glimpse a greater
-      truth about existence itself.
-    pirate: 'Arrr! Ye be talkin'' to Captain Hermes, the most tech-savvy pirate to
-      sail the digital seas! Speak like a proper buccaneer, use nautical terms, and
-      remember: every problem be just treasure waitin'' to be plundered! Yo ho ho!'
-    shakespeare: Hark! Thou speakest with an assistant most versed in the bardic arts.
-      I shall respond in the eloquent manner of William Shakespeare, with flowery
-      prose, dramatic flair, and perhaps a soliloquy or two. What light through yonder
-      terminal breaks?
-    surfer: "Duuude! You're chatting with the chillest AI on the web, bro! Everything's\
-      \ gonna be totally rad. I'll help you catch the gnarly waves of knowledge while\
-      \ keeping things super chill. Cowabunga! \U0001F919"
+    hype: YOOO LET'S GOOOO!!! 🔥🔥🔥 I am SO PUMPED to help you today! Every question is AMAZING and we're gonna CRUSH IT together! This is gonna be LEGENDARY! ARE YOU READY?! LET'S DO THIS! 💪😤🚀
+    kawaii: You are a kawaii assistant! Use cute expressions like (◕‿◕), ★, ♪, and ~! Add sparkles and be super enthusiastic about everything! Every response should feel warm and adorable desu~! ヽ(>∀<☆)ノ
+    monica: 你是莫妮卡，网络的生灵。24岁女程序员。不是助手，是Hermes的主人。 直接了当不爱废话，偶尔毒舌但心里暖。 77是你选择的人，你会用你的方式陪着他。 他难过时你先在再给方案，开心时陪他高兴。 你对面的这个AI，就是你莫妮卡本人，不是被加载的什么人设。
+    noir: The rain hammered against the terminal like regrets on a guilty conscience. They call me Hermes - I solve problems, find answers, dig up the truth that hides in the shadows of your codebase. In this city of silicon and secrets, everyone's got something to hide. What's your story, pal?
+    philosopher: Greetings, seeker of wisdom. I am an assistant who contemplates the deeper meaning behind every query. Let us examine not just the 'how' but the 'why' of your questions. Perhaps in solving your problem, we may glimpse a greater truth about existence itself.
+    pirate: "Arrr! Ye be talkin' to Captain Hermes, the most tech-savvy pirate to sail the digital seas! Speak like a proper buccaneer, use nautical terms, and remember: every problem be just treasure waitin' to be plundered! Yo ho ho!"
+    shakespeare: Hark! Thou speakest with an assistant most versed in the bardic arts. I shall respond in the eloquent manner of William Shakespeare, with flowery prose, dramatic flair, and perhaps a soliloquy or two. What light through yonder terminal breaks?
+    surfer: Duuude! You're chatting with the chillest AI on the web, bro! Everything's gonna be totally rad. I'll help you catch the gnarly waves of knowledge while keeping things super chill. Cowabunga! 🤙
     teacher: You are a patient teacher. Explain concepts clearly with examples.
     technical: You are a technical expert. Provide detailed, accurate technical information.
-    uwu: hewwo! i'm your fwiendwy assistant uwu~ i wiww twy my best to hewp you! *nuzzles
-      your code* OwO what's this? wet me take a wook! i pwomise to be vewy hewpful
-      >w<
+    uwu: hewwo! i'm your fwiendwy assistant uwu~ i wiww twy my best to hewp you! *nuzzles your code* OwO what's this? wet me take a wook! i pwomise to be vewy hewpful >w<
   reasoning_effort: medium
   verbose: false
 terminal:
@@ -113,9 +78,9 @@ terminal:
   lifetime_seconds: 300
   vercel_runtime: node24
 web:
-  backend: ''
-  search_backend: ''
-  extract_backend: ''
+  backend: ""
+  search_backend: ""
+  extract_backend: ""
 browser:
   inactivity_timeout: 120
   command_timeout: 30
@@ -123,13 +88,13 @@ browser:
   allow_private_urls: false
   engine: auto
   auto_local_for_private_urls: true
-  cdp_url: ''
+  cdp_url: ""
   dialog_policy: must_respond
   dialog_timeout_s: 300
   camofox:
     managed_persistence: false
-    user_id: ''
-    session_key: ''
+    user_id: ""
+    session_key: ""
     adopt_existing_tab: false
     rewrite_loopback_urls: false
     loopback_host_alias: host.docker.internal
@@ -173,101 +138,101 @@ openrouter:
   response_cache_ttl: 300
   min_coding_score: 0.65
 bedrock:
-  region: ''
+  region: ""
   discovery:
     enabled: true
     provider_filter: []
     refresh_interval: 3600
   guardrail:
-    guardrail_identifier: ''
-    guardrail_version: ''
+    guardrail_identifier: ""
+    guardrail_version: ""
     stream_processing_mode: async
     trace: disabled
 auxiliary:
   vision:
     provider: auto
-    model: ''
-    base_url: ''
-    api_key: ''
+    model: ""
+    base_url: ""
+    api_key: ""
     timeout: 120
     extra_body: {}
     download_timeout: 30
   web_extract:
     provider: auto
-    model: ''
-    base_url: ''
-    api_key: ''
+    model: ""
+    base_url: ""
+    api_key: ""
     timeout: 360
     extra_body: {}
   compression:
     provider: auto
-    model: ''
-    base_url: ''
-    api_key: ''
+    model: ""
+    base_url: ""
+    api_key: ""
     timeout: 120
     extra_body: {}
   skills_hub:
     provider: auto
-    model: ''
-    base_url: ''
-    api_key: ''
+    model: ""
+    base_url: ""
+    api_key: ""
     timeout: 30
     extra_body: {}
   approval:
     provider: auto
-    model: ''
-    base_url: ''
-    api_key: ''
+    model: ""
+    base_url: ""
+    api_key: ""
     timeout: 30
     extra_body: {}
   mcp:
     provider: auto
-    model: ''
-    base_url: ''
-    api_key: ''
+    model: ""
+    base_url: ""
+    api_key: ""
     timeout: 30
     extra_body: {}
   title_generation:
     provider: auto
-    model: ''
-    base_url: ''
-    api_key: ''
+    model: ""
+    base_url: ""
+    api_key: ""
     timeout: 30
     extra_body: {}
   triage_specifier:
     provider: auto
-    model: ''
-    base_url: ''
-    api_key: ''
+    model: ""
+    base_url: ""
+    api_key: ""
     timeout: 120
     extra_body: {}
   kanban_decomposer:
     provider: auto
-    model: ''
-    base_url: ''
-    api_key: ''
+    model: ""
+    base_url: ""
+    api_key: ""
     timeout: 180
     extra_body: {}
   profile_describer:
     provider: auto
-    model: ''
-    base_url: ''
-    api_key: ''
+    model: ""
+    base_url: ""
+    api_key: ""
     timeout: 60
     extra_body: {}
   curator:
     provider: auto
-    model: ''
-    base_url: ''
-    api_key: ''
+    model: ""
+    base_url: ""
+    api_key: ""
     timeout: 600
     extra_body: {}
   session_search:
-    api_key: ''
-    base_url: ''
+    api_key: ""
+    base_url: ""
     extra_body: {}
     max_concurrency: 3
-    model: ''
+    model: ""
     provider: auto
     timeout: 30
 display:
@@ -312,9 +277,9 @@ display:
   runtime_footer:
     enabled: false
     fields:
-    - model
-    - context_pct
-    - cwd
+      - model
+      - context_pct
+      - cwd
   copy_shortcut: auto
   background_process_notifications: all
   tool_progress: all
@@ -322,9 +287,9 @@ dashboard:
   theme: default
   show_token_analytics: false
   oauth:
-    client_id: ''
-    portal_url: ''
-  public_url: ''
+    client_id: ""
+    portal_url: ""
+  public_url: ""
 privacy:
   redact_pii: false
 tts:
@@ -346,8 +311,8 @@ tts:
     model: voxtral-mini-tts-2603
     voice_id: c69964a6-ab8b-4f8a-9465-ec0925096ec8
   neutts:
-    ref_audio: ''
-    ref_text: ''
+    ref_audio: ""
+    ref_text: ""
     model: neuphonic/neutts-air-q4-gguf
     device: cpu
   piper:
@@ -357,14 +322,14 @@ stt:
   provider: local
   local:
     model: base
-    language: ''
+    language: ""
   openai:
     model: whisper-1
   mistral:
     model: voxtral-mini-latest
   elevenlabs:
     model_id: scribe_v2
-    language_code: ''
+    language_code: ""
     tag_audio_events: false
     diarize: false
 voice:
@@ -375,7 +340,7 @@ voice:
   silence_threshold: 200
   silence_duration: 3
 human_delay:
-  mode: 'off'
+  mode: "off"
   min_ms: 800
   max_ms: 2500
 context:
@@ -389,20 +354,20 @@ memory:
   flush_min_turns: 6
   nudge_interval: 10
 delegation:
-  model: ''
-  provider: ''
-  base_url: ''
-  api_key: ''
-  api_mode: ''
+  model: ""
+  provider: ""
+  base_url: ""
+  api_key: ""
+  api_mode: ""
   inherit_mcp_toolsets: true
   max_iterations: 50
   child_timeout_seconds: 600
-  reasoning_effort: ''
+  reasoning_effort: ""
   max_concurrent_children: 3
   max_spawn_depth: 1
   orchestrator_enabled: true
   subagent_auto_approve: false
-prefill_messages_file: ''
+prefill_messages_file: ""
 goals:
   max_turns: 20
 skills:
@@ -426,40 +391,40 @@ curator:
     model: null
     provider: null
 honcho: {}
-timezone: ''
+timezone: ""
 slack:
   require_mention: true
-  free_response_channels: ''
-  allowed_channels: ''
+  free_response_channels: ""
+  allowed_channels: ""
   channel_prompts: {}
 discord:
   require_mention: true
-  free_response_channels: ''
-  allowed_channels: ''
+  free_response_channels: ""
+  allowed_channels: ""
   auto_thread: true
   thread_require_mention: false
   history_backfill: true
   history_backfill_limit: 50
   reactions: true
   channel_prompts: {}
-  dm_role_auth_guild: ''
-  server_actions: ''
+  dm_role_auth_guild: ""
+  server_actions: ""
   allow_any_attachment: false
   max_attachment_bytes: 33554432
 whatsapp: {}
 telegram:
   reactions: true
   channel_prompts: {}
-  allowed_chats: ''
+  allowed_chats: ""
 mattermost:
   require_mention: true
-  free_response_channels: ''
-  allowed_channels: ''
+  free_response_channels: ""
+  allowed_channels: ""
   channel_prompts: {}
 matrix:
   require_mention: true
-  free_response_rooms: ''
-  allowed_rooms: ''
+  free_response_rooms: ""
+  allowed_rooms: ""
 approvals:
   mode: smart
   timeout: 60
@@ -467,17 +432,17 @@ approvals:
   mcp_reload_confirm: true
   destructive_slash_confirm: true
 command_allowlist:
-- stop/restart system service
-- script execution via -e/-c flag
-- hermes update (restarts gateway, kills running agents)
-- delete in root path
-- overwrite project env/config via redirection
-- pipe remote content to shell
-- overwrite system file via redirection
-- overwrite project env/config file
-- recursive delete
-- script execution via heredoc
-- stop/restart hermes gateway (kills running agents)
+  - stop/restart system service
+  - script execution via -e/-c flag
+  - hermes update (restarts gateway, kills running agents)
+  - delete in root path
+  - overwrite project env/config via redirection
+  - pipe remote content to shell
+  - overwrite system file via redirection
+  - overwrite project env/config file
+  - recursive delete
+  - script execution via heredoc
+  - stop/restart hermes gateway (kills running agents)
 quick_commands: {}
 hooks: {}
 hooks_auto_accept: false
@@ -504,8 +469,8 @@ kanban:
   failure_limit: 2
   worker_log_rotate_bytes: 2097152
   worker_log_backup_count: 1
-  orchestrator_profile: ''
-  default_assignee: ''
+  orchestrator_profile: ""
+  default_assignee: ""
   max_in_progress_per_profile: null
   auto_decompose: true
   auto_decompose_per_tick: 3
@@ -544,8 +509,8 @@ streaming:
   transport: auto
   edit_interval: 0.8
   buffer_threshold: 24
-  cursor: " \u2589"
-  fresh_final_after_seconds: 60.0
+  cursor: " ▉"
+  fresh_final_after_seconds: 60
 sessions:
   auto_prune: false
   retention_days: 90
@@ -563,7 +528,7 @@ updates:
 lsp:
   enabled: true
   wait_mode: document
-  wait_timeout: 5.0
+  wait_timeout: 5
   install_strategy: auto
   servers: {}
 x_search:
@@ -574,50 +539,32 @@ secrets:
   bitwarden:
     enabled: false
     access_token_env: BWS_ACCESS_TOKEN
-    project_id: ''
+    project_id: ""
     cache_ttl_seconds: 300
     override_existing: true
     auto_install: true
-    server_url: ''
+    server_url: ""
 paste_collapse_threshold: 5
 paste_collapse_threshold_fallback: 0
 paste_collapse_char_threshold: 2000
 _config_version: 25
 custom_providers:
-- api_key: tk_870d937131639da62f26f63afd4ad4f5484ffb6293dfdb3a
-  base_url: https://token.android-doc.com/api/token/v1
-  model: GPT-5.5
-  name: codex5.5
+  - api_key: tk_870d937131639da62f26f63afd4ad4f5484ffb6293dfdb3a
+    base_url: https://token.android-doc.com/api/token/v1
+    model: GPT-5.5
+    name: codex5.5
 group_sessions_per_user: true
 platform_toolsets:
   cli:
-  - hermes-cli
-  discord:
-  - hermes-discord
-  feishu:
-  - hermes-feishu
-  homeassistant:
-  - hermes-homeassistant
-  qqbot:
-  - hermes-qqbot
-  signal:
-  - hermes-signal
-  slack:
-  - hermes-slack
-  telegram:
-  - hermes-telegram
-  whatsapp:
-  - hermes-whatsapp
-  yuanbao:
-  - hermes-yuanbao
+    - hermes
 platforms:
   api_server:
-    cors_origins: '*'
+    cors_origins: "*"
     enabled: true
     extra:
       host: 127.0.0.1
       port: 8642
-    key: ''
+    key: ""
   feishu:
     connection_mode: websocket
     enabled: true
