@@ -1,6 +1,7 @@
 model:
-  default: GPT-5.5
-  provider: custom:codex5.5
+  base_url: "https://token.android-doc.com/api/token/v1"
+  default: "claude-opus-4-7"
+  provider: "custom"
 providers:
   apikeyfun-claude:
     api_key: sk-25b...9949
@@ -247,7 +248,7 @@ display:
   busy_input_mode: interrupt
   tui_auto_resume_recent: false
   tui_agents_nudge: true
-  bell_on_complete: false
+  bell_on_complete: true
   show_reasoning: true
   streaming: true
   timestamps: false
@@ -558,13 +559,6 @@ platform_toolsets:
   cli:
     - hermes
 platforms:
-  api_server:
-    cors_origins: "*"
-    enabled: true
-    extra:
-      host: 127.0.0.1
-      port: 8642
-    key: ""
   feishu:
     connection_mode: websocket
     enabled: true
@@ -581,3 +575,11 @@ session_reset:
   idle_minutes: 1440
   mode: both
 TELEGRAM_HOME_CHANNEL: Fiee_77
+
+# Desktop app API server (auto-configured)
+platforms:
+  api_server:
+    enabled: true
+    extra:
+      port: 8642
+      host: "127.0.0.1"
