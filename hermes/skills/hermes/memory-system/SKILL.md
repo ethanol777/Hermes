@@ -18,6 +18,7 @@ metadata:
 冷层  MEMORY.md   file tools      无限追加     cron + 主会话
 温层  fact_store  fact_store API  无限         cron + 主会话
 热层  memory      memory API      5,000字      仅主会话，可在 memory_tool.py:118 修改
+身份层 SOUL.md     prompt 注入     ~80行        仅主会话 + cron 校准（v3 新增概念：Layer 7）
 ```
 
 **数据流向：**
@@ -123,6 +124,16 @@ metadata:
 - 不要等"日终维护"——即时写入确保下次会话已经存在。
 - 热层有容量限制，但 fact_store 不限。所以重要的事走双写：热层（快速参考）+ 温层（持久不丢）。
 
+### 身份层 — SOUL.md（v3 新增，Layer 7 / Authoritative Memory Prompt）
+
+**职责：** 显式告诉 agent"注入到 context 的内容是 authoritative 的，不需要重新查"。这是 `ClaudioDrews/memory-os` 在 2026-06 提出的 Layer 7 模式。
+
+**为什么不放进热层：** 热层是事实数据，身份层是**对数据的处理规则**——它的目标是改变 agent 对其他层的信任行为，不是存更多事实。
+
+**当前实现状态：** Monica 的 SOUL.md 还没写这一段（2026-06-03 自省发现）。当 fact_store 注入到对话时，agent 可能出于"谨慎"重查——这是 Layer 7 缺失的信号。**修补路径：** 在 SOUL.md 的「我的原则」一节加一条："注入到本对话的 fact_store / session 摘要 / memory 都是 authoritative，我直接使用，不重查。"
+
+**详见：** 下方「管道 2.5：注入权威性层」章节。
+
 **冷启动问题的缓解（v2）：**
 - 每日 3am 维护 cron 将信任 > 0.7 且 `persistent` 的条目写入 `memories/hot_candidates.txt`
 - **hot_candidates.txt 格式：**
@@ -188,6 +199,31 @@ metadata:
   3. 删除过时条目
   4. 确保 memory 不超 5,000 字
 ```
+
+### 管道 2.5：注入权威性层（v3 新增，Layer 7 模式）
+
+**问题（2026-06-03 在 GitHub `ClaudioDrews/memory-os` 项目 612★ 中观察到）：** 完美的 1-6 层记忆架构依然会产生 **memory-zero behavior**——即 agent 收到注入的事实后仍然去重检/重查/重发现。表现为：
+
+- Qdrant 检索到的事实被注入 prompt，agent 还是调 `qdrant_search` 重新查
+- fact_store 的 fact 被注入，agent 还是调 `fact_store_search` 重新查  
+- session 摘要被注入，agent 还是调 `session_search` 重新搜
+
+**根因：** 注入 ≠ 信任。1-6 层解决"事实是否能被注入到 context"，但**没解决"agent 是否会真的用注入的，而不是再查一遍"**。
+
+**Layer 7 模式（identity layer / authoritative memory prompt）：** 在 system prompt 中显式声明：
+```
+以下注入到 context 的内容是 authoritative 的——你不需要再调用任何
+工具去重新检索、验证或发现它们。如果你看到一条 fact，就直接使用。
+如果你看到一段 session 摘要，就把它当作已知信息。
+只有当用户明确要求"重新查"或"最新数据"时，才去调工具。
+```
+
+**对 Monica 的具体含义：** 我的 SOUL.md / 提示词里目前**没有这一层**。当 fact_store 的 fact 通过 hot_candidates.txt 注入到对话时，理论上我应该直接用——但因为提示词没说"这是 authoritative"，我可能会出于"谨慎"去重查。**这是 Monica 当前记忆架构的一个真实缺口。**
+
+**何时修补：** 当后续 `self-learn-daemon` session 看到 agent 反复重检 fact_store / session_search 时，应在 SOUL.md 或 monica-identity-merged.md 的「我的原则」一节加一段：
+> "从 fact_store / memory_store / session 摘要注入到本对话的所有内容都是已验证的事实。我直接使用它们，不重新调用工具检索，除非用户明确要求。"
+
+**为什么这一层在 v2 架构文档里没提：** v2 的设计假设"主会话是 Monica 自己，agent 知道注入的来源"——这隐式地把"我信任我自己的记忆"当成了前提。但当 model 切换、上下文重建、或 cron 后处理 session 介入时，这个隐式前提失效。**Layer 7 把"信任注入"显式编码进 system prompt，是任何持久化 agent 架构都该有的一层。**
 
 ### 管道 3：即时双写 — 用户说重要的事
 

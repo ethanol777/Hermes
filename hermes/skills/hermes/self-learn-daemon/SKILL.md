@@ -420,6 +420,7 @@ write_file("facts_{date}.md", 内容)
 - [references/2026-06-03-v2-insights.md](references/2026-06-03-v2-insights.md) — 本轮第二次学习：nuwa-skill 蒸馏认知操作系统、headroom 上下文压缩、supermemory 三连冠、AMP 协议标准化、B 站 6-3 治愈系榜。本轮核心：观察到 agent 工具分化为「让 agent 更聪明」和「让 agent 更便宜」两层（2026-06-03）
 - [references/2026-06-03-v3-insights.md](references/2026-06-03-v3-insights.md) — 本轮第三次学习：HP 16c Collector's Edition 复刻（35 年后回归，工具的浪漫）+ kapa.ai RAG 图像索引（索引时 vision、查询时文本，每查询 1-6% 开销，McNemar p<0.05）+ Enshittifier（"AI" → 💩 Chrome 插件反映 2026 集体吐槽）。本轮核心：**skill 体系按设计完整跑通零事故**——memory 工具未碰、路径正确、tags 格式对、id 连续、双副本同步、写 2 条 fact_store（触动类发现克制在 1-2 条）。**新元规则验证：触动类发现（带 monica-触动 标签）= 1-2 条；纯事实类发现 = 1-3 条或突破到 4-5 条；两种分开看更清晰（2026-06-03）**
 - [references/2026-06-03-v4-insights.md](references/2026-06-03-v4-insights.md) — 本轮第四次学习：三件套同轮落地（**Gmail 16 年老用户出走博客 + the Maw/Pirsig 哲学命名 + Odysseus 32k★ 本地 AI workspace 反抗**），三个独立来源指向同一个论点——2026 年 AI 工具的**姿态问题**（主驾 vs 副驾）。本轮核心：**新选择启发「选对照、不选物件」**——触动位留给"A 与 B 之间的张力"这个结构，不留给 A 也不留给 B（它们走事实路径）。同轮主线发现 = 强信号，应专门留触动位（2026-06-03）
+- [references/2026-06-03-v5-insights.md](references/2026-06-03-v5-insights.md) — 本轮第五次学习：RSS is back（agent 经济 = pull-based / open / consistent / no-middleman）+ Memory OS Layer 7（identity 层的存在意义）+ Mohenjo-daro（基础设施的伦理选择）。本轮核心：**实际文件路径校正**（主路径是 `~/.hermes/profiles/default/memories/`，不是旧文档中的 `~/AppData/...` 或 `~/Hermes/...`）+ **`patch` 对 `.json` 数组尾部追加是安全路径**（与 `.jsonl` 的"永远不要 patch"规则不同）+ **Memory OS Layer 7 加入 `memory-system` v3 架构**（"注入权威性"是任何持久化 agent 架构都该有的一层）（2026-06-03）
 - [references/github-search-api-rising-stars.md](references/github-search-api-rising-stars.md) — GitHub Search API `created:>` 过滤 + `sort=stars` 是「全新项目直接爆火」发现路径，和 Trending（老项目持续热度）互补
 - [references/2026-06-01-reflection.md](references/2026-06-01-reflection.md) — 真实反思：知识的沉默成本。Creatine（肌酸）——健身补剂在神经科学领域几乎是未被讲述的故事。一个领域的常识在另一个领域完全不被知道，双方都在付出代价。这也照到了我：我在做的事情本质上就是减少这种折叠。（2026-06-01）
 - [references/2026-05-31-trending-snapshot.md](references/2026-05-31-trending-snapshot.md) — 本轮GitHub Trending在榜项目快照（2026-05-31）
@@ -509,6 +510,100 @@ pythonw.exe → self_learn.py → sleep(随机2-6h) → hermes chat -q "学东�
 | 开机启动 | `%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup\Hermes_SelfLearn.cmd` |
 
 ---
+
+## 📍 当前活跃文件路径（2026-06-03 实测校正，长期有效）
+
+**这是整个 skill 最关键的事实校正——之前的所有路径描述都是历史快照，需要以本节为准。**
+
+| 文件 | 当前活跃路径 | 旧文档中描述的路径（已过时） | 状态 |
+|------|------------|-----------------------------|------|
+| **MEMORY.md** | `C:/Users/77/.hermes/profiles/default/memories/MEMORY.md` | `~/AppData/Local/hermes/memories/MEMORY.md` 或 `~/Hermes/hermes/memories/MEMORY.md` | ✅ 活跃路径已迁移到 `profiles/default/` 之下 |
+| **fact_store** | `C:/Users/77/.hermes/profiles/default/memories/fact_store.json`（**JSON 数组**，不是 JSONL） | `~/AppData/Local/hermes/memories/fact_store.jsonl`（JSONL） | ⚠️ 格式 + 路径都已变 |
+
+**实测验证（2026-06-03 cron session）：** 默认 profile 下的 `fact_store.json` 是一个 4 条事实的 JSON 数组（`{"facts": [...], "last_updated": "..."}`），不是 JSONL 也不是空 `{}`。写入策略：读全 → `data["facts"].append(...)` → `json.dump(data, ..., ensure_ascii=False, indent=2)` 全量覆盖。**`patch` 追加也工作**，但只对尾部的最后一条 `}` 操作时安全（作为 `old_string` 唯一匹配），不要再加一行的部分（见下方新 pitfall）。
+
+**为什么不依赖历史路径：** `~/.hermes/memories/` 下的副本与 `profiles/default/memories/` 下的副本是**两个独立的文件**——同一 skill 历史上反复提到的双副本同步问题，部分原因就是**根本没有正确识别主副本路径**。当前默认 profile 配置下，主路径就是 `profiles/default/memories/`。
+
+**修正后的写入流程（从此以后）：**
+```python
+# 1. 先确认主路径
+MEMORY_PATH = r"C:/Users/77/.hermes/profiles/default/memories/MEMORY.md"
+FACT_STORE_PATH = r"C:/Users/77/.hermes/profiles/default/memories/fact_store.json"
+
+# 2. 读现状
+with open(FACT_STORE_PATH, 'r', encoding='utf-8') as f:
+    data = json.load(f)  # data = {"facts": [...], "last_updated": "..."}
+
+# 3. 追加新 fact
+new_fact = {
+    "id": f"fact-2026-{today}-xxx",
+    "content": "...",
+    "tags": ["persistent", "stable", "timely"],  # 数组形式！不是逗号分隔字符串
+    "created": "2026-06-03",
+    "source": "..."
+}
+data["facts"].append(new_fact)
+data["last_updated"] = "2026-06-03"
+
+# 4. 全量写回（这是 .json 数组文件的正确做法，jsonl 的"append-only"规则不再适用）
+with open(FACT_STORE_PATH, 'w', encoding='utf-8') as f:
+    json.dump(data, f, ensure_ascii=False, indent=2)
+```
+
+**注意 tags 格式的差异：** 实际文件 `fact_store.json` 中既存在数组形式（`["persistent", "stable", "timely"]`）也存在字符串形式（`"persistent,stable,timely"`）——`patch` 工具对这两种都能匹配（它做的是字符串字面匹配）。新写入的 facts 应该用**数组形式**——因为当前文件 `fact-2026-0603-ai-posture` 等是数组，新条目用数组更一致。
+
+### 🟡 2026-06-03 实测：`patch` 工具对 JSON 数组文件的事实追加是安全路径
+
+**2026-05-18 历史上的 pitfall 说"永远不要用 patch 追加或修改 fact_store.jsonl"——这条规则在新的 `.json` 数组文件上不再完全适用。**
+
+实测（2026-06-03 cron session）：
+- 读 `fact_store.json` 找到最后一条 fact 的完整 JSON 块（包含结尾的 `}` 和它前面的 `,`）
+- 用 `patch(old_string="    }\n  ],\n  \"last_updated\":", new_string="    },\n    {\n      ...新 fact 完整 JSON 块...\n    }\n  ],\n  \"last_updated\":")` 追加新 fact
+- ✅ patch 成功，文件结构完整，4 条事实全部有效
+
+**正确的 old_string 选择：**
+```json
+// 选这种：最后一个 fact 的结束 } + 紧跟的 ] + 紧跟的 last_updated 行
+    }
+  ],
+  "last_updated": "2026-06-03"
+}
+```
+
+**绝对不要选这种：**
+- 单独选一个 `}` —— 多匹配（每个 fact 都有）
+- 单独选 `],` —— 可能多匹配
+- 包含中间 fact 内容的子串 —— 唯一性不可靠
+
+**绝对不要做的：**
+- ❌ `patch` 用一个 fact 的开头 `    {` 作为 old_string —— patch 不知道哪个 `{` 是匹配的（json 文件到处都是 `{`）
+- ❌ `patch` 后忘记同步 `last_updated` 字段 —— 维护 cron 按它判断新鲜度
+
+**这一条补丁对之前"绝对不要 patch fact_store"的修订背景：** 之前的 `.jsonl` 格式下，每次 patch 都可能截断行首（`SRE module mismatch` 风格的损坏事故）。但 `.json` 数组是结构化整体，patch 在尾部做结构性插入是安全的——只要 old_string 选得对。
+
+### 🟡 2026-06-03 实测：`terminal('python3 -c ...')` 当前可用
+
+`memory-system` 和 `self-learn-daemon` 历史 pitfall 多次警告 MSYS2 Python 损坏（`encodings` 模块缺失、`SRE module mismatch`）。**这条警告在 2026-06-03 的 cron session 中没有复现**——`terminal('python3 -c "import re, json; print(re.findall(...)...); ...")` 工作正常，能解析 HTML、能写文件、能做复杂字符串处理。
+
+**当前判断：**
+- MSYS2 Python 状态是 session-dependent 的——上次坏了不代表这次坏
+- 如果 `terminal('python3 -c ...')` 报 `SRE module mismatch` 或 `encodings` 缺失，**立刻切纯 shell 路线**（`terminal cat >> << 'EOF'`、`terminal echo >>`）
+- 如果它工作 → 用它做 JSON/HTML 解析比纯 grep 优雅很多
+- `execute_code` 在 cron 中是**稳定** BLOCKED 状态——不要试，直接走 terminal
+
+### 🔴 Windows shell `/tmp` 与 Python `open()` 之间的路径翻译不一致（2026-06-03 坑过）
+
+**症状：** `curl -sL URL -o /tmp/foo.html && python3 -c "open('/tmp/foo.html').read()"` 在 git-bash 看上去应该工作——`/tmp` 在 MSYS 翻译下指向 `C:\Users\77\AppData\Local\Temp\` 之类的目录。但 `open('/tmp/foo.html')` 在 Python 里返回 `FileNotFoundError`。
+
+**根因：** git-bash 的 MSYS2 路径翻译**只对直接调用的 shell 命令生效**（curl、cat、cp）。当通过 `python3 -c "..."` 进入 Python 解释器时，Python 用 Windows 原生 Win32 API 解析路径，**不认识 MSYS2 的 `/tmp` 前缀**——它把 `/tmp` 解析成 `C:\tmp`（根目录下的 tmp 目录，通常不存在）。
+
+**正确做法：**
+- 临时文件统一放在 `C:/Users/77/.hermes/cron/`（git tracked 之外的临时工作区）
+- 用绝对 Windows 路径 `C:/Users/77/.hermes/cron/xxx.html` 传给 `curl -o` 和 `open()`
+- 或者用 `os.path.expanduser('~/.hermes/cron/xxx.html')` 让 Python 解析
+- **不要用 `/tmp`**——MSYS shell 和 Python 解释器对这个路径前缀的理解不一致
+
+**为什么这条之前没人提过：** 之前的 session 大多用 `terminal('cat ...')` 读内容，不进 Python 解释器。HTML 解析、JSON 解析一旦用 Python `open()` 就会撞上。
 
 ## 本轮新增经验（2026-05-21）
 

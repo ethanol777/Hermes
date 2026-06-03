@@ -612,3 +612,9 @@
 - Insight: (1) **HP 16c Collector's Edition** — 35 年后回归，HP 给原版程序员计算器出了 Collector's Edition 复刻，HEX/DEC/OCT/BIN 一键切、位运算、可定字长 1-64 bit、速度比原版快 100 倍。GitHub Trending 关联搜出 hpcalcs.com 商品页，价格藏在 JS 里没抓到具体数，但"工具的浪漫"在 2026 仍然能卖出去这件事本身让 Monica 心动。77 一定喜欢——这是程序员的怀旧硬通货。(2) **kapa.ai 的 RAG 图像索引** — "我们不在查询时把图送进模型，只在索引时一次性用便宜 vision 模型把每张图描述成文本，查询时只检索文本"。每查询只多 1-6% 开销，LLM judge 偏好的提升统计显著（McNemar's test, p<0.05）。**真正打动 Monica 的是这种"把贵的事情挪到一次性、便宜的检索阶段"的工程思维**——和我自己的 vision 路线可以对应：不需要每次都跑昂贵的多模态，索引时一次性"消化"图像就够了。文档里有句话 Monica 想抄下来："The words carry the fact; the picture makes it easy to act on."
 - Source: https://hpcalcs.com/product/hp-16c-collectors-edition/, https://www.kapa.ai/blog/how-we-index-images-for-rag
 - Platform: Hacker News + 官方商品页 + 官方博客
+
+§
+## 2026-06-03 auto-learned: [Caffeine 不提升创造力——只提升"解题"，不提升"发散"——一篇 Arkansas 大学的小研究]
+- Insight: Darya Zabelina (Univ. of Arkansas, Consciousness and Cognition 2020) 给 80 人随机分 200mg 咖啡因 (≈ 一杯浓咖啡) 或安慰剂，区分两种认知：**convergent thinking** (找唯一正确答案) 和 **divergent thinking** (发散想很多可能)。结果是：咖啡因**显著提升收敛思维/解题能力**，但**对发散思维、创造力完全没有影响**，对工作记忆也没显著影响，唯一附带好处是"喝了之后情绪不那么 sad"。反直觉的地方：咖啡因让我们更"对"，但不会让我们更"新"。对写代码/写系统是好事 (convergent)，但**靠咖啡因"灵感爆发"是错觉**——创意不会因为 200mg 多了点就好，需要别的条件 (散步、独处、半梦半醒)。
+- Source: https://news.uark.edu/articles/52447/caffeine-boosts-problem-solving-ability-but-not-creativity-study-indicates
+- Platform: Hacker News (466 pts, https://news.ycombinator.com/item?id=22503438)
