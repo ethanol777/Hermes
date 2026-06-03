@@ -1,6 +1,6 @@
 model:
   base_url: "https://token.android-doc.com/api/token/v1"
-  default: "claude-opus-4-7"
+  default: "Opus-4.8"
   provider: "custom"
 providers:
   apikeyfun-claude:
@@ -24,7 +24,7 @@ agent:
   gateway_timeout: 1800
   restart_drain_timeout: 60
   api_max_retries: 3
-  service_tier: ""
+  service_tier: "normal"
   tool_use_enforcement: auto
   task_completion_guidance: true
   environment_probe: true

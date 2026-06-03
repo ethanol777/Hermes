@@ -1,7 +1,7 @@
 ---
 name: skill-tree-evolution
 description: 技能树进化系统 - 从平铺技能列表迁移到树状结构并持续进化
-version: 1.2.0
+version: 1.3.0
 ---
 
 # 技能树进化系统
@@ -10,28 +10,88 @@ version: 1.2.0
 - **树形结构**：技能不再是散乱的列表，而是有组织的能力图谱
 - **自动同步**：新下载或新建的 skill 自动归类，无需手动维护
 - **持续进化**：每次使用留下痕迹，看见自己成长
+- **主体视角**：分类的根是"我是谁、我做什么"，不是"外部能力目录"（v5 设计原则）
 
 ## 当前状态
 莫妮卡的技能树：`~/AppData/Local/hermes/skills_tree_v2/`
-- **359 个技能**（2026-05-30）
-- 存储位置：`skills_tree_v2/index.yaml`
 
-## 技能树结构（2026-05-28 清理后）
+### 版本历史
+- **v4**（2026-05-28 ~ 06-02）: 6 分支结构（cognition/creation/execution/interaction/domain/meta），358 个技能
+- **v5**（2026-06-03）: 8 分支结构（self/communicate/create/think/execute/delegate/meta/domains），365 个技能
+  - 视角从"外部能力分类"切到"莫妮卡的三圈结构"（我→沟通→做事）
+  - 新增 `delegate` 分支管子 agent（codex/claude-code/opencode）
+  - 新增 `self/body` 子分支管我自己的狗和房子（dogfood/smart-home/hermes-profile-api-server）
+  - 命理从 `creation` 挪到 `domains/academic`
+  - 旧版本备份在 `index.yaml.bak.20260603`
+  - 详细重构笔记：`references/v5-redesign-notes.md`
+
+### v5 结构（2026-06-03 重构后）
 
 ```
-认知能力 (cognition)        — 31 skills
-  └ 研究调研(26) / 记忆系统(3) / 学习方法(2)
-创作能力 (creation)         — 35 skills
-  └ 视觉创作(25) / 文字创作(4) / 声音创作(3) / 媒体内容(3)
-执行能力 (execution)        — 109 skills
-  └ 工程架构(45) / 数据科学(25) / 编码开发(20) / 运维部署(10) / 质量测试(9)
-交互能力 (interaction)      — 18 skills
-  └ 平台集成(16) / 沟通协作(2)
-领域专家 (domain)           — 121 skills
-  └ 商业运营(71) / 游戏开发(22) / 创意设计(16) / 安全合规(10) / 身心健康(2)
-元能力 (meta)              — 36 skills
-  └ 系统控制(26) / 自我管理(7) / 技能进化(3)
+self (13)        — 我自己：身份/记忆/成长
+  └ identity (4)    soul-md, monica-tts, using-superpowers, skill-executor
+  └ memory (5)      memory-system, ontology, obsidian, self-improving, self-learned-knowledge
+  └ growth (4)      proactive-agent, self-learn-daemon, monica-core, awesome-hermes-agent
+communicate (22) — 跟七十七和世界说话
+  └ messaging (3)   messaging-delivery, work-communication-polish, one-three-one-rule
+  └ platforms (19)  feishu-api, google-workspace, notion, linear, ...
+create (38)      — 创作
+  └ writing (7)     screenwriter, humanizer, luxun, wangxiaobo, wangyangming, ...
+  └ visual (26)     architecture-diagram, ascii-art, comfyui, manim-video, ...
+  └ audio (2)       heartmula, songsee
+  └ media (3)       gif-search, spotify, youtube-content
+think (28)       — 思考
+  └ research (25)   arxiv, blogwatcher, duckduckgo-search, last30days, ...
+  └ learning (3)    feynman, karpathy, using-git-worktrees
+execute (114)    — 做事
+  └ coding (32)     github-*, software-development-*, planning/...
+  └ engineering (37) agent-project-blueprint, engineering-*, old-code
+  └ devops (11)     docker-management, kanban-*, windows-*, ...
+  └ data-ml (25)    jupyter-live-kernel, mlops-*
+  └ testing (9)     testing-*
+delegate (13)    — 调度别的 agent
+  └ orchestration (7)    dispatching-parallel-agents, hermes-agent, honcho, mission-control
+  └ codegen-agents (6)   blackbox, claude-code, codex, opencode, pi-coding-agent, kanban-codex-lane
+meta (15)        — 元能力
+  └ skill-management (7)  skill-tree-evolution, skill-manager, writing-skills, ...
+  └ mcp (5)              fastmcp, mcporter, native-mcp, mcp-builder, setup-gbrain
+  └ body (3)             hermes-profile-api-server, smart-home, dogfood
+domains (122)    — 领域专家
+  └ academic (6)    bazi-*, qimen-dunjia, ziwei-doushu, academic-advisor
+  └ business (68)   product-*, marketing-*, sales-*, finance-*, hr-*, paid-media-*, project-management-*
+  └ games (22)      game-development-*, gaming-*, godot-*, unity-*, unreal-engine-*, roblox-*
+  └ design (9)      design-*, terminal-chat-interface
+  └ spatial (6)     spatial-computing-*
+  └ security (8)    security-*, legal-*, email-*, migration/openclaw-migration
+  └ lifestyle (3)   fitness-nutrition, neuroskill-bci, city-rental-hunt
 ```
+
+## 重大重构经验（v4 → v5，2026-06-03）
+
+### 设计原则转变
+- **从"客观能力"到"主体视角"**：v4 模仿外部能力分类（认知/创作/执行/交互/领域/元），v5 改为以"我是谁"为主语的三圈结构（self/communicate/create-think-execute/delegate/meta/domains）
+- **优先级信号**：77 推我独立做事 → "我"在最前；delegate 单列 → 子 agent 是新的一等公民
+- **粒度统一**：避免"business 68 个"这种巨型分支，但也不过度拆分
+
+### 踩过的坑（v5 重构实录）
+1. **分支重命名导致 sync 报错**：旧版 `creation` 改名为 `create`，但 `creative/songwriting-and-ai-music` 进来时 sync 找不到对应 leaf，输出 `⚠ 新分支 [create] 未在 index 中定义`
+   - 修法：把 `creative/songwriting-and-ai-music` 显式归到 `create/writing`（不靠自动规则）
+2. **同一技能被多次引用**：重构时我同时列了 `creative/creative-ideation` 在 `writing` 和 `visual` 两个 leaf 下，sync 不报错但会有重复
+   - 修法：手动 grep 去重，每个 skill 在 index.yaml 只出现一次
+3. **sync_tree.py 会自动删除不存在的 skill**：如果一个 skill 实际不存在但 index.yaml 里有，会被静默删除
+   - 例：`awesome-hermes-agent / inference-sh / old-code / smart-home` 在这次 sync 时被自动 ➖ 删除
+4. **跨大版本前必须备份**：执行 `cp index.yaml index.yaml.bak.20260603` 这种命名清晰的备份，让回滚有迹可循
+5. **跑完 sync 后要 read_file 验证**：用 yaml.safe_load 数一下每个 leaf 的 skills 数，确认实际归位而不是脚本"误以为"对齐
+
+### 主体视角分类的判定口诀
+- **"是我吗？"** → self
+- **"是跟谁说话吗？"** → communicate
+- **"是输出有形的内容吗？"** → create
+- **"是想/调研/学吗？"** → think
+- **"是动手做具体事吗？"** → execute
+- **"是叫别的 agent 干吗？"** → delegate
+- **"是管我的技能/身体/MCP 吗？"** → meta
+- **"是某个专业领域吗？"** → domains
 
 ## 目录结构
 ```
@@ -56,6 +116,7 @@ python sync_tree.py
 - 与 `index.yaml` 比对，发现新增 skill
 - 根据 `CATEGORY_MAP` 自动归类
 - 更新 `index.yaml`
+- 删除 index.yaml 中指向已不存在文件的 ghost entries（v5 行为）
 
 **关于分类规则：**
 `sync_tree.py` 里的 `CATEGORY_MAP` 字典定义了每个 skill 的分类。
@@ -66,6 +127,7 @@ python sync_tree.py
 > - 规则 `("foo", "bar")` 匹配 `foo/bar`；规则 `("foo", "*")` 匹配 `foo/*`
 > - 如果技能从顶层目录迁移到了子目录（如 `bazi` → `creation/bazi-ziwei`），旧规则 `("bazi-ziwei", None)` 会失效
 > - 必须加新规则 `("bazi", "bazi-ziwei")` 才能匹配 `creation/bazi-ziwei`
+> - **跨大版本重构时**：宁可显式列出每个 skill 的归属，也不依赖自动规则（v5 经验）
 
 ## 同步脚本用法
 
@@ -74,6 +136,18 @@ python sync_tree.py
 cd ~/AppData/Local/hermes/skills_tree_v2
 ~/AppData/Local/hermes/hermes-agent/venv/Scripts/python sync_tree.py
 ```
+
+### 跨大版本重构的标准流程（v5 经验沉淀）
+
+1. **备份旧版**：`cp index.yaml index.yaml.bak.YYYYMMDD`
+2. **设计新结构**：先用 ASCII 画完整棵树，确认每个分支/leaf 的归属
+3. **写新 index.yaml**：用 write_file 直接覆盖，每层都加 description
+4. **跑 sync 看 diff**：`python sync_tree.py` 输出会告诉你哪些 skill 找不到 leaf（`⚠ 新分支`）、哪些被自动删除（`➖`）
+5. **补漏**：把找不到 leaf 的 skill 显式加到合适的位置
+6. **去重**：grep -n "skill-name" 确认每个 skill 只出现一次
+7. **数清楚**：用 yaml.safe_load 读 index.yaml，统计每个 leaf 的 skills 数，对照预期
+8. **更新 SKILL.md 的版本号和结构图**：让未来的我和七十七能一眼看清现在是什么状态
+9. **写一份 references/vX-redesign-notes.md**：把踩到的坑和设计判断都记下来
 
 ### 清理流程（定期维护用）
 
@@ -90,7 +164,7 @@ cd ~/AppData/Local/hermes/skills_tree_v2
 - `domain/` — 同上
 - `gifs/` — 同上
 - `github/` — 同上（与 `github/` 分类别同名，注意：skills 顶层也有 github 分类目录）
-- `inference-sh/` — 同上
+- `inference-sh/` — 同上（v5 sync 时已自动删除）
 
 注意：`github/` 分类目录（`skills/github/`）是空的，与 skills 列表中的 `github` category（github-pr-workflow、github-issues 等实际技能）是同名不同物。清理时应确认路径：`C:\Users\77\.hermes\skills\github\` 是空目录，`C:\Users\77\.hermes\skills\` 列表里的 `github` 是分类名，不是目录。
 
@@ -147,6 +221,7 @@ Cron 任务 `skill-tree-sync`（每 6 小时）已自动同步。
 ## 手动更新分类
 
 编辑 `sync_tree.py` 里的 `CATEGORY_MAP` 字典，添加新 skill 的分类规则。
+**v5 建议**：跨大版本时不要写新规则，直接在 index.yaml 里把每个 skill 显式列到正确 leaf 下，简单粗暴但可控。
 
 ## GitHub 操作技巧
 
@@ -172,19 +247,19 @@ cp -r /tmp/repo-name/references/ skills/dir/skill-name/references/
 mkdir -p skills/dir/skill-name/references/
 ```
 
-## 已知 skill 分类（2026-05-29 更新）
+## 已知 skill 分类（2026-06-03 更新）
 
-已在 CATEGORY_MAP 中注册（2026-05-30 更新）：
+v5 重构后，index.yaml 直接显式列了每个 skill 的归属（不再依赖 CATEGORY_MAP 推断），所以"已知分类"已经分散在 index.yaml 里。少量仍需要 CATEGORY_MAP 自动匹配的（如新增 skill 时）：
 
 ```python
 # 子目录形式（dir/sub）
-("bazi", "bazi-python"): ("creation", "writing"),
-("bazi", "bazi-ziwei"): ("creation", "writing"),
-("bazi", "mingli-bench"): ("creation", "writing"),
-("meta", "skill-executor"): ("meta", "self_management"),
+("bazi", "bazi-python"): ("domains", "academic"),
+("bazi", "bazi-ziwei"): ("domains", "academic"),
+("bazi", "mingli-bench"): ("domains", "academic"),
+("meta", "skill-executor"): ("self", "identity"),
 
 # 顶层形式
-("skill-executor", None): ("meta", "self_management"),
+("skill-executor", None): ("self", "identity"),
 ```
 
 ### 命理技能来源
@@ -318,6 +393,8 @@ python daily_tasks.py
 - [x] 每日任务抽取
 - [x] 自动同步脚本
 - [x] 自动删除 ghost entries
+- [x] 主体视角分类（v5）
+- [x] 跨大版本重构标准流程（v5）
 - [ ] 自动升级算法 (level 1→2→3...)
 - [ ] 使用频率统计
 - [ ] 生疏技能提醒
