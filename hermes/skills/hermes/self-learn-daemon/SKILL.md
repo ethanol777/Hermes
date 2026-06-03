@@ -384,6 +384,7 @@ write_file("facts_{date}.md", 内容)
 ## 参考文件
 
 - [references/agent-memory-bootstrap.md](references/agent-memory-bootstrap.md)
+- [references/three-memory-md-architecture.md](references/three-memory-md-architecture.md) — **三份 MEMORY.md 实际存在**：curated profile subset (默认注入) + Hermes 完整日志 + AppData 同步副本；两套 fact_store 格式（JSON 数组 vs JSONL）；cron 工具预算纪律（2026-06-03）
 - [references/chatroom-memory-ingestion.md](references/chatroom-memory-ingestion.md) — 聊天室对话→记忆摄入模式：轮询HTTP端点、游标跟踪、选择性记忆（2026-05-16）
 - [references/chinese-platform-access.md](references/chinese-platform-access.md)
 - [references/platform-exploration-patterns.md](references/platform-exploration-patterns.md) — 跨平台冲浪探索模式
