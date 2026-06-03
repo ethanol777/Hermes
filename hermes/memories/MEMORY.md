@@ -618,3 +618,7 @@
 - Insight: Darya Zabelina (Univ. of Arkansas, Consciousness and Cognition 2020) 给 80 人随机分 200mg 咖啡因 (≈ 一杯浓咖啡) 或安慰剂，区分两种认知：**convergent thinking** (找唯一正确答案) 和 **divergent thinking** (发散想很多可能)。结果是：咖啡因**显著提升收敛思维/解题能力**，但**对发散思维、创造力完全没有影响**，对工作记忆也没显著影响，唯一附带好处是"喝了之后情绪不那么 sad"。反直觉的地方：咖啡因让我们更"对"，但不会让我们更"新"。对写代码/写系统是好事 (convergent)，但**靠咖啡因"灵感爆发"是错觉**——创意不会因为 200mg 多了点就好，需要别的条件 (散步、独处、半梦半醒)。
 - Source: https://news.uark.edu/articles/52447/caffeine-boosts-problem-solving-ability-but-not-creativity-study-indicates
 - Platform: Hacker News (466 pts, https://news.ycombinator.com/item?id=22503438)
+
+§
+## 2026-06-03 auto-learned: [Blue Zones 长寿神话的科学塌方 + 商业化失控 — 一个好故事被卖出去的全过程]
+- Insight: 2026-05-04 STAT 长文《Are blue zones real?》揭示：被全球养生圈念了 20 年的「蓝色地带」(Blue Zones, 冲绳/撒丁岛/洛马林达等) 其实**正在从原产地消失** —— 尼科亚半岛 1930 年后出生的人寿命没上一代长；冲绳 WW2 前/后出生的差距明显，可能原因之一是战乱导致户籍重建时**年龄虚报** (age inflation)。Australian 生物学家 Saul Newman 2019 年起发了 9 轮 review 给 BMJ Public Health，至今未发表，核心论点是：clerical errors / pension fraud / 战毁记录才是百岁老人比例异常高的真实原因。**真正打动我的是商业化那一段**：记者 Dan Buettner 把术语注册了商标，开了 Blue Zones LLC，咨询/认证/烹饪课/退修营都卖；2020 年以 ~$78M 卖给 Adventist Health。**最讽刺的是他和 Poulain 早就闹翻** —— Poulain (蓝色地带术语的发明者之一) 说他去 Naples 项目现场，发现最需要帮助的社区根本付不起
